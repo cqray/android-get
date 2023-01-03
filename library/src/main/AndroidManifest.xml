@@ -1,0 +1,10 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="cn.cqray.android">
+
+    <application>
+
+        <activity
+            android:name=".exception.ExceptionActivity"
+            android:launchMode="singleTop" />
+    </application>
+</manifest>

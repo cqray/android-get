@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="fixed_footer" type="id" />
+    <item name="fixed_header" type="id" />
+    <item name="translation_footer" type="id" />
+    <item name="translation_header" type="id" />
+
+    <item name="toolbar" type="id" />
+    <item name="footer_layout" type="id" />
+    <item name="header_layout" type="id" />
+    <item name="refresh_layout" type="id" />
+    <item name="nav_layout" type="id" />
+
+    <item name="starter_toolbar" type="id" />
+    <item name="starter_header_layout" type="id" />
+    <item name="starter_refresh_layout" type="id" />
+    <item name="starter_footer_layout" type="id" />
+    <item name="starter_content_layout" type="id" />
+    <item name="starter_nav_view" type="id" />
+    <item name="starter_tab_layout" type="id" />
+
+    <item name="starter_toolbar_title" type="id" />
+    <item name="starter_toolbar_back_view" type="id" />
+    <item name="starter_toolbar_action_layout" type="id" />
+
+
+
+    <item name="get_toolbar" type="id"/>
+
+    <!-- ViewState相关ID -->
+    <item name="get_state_img" type="id" />
+    <item name="get_state_text" type="id" />
+    <item name="get_state_retry" type="id" />
+    <item name="get_state_spin_kit" type="id" />
+
+    <item name="get_tip_text" type="id" />
+
+</resources>

@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <cn.cqray.android.widget.Toolbar
+        android:id="@id/starter_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/toolbar">
+
+    </cn.cqray.android.widget.Toolbar>
+
+    <!-- 刷新界面 -->
+    <com.scwang.smart.refresh.layout.SmartRefreshLayout
+        android:id="@id/starter_refresh_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@id/starter_footer_layout"
+        android:layout_below="@id/starter_header_layout"
+        android:overScrollMode="never"
+        app:srlEnablePureScrollMode="true"
+        app:srlEnableLoadMore="false"
+        app:srlEnableOverScrollDrag="true"
+        app:srlEnableScrollContentWhenRefreshed="false"
+        app:srlFixedFooterViewId="@id/fixed_footer"
+        app:srlFixedHeaderViewId="@id/fixed_header"
+        app:srlFooterTranslationViewId="@id/translation_footer"
+        app:srlHeaderTranslationViewId="@id/translation_header">
+
+    </com.scwang.smart.refresh.layout.SmartRefreshLayout>
+
+    <!-- 头部布局 -->
+    <FrameLayout
+        android:id="@id/starter_header_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/starter_toolbar">
+
+    </FrameLayout>
+
+    <!-- 底部布局 -->
+    <FrameLayout
+        android:id="@id/starter_footer_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true">
+
+    </FrameLayout>
+
+</RelativeLayout>
