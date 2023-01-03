@@ -135,7 +135,7 @@ class GetViewDelegate(private val provider: GetViewProvider) {
         mHeaderLayout = view.findViewById(R.id.starter_header_layout)
         mFooterLayout = view.findViewById(R.id.starter_footer_layout)
         mRefreshLayout = view.findViewById(R.id.starter_refresh_layout)
-        assert(mRefreshLayout != null)
+        //assert(mRefreshLayout != null)
         mRefreshLayout!!.addView(view)
         initContentView()
         initGetView()

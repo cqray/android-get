@@ -23,7 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import cn.cqray.android.Get;
-import cn.cqray.android.app2.GetManager;
+import cn.cqray.android.manage.GetActivityManager;
 
 public class ActivityUtils {
 
@@ -237,7 +237,7 @@ public class ActivityUtils {
 
     @NonNull
     private static Context getTopActivityOrApp() {
-        if (GetManager.isAppForeground()) {
+        if (GetActivityManager.isAppForeground()) {
             Activity topActivity = Get.getTopActivity();
             return topActivity == null ? Get.getContext() : topActivity;
         } else {

@@ -1,4 +1,4 @@
-package cn.cqray.android.app2
+package cn.cqray.android.manage
 
 import android.app.Activity
 import android.app.Application
@@ -11,6 +11,7 @@ import android.view.WindowManager
 import androidx.fragment.app.FragmentActivity
 import cn.cqray.android.Get
 import cn.cqray.android.app2.GetNavDelegate.Companion.get
+import cn.cqray.android.app2.GetNavProvider
 import cn.cqray.android.lifecycle.GetActivityLifecycleCallbacks
 import cn.cqray.android.lifecycle.GetAppLifecycleCallbacks
 import cn.cqray.android.lifecycle.GetFragmentLifecycleCallbacks
@@ -24,7 +25,7 @@ import java.util.*
  * [Get]生命周期管理器
  * @author Cqray
  */
-object GetManager {
+object GetActivityManager {
 
     /** 处于前台的Activity数量  */
     private var foregroundCount = 0
@@ -50,8 +51,9 @@ object GetManager {
     @JvmStatic
     fun init(application: Application?) {
         if (application == null) return
-        this.application = if (this.application == null) application else return
+        GetActivityManager.application = if (GetActivityManager.application == null) application else return
         registerActivityLifecycleCallbacks()
+
     }
 
     @JvmStatic
@@ -214,7 +216,7 @@ object GetManager {
         if (logInit.activityLifecycleLogEnable == false) return
         // 打印日志
         GetLog.d(
-            this@GetManager,
+            this@GetActivityManager,
             String.format(
                 "%s [%d] -> %s",
                 activity.javaClass.name,

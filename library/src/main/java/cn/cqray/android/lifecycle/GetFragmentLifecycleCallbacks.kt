@@ -12,7 +12,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
 import cn.cqray.android.Get
-import cn.cqray.android.app2.GetManager
+import cn.cqray.android.manage.GetActivityManager
 import cn.cqray.android.app2.GetNavDelegate.Companion.get
 import cn.cqray.android.app2.GetNavProvider
 import cn.cqray.android.log.GetLog
@@ -125,7 +125,7 @@ class GetFragmentLifecycleCallbacks(activity: FragmentActivity) :
         if (logInit.fragmentLifecycleLogEnable == false) return
         // 打印日志
         GetLog.d(
-            GetManager.javaClass,
+            GetActivityManager.javaClass,
             String.format(
                 "%s [%d] -> %s",
                 fragment.javaClass.name,

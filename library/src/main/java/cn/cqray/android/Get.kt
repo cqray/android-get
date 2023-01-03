@@ -5,7 +5,7 @@ import android.app.Application
 import android.content.Context
 
 import cn.cqray.android.app2.GetInit
-import cn.cqray.android.app2.GetManager
+import cn.cqray.android.manage.GetActivityManager
 
 /**
  * [Get]框架
@@ -31,7 +31,7 @@ object Get {
         this.application = application
         this.init = getInit ?: this.init
         // 初始化Get管理器
-        GetManager.init(application)
+        GetActivityManager.init(application)
 
 //        GetDelegate.get()
     }
@@ -42,5 +42,5 @@ object Get {
 
     @JvmStatic
     val topActivity: Activity?
-        get() = GetManager.topActivity
+        get() = GetActivityManager.topActivity
 }
