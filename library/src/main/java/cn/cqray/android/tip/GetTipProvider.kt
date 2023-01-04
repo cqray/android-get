@@ -1,29 +1,27 @@
 package cn.cqray.android.tip
 
-import cn.cqray.android.GetDelegate
-import cn.cqray.android.GetProvider
-
 /**
  * Tip提供者
  * @author Cqray
  */
 @JvmDefaultWithoutCompatibility
-interface GetTipProvider : GetProvider {
+interface GetTipProvider {
 
     val tipDelegate: GetTipDelegate
-        get() = GetDelegate.get(this)
+        get() = GetTipDelegate.get(this)
+
+    /**
+     * 显示Tip
+     * @param text     文本内容 [CharSequence]
+     */
+    fun showTip(text: CharSequence?) = tipDelegate.showTip(text)
 
     /**
      * 显示Tip
      * @param text     文本内容 [CharSequence]
      * @param callback 结束回调 [GetTipCallback]
      */
-    fun showTip(text: CharSequence?, callback: GetTipCallback? = null) = tipDelegate.showTip(
-        level = null,
-        text = text,
-        init = null,
-        callback = callback
-    )
+    fun showTip(text: CharSequence?, callback: GetTipCallback? = null) = tipDelegate.showTip(text, callback)
 
     /**
      * 显示Tip

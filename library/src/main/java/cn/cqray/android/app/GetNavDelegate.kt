@@ -1,34 +1,35 @@
-package cn.cqray.android.app2
+package cn.cqray.android.app
 
 import android.app.Activity
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import androidx.activity.OnBackPressedCallback
 import androidx.annotation.IdRes
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
+import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import cn.cqray.android.lifecycle.GetViewModelProvider
+import cn.cqray.android.lifecycle.GetViewModel
 import java.lang.IllegalStateException
-import java.util.*
 import kotlin.collections.HashMap
 
 /**
  * Get框架导航委托
  * @author Cqray
  */
-class GetNavDelegate(private val navProvider: GetNavProvider) {
+class GetNavDelegate(private val provider: GetNavProvider) {
 
     init {
-        GetUtils.checkProvider(navProvider)
-        navDelegates[navProvider] = this
+        GetUtils.checkProvider(provider)
+        cacheDelegates[provider] = this
     }
 
     private var navViewModel: GetNavViewModel? = null
 
-    private val mHandler = Handler(Looper.getMainLooper())
+    /** [LifecycleOwner]生命周期管理持有 **/
+    val lifecycleOwner: LifecycleOwner get() = provider as LifecycleOwner
 
+    /** 导航[GetViewModel] **/
     val viewModel: GetNavViewModel
         get() {
             if (navViewModel == null) {
@@ -40,12 +41,12 @@ class GetNavDelegate(private val navProvider: GetNavProvider) {
     /**
      * 主要是初始化[GetNavViewModel]以及管理[Activity.onBackPressed]事件
      */
-    fun onCreated() {
+    internal fun onCreated() {
         val activity: FragmentActivity
-        if (navProvider is Fragment) {
-            activity = (navProvider as Fragment).requireActivity()
+        if (provider is Fragment) {
+            activity = (provider as Fragment).requireActivity()
         } else {
-            activity = navProvider as FragmentActivity
+            activity = provider as FragmentActivity
             activity.onBackPressedDispatcher.addCallback(activity,
                 object : OnBackPressedCallback(true) {
                     override fun handleOnBackPressed() {
@@ -56,26 +57,29 @@ class GetNavDelegate(private val navProvider: GetNavProvider) {
         }
         // 初始化GetNavViewModel
         navViewModel = GetViewModelProvider(activity).get(GetNavViewModel::class.java)
-    }
-
-    /** 回收资源 **/
-    fun onDestroyed() {
-        // 保证其他资源回收后，回收自身资源
-        mHandler.removeCallbacksAndMessages(null)
-        navDelegates.remove(navProvider)
+        // 资源回收观察者
+        lifecycleOwner.lifecycle.addObserver(object : DefaultLifecycleObserver {
+            override fun onDestroy(owner: LifecycleOwner) {
+                super.onDestroy(owner)
+                // 从缓存中移除GetNavDelegate
+                cacheDelegates.remove(provider)
+            }
+        })
     }
 
     /**
      * 主要实现[GetNavProvider.onEnterAnimEnd]回调
      */
-    fun onViewCreated() {
-        val enterAnimDuration: Int = if (navProvider is Fragment) {
+    internal fun onViewCreated() {
+        // 获取动画时长
+        val enterAnimDuration: Int = if (provider is Fragment) {
             navViewModel!!.enterAnimDuration
         } else {
-            val animResId = GetUtils.getActivityOpenEnterAnimationResId((navProvider as Activity))
+            val animResId = GetUtils.getActivityOpenEnterAnimationResId((provider as Activity))
             GetUtils.getAnimDurationFromResource(animResId)
         }
-        mHandler.postDelayed({ navProvider.onEnterAnimEnd() }, enterAnimDuration.toLong())
+        // 动画结束回调
+        GetManager.runOnUiThreadDelayed({ provider.onEnterAnimEnd() }, enterAnimDuration)
     }
 
     /**
@@ -123,27 +127,18 @@ class GetNavDelegate(private val navProvider: GetNavProvider) {
      */
     fun backTo(back: Class<*>?, inclusive: Boolean) = viewModel.backTo(back, inclusive)
 
-    val lifecycleOwner: LifecycleOwner get() = navProvider as LifecycleOwner
-
     companion object {
+
         /** 委托缓存 [GetNavDelegate] **/
-        private val navDelegates =
-            Collections.synchronizedMap(HashMap<GetNavProvider, GetNavDelegate>())
+        private val cacheDelegates = HashMap<GetNavProvider, GetNavDelegate>()
 
         /**
          * 获取并初始化[GetNavDelegate]
-         * @param provider [GetNavProvider]实现对象
+         * @param provider [GetNavProvider]实现实例
          */
         @JvmStatic
-        fun get(provider: GetNavProvider): GetNavDelegate {
-            var delegate = navDelegates[provider]
-            synchronized(GetNavDelegate::class.java) {
-                if (delegate == null) {
-                    delegate = GetNavDelegate(provider)
-                }
-            }
-            return delegate!!
-        }
+        @Synchronized
+        fun get(provider: GetNavProvider): GetNavDelegate = cacheDelegates[provider] ?: GetNavDelegate(provider)
     }
 
 }

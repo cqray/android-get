@@ -1,4 +1,4 @@
-package cn.cqray.android.app2
+package cn.cqray.android.app
 
 import android.os.Bundle
 import android.view.LayoutInflater

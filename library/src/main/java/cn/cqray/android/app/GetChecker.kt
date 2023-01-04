@@ -1,4 +1,4 @@
-package cn.cqray.android.app2
+package cn.cqray.android.app
 
 class GetChecker {
 

@@ -1,7 +1,5 @@
 package cn.cqray.android.util
 
-import android.app.Activity
-import android.app.Dialog
 import android.view.View
 import butterknife.ButterKnife
 import butterknife.Unbinder
@@ -11,56 +9,9 @@ import butterknife.Unbinder
  * @author Cqray
  */
 object ButterKnifeUtils {
-    /** ButterKnife是否可用  */
-    private var mButterKnifeSupport = true
 
-//    /**
-//     * ButterKnife绑定Activity实例
-//     * @param target Activity实例
-//     * @return 绑定实例
-//     */
-//    fun bind(target: Activity): Any? {
-//        return if (mButterKnifeSupport) {
-//            try {
-//                ButterKnife.bind(target)
-//            } catch (t: Throwable) {
-//                setClassNotFound(t)
-//                null
-//            }
-//        } else null
-//    }
-//
-//    /**
-//     * ButterKnife绑定控件
-//     * @param target 控件
-//     * @return 绑定实例
-//     */
-//    fun bind(target: View): Any? {
-//        return if (mButterKnifeSupport) {
-//            try {
-//                ButterKnife.bind(target)
-//            } catch (t: Throwable) {
-//                setClassNotFound(t)
-//                null
-//            }
-//        } else null
-//    }
-//
-//    /**
-//     * ButterKnife绑定对话框
-//     * @param target 控件
-//     * @return 绑定实例
-//     */
-//    fun bind(target: Dialog): Any? {
-//        return if (mButterKnifeSupport) {
-//            try {
-//                ButterKnife.bind(target)
-//            } catch (t: Throwable) {
-//                setClassNotFound(t)
-//                null
-//            }
-//        } else null
-//    }
+    /** ButterKnife是否可用  */
+    private var sSupported = true
 
     /**
      * ButterKnife绑定控件
@@ -70,13 +21,16 @@ object ButterKnifeUtils {
      */
     @JvmStatic
     fun bind(target: Any?, source: View): Any? {
-        if (target == null || !mButterKnifeSupport) return null
-        return try {
-            ButterKnife.bind(target, source)
-        } catch (t: Throwable) {
-            setClassNotFound(t)
-            null
+        if (target == null || !sSupported) return null
+        val unBinder: Unbinder?
+        try {
+            unBinder = ButterKnife.bind(target, source)
+            sSupported = true
+        } catch (t: NoClassDefFoundError) {
+            sSupported = false
+            return null
         }
+        return unBinder
     }
 
     /**
@@ -85,21 +39,13 @@ object ButterKnifeUtils {
      */
     @JvmStatic
     fun unbind(unBinder: Any?) {
-        if (unBinder == null || !mButterKnifeSupport) return
-        try {
+        if (unBinder == null || !sSupported) return
+        if (unBinder is Unbinder) unBinder.unbind()
+        sSupported = try {
             if (unBinder is Unbinder) unBinder.unbind()
-        } catch (t: Throwable) {
-            setClassNotFound(t)
-        }
-    }
-
-    /**
-     * 设置[ButterKnife]没有找到
-     * @param th 异常[Throwable]
-     */
-    private fun setClassNotFound(th: Throwable) {
-        if (th is NoClassDefFoundError) {
-            mButterKnifeSupport = false
+            true
+        } catch (e: NoClassDefFoundError) {
+            false
         }
     }
 }

@@ -1,17 +1,16 @@
-package cn.cqray.android.manage
+package cn.cqray.android.app
 
 import android.app.Activity
 import android.app.Application
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
+import android.os.Message
 import android.view.WindowManager
 
 import androidx.fragment.app.FragmentActivity
 import cn.cqray.android.Get
-import cn.cqray.android.app2.GetNavDelegate.Companion.get
-import cn.cqray.android.app2.GetNavProvider
+import cn.cqray.android.app.GetNavDelegate.Companion.get
 import cn.cqray.android.lifecycle.GetActivityLifecycleCallbacks
 import cn.cqray.android.lifecycle.GetAppLifecycleCallbacks
 import cn.cqray.android.lifecycle.GetFragmentLifecycleCallbacks
@@ -25,7 +24,10 @@ import java.util.*
  * [Get]生命周期管理器
  * @author Cqray
  */
-object GetActivityManager {
+object GetManager {
+
+    /** 通用[Handler]what值 **/
+    private const val normalHandlerWhat = 0
 
     /** 处于前台的Activity数量  */
     private var foregroundCount = 0
@@ -39,21 +41,24 @@ object GetActivityManager {
     /** Application实例  */
     private var application: Application? = null
 
-    /** Handler控制 **/
-    private val handler = Handler(Looper.getMainLooper())
-
     /** Activity列表 **/
     private val activityList = LinkedList<Activity>()
 
     /** App生命周期回调 **/
     private val appLifecycleCallbacks = ArrayList<GetAppLifecycleCallbacks>()
 
+    /** Handler控制 **/
+    private val handler = Handler(Looper.getMainLooper()) {
+        val runnable = it.obj as Runnable
+        runnable.run()
+        true
+    }
+
     @JvmStatic
     fun init(application: Application?) {
         if (application == null) return
-        GetActivityManager.application = if (GetActivityManager.application == null) application else return
+        this.application = if (this.application == null) application else return
         registerActivityLifecycleCallbacks()
-
     }
 
     @JvmStatic
@@ -106,10 +111,8 @@ object GetActivityManager {
 
             override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
                 if (activityList.isEmpty()) {
-                    // 通知App调用onCreated()
-                    notifyAppLifecycleChanged(null, true)
-                    // 通知APP处于前台
-                    notifyAppLifecycleChanged(activity, true)
+                    onCreated()
+                    onForeground(activity)
                 }
 
 //                LanguageUtils.applyLanguage(activity)
@@ -153,7 +156,7 @@ object GetActivityManager {
                 setTopActivity(activity)
                 if (isBackground) {
                     isBackground = false
-                    notifyAppLifecycleChanged(activity, true)
+                    onForeground(activity)
                 }
                 processHideSoftInputOnActivityDestroy(activity, false)
                 // 打印日志
@@ -172,8 +175,7 @@ object GetActivityManager {
                     --foregroundCount
                     if (foregroundCount <= 0) {
                         isBackground = true
-                        // 通知App处于后台
-                        notifyAppLifecycleChanged(activity, false)
+                        onBackground(activity)
                     }
                 }
                 processHideSoftInputOnActivityDestroy(activity, true)
@@ -184,22 +186,15 @@ object GetActivityManager {
             override fun onActivityDestroyed(activity: Activity) {
                 // 打印日志
                 printActivityStateLog(activity, "onActivityDestroyed")
-                handler.post {
-                    // 监管GetNavProvider
-                    if (activity is GetNavProvider) {
-                        // 在post中，保证GetNavDelegate的资源最后回收
-                        get((activity as GetNavProvider)).onDestroyed()
-                    }
+                // 延时处理，主要是适配程序关闭的生命周期
+                runOnUiThreadDelayed({
+                    // 移除Activity
                     activityList.remove(activity)
                     // 修复软键盘输入泄漏问题
                     KeyboardUtils.fixSoftInputLeaks(activity)
                     // 没有任何Activity，说明APP关闭
-                    if (activityList.isEmpty()) {
-                        // 通知APP调用onTerminated()
-                        Log.e("数据", "打扰了")
-                        notifyAppLifecycleChanged(null, false)
-                    }
-                }
+                    if (activityList.isEmpty()) onTerminated()
+                }, 0)
             }
         })
     }
@@ -216,7 +211,7 @@ object GetActivityManager {
         if (logInit.activityLifecycleLogEnable == false) return
         // 打印日志
         GetLog.d(
-            this@GetActivityManager,
+            this@GetManager,
             String.format(
                 "%s [%d] -> %s",
                 activity.javaClass.name,
@@ -269,32 +264,50 @@ object GetActivityManager {
     }
 
     /**
-     * 通知App生命周期变化
-     * @param activity
-     * @param isForeground
+     * 程序进入前台回调
+     * @param activity 当前Activity
      */
-    private fun notifyAppLifecycleChanged(activity: Activity?, isForeground: Boolean) {
-        // 打印日志
-        if (activity == null) {
-            if (isForeground) GetLog.d(this, "程序启动")
-            else GetLog.d(this, "程序关闭")
-        } else {
-            if (isForeground) GetLog.d(this, "程序进入前台")
-            else GetLog.d(this, "程序退到后台")
-        }
-        // 程序回调
-        for (callback in appLifecycleCallbacks) {
-            if (activity == null) {
-                // App创建
-                if (isForeground) callback.onCreated()
-                // App回收
-                else callback.onTerminated()
-            } else {
-                // App前台
-                if (isForeground) callback.onForeground(activity)
-                // App后台
-                else callback.onBackground(activity)
-            }
-        }
+    private fun onForeground(activity: Activity) {
+        GetLog.d(this, "Application is on foreground.")
+        appLifecycleCallbacks.forEach { it.onForeground(activity) }
+    }
+
+    /**
+     * 程序退到后台回调
+     * @param activity 当前Activity
+     */
+    private fun onBackground(activity: Activity) {
+        GetLog.d(this, "Application is on background.")
+        appLifecycleCallbacks.forEach { it.onBackground(activity) }
+    }
+
+    /**
+     * 程序启动回调
+     */
+    private fun onCreated() {
+        GetLog.d(this, "Application is created.")
+        appLifecycleCallbacks.forEach { it.onCreated() }
+    }
+
+    /**
+     * 程序关闭回调
+     */
+    private fun onTerminated() {
+        appLifecycleCallbacks.forEach { it.onTerminated() }
+        handler.removeMessages(normalHandlerWhat)
+        GetLog.d(this, "Application is terminated.")
+    }
+
+    /**
+     * 在UI线程上延时执行程序
+     * @param runnable  需要执行的内容
+     * @param delayed   延时时长(ms)
+     */
+    @JvmStatic
+    fun runOnUiThreadDelayed(runnable: Runnable, delayed: Int? = null) {
+        val message = Message.obtain()
+        message.what = normalHandlerWhat
+        message.obj = runnable
+        handler.sendMessageDelayed(message, (delayed ?: 0).toLong())
     }
 }

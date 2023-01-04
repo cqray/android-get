@@ -1,9 +1,33 @@
 package cn.cqray.android.tip
 
+import androidx.lifecycle.DefaultLifecycleObserver
+import androidx.lifecycle.LifecycleOwner
 import cn.cqray.android.Get
-import cn.cqray.android.GetDelegate
+import cn.cqray.android.app.GetUtils
 
-class GetTipDelegate(provider: GetTipProvider) : GetDelegate<GetTipProvider>(provider) {
+class GetTipDelegate(private val provider: GetTipProvider) {
+
+    init {
+        GetUtils.checkProvider(provider)
+        cacheDelegates[provider] = this
+        (provider as LifecycleOwner).lifecycle.addObserver(object : DefaultLifecycleObserver {
+            override fun onDestroy(owner: LifecycleOwner) {
+                super.onDestroy(owner)
+                cacheDelegates.remove(provider)
+            }
+        })
+    }
+
+    /**
+     * 显示Tip
+     * @param text     文本内容 [CharSequence]
+     */
+    fun showTip(text: CharSequence?) = showTip(
+        level = null,
+        text = text,
+        init = null,
+        callback = null
+    )
 
     /**
      * 显示Tip
@@ -34,5 +58,19 @@ class GetTipDelegate(provider: GetTipProvider) : GetDelegate<GetTipProvider>(pro
         val defAdapter = init?.tipAdapter ?: defInit.tipAdapter
         val newAdapter = defAdapter ?: TipAdapterImpl()
         newAdapter.show(this, level, text, init, callback)
+    }
+
+    companion object {
+
+        /** 委托缓存 [GetTipDelegate] **/
+        private val cacheDelegates = HashMap<GetTipProvider, GetTipDelegate>()
+
+        /**
+         * 获取并初始化[GetTipDelegate]
+         * @param provider [GetTipProvider]实现实例
+         */
+        @JvmStatic
+        @Synchronized
+        fun get(provider: GetTipProvider): GetTipDelegate = cacheDelegates[provider] ?: GetTipDelegate(provider)
     }
 }

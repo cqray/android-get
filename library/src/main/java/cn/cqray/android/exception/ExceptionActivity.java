@@ -13,7 +13,7 @@ import androidx.core.view.ViewCompat;
 
 
 import cn.cqray.android.R;
-import cn.cqray.android.app2.GetActivity;
+import cn.cqray.android.app.GetActivity;
 import cn.cqray.android.util.Sizes;
 
 /**

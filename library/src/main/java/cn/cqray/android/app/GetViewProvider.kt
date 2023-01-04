@@ -1,9 +1,9 @@
-package cn.cqray.android.app2
+package cn.cqray.android.app
 
 import android.graphics.drawable.Drawable
 import android.view.View
 import androidx.annotation.DrawableRes
-import cn.cqray.android.app2.GetViewDelegate.Companion.get
+import cn.cqray.android.app.GetViewDelegate.Companion.get
 
 /**
  * [GetViewDelegate]功能提供者

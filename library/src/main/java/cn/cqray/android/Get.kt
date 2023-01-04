@@ -3,9 +3,12 @@ package cn.cqray.android
 import android.app.Activity
 import android.app.Application
 import android.content.Context
+import butterknife.Unbinder
 
-import cn.cqray.android.app2.GetInit
-import cn.cqray.android.manage.GetActivityManager
+import cn.cqray.android.app.GetInit
+import cn.cqray.android.app.GetManager
+import cn.cqray.android.log.GetLog
+import cn.cqray.android.util.ThirdCheckUtils
 
 /**
  * [Get]框架
@@ -31,7 +34,8 @@ object Get {
         this.application = application
         this.init = getInit ?: this.init
         // 初始化Get管理器
-        GetActivityManager.init(application)
+        GetManager.init(application)
+
 
 //        GetDelegate.get()
     }
@@ -42,5 +46,5 @@ object Get {
 
     @JvmStatic
     val topActivity: Activity?
-        get() = GetActivityManager.topActivity
+        get() = GetManager.topActivity
 }

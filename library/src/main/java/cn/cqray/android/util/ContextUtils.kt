@@ -12,7 +12,7 @@ import androidx.annotation.LayoutRes
 import androidx.annotation.StringRes
 import androidx.core.content.ContextCompat
 import cn.cqray.android.Get
-import cn.cqray.android.manage.GetActivityManager
+import cn.cqray.android.app.GetManager
 
 /**
  * @author LeiJue
@@ -22,7 +22,7 @@ object ContextUtils {
 
     @JvmStatic
     fun get(): Context {
-        val act = GetActivityManager.topActivity
+        val act = GetManager.topActivity
         return act ?: Get.context
     }
 
@@ -42,7 +42,7 @@ object ContextUtils {
 
     @JvmStatic
     fun inflate(@LayoutRes resId: Int): View {
-        val act = GetActivityManager.topActivity
+        val act = GetManager.topActivity
         var parent: ViewGroup? = null
         if (act != null) parent = act.findViewById(android.R.id.content)
         return LayoutInflater.from(get()).inflate(resId, parent, false)

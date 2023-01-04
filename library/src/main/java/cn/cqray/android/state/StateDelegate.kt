@@ -4,7 +4,7 @@ import android.util.TypedValue
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
-import cn.cqray.android.GetDelegate
+import cn.cqray.android.app.GetDelegate
 import cn.cqray.android.R
 
 import cn.cqray.android.util.ContextUtils

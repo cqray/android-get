@@ -1,4 +1,4 @@
-package cn.cqray.android
+package cn.cqray.android.app
 
 import androidx.activity.ComponentActivity
 import androidx.fragment.app.Fragment
@@ -11,7 +11,7 @@ import cn.cqray.android.tip.GetTipProvider
 import java.io.Serializable
 import kotlin.collections.HashMap
 
-open class GetDelegate<T : GetProvider>(@Suppress("unused") val provider: T): Serializable {
+internal open class GetDelegate<T : GetProvider>(@Suppress("unused") val provider: T): Serializable {
 
     init {
         if (provider !is ComponentActivity && provider !is Fragment) {
@@ -37,7 +37,7 @@ open class GetDelegate<T : GetProvider>(@Suppress("unused") val provider: T): Se
     val lifecycleOwner: LifecycleOwner
         get() = provider as LifecycleOwner
 
-    open fun onCleared() = cacheDelegates.remove(provider)
+    internal open fun onCleared() = cacheDelegates.remove(provider)
 
     companion object {
 

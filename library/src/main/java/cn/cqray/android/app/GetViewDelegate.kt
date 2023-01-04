@@ -1,4 +1,4 @@
-package cn.cqray.android.app2
+package cn.cqray.android.app
 
 import android.content.Context
 import android.graphics.drawable.ColorDrawable
@@ -131,10 +131,12 @@ class GetViewDelegate(private val provider: GetViewProvider) {
         }
         mContentView = view
         mRootView = inflate(R.layout.starter_layout_default)
-        mToolbar = view.findViewById(R.id.starter_toolbar)
-        mHeaderLayout = view.findViewById(R.id.starter_header_layout)
-        mFooterLayout = view.findViewById(R.id.starter_footer_layout)
-        mRefreshLayout = view.findViewById(R.id.starter_refresh_layout)
+        mRootView?.let {
+            mToolbar = it.findViewById(R.id.starter_toolbar)
+            mHeaderLayout = it.findViewById(R.id.starter_header_layout)
+            mFooterLayout = it.findViewById(R.id.starter_footer_layout)
+            mRefreshLayout = it.findViewById(R.id.starter_refresh_layout)
+        }
         //assert(mRefreshLayout != null)
         mRefreshLayout!!.addView(view)
         initContentView()
