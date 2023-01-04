@@ -1,13 +1,10 @@
 package cn.cqray.android.state
 
-import cn.cqray.android.app.GetDelegate
-import cn.cqray.android.app.GetProvider
-
 @JvmDefaultWithoutCompatibility
-interface StateProvider : GetProvider {
+interface StateProvider {
 
     val stateDelegate: StateDelegate
-        get() = GetDelegate.get(this)
+        get() = StateDelegate.get(this)
 
     fun setBusy() = stateDelegate.setBusy()
 

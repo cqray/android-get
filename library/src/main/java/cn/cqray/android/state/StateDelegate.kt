@@ -4,8 +4,10 @@ import android.util.TypedValue
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
-import cn.cqray.android.app.GetDelegate
+import androidx.lifecycle.DefaultLifecycleObserver
+import androidx.lifecycle.LifecycleOwner
 import cn.cqray.android.R
+import cn.cqray.android.app.GetUtils
 
 import cn.cqray.android.util.ContextUtils
 import cn.cqray.android.util.Sizes
@@ -18,7 +20,18 @@ import java.lang.reflect.Field
  * 状态管理委托
  * @author Cqray
  */
-class StateDelegate(provider: StateProvider) : GetDelegate<StateProvider>(provider) {
+class StateDelegate(private val provider: StateProvider) {
+
+    init {
+        GetUtils.checkProvider(provider)
+        cacheDelegates[provider] = this
+        (provider as LifecycleOwner).lifecycle.addObserver(object : DefaultLifecycleObserver {
+            override fun onDestroy(owner: LifecycleOwner) {
+                super.onDestroy(owner)
+                cacheDelegates.remove(provider)
+            }
+        })
+    }
 
     /** 偏移量 **/
     private val offsets: Array<Int?> = arrayOfNulls(4)
@@ -222,9 +235,8 @@ class StateDelegate(provider: StateProvider) : GetDelegate<StateProvider>(provid
         /** SmartLayout一些Enable属性  */
         private val refreshFields = arrayOfNulls<Field>(4)
 
-//        /** 委托缓存 [StateDelegate] **/
-//        private val stateDelegates =
-//            Collections.synchronizedMap(HashMap<StateProvider, StateDelegate>())
+        /** 委托缓存 [StateDelegate] **/
+        private val cacheDelegates = HashMap<StateProvider, StateDelegate>()
 
         init {
             // 静态反射初始化一些属性
@@ -239,13 +251,12 @@ class StateDelegate(provider: StateProvider) : GetDelegate<StateProvider>(provid
             }
         }
 
-//        /**
-//         * 获取并初始化[StateDelegate]
-//         * @param provider [StateProvider]实现对象
-//         */
-//        @JvmStatic
-//        @Synchronized
-//        fun get(provider: StateProvider): StateDelegate =
-//            stateDelegates[provider] ?: StateDelegate(provider)
+        /**
+         * 获取并初始化[StateDelegate]
+         * @param provider [StateProvider]实现对象
+         */
+        @JvmStatic
+        @Synchronized
+        fun get(provider: StateProvider): StateDelegate = cacheDelegates[provider] ?: StateDelegate(provider)
     }
 }
