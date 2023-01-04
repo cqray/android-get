@@ -19,23 +19,27 @@ import cn.cqray.android.util.Sizes
 import java.util.*
 
 /**
- * Get框架Tip统一处理
+ * [Get]全局提示
  * @author Cqray
  */
 object GetTip {
-    /** Tip Toast  */
+
+    /** 提示[Toast] **/
     private var tipToast: Toast? = null
 
-    /** Tip Handler  */
+    /** 提示处理[Handler] **/
     private val tipHandler: Handler = Handler(Looper.getMainLooper()) {
         cancelTip()
         showTip()
         true
     }
 
-    /** Tip任务集合  */
+    /** 提示任务集合 **/
     private val tipTasks: MutableList<TipTask> = Collections.synchronizedList(ArrayList())
 
+    /**
+     * 显示提示
+     */
     private fun showTip() {
         if (tipTasks.isEmpty()) {
             return
@@ -48,6 +52,9 @@ object GetTip {
         }
     }
 
+    /**
+     * 取消提示
+     */
     private fun cancelTip() {
         if (tipToast != null) {
             tipToast!!.cancel()
@@ -101,6 +108,7 @@ object GetTip {
         synchronized(GetTip::class.java) {
             tipToast = Toast.makeText(context, "", Toast.LENGTH_LONG)
             tipToast?.let {
+                @Suppress("deprecation")
                 it.view = view
                 it.show()
             }
@@ -165,9 +173,13 @@ object GetTip {
      * @param text Tip内容 [CharSequence]
      */
     @JvmStatic
-    fun show(text: CharSequence?) {
-        show(null, text, null, null)
-    }
+    @Suppress("unused")
+    fun show(text: CharSequence?) = show(
+        level = TipLevel.INFO,
+        text = text,
+        init = null,
+        callback = null
+    )
 
     /**
      * 显示Tip
@@ -175,9 +187,13 @@ object GetTip {
      * @param callback TIP回调 [GetTipCallback]
      */
     @JvmStatic
-    fun show(text: CharSequence?, callback: GetTipCallback?) {
-        show(TipLevel.INFO, text, null, callback)
-    }
+    @Suppress("unused")
+    fun show(text: CharSequence?, callback: GetTipCallback?) = show(
+        level = TipLevel.INFO,
+        text = text,
+        init = null,
+        callback = callback
+    )
 
     /**
      * 显示Tip

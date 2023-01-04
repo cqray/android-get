@@ -1,4 +1,4 @@
-package cn.cqray.android
+ package cn.cqray.android
 
 import android.app.Activity
 import android.app.Application
