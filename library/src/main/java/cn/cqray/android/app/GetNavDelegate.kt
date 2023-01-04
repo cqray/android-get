@@ -20,8 +20,18 @@ import kotlin.collections.HashMap
 class GetNavDelegate(private val provider: GetNavProvider) {
 
     init {
+        // 检查Provider是否合法
         GetUtils.checkProvider(provider)
+        // 加入缓存
         cacheDelegates[provider] = this
+        // 资源回收事件订阅
+        (provider as LifecycleOwner).lifecycle.addObserver(object : DefaultLifecycleObserver {
+            override fun onDestroy(owner: LifecycleOwner) {
+                super.onDestroy(owner)
+                // 从缓存中移除
+                cacheDelegates.remove(provider)
+            }
+        })
     }
 
     private var navViewModel: GetNavViewModel? = null
@@ -57,14 +67,6 @@ class GetNavDelegate(private val provider: GetNavProvider) {
         }
         // 初始化GetNavViewModel
         navViewModel = GetViewModelProvider(activity).get(GetNavViewModel::class.java)
-        // 资源回收观察者
-        lifecycleOwner.lifecycle.addObserver(object : DefaultLifecycleObserver {
-            override fun onDestroy(owner: LifecycleOwner) {
-                super.onDestroy(owner)
-                // 从缓存中移除GetNavDelegate
-                cacheDelegates.remove(provider)
-            }
-        })
     }
 
     /**

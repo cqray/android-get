@@ -1,3 +1,3 @@
 package cn.cqray.android.app
 
-interface GetProvider
+interface GetProvider2

@@ -23,11 +23,15 @@ import java.lang.reflect.Field
 class StateDelegate(private val provider: StateProvider) {
 
     init {
+        // 检查Provider是否合法
         GetUtils.checkProvider(provider)
+        // 加入缓存
         cacheDelegates[provider] = this
+        // 资源回收事件订阅
         (provider as LifecycleOwner).lifecycle.addObserver(object : DefaultLifecycleObserver {
             override fun onDestroy(owner: LifecycleOwner) {
                 super.onDestroy(owner)
+                // 从缓存中移除
                 cacheDelegates.remove(provider)
             }
         })
