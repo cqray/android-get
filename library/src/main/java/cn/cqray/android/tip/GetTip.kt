@@ -41,9 +41,7 @@ object GetTip {
      * 显示提示
      */
     private fun showTip() {
-        if (tipTasks.isEmpty()) {
-            return
-        }
+        if (tipTasks.isEmpty()) return
         tipHandler.post {
             val task = tipTasks[0]
             val init = task.init
@@ -56,8 +54,8 @@ object GetTip {
      * 取消提示
      */
     private fun cancelTip() {
-        if (tipToast != null) {
-            tipToast!!.cancel()
+        tipToast?.let {
+            it.cancel()
             tipToast = null
             tipHandler.removeMessages(0)
             if (tipTasks.isNotEmpty()) tipTasks.removeAt(0).callback?.onHide()
@@ -111,8 +109,8 @@ object GetTip {
                 @Suppress("deprecation")
                 it.view = view
                 it.show()
+                tipTask.callback?.onShow()
             }
-            tipTask.callback?.onShow()
         }
     }
 

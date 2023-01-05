@@ -1,5 +1,6 @@
 package cn.cqray.android.app
 
+import android.app.Activity
 import android.content.Context
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
@@ -22,8 +23,10 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.MutableLiveData
 import cn.cqray.android.R
-import cn.cqray.android.exception.ExceptionDispatcher
-import cn.cqray.android.exception.ExceptionType
+import cn.cqray.android.exc.ExceptionDispatcher
+import cn.cqray.android.exc.ExceptionType
+import cn.cqray.android.state.StateDelegate
+import cn.cqray.android.state.StateProvider
 import cn.cqray.android.util.ActivityUtils
 import cn.cqray.android.util.ButterKnifeUtils
 import cn.cqray.android.util.ContextUtils.inflate
@@ -51,10 +54,8 @@ class GetViewDelegate(private val provider: GetViewProvider) {
                     mHandler.post { onCleared() }
                 }
             })
-//        val strategy = Starter.getInstance().starterStrategy
-//        if (strategy.activityBackground != null) {
-//            setBackground(strategy.activityBackground)
-//        }
+        // 初始化状态委托
+        if (provider is StateProvider) StateDelegate(provider).also { stateDelegate = it }
     }
 
     /** 是否设置Get扩展界面 **/
@@ -87,6 +88,8 @@ class GetViewDelegate(private val provider: GetViewProvider) {
 
     /** Handler控制 **/
     private var mHandler = Handler(Looper.getMainLooper())
+
+    private var stateDelegate :StateDelegate? = null
 
     /**
      * 上下文
@@ -292,6 +295,14 @@ class GetViewDelegate(private val provider: GetViewProvider) {
         mBackground!!.value = background
     }
 
+    fun setIdle() = stateDelegate?.setIdle()
+
+    fun setBusy(text: String?) = stateDelegate?.setBusy(text)
+
+    fun setEmpty(text: String?) = stateDelegate?.setEmpty(text)
+
+    fun setError(text: String?) = stateDelegate?.setError(text)
+
 //    fun setIdle() {
 //        mStateDelegate.setIdle()
 //    }
@@ -364,7 +375,7 @@ class GetViewDelegate(private val provider: GetViewProvider) {
         if (provider is GetActivity) {
             provider.mToolbar = mToolbar
             provider.mContentView = mContentView
-            provider.mRefreshLayout = mRefreshLayout
+//            provider.mRefreshLayout = mRefreshLayout
         } else if (provider is GetFragment) {
             provider.mToolbar = mToolbar
             provider.mContentView = mContentView
@@ -375,6 +386,9 @@ class GetViewDelegate(private val provider: GetViewProvider) {
 //        } else if (mRootView is FrameLayout) {
 //            mStateDelegate.attachLayout(mRootView as FrameLayout?)
 //        }
+        if (provider is Activity) stateDelegate?.attachActivity(provider)
+        else if (provider is Fragment) stateDelegate?.attachFragment(provider)
+
 
         // 初始化标题
         initToolbar()

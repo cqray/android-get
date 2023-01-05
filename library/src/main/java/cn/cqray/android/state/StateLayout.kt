@@ -1,6 +1,7 @@
 package cn.cqray.android.state
 
 import android.content.Context
+import android.graphics.Color
 import android.util.AttributeSet
 import android.util.SparseArray
 import android.view.View
@@ -9,10 +10,14 @@ import cn.cqray.android.Get
 import cn.cqray.android.util.JsonUtils
 
 /**
- * 状态容器
+ * 状态容器控件
  * @author Cqray
  */
+@Suppress("unused")
 class StateLayout : FrameLayout {
+
+    /** 状态控件标签 **/
+    private val stateTag = "State:tag"
 
     /** 当前状态 **/
     var currentState: ViewState = ViewState.IDLE
@@ -21,27 +26,24 @@ class StateLayout : FrameLayout {
     /** 适配器集合  */
     private val stateAdapters = SparseArray<StateAdapter<*>>()
 
-    constructor(context: Context) : super(context) {
-        isFocusable = true
-        isClickable = true
-    }
+    constructor(context: Context) : super(context)
 
-    constructor(context: Context, attrs: AttributeSet?) : super(context, attrs) {
-        isFocusable = true
-        isClickable = true
-    }
+    constructor(context: Context, attrs: AttributeSet?) : super(context, attrs)
 
     constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
         context,
         attrs,
         defStyleAttr
-    ) {
-        isFocusable = true
-        isClickable = true
-    }
+    )
 
-    /** 是否忙碌状态 **/
+    /** 是否忙碌 **/
     fun isBusy(): Boolean = currentState == ViewState.BUSY
+
+    /** 是否空 **/
+    fun isEmpty(): Boolean = currentState == ViewState.EMPTY
+
+    /** 是否异常 **/
+    fun isError(): Boolean = currentState == ViewState.ERROR
 
     /** 是否空闲状态 **/
     fun isIdle(): Boolean = currentState == ViewState.IDLE
@@ -69,20 +71,20 @@ class StateLayout : FrameLayout {
     fun setErrorAdapter(adapter: StateAdapter<*>?) =
         stateAdapters.put(ViewState.ERROR.ordinal, adapter)
 
-    fun setBusy(vararg texts: String?) = setState(ViewState.BUSY, *texts)
+    fun setBusy(text: String? = null) = setState(ViewState.BUSY, text)
 
-    fun setEmpty(vararg texts: String?) = setState(ViewState.EMPTY, *texts)
+    fun setEmpty(text: String? = null) = setState(ViewState.EMPTY, text)
 
-    fun setError(vararg texts: String?) = setState(ViewState.ERROR, *texts)
+    fun setError(text: String? = null) = setState(ViewState.ERROR, text)
 
     fun setIdle() = setState(ViewState.IDLE, null)
 
     /**
      * 设置对应状态
      * @param state 状态[ViewState]
-     * @param texts 文本内容
+     * @param text 文本内容
      */
-    fun setState(state: ViewState?, vararg texts: String?) {
+    fun setState(state: ViewState?, text: String? = null) {
         // 获取状态
         val newState = state ?: ViewState.IDLE
         // 更新状态
@@ -101,7 +103,7 @@ class StateLayout : FrameLayout {
             adapter?.contentView?.setTag(stateTag.hashCode(), stateTag)
         }
         // 显示界面
-        adapter?.show(convertTexts(*texts))
+        adapter?.show(text)
     }
 
     /**
@@ -115,40 +117,20 @@ class StateLayout : FrameLayout {
         if (adapter == null) {
             // 获取全局配置
             val init = Get.init.stateInit!!
-            when (state) {
-                ViewState.BUSY -> adapter = init.busyAdapter!!
-                ViewState.EMPTY -> adapter = init.emptyAdapter!!
-                ViewState.ERROR -> adapter = init.errorAdapter!!
-                else -> {}
+            adapter = when (state) {
+                ViewState.BUSY -> init.busyAdapter!!
+                ViewState.EMPTY -> init.emptyAdapter!!
+                ViewState.ERROR -> init.errorAdapter!!
+                else -> null
             }
-            if (adapter != null) {
-                // 因为需要关联布局，所以需要克隆适配器
-                adapter = JsonUtils.deepClone(adapter, adapter.javaClass)
-                adapter?.hide()
+            // 因为需要关联布局，所以需要克隆适配器
+            adapter?.let {
+                adapter = JsonUtils.deepClone(it, it.javaClass)
+                adapter.hide()
             }
+            // 放入缓存
             stateAdapters.put(state.ordinal, adapter)
         }
         return adapter
-    }
-
-    /**
-     * 转换文本内容
-     * @param texts 文本列表
-     */
-    private fun convertTexts(vararg texts: String?): String? {
-        if (texts.isEmpty()) return null
-        if (texts.size == 1) return texts[0]
-        // 多个数据
-        val builder = StringBuilder()
-        for (text in texts) {
-            if (text == null) continue
-            builder.append(text).append("\n")
-        }
-        if (builder.isNotEmpty()) builder.setLength(builder.length - 1)
-        return builder.toString()
-    }
-
-    private companion object {
-        const val stateTag = "State:tag"
     }
 }

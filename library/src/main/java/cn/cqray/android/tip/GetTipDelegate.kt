@@ -3,9 +3,10 @@ package cn.cqray.android.tip
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import cn.cqray.android.Get
+import cn.cqray.android.app.GetDelegate
 import cn.cqray.android.app.GetUtils
 
-class GetTipDelegate(private val provider: GetTipProvider) {
+class GetTipDelegate(provider: GetTipProvider) : GetDelegate<GetTipProvider>(provider) {
 
     init {
         // 检查Provider是否合法

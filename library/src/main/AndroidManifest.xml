@@ -4,7 +4,7 @@
     <application>
 
         <activity
-            android:name=".exception.ExceptionActivity"
+            android:name=".exc.ExceptionActivity"
             android:launchMode="singleTop" />
     </application>
 </manifest>

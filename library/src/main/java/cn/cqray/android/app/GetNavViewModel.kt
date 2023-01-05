@@ -13,7 +13,7 @@ import androidx.lifecycle.LifecycleOwner
 
 import cn.cqray.android.anim.DefaultVerticalAnimator
 import cn.cqray.android.anim.FragmentAnimator
-import cn.cqray.android.exception.ExceptionDispatcher
+import cn.cqray.android.exc.ExceptionDispatcher
 import cn.cqray.android.lifecycle.GetViewModel
 import cn.cqray.android.util.ActivityUtils
 

@@ -1,4 +1,4 @@
-package cn.cqray.android.exception;
+package cn.cqray.android.exc;
 
 import android.content.ComponentName;
 import android.content.Context;

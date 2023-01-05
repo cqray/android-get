@@ -1,12 +1,17 @@
 package cn.cqray.android.state
 
+import android.app.Activity
 import android.util.TypedValue
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import cn.cqray.android.R
+import cn.cqray.android.app.GetActivity
+import cn.cqray.android.app.GetDelegate
+import cn.cqray.android.app.GetFragment
 import cn.cqray.android.app.GetUtils
 
 import cn.cqray.android.util.ContextUtils
@@ -20,7 +25,8 @@ import java.lang.reflect.Field
  * 状态管理委托
  * @author Cqray
  */
-class StateDelegate(private val provider: StateProvider) {
+@Suppress("unused")
+class StateDelegate(provider: StateProvider) : GetDelegate<StateProvider>(provider) {
 
     init {
         // 检查Provider是否合法
@@ -29,6 +35,7 @@ class StateDelegate(private val provider: StateProvider) {
         cacheDelegates[provider] = this
         // 资源回收事件订阅
         (provider as LifecycleOwner).lifecycle.addObserver(object : DefaultLifecycleObserver {
+
             override fun onDestroy(owner: LifecycleOwner) {
                 super.onDestroy(owner)
                 // 从缓存中移除
@@ -48,13 +55,56 @@ class StateDelegate(private val provider: StateProvider) {
 
     /** 状态控件 **/
     private var stateLayout: StateLayout? = null
-        get() {
-            if (field == null) {
-                field = StateLayout(ContextUtils.get())
-                field!!.layoutParams = ViewGroup.MarginLayoutParams(-1, -1)
-            }
-            return field
+        get() = field ?: StateLayout(ContextUtils.get()).also {
+            it.isClickable = true
+            it.isFocusable = true
+            it.layoutParams = ViewGroup.MarginLayoutParams(-1, -1)
+            field = it
         }
+
+    fun attachActivity(activity: Activity) {
+        if (activity is GetActivity) {
+            val refresh: SmartRefreshLayout? = activity.mRefreshLayout
+                ?: activity.findViewById(R.id.get_refresh_layout)
+            if (refresh != null) {
+                attachLayout(refresh)
+                return
+            }
+        }
+        // 获取Activity的根布局，进行连接
+        val root = activity.findViewById<FrameLayout>(android.R.id.content)
+        attachLayout(root)
+    }
+
+    fun attachFragment(fragment: Fragment) {
+        if (fragment.view == null) return
+        if (fragment is GetFragment) {
+            val refresh: SmartRefreshLayout? = fragment.mRefreshLayout
+                ?: fragment.view?.findViewById(R.id.get_refresh_layout)
+            if (refresh != null) {
+                attachLayout(refresh)
+                return
+            }
+            val root = fragment.viewDelegate.mRootView as FrameLayout?
+            if (root != null) {
+                attachLayout(root)
+                return
+            }
+        }
+
+        val view = fragment.requireView()
+        val parent = view.parent as ViewGroup
+        val layout = FrameLayout(fragment.requireContext())
+        layout.layoutParams = ViewGroup.LayoutParams(-1, -1)
+
+        // 替换View的位置
+        val index = parent.indexOfChild(view)
+        parent.addView(layout, index)
+        parent.removeView(view)
+        layout.addView(view)
+
+        attachLayout(layout)
+    }
 
     fun attachLayout(layout: FrameLayout?) = attachLayout(layout as ViewGroup?)
 
@@ -107,6 +157,10 @@ class StateDelegate(private val provider: StateProvider) {
         }
     }
 
+    /**
+     * 断开连接
+     * @param oldLayout 已连接的控件
+     */
     private fun detachLayout(oldLayout: ViewGroup?) {
         // 判断是否需要回收
         if (oldLayout == null) return
@@ -169,6 +223,37 @@ class StateDelegate(private val provider: StateProvider) {
         if (offsets[3] != null) params.bottomMargin = offsets[3]!!
     }
 
+
+    fun setBusyAdapter(adapter: StateAdapter<*>?) = stateLayout?.setBusyAdapter(adapter)
+
+    fun setEmptyAdapter(adapter: StateAdapter<*>?) = stateLayout?.setEmptyAdapter(adapter)
+
+    fun setErrorAdapter(adapter: StateAdapter<*>?) = stateLayout?.setErrorAdapter(adapter)
+
+    fun setBusy(text: String?) = setState(ViewState.BUSY, text)
+
+    fun setEmpty(text: String?) = setState(ViewState.EMPTY, text)
+
+    fun setError(text: String?) = setState(ViewState.ERROR, text)
+
+    fun setIdle() = setState(ViewState.IDLE, null)
+
+    @Synchronized
+    fun setState(state: ViewState?, text: String?) {
+        // 新状态
+        val newState = state ?: ViewState.IDLE
+        // 更新偏移量
+        refreshOffsets(offsets)
+        // 获取状态控件
+        val stateLayout = this.stateLayout!!
+        // 保存刷新控件空闲状态时的相关属性
+        saveRefreshStates(stateLayout.currentState)
+        // 设置状态
+        stateLayout.setState(newState, text)
+        // 恢复刷新控件状态
+        restoreRefreshStates(newState)
+    }
+
     /**
      * 保存刷新控件空闲状态时的相关属性
      */
@@ -179,38 +264,7 @@ class StateDelegate(private val provider: StateProvider) {
             if (state == null || state == ViewState.IDLE) {
                 (0..2).forEach { i -> refreshStates[i] = refreshFields[i]!!.getBoolean(layout) }
             }
-        } catch (ignore: IllegalAccessException) {
-        }
-    }
-
-    fun setBusyAdapter(adapter: StateAdapter<*>?) = stateLayout?.setBusyAdapter(adapter)
-
-    fun setEmptyAdapter(adapter: StateAdapter<*>?) = stateLayout?.setEmptyAdapter(adapter)
-
-    fun setErrorAdapter(adapter: StateAdapter<*>?) = stateLayout?.setErrorAdapter(adapter)
-
-    fun setBusy(vararg texts: String?) = setState(ViewState.BUSY, *texts)
-
-    fun setEmpty(vararg texts: String?) = setState(ViewState.EMPTY, *texts)
-
-    fun setError(vararg texts: String?) = setState(ViewState.ERROR, *texts)
-
-    fun setIdle() = setState(ViewState.IDLE, null)
-
-    @Synchronized
-    fun setState(state: ViewState?, vararg texts: String?) {
-        // 新状态
-        val newState = state ?: ViewState.IDLE
-        // 更新偏移量
-        refreshOffsets(offsets)
-        // 获取状态控件
-        val stateLayout = this.stateLayout!!
-        // 保存刷新控件空闲状态时的相关属性
-        saveRefreshStates(stateLayout.currentState)
-        // 设置状态
-        stateLayout.setState(newState, *texts)
-        // 恢复刷新控件状态
-        restoreRefreshStates(newState)
+        } catch (ignore: Exception) {}
     }
 
     /**
@@ -225,17 +279,17 @@ class StateDelegate(private val provider: StateProvider) {
                     refreshFields[int]?.setBoolean(layout, refreshStates[int]!!)
                 }
             } else {
-                val busy = state == ViewState.BUSY;
+                val busy = state == ViewState.BUSY
                 refreshFields[0]?.setBoolean(layout, !busy && refreshStates[0]!!)
                 refreshFields[1]?.setBoolean(layout, false)
                 refreshFields[2]?.setBoolean(layout, !busy)
                 refreshFields[3]?.setBoolean(layout, true)
             }
-        } catch (ignore: IllegalAccessException) {
-        }
+        } catch (ignore: Exception) {}
     }
 
     companion object {
+
         /** SmartLayout一些Enable属性  */
         private val refreshFields = arrayOfNulls<Field>(4)
 
@@ -252,6 +306,7 @@ class StateDelegate(private val provider: StateProvider) {
                 refreshFields[3] = cls.getDeclaredField("mManualLoadMore")
                 refreshFields.forEach { field -> field?.isAccessible = true }
             } catch (ignore: NoSuchFieldException) {
+                ignore.fillInStackTrace()
             }
         }
 

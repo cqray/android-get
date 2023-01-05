@@ -9,6 +9,9 @@ import android.widget.FrameLayout
 import androidx.annotation.DrawableRes
 import androidx.annotation.LayoutRes
 import androidx.annotation.MainThread
+import androidx.core.content.ContextCompat
+import cn.cqray.android.Get
+import cn.cqray.android.R
 import cn.cqray.android.util.ContextUtils
 import cn.cqray.android.util.JsonUtils
 
@@ -19,9 +22,19 @@ import java.io.Serializable
  * @author Cqray
  */
 @Suppress("UNCHECKED_CAST")
-open class StateAdapter<T: StateAdapter<T>> (
+open class StateAdapter<T : StateAdapter<T>>(
     @param:LayoutRes private val layoutResId: Int
 ) : Serializable {
+
+    /** 文本内容 **/
+    private var text: String? = null
+
+    /** 默认文本内容  */
+    private var defaultText: String? = null
+
+    /** 背景 **/
+    @Transient
+    private var background: Any? = R.color.background
 
     /** 关联的控件 **/
     @Transient
@@ -32,23 +45,17 @@ open class StateAdapter<T: StateAdapter<T>> (
     var contentView: View? = null
         private set
 
-    /** 文本内容 **/
-    private var text: String? = null
-
-    /** 默认文本内容  */
-    private var defaultText: String? = null
-
-    /** 背景 **/
-    @Transient
-    private var background: Any? = null
-
     @MainThread
     internal fun onAttach(layout: FrameLayout) {
         attachedView = layout
         // 初始化界面
         contentView = ContextUtils.inflate(layoutResId)
         // 控件被创建
-        onViewCreated(contentView!!)
+        contentView?.let {
+            it.isClickable = true
+            it.isFocusable = true
+            onViewCreated(it)
+        }
     }
 
     /**
@@ -138,6 +145,7 @@ open class StateAdapter<T: StateAdapter<T>> (
      */
     fun setText(text: String?): T {
         this.text = text
+        contentView?.let { onTextChanged(text) }
         return this as T
     }
 
@@ -156,6 +164,7 @@ open class StateAdapter<T: StateAdapter<T>> (
      */
     fun setBackground(background: Drawable?): T {
         this.background = background
+        contentView?.let { onBackgroundChanged(background) }
         return this as T
     }
 
@@ -165,6 +174,10 @@ open class StateAdapter<T: StateAdapter<T>> (
      */
     fun setBackgroundResource(@DrawableRes resId: Int?): T {
         this.background = resId
+        contentView?.let {
+            val background = if (resId == null) null else ContextCompat.getDrawable(Get.context, resId)
+            setBackground(background)
+        }
         return this as T
     }
 
@@ -188,5 +201,4 @@ open class StateAdapter<T: StateAdapter<T>> (
         adapter?.background = background
         return adapter
     }
-
 }

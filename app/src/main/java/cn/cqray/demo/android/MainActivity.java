@@ -1,6 +1,5 @@
 package cn.cqray.demo.android;
 
-
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -12,7 +11,6 @@ import org.jetbrains.annotations.NotNull;
 import cn.cqray.android.app.GetActivity;
 import cn.cqray.android.app.GetManager;
 import cn.cqray.android.log.GetLog;
-import cn.cqray.android.tip.GetTip;
 
 
 public class MainActivity extends GetActivity {
@@ -43,7 +41,11 @@ public class MainActivity extends GetActivity {
                 GetLog.d("onDestroy2");
             }
         });
-        GetTip.show("666666666");
+        //GetTip.show("666666666");
+
+        showTip("666666");
+
+        setEmpty();
     }
 
     @Override
