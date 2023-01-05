@@ -13,6 +13,7 @@ import cn.cqray.android.app.GetManager;
 import cn.cqray.android.log.GetLog;
 
 
+
 public class MainActivity extends GetActivity {
 
     @Override
@@ -23,6 +24,17 @@ public class MainActivity extends GetActivity {
 
             GetLog.d("666666666");
         }, 5000);
+
+        toolbar.setTitle("我是谁啊");
+
+        getToolbar2();
+
+
+
+
+
+
+
 
         GetLog.d("onCreate");
         getLifecycle().addObserver(new DefaultLifecycleObserver() {

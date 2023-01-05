@@ -42,9 +42,9 @@ class GetNavDelegate(private val provider: GetNavProvider) {
     /** 导航[GetViewModel] **/
     val viewModel: GetNavViewModel
         get() {
-            if (navViewModel == null) {
-                throw IllegalStateException("The [GetNavViewModel] couldn't be used when Lifecycle state is initialized.")
-            }
+            if (navViewModel == null) throw IllegalStateException(
+                "The [GetNavViewModel] couldn't be used when Lifecycle state is initialized."
+            )
             return navViewModel!!
         }
 
@@ -57,6 +57,7 @@ class GetNavDelegate(private val provider: GetNavProvider) {
             activity = (provider as Fragment).requireActivity()
         } else {
             activity = provider as FragmentActivity
+            // 监听Activity的back事件
             activity.onBackPressedDispatcher.addCallback(activity,
                 object : OnBackPressedCallback(true) {
                     override fun handleOnBackPressed() {
@@ -112,9 +113,7 @@ class GetNavDelegate(private val provider: GetNavProvider) {
      */
     fun to(intent: GetIntent, callback: GetIntentCallback?) {
         viewModel.to(intent)
-        if (callback != null) {
-            GetResultManager.registerReceiver(lifecycleOwner, callback)
-        }
+        callback?.let { GetResultManager.registerReceiver(lifecycleOwner, callback) }
     }
 
     /**
@@ -140,7 +139,8 @@ class GetNavDelegate(private val provider: GetNavProvider) {
          */
         @JvmStatic
         @Synchronized
-        fun get(provider: GetNavProvider): GetNavDelegate = cacheDelegates[provider] ?: GetNavDelegate(provider)
+        fun get(provider: GetNavProvider): GetNavDelegate =
+            cacheDelegates[provider] ?: GetNavDelegate(provider)
     }
 
 }

@@ -7,6 +7,9 @@ package cn.cqray.android.tip
 @JvmDefaultWithoutCompatibility
 interface GetTipProvider {
 
+    /**
+     * 获取并初始化[GetTipDelegate]
+     */
     val tipDelegate: GetTipDelegate
         get() = GetTipDelegate.get(this)
 

@@ -12,6 +12,13 @@ internal class LogAdapterImpl : LogAdapter {
     /** 是否支持[Logger] **/
     private var supportLogger = true
 
+    /**
+     * 打印日志
+     * @param level 日志等级[LogLevel]
+     * @param tag 日志标识
+     * @param message 日志内容
+     * @param exc 异常信息
+     */
     override fun print(level: LogLevel, tag: String, message: String, exc: Throwable?) {
         // 使用Logger
         if (supportLogger) printByLogger(level, tag, message, exc)

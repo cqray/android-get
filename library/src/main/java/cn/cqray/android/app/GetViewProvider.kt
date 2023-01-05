@@ -4,6 +4,7 @@ import android.graphics.drawable.Drawable
 import android.view.View
 import androidx.annotation.DrawableRes
 import cn.cqray.android.app.GetViewDelegate.Companion.get
+import cn.cqray.android.widget.Toolbar
 
 /**
  * [GetViewDelegate]功能提供者
@@ -17,6 +18,9 @@ interface GetViewProvider {
      */
     val viewDelegate: GetViewDelegate
         get() = get(this)
+
+    val toolbar2: Toolbar
+        get() = viewDelegate.toolbar!!
 
     /**
      * 确认[setGetContentView]不被[setNativeContentView]替代

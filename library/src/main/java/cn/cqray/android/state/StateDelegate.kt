@@ -10,7 +10,6 @@ import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import cn.cqray.android.R
 import cn.cqray.android.app.GetActivity
-import cn.cqray.android.app.GetDelegate
 import cn.cqray.android.app.GetFragment
 import cn.cqray.android.app.GetUtils
 
@@ -26,7 +25,7 @@ import java.lang.reflect.Field
  * @author Cqray
  */
 @Suppress("unused")
-class StateDelegate(provider: StateProvider) : GetDelegate<StateProvider>(provider) {
+class StateDelegate(provider: StateProvider) {
 
     init {
         // 检查Provider是否合法
@@ -64,7 +63,7 @@ class StateDelegate(provider: StateProvider) : GetDelegate<StateProvider>(provid
 
     fun attachActivity(activity: Activity) {
         if (activity is GetActivity) {
-            val refresh: SmartRefreshLayout? = activity.mRefreshLayout
+            val refresh: SmartRefreshLayout? = activity.refreshLayout
                 ?: activity.findViewById(R.id.get_refresh_layout)
             if (refresh != null) {
                 attachLayout(refresh)
@@ -79,13 +78,13 @@ class StateDelegate(provider: StateProvider) : GetDelegate<StateProvider>(provid
     fun attachFragment(fragment: Fragment) {
         if (fragment.view == null) return
         if (fragment is GetFragment) {
-            val refresh: SmartRefreshLayout? = fragment.mRefreshLayout
+            val refresh: SmartRefreshLayout? = fragment.refreshLayout
                 ?: fragment.view?.findViewById(R.id.get_refresh_layout)
             if (refresh != null) {
                 attachLayout(refresh)
                 return
             }
-            val root = fragment.viewDelegate.mRootView as FrameLayout?
+            val root = fragment.viewDelegate.rootView as FrameLayout?
             if (root != null) {
                 attachLayout(root)
                 return

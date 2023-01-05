@@ -3,6 +3,9 @@ package cn.cqray.android.state
 @JvmDefaultWithoutCompatibility
 interface StateProvider {
 
+    /**
+     * 获取并初始化[StateDelegate]
+     */
     val stateDelegate: StateDelegate
         get() = StateDelegate.get(this)
 

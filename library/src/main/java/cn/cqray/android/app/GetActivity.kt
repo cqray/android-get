@@ -12,14 +12,11 @@ import com.scwang.smart.refresh.layout.SmartRefreshLayout
 open class GetActivity : AppCompatActivity(), GetViewProvider, GetNavProvider, StateProvider,
     GetTipProvider {
 
-    @JvmField
-    var mContentView: View? = null
+    lateinit var rootView: View
 
-    @JvmField
-    var mRefreshLayout: SmartRefreshLayout? = null
+    lateinit var refreshLayout: SmartRefreshLayout
 
-    @JvmField
-    var mToolbar: Toolbar? = null
+    lateinit var toolbar: Toolbar
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

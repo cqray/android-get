@@ -60,9 +60,9 @@ public class ExceptionActivity extends GetActivity {
         initDivider(findViewById(R.id._starter_divider2));
 
         if (mThrowable instanceof StarterException) {
-            mToolbar.setTitle("启动相关问题");
+            toolbar.setTitle("启动相关问题");
         } else {
-            mToolbar.setTitle("其他问题");
+            toolbar.setTitle("其他问题");
         }
     }
 

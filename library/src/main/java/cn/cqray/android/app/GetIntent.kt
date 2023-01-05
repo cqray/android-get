@@ -12,6 +12,7 @@ import java.util.*
  * 导航意图
  * @author Cqray
  */
+@Suppress("unused")
 class GetIntent {
     /** 目标界面[Class]，仅支持实现[GetNavProvider]的[Fragment]以及[Activity] **/
     var toClass: Class<*>? = null

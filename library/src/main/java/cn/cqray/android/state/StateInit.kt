@@ -1,5 +1,9 @@
 package cn.cqray.android.state
 
+/**
+ * [StateDelegate]全局配置
+ * @author Cqray
+ */
 class StateInit {
 
     /** 日志等级 **/
