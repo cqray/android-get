@@ -3,7 +3,6 @@ package cn.cqray.android.app
 import android.app.Activity
 import android.content.Intent
 import android.text.TextUtils
-import android.util.Log
 import android.view.View
 import androidx.annotation.IdRes
 import androidx.fragment.app.Fragment

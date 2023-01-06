@@ -2,16 +2,24 @@ package cn.cqray.android.lifecycle
 
 import android.os.Looper
 import androidx.lifecycle.MutableLiveData
+import cn.cqray.android.app.GetManager
 
+/**
+ * [MutableLiveData]修改版
+ * [setValue]和[postValue]功能完全一样，均可在子线程调用
+ * @author Cqray
+ */
+@Suppress("unused")
 class GetLiveData<T> : MutableLiveData<T> {
-    constructor() : super() {}
-    constructor(value: T) : super(value) {}
+    constructor() : super()
+
+    constructor(value: T) : super(value)
 
     override fun setValue(value: T) {
         if (Looper.myLooper() == Looper.getMainLooper()) {
             super.setValue(value)
         } else {
-            super.postValue(value)
+            GetManager.runOnUiThreadDelayed({ super.setValue(value) })
         }
     }
 
@@ -19,7 +27,7 @@ class GetLiveData<T> : MutableLiveData<T> {
         if (Looper.myLooper() == Looper.getMainLooper()) {
             super.setValue(value)
         } else {
-            super.postValue(value)
+            GetManager.runOnUiThreadDelayed({ super.setValue(value) })
         }
     }
 }

@@ -5,11 +5,15 @@ import java.io.Serializable;
 /**
  * @author Admin
  */
-public class StarterException extends RuntimeException implements Serializable {
+public class GetException extends RuntimeException implements Serializable {
 
 //    private String mMessage;
 
-    public StarterException(String message) {
+    private String intro;
+
+    private String desc;
+
+    public GetException(String message) {
         //mMessage = message;
         super(message);
     }

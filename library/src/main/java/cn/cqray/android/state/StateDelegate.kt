@@ -5,11 +5,11 @@ import android.util.TypedValue
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
+import android.widget.Toolbar
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import cn.cqray.android.R
-import cn.cqray.android.app.GetActivity
 import cn.cqray.android.app.GetUtils
 import cn.cqray.android.app.GetViewProvider
 
@@ -25,7 +25,7 @@ import java.lang.reflect.Field
  * @author Cqray
  */
 @Suppress("unused")
-class StateDelegate(provider: StateProvider) {
+class StateDelegate(val provider: StateProvider) {
 
     init {
         // 检查Provider是否合法
@@ -61,33 +61,23 @@ class StateDelegate(provider: StateProvider) {
             field = it
         }
 
-    fun attachActivity(activity: Activity) {
-        if (activity is GetActivity) {
-            val refresh: SmartRefreshLayout? = activity.refreshLayout
-                ?: activity.findViewById(R.id.get_refresh_layout)
-            if (refresh != null) {
-                attachLayout(refresh)
-                return
+    internal fun attachActivity(activity: Activity) {
+        if (activity is GetViewProvider) {
+            val delegate = activity.viewDelegate
+            val refresh: SmartRefreshLayout? = delegate.refreshLayout ?: activity.findViewById(R.id.get_refresh_layout)
+            refresh?.let { attachLayout(refresh) }
+        } else {
+            // 获取Activity的根布局，进行连接
+            val root = activity.findViewById<FrameLayout>(android.R.id.content)
+            root.addView(stateLayout)
+            stateLayout?.let {
+                it.visibility = View.GONE
+                it.post { refreshOffsets() }
             }
-        }
-        // 获取Activity的根布局，进行连接
-        val root = activity.findViewById<FrameLayout>(android.R.id.content)
-        root.addView(stateLayout)
-        // 设置容器偏移
-        stateLayout!!.visibility = View.GONE
-        stateLayout!!.post {
-            // 如果标记了内容控件，则有标题栏存在
-            val toolbar = root.findViewById<View>(R.id.get_toolbar)
-            // 获取标题栏底部位置为顶部偏移量
-            if (toolbar != null && offsets[1] == null) offsets[1] = toolbar.bottom
-            // 显示容器
-            stateLayout!!.visibility = if (stateLayout!!.isIdle()) View.GONE else View.VISIBLE
-            // 设置偏移
-            refreshOffsets(offsets)
         }
     }
 
-    fun attachFragment(fragment: Fragment) {
+    internal fun attachFragment(fragment: Fragment) {
         if (fragment is GetViewProvider) {
             val refresh: SmartRefreshLayout? = fragment.viewDelegate.refreshLayout
                 ?: fragment.viewDelegate.findViewById(R.id.get_refresh_layout)
@@ -139,16 +129,7 @@ class StateDelegate(provider: StateProvider) {
         }
         // 设置容器偏移
         stateLayout.visibility = View.GONE
-        stateLayout.post {
-            // 如果标记了内容控件，则有标题栏存在
-            val toolbar = layout.findViewById<View>(R.id.get_toolbar)
-            // 获取标题栏底部位置为顶部偏移量
-            if (toolbar != null && offsets[1] == null) offsets[1] = toolbar.bottom
-            // 显示容器
-            stateLayout.visibility = if (stateLayout.isIdle()) View.GONE else View.VISIBLE
-            // 设置偏移
-            refreshOffsets(offsets)
-        }
+        stateLayout.post { refreshOffsets() }
     }
 
     /**
@@ -195,26 +176,37 @@ class StateDelegate(provider: StateProvider) {
      */
     @Synchronized
     fun setOffsets(start: Float?, top: Float?, end: Float?, bottom: Float?, unit: Int?) {
-        val newUnit = TypedValue.COMPLEX_UNIT_DIP
+        val newUnit = unit ?: TypedValue.COMPLEX_UNIT_DIP
         if (start != null) offsets[0] = Sizes.applyDimension(start, newUnit).toInt()
         if (top != null) offsets[1] = Sizes.applyDimension(top, newUnit).toInt()
         if (end != null) offsets[2] = Sizes.applyDimension(end, newUnit).toInt()
         if (bottom != null) offsets[3] = Sizes.applyDimension(bottom, newUnit).toInt()
-        refreshOffsets(offsets)
+        refreshOffsets()
     }
 
     /**
-     * 刷新控件偏移量
-     * @param offsets 偏移量[Array]
+     * 刷新偏移量
      */
-    private fun refreshOffsets(offsets: Array<Int?>) {
-        val stateLayout = this.stateLayout!!
-        // 设置四周的间距
-        val params = stateLayout.layoutParams as ViewGroup.MarginLayoutParams
-        if (offsets[0] != null) params.marginStart = offsets[0]!!
-        if (offsets[1] != null) params.topMargin = offsets[1]!!
-        if (offsets[2] != null) params.marginEnd = offsets[2]!!
-        if (offsets[3] != null) params.bottomMargin = offsets[3]!!
+    private fun refreshOffsets() {
+        // 获取标题栏
+        val toolbar: Toolbar? = when (provider) {
+            is Activity -> provider.findViewById(R.id.get_toolbar)
+            is Fragment -> provider.view?.findViewById(R.id.get_toolbar)
+            else -> null
+        }
+        // 获取标题栏底部位置为顶部偏移量
+        toolbar?.let { offsets[1] = offsets[1] ?: it.bottom }
+        // 更新属性
+        with(stateLayout!!) {
+            // 显示或隐藏
+            visibility = if (isIdle()) View.GONE else View.VISIBLE
+            // 设置四周的间距
+            val params = layoutParams as ViewGroup.MarginLayoutParams
+            params.marginStart = offsets[0] ?: params.marginStart
+            params.topMargin = offsets[1] ?: params.topMargin
+            params.marginEnd = offsets[2] ?: params.marginEnd
+            params.bottomMargin = offsets[3] ?: params.bottomMargin
+        }
     }
 
 
@@ -237,7 +229,7 @@ class StateDelegate(provider: StateProvider) {
         // 新状态
         val newState = state ?: ViewState.IDLE
         // 更新偏移量
-        refreshOffsets(offsets)
+        refreshOffsets()
         // 获取状态控件
         val stateLayout = this.stateLayout!!
         // 保存刷新控件空闲状态时的相关属性
@@ -258,7 +250,8 @@ class StateDelegate(provider: StateProvider) {
             if (state == null || state == ViewState.IDLE) {
                 (0..2).forEach { i -> refreshStates[i] = refreshFields[i]!!.getBoolean(layout) }
             }
-        } catch (ignore: Exception) {}
+        } catch (ignore: Exception) {
+        }
     }
 
     /**
@@ -279,7 +272,8 @@ class StateDelegate(provider: StateProvider) {
                 refreshFields[2]?.setBoolean(layout, !busy)
                 refreshFields[3]?.setBoolean(layout, true)
             }
-        } catch (ignore: Exception) {}
+        } catch (ignore: Exception) {
+        }
     }
 
     companion object {

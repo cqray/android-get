@@ -12,7 +12,7 @@ open class GetNavActivity : GetActivity() {
 
     override fun onCreating(savedInstanceState: Bundle?) {
         super.onCreating(savedInstanceState)
-        setNativeContentView(R.layout.get_layout_nav)
+        setNativeContentView(R.layout.get_activity_layout_nav)
     }
 
     fun loadRootFragment(fragmentClass: Class<*>) {

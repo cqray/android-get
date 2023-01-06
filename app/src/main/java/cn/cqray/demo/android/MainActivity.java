@@ -18,5 +18,6 @@ public class MainActivity extends GetNavActivity {
         setBackgroundColor(Color.YELLOW);
 
         findViewById(R.id.get_nav_content).setOnClickListener(v -> {});
+
     }
 }

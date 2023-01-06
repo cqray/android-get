@@ -30,15 +30,15 @@ public class ExceptionDispatcher {
         intent.putExtra("intro", intro);
         intent.putExtra("throwable", throwable);
         intent.putExtra("source", source == null ? null : source.getClass().getName());
-        intent.setComponent(new ComponentName(context, ExceptionActivity.class));
+        intent.setComponent(new ComponentName(context, GetExcActivity.class));
         context.startActivity(intent);
     }
 
     public static void dispatchStarterThrowable(Object source, String intro, String desc) {
-        dispatchThrowable(source, intro, new StarterException(desc));
+        dispatchThrowable(source, intro, new GetException(desc));
     }
 
     public static void dispatchThrowable(Object source, @NonNull ExceptionType type) {
-        dispatchThrowable(source, type.mIntro, new StarterException(type.mDesc));
+        dispatchThrowable(source, type.mIntro, new GetException(type.mDesc));
     }
 }

@@ -6,6 +6,10 @@ import androidx.lifecycle.ViewModelProvider.NewInstanceFactory
 import androidx.lifecycle.ViewModelStoreOwner
 import java.lang.reflect.InvocationTargetException
 
+/**
+ * [GetViewModel]工厂
+ * @author Cqray
+ */
 class GetViewModelFactory(owner: ViewModelStoreOwner?) : NewInstanceFactory() {
     private var lifecycleOwner: LifecycleOwner? = null
     override fun <T : ViewModel> create(modelClass: Class<T>): T {

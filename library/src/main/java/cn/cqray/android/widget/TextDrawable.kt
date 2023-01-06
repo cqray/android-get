@@ -1,158 +1,150 @@
-package cn.cqray.android.widget;
+package cn.cqray.android.widget
 
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.ColorFilter;
-import android.graphics.Paint;
-import android.graphics.Path;
-import android.graphics.PixelFormat;
-import android.graphics.Rect;
-import android.graphics.RectF;
-import android.graphics.drawable.ShapeDrawable;
-import android.graphics.drawable.shapes.RectShape;
-import android.text.TextUtils;
-
-import java.util.concurrent.atomic.AtomicBoolean;
-
-import cn.cqray.android.util.Sizes;
-import lombok.Builder;
-import lombok.experimental.Accessors;
-import lombok.experimental.Tolerate;
+import android.graphics.*
+import android.graphics.drawable.ShapeDrawable
+import android.graphics.drawable.shapes.RectShape
+import android.text.TextUtils
+import cn.cqray.android.util.Sizes
+import java.util.concurrent.atomic.AtomicBoolean
+import kotlin.math.min
 
 /**
  * 带文字的Drawable
  * @author Cqray
  */
-@Builder
-@Accessors(prefix = "m")
-public class TextDrawable extends ShapeDrawable {
+class TextDrawable private constructor() : ShapeDrawable() {
+    /** 文本画笔  */
+    private val textPaint = Paint()
 
-    /** 文本画笔 **/
-    private final Paint mTextPaint = new Paint();
-    /** 边框画笔 **/
-    private final Paint mBorderPaint = new Paint();
-    /** 是否初始化 **/
-    private final AtomicBoolean mPaintInit = new AtomicBoolean();
-    /** 高度 **/
-    private float mHeight;
-    /** 宽度 **/
-    private float mWidth;
-    /** 文本 **/
-    private String mText;
-    /** 字体颜色 **/
-    private int mTextColor;
-    /** 字体大小 **/
-    private float mTextSize;
-    /** 字体加粗 **/
-    private boolean mTextBold;
-    /** 字体边框厚度 **/
-    private float mTextBorderThickness;
-    /** 背景颜色 **/
-    private int mColor;
-    /** 背景圆角 **/
-    private float mRadius;
-    /** 背景圆角 **/
-    private float[] mRadii;
-    /** 边框颜色 **/
-    private int mBorderColor;
-    /** 背景图形边框厚度 **/
-    private float mBorderThickness;
+    /** 边框画笔  */
+    private val borderPaint = Paint()
 
-    @Tolerate
-    private TextDrawable() {
-        super();
+    /** 是否初始化  */
+    private val paintInit = AtomicBoolean()
+
+    /** 高度  */
+    private val height = 0f
+
+    /** 宽度  */
+    private val width = 0f
+
+    /** 文本  */
+    private val text: String? = null
+
+    /** 字体颜色  */
+    private val textColor = 0
+
+    /** 字体大小  */
+    private val textSize = 0f
+
+    /** 字体加粗  */
+    private val textBold = false
+
+    /** 字体边框厚度  */
+    private val textBorderThickness = 0f
+
+    /** 背景颜色  */
+    private var color = 0
+
+    /** 背景圆角  */
+    private val radius = 0f
+
+    /** 背景圆角  */
+    private val radii: FloatArray? = null
+
+    /** 边框颜色  */
+    private val borderColor = 0
+
+    /** 背景图形边框厚度  */
+    private val borderThickness = 0f
+    private fun getDarkerShade(color: Int): Int {
+        return Color.rgb(
+            (0.9 * Color.red(color)).toInt(),
+            (0.9 * Color.green(color)).toInt(),
+            (0.9 * Color.blue(color)).toInt()
+        )
     }
 
-    private int getDarkerShade(int color) {
-        return Color.rgb((int) (0.9 * Color.red(color)),
-                (int) (0.9 * Color.green(color)),
-                (int) (0.9 * Color.blue(color)));
-    }
-
-    @Override
-    public void draw(Canvas canvas) {
+    override fun draw(canvas: Canvas) {
         // 初始化画笔
-        initPaints();
+        initPaints()
         // 获取界限
-        Rect rect = getBounds();
+        val rect = bounds
         // 设置圆角矩形Path
-        float[] radii = new float[8];
-        for (int i = 0; i < radii.length ; i++) {
-            radii[i] = Sizes.dp2px(mRadii == null ? mRadius : mRadii[i]);
+        val radii = FloatArray(8)
+        for (i in radii.indices) {
+            radii[i] = Sizes.dp2px(this.radii?.get(i) ?: radius).toFloat()
         }
-        Path path = new Path();
-        path.addRoundRect(new RectF(getBounds()), radii, Path.Direction.CW);
+        val path = Path()
+        path.addRoundRect(RectF(bounds), radii, Path.Direction.CW)
         // 绘制边框
-        if (mBorderThickness > 0) {
-            int thickness = Sizes.dp2px(mBorderThickness / 2);
-            RectF rectf = new RectF(getBounds());
-            rectf.inset(thickness, thickness);
-            canvas.drawPath(path, mBorderPaint);
+        if (borderThickness > 0) {
+            val thickness = Sizes.dp2px(borderThickness / 2)
+            val rectf = RectF(bounds)
+            rectf.inset(thickness.toFloat(), thickness.toFloat())
+            canvas.drawPath(path, borderPaint)
         }
         // 绘制背景
-        canvas.drawPath(path, getPaint());
+        canvas.drawPath(path, paint)
         // 保存并移动画布
-        int count = canvas.save();
-        canvas.translate(rect.left, rect.top);
+        val count = canvas.save()
+        canvas.translate(rect.left.toFloat(), rect.top.toFloat())
         // 获取画布宽高
-        int width = getIntrinsicWidth() < 0 ? rect.width() : getIntrinsicWidth();
-        int height = getIntrinsicHeight() < 0 ? rect.height() : getIntrinsicHeight();
+        val width = if (intrinsicWidth < 0) rect.width() else intrinsicWidth
+        val height = if (intrinsicHeight < 0) rect.height() else intrinsicHeight
         // 绘制文字
-        if (!TextUtils.isEmpty(mText)) {
-            float textSize = mTextSize <= 0 ? (Math.min(width, height) / 2f) : mTextSize;
-            mTextPaint.setTextSize(Sizes.dp2px(textSize));
-            canvas.drawText(mText, width / 2f, height / 2f - ((mTextPaint.descent() + mTextPaint.ascent()) / 2), mTextPaint);
+        if (!TextUtils.isEmpty(text)) {
+            val textSize = if (textSize <= 0) min(width, height) / 2f else textSize
+            textPaint.textSize = Sizes.dp2px(textSize).toFloat()
+            canvas.drawText(text!!, width / 2f, height / 2f - (textPaint.descent() + textPaint.ascent()) / 2, textPaint)
         }
         // 恢复画布
-        canvas.restoreToCount(count);
-
+        canvas.restoreToCount(count)
     }
-    private synchronized void initPaints() {
-        if (mPaintInit.get()) {
-            return;
+
+    @Synchronized
+    private fun initPaints() {
+        if (paintInit.get()) {
+            return
         }
-        setShape(new RectShape());
-
-        mTextPaint.setColor(mTextColor);
-        mTextPaint.setAntiAlias(true);
-        mTextPaint.setFakeBoldText(mTextBold);
-        mTextPaint.setStyle(Paint.Style.FILL);
-        mTextPaint.setTextAlign(Paint.Align.CENTER);
-        mTextPaint.setStrokeWidth(mTextBorderThickness);
-
-        mBorderPaint.setColor(mBorderColor == 0 ? getDarkerShade(mColor) : mBorderColor);
-        mBorderPaint.setStyle(Paint.Style.STROKE);
-        mBorderPaint.setStrokeWidth(mBorderThickness);
-
-        Paint paint = getPaint();
-        paint.setColor(mColor);
-        paint.setAntiAlias(true);
+        shape = RectShape()
+        textPaint.color = textColor
+        textPaint.isAntiAlias = true
+        textPaint.isFakeBoldText = textBold
+        textPaint.style = Paint.Style.FILL
+        textPaint.textAlign = Paint.Align.CENTER
+        textPaint.strokeWidth = textBorderThickness
+        borderPaint.color = if (borderColor == 0) getDarkerShade(color) else borderColor
+        borderPaint.style = Paint.Style.STROKE
+        borderPaint.strokeWidth = borderThickness
+        val paint = paint
+        paint.color = color
+        paint.isAntiAlias = true
     }
 
-    @Override
-    public void setAlpha(int alpha) {
-        initPaints();
-        mTextPaint.setAlpha(alpha);
+    override fun setAlpha(alpha: Int) {
+        initPaints()
+        textPaint.alpha = alpha
     }
 
-    @Override
-    public void setColorFilter(ColorFilter cf) {
-        initPaints();
-        mTextPaint.setColorFilter(cf);
+    override fun setColorFilter(cf: ColorFilter?) {
+        initPaints()
+        textPaint.colorFilter = cf
     }
 
-    @Override
-    public int getOpacity() {
-        return PixelFormat.TRANSLUCENT;
+    override fun getOpacity(): Int {
+        return PixelFormat.TRANSLUCENT
     }
 
-    @Override
-    public int getIntrinsicWidth() {
-        return Sizes.dp2px(mWidth);
+    override fun getIntrinsicWidth(): Int {
+        return Sizes.dp2px(width)
     }
 
-    @Override
-    public int getIntrinsicHeight() {
-        return Sizes.dp2px(mHeight);
+    override fun getIntrinsicHeight(): Int {
+        return Sizes.dp2px(height)
+    }
+
+    fun setColor(color: Int?) = also {
+        this.color = color?: this.color
     }
 }
