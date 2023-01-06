@@ -29,6 +29,8 @@
     <item name="get_refresh_layout" type="id" />
 
     <item name="get_nav_content" type="id" />
+    <item name="get_nav_view" type="id" />
+    <item name="get_nav_tab" type="id" />
 
     <!-- ViewState相关ID -->
     <item name="get_state_img" type="id" />
