@@ -3,8 +3,8 @@ package cn.cqray.android.app
 import android.graphics.drawable.Drawable
 import android.view.View
 import androidx.annotation.DrawableRes
-import cn.cqray.android.app.GetViewDelegate.Companion.get
 import cn.cqray.android.widget.Toolbar
+import com.scwang.smart.refresh.layout.SmartRefreshLayout
 
 /**
  * [GetViewDelegate]功能提供者
@@ -17,10 +17,22 @@ interface GetViewProvider {
      * 获取并初始化[GetViewDelegate]
      */
     val viewDelegate: GetViewDelegate
-        get() = get(this)
+        get() = GetViewDelegate.get(this)
 
-    val toolbar2: Toolbar
-        get() = viewDelegate.toolbar!!
+    /**
+     * 获取[Toolbar]，NULL会抛出异常
+     */
+    fun requireToolbar() = viewDelegate.requireToolbar()
+
+    /**
+     * 获取[SmartRefreshLayout]，NULL会抛出异常
+     */
+    fun requireRefreshLayout() = viewDelegate.requireRefreshLayout()
+
+    /**
+     * 获取内容布局，NULL会抛出异常
+     */
+    fun requireContentView() = viewDelegate.requireContentView()
 
     /**
      * 确认[setGetContentView]不被[setNativeContentView]替代

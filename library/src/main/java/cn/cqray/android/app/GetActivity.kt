@@ -9,14 +9,19 @@ import cn.cqray.android.tip.GetTipProvider
 import cn.cqray.android.widget.Toolbar
 import com.scwang.smart.refresh.layout.SmartRefreshLayout
 
-open class GetActivity : AppCompatActivity(), GetViewProvider, GetNavProvider, StateProvider,
+open class GetActivity : AppCompatActivity(),
+    GetViewProvider,
+    GetNavProvider,
+    StateProvider,
     GetTipProvider {
 
-    lateinit var rootView: View
+    /** 刷新容器 **/
+    @JvmField
+    var refreshLayout: SmartRefreshLayout? = null
 
-    lateinit var refreshLayout: SmartRefreshLayout
-
-    lateinit var toolbar: Toolbar
+    /** 标题栏 **/
+    @JvmField
+    var toolbar: Toolbar? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -25,14 +30,15 @@ open class GetActivity : AppCompatActivity(), GetViewProvider, GetNavProvider, S
 
     open fun onCreating(savedInstanceState: Bundle?) {}
 
-    override fun setContentView(layoutResId: Int) = viewDelegate.setGetContentView(layoutResId)
+    final override fun setContentView(layoutResId: Int) = viewDelegate.setGetContentView(layoutResId)
 
-    override fun setContentView(view: View) = viewDelegate.setGetContentView(view)
+    final override fun setContentView(view: View) = viewDelegate.setGetContentView(view)
 
-    override fun setContentView(view: View, params: ViewGroup.LayoutParams?) =
+    final override fun setContentView(view: View, params: ViewGroup.LayoutParams?) =
         viewDelegate.setGetContentView(view)
 
-    override fun addContentView(view: View, params: ViewGroup.LayoutParams?) {
-        super.addContentView(view, params)
+    final override fun onBackPressed() {
+        // 避免重写，影响内部逻辑
+        super.onBackPressed()
     }
 }

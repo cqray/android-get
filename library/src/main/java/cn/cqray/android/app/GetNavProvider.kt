@@ -29,7 +29,7 @@ interface GetNavProvider {
      * 回退事件拦截
      * @return true 拦截 false 不拦截
      */
-    fun onGetBackPressed(): Boolean = false
+    fun onBackPressedGet(): Boolean = false
 
     /**
      * 进入动画结束

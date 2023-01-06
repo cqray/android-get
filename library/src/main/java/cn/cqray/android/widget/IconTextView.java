@@ -47,11 +47,11 @@ public class IconTextView extends LinearLayout {
     public @interface Location{}
 
     /** 间隔控件 **/
-    private Space mSpaceView;
+    private final Space mSpaceView;
     /** 图标控件 **/
-    private AppCompatImageView mIconView;
+    private final AppCompatImageView mIconView;
     /** 文本控件 **/
-    private AppCompatTextView mTextView;
+    private final AppCompatTextView mTextView;
     /** 图标的位置 **/
     private int mItvLocation;
     /** 图标与文字的间隔 **/
@@ -75,7 +75,7 @@ public class IconTextView extends LinearLayout {
         int textColor = ta.getColor(R.styleable.IconTextView_android_textColor, ContextCompat.getColor(context, R.color.text));
         int textSize = ta.getDimensionPixelSize(R.styleable.IconTextView_android_textSize, getResources().getDimensionPixelSize(R.dimen.body));
         int textStyle = ta.getInt(R.styleable.IconTextView_android_textStyle, 0);
-        boolean useRipple = ta.getBoolean(R.styleable.IconTextView_sUseRipple, true);
+        boolean useRipple = ta.getBoolean(R.styleable.IconTextView_useRipple, true);
         Drawable drawable = ta.getDrawable(R.styleable.IconTextView_android_src);
         ta.recycle();
         // 设置方向

@@ -12,23 +12,25 @@ import com.scwang.smart.refresh.layout.SmartRefreshLayout
 
 open class GetFragment : Fragment(), GetViewProvider, GetNavProvider, StateProvider, GetTipProvider {
 
-    lateinit var rootView: View
+    /** 刷新容器 **/
+    @JvmField
+    var refreshLayout: SmartRefreshLayout? = null
 
-    lateinit var refreshLayout: SmartRefreshLayout
+    /** 标题栏 **/
+    @JvmField
+    var toolbar: Toolbar? = null
 
-    lateinit var toolbar: Toolbar
-
-    override fun onCreateView(
+    final override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         onCreating(savedInstanceState)
-        return if (viewDelegate.rootView == null) super.onCreateView(
+        return viewDelegate.rootView ?: super.onCreateView(
             inflater,
             container,
             savedInstanceState
-        ) else viewDelegate.rootView
+        )
     }
 
     open fun onCreating(savedInstanceState: Bundle?) {}

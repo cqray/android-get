@@ -8,7 +8,6 @@ import android.view.ViewGroup
 import android.widget.FrameLayout
 import androidx.annotation.DrawableRes
 import androidx.annotation.LayoutRes
-import androidx.annotation.MainThread
 import androidx.core.content.ContextCompat
 import cn.cqray.android.Get
 import cn.cqray.android.R
@@ -45,7 +44,6 @@ open class StateAdapter<T : StateAdapter<T>>(
     var contentView: View? = null
         private set
 
-    @MainThread
     internal fun onAttach(layout: FrameLayout) {
         attachedView = layout
         // 初始化界面
@@ -143,62 +141,58 @@ open class StateAdapter<T : StateAdapter<T>>(
      * 设置文本内容
      * @param text 文本内容
      */
-    fun setText(text: String?): T {
+    fun setText(text: String?) = also {
         this.text = text
         contentView?.let { onTextChanged(text) }
-        return this as T
-    }
+    } as T
 
     /**
      * 设置默认的文本内容
      * @param text 文本内容
      */
-    fun setDefaultText(text: String?): T {
-        this.defaultText = text
-        return this as T
-    }
+    fun setDefaultText(text: String?) = also { this.defaultText = text } as T
 
     /**
      * 设置背景
      * @param background [Drawable]
      */
-    fun setBackground(background: Drawable?): T {
+    fun setBackground(background: Drawable?) = also {
         this.background = background
         contentView?.let { onBackgroundChanged(background) }
-        return this as T
-    }
+    } as T
 
     /**
      * 设置背景资源
      * @param resId 资源ID[DrawableRes]
      */
-    fun setBackgroundResource(@DrawableRes resId: Int?): T {
+    fun setBackgroundResource(@DrawableRes resId: Int?) = also {
         this.background = resId
         contentView?.let {
-            val background = if (resId == null) null else ContextCompat.getDrawable(Get.context, resId)
+            val background = when (resId) {
+                null -> null
+                else -> ContextCompat.getDrawable(Get.context, resId)
+            }
             setBackground(background)
         }
-        return this as T
-    }
+    } as T
 
     /**
      * 设置背景颜色
      * @param color 颜色
      */
-    fun setBackgroundColor(color: Int?): T {
-        if (color == null) setBackground(null as Drawable?)
-        else setBackground(ColorDrawable(color))
-        return this as T
-    }
+    fun setBackgroundColor(color: Int?) = also {
+        val drawable = color?.let { ColorDrawable(color) }
+        setBackground(drawable)
+    } as T
 
     /**
      * 深度拷贝状态适配器
      * @param <S> 泛型
      * @return 实例</S>
      */
-    fun <T : StateAdapter<T>> deepClone(): T? {
+    fun <T : StateAdapter<T>> deepClone() = let {
         val adapter = JsonUtils.deepClone(this as T, javaClass)
         adapter?.background = background
-        return adapter
+        adapter
     }
 }

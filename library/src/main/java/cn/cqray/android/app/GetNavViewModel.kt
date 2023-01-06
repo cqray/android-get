@@ -3,6 +3,7 @@ package cn.cqray.android.app
 import android.app.Activity
 import android.content.Intent
 import android.text.TextUtils
+import android.util.Log
 import android.view.View
 import androidx.annotation.IdRes
 import androidx.fragment.app.Fragment
@@ -73,25 +74,25 @@ class GetNavViewModel(owner: LifecycleOwner) : GetViewModel(owner) {
         val fragment = topFragment
         // 栈顶元素为空，说明没有调用LoadRootFragment。
         if (fragment == null) {
-            // 处理onGetBackPressed拦截事件
-            if (!(activity as GetNavProvider).onGetBackPressed()) {
+            // 处理onBackPressedGet拦截事件
+            if (!(activity as GetNavProvider).onBackPressedGet()) {
                 back()
             }
             return
         }
-        // 处理onGetBackPressed()事件
+        // 处理onBackPressedGet()事件
         if (mBackStack.size <= 1) {
             // 检查Fragment是否拦截
-            if (!(fragment as GetNavProvider).onGetBackPressed()) {
+            if (!(fragment as GetNavProvider).onBackPressedGet()) {
                 // 检查Activity是否拦截
-                if (!(activity as GetNavProvider).onGetBackPressed()) {
+                if (!(activity as GetNavProvider).onBackPressedGet()) {
                     // 均未拦截则回退
                     back()
                 }
             }
         } else {
             // 检查Fragment是否拦截
-            if (!(fragment as GetNavProvider).onGetBackPressed()) {
+            if (!(fragment as GetNavProvider).onBackPressedGet()) {
                 // 未拦截则回退
                 back()
             }

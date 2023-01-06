@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Context
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
+import android.util.Log
 
 import android.view.View
 import android.widget.FrameLayout
@@ -71,8 +72,7 @@ class GetViewDelegate(private val provider: GetViewProvider) {
 
     /** 标题 **/
     @Suppress("unused")
-    var toolbar: Toolbar? = null
-        private set
+    private var toolbar: Toolbar? = null
 
     /** 刷新控件 **/
     @Suppress("unused")
@@ -160,11 +160,11 @@ class GetViewDelegate(private val provider: GetViewProvider) {
         setGetContentView = false
         contentView = view
         rootView = inflate(R.layout.starter_layout_native)
+        (rootView as FrameLayout).addView(view)
         toolbar = view.findViewById(R.id.starter_toolbar)
         mHeaderLayout = view.findViewById(R.id.starter_header_layout)
         mFooterLayout = view.findViewById(R.id.starter_footer_layout)
         refreshLayout = view.findViewById(R.id.starter_refresh_layout)
-        (rootView as FrameLayout?)?.addView(view)
         initContentView()
         initGetView()
     }
@@ -245,6 +245,29 @@ class GetViewDelegate(private val provider: GetViewProvider) {
     fun <T : View> findViewById(@IdRes resId: Int): T? = contentView?.findViewById(resId)
 
     /**
+     * 获取[Toolbar]，NULL会抛出异常
+     */
+    fun requireToolbar(): Toolbar = when (provider) {
+        is GetActivity -> provider.toolbar
+        is GetFragment -> provider.toolbar
+        else -> toolbar
+    } ?: throw RuntimeException("Please make sure toolbar is exist.")
+
+    /**
+     * 获取[SmartRefreshLayout]，NULL会抛出异常
+     */
+    fun requireRefreshLayout(): SmartRefreshLayout = when (provider) {
+        is GetActivity -> provider.refreshLayout
+        is GetFragment -> provider.refreshLayout
+        else -> refreshLayout
+    } ?: throw RuntimeException("Please make sure refreshLayout is exist.")
+
+    /**
+     * 获取内容布局，NULL会抛出异常
+     */
+    fun requireContentView(): View = contentView ?: throw RuntimeException("Please make sure contentView is exist.")
+
+    /**
      * 设置背景
      * @param resId 资源ID
      **/
@@ -281,6 +304,7 @@ class GetViewDelegate(private val provider: GetViewProvider) {
                             is Drawable -> rootView!!.background = any
                             else -> rootView!!.background = null
                         }
+                        Log.e("数据", "88888888888888888")
                     } else if (!isTranslucentOrFloating) {
                         // 根据内容设置背景
                         when (any) {
@@ -288,6 +312,7 @@ class GetViewDelegate(private val provider: GetViewProvider) {
                             is Drawable -> provider.window.setBackgroundDrawable(any)
                             else -> provider.window.setBackgroundDrawable(null)
                         }
+                        Log.e("数据", "777777777777777777")
                     }
                 } else if (rootView != null) {
                     // 根据内容设置背景
@@ -319,6 +344,7 @@ class GetViewDelegate(private val provider: GetViewProvider) {
     private fun initContentView() {
         if (provider is AppCompatActivity) {
             provider.delegate.setContentView(rootView)
+            Log.e("数据u", "施工方")
         } else if (provider is ComponentActivity) {
             // 考虑到有可能重写了 setContentView
             // 所以需要临时改变 mSetGetContentView 的值
@@ -342,12 +368,10 @@ class GetViewDelegate(private val provider: GetViewProvider) {
      **/
     private fun initGetView() {
         if (provider is GetActivity) {
-            //toolbar?.let { provider.toolbar = it }
-            contentView?.let { provider.rootView = it }
+            toolbar?.let { provider.toolbar = it }
             refreshLayout?.let { provider.refreshLayout = it }
         } else if (provider is GetFragment) {
-            //toolbar?.let { provider.toolbar = it }
-            contentView?.let { provider.rootView = it }
+            toolbar?.let { provider.toolbar = it }
             refreshLayout?.let { provider.refreshLayout = it }
         }
         // 状态委托连接界面

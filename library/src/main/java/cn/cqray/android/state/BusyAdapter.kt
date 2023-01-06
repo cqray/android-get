@@ -40,25 +40,23 @@ class BusyAdapter : StateAdapter<BusyAdapter>(R.layout.get_layout_state_busy) {
         spinKitView?.setIndeterminateDrawable(SpriteFactory.create(style))
     }
 
-    override fun onTextChanged(text: String?) {
-        textView?.text = text
-    }
+    override fun onTextChanged(text: String?) : Unit = text.let { textView?.text = it }
 
     /**
      * 设置加载框颜色
      * @param color 颜色
      */
-    fun setSpinColor(color: Int): BusyAdapter {
+    fun setSpinColor(color: Int) = also {
         this.color = color
-        return this
+        spinKitView?.setColor(color)
     }
 
     /**
      * 设置加载框样式
      * @param style 样式[Style]
      */
-    fun setSpinStyle(style: Style): BusyAdapter {
+    fun setSpinStyle(style: Style) = also {
         this.spinStyle = style
-        return this
+        spinKitView?.setIndeterminateDrawable(SpriteFactory.create(style))
     }
 }

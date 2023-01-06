@@ -15,7 +15,7 @@
     <item name="starter_header_layout" type="id" />
     <item name="starter_refresh_layout" type="id" />
     <item name="starter_footer_layout" type="id" />
-    <item name="starter_content_layout" type="id" />
+<!--    <item name="get_nav_content" type="id" />-->
     <item name="starter_nav_view" type="id" />
     <item name="starter_tab_layout" type="id" />
 
@@ -27,6 +27,8 @@
 
     <item name="get_toolbar" type="id"/>
     <item name="get_refresh_layout" type="id" />
+
+    <item name="get_nav_content" type="id" />
 
     <!-- ViewState相关ID -->
     <item name="get_state_img" type="id" />

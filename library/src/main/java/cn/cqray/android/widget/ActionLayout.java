@@ -6,7 +6,7 @@ import android.content.res.TypedArray;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
-import android.util.Size;
+
 import android.util.SparseArray;
 import android.util.SparseBooleanArray;
 import android.util.SparseIntArray;
@@ -38,9 +38,9 @@ import cn.cqray.android.util.ViewUtils;
 public class ActionLayout extends LinearLayout {
 
     /** 左间隔 **/
-    private Space mLeftSpace;
+    private final Space mLeftSpace;
     /** 右间隔 **/
-    private Space mRightSpace;
+    private final Space mRightSpace;
     /** 间隔 **/
     private int mActionSpace;
     /** 文字大小 **/

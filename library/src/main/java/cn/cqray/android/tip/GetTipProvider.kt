@@ -24,6 +24,7 @@ interface GetTipProvider {
      * @param text     文本内容 [CharSequence]
      * @param callback 结束回调 [GetTipCallback]
      */
+//    @JvmOverloads
     fun showTip(text: CharSequence?, callback: GetTipCallback? = null) = tipDelegate.showTip(text, callback)
 
     /**

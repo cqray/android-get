@@ -3,6 +3,7 @@
 
     <!-- 是否使用水波纹 -->
     <attr name="sUseRipple" format="boolean" />
+    <attr name="useRipple" format="boolean" />
     <attr name="sActionTextColor" format="color" />
     <attr name="sActionTextSize" format="dimension" />
     <attr name="sActionTextStyle">
@@ -77,9 +78,10 @@
             <enum name="right" value="2" />
             <enum name="bottom" value="3" />
         </attr>
+<!--        <attr name="icon"-->
         <!-- 图标文本间隔 -->
         <attr name="sViewSpace" format="dimension" />
-        <attr name="sUseRipple"/>
+        <attr name="useRipple"/>
         <attr name="android:src" />
         <attr name="android:text" />
         <attr name="android:textColor" />

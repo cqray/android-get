@@ -96,10 +96,11 @@ class StateLayout : FrameLayout {
         }
         // 显示对应的状态控件
         val adapter = getAdapter(newState)
-        // 连接控件
-        if (adapter?.contentView == null) {
-            adapter?.onAttach(this)
-            adapter?.contentView?.setTag(stateTag.hashCode(), stateTag)
+        adapter?.let {
+            if (it.contentView == null) {
+                it.onAttach(this@StateLayout)
+                it.contentView?.setTag(stateTag.hashCode(), stateTag)
+            }
         }
         // 显示界面
         adapter?.show(text)

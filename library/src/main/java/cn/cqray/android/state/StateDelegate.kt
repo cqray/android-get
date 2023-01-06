@@ -10,8 +10,8 @@ import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import cn.cqray.android.R
 import cn.cqray.android.app.GetActivity
-import cn.cqray.android.app.GetFragment
 import cn.cqray.android.app.GetUtils
+import cn.cqray.android.app.GetViewProvider
 
 import cn.cqray.android.util.ContextUtils
 import cn.cqray.android.util.Sizes
@@ -72,37 +72,32 @@ class StateDelegate(provider: StateProvider) {
         }
         // 获取Activity的根布局，进行连接
         val root = activity.findViewById<FrameLayout>(android.R.id.content)
-        attachLayout(root)
+        root.addView(stateLayout)
+        // 设置容器偏移
+        stateLayout!!.visibility = View.GONE
+        stateLayout!!.post {
+            // 如果标记了内容控件，则有标题栏存在
+            val toolbar = root.findViewById<View>(R.id.get_toolbar)
+            // 获取标题栏底部位置为顶部偏移量
+            if (toolbar != null && offsets[1] == null) offsets[1] = toolbar.bottom
+            // 显示容器
+            stateLayout!!.visibility = if (stateLayout!!.isIdle()) View.GONE else View.VISIBLE
+            // 设置偏移
+            refreshOffsets(offsets)
+        }
     }
 
     fun attachFragment(fragment: Fragment) {
-        if (fragment.view == null) return
-        if (fragment is GetFragment) {
-            val refresh: SmartRefreshLayout? = fragment.refreshLayout
-                ?: fragment.view?.findViewById(R.id.get_refresh_layout)
+        if (fragment is GetViewProvider) {
+            val refresh: SmartRefreshLayout? = fragment.viewDelegate.refreshLayout
+                ?: fragment.viewDelegate.findViewById(R.id.get_refresh_layout)
             if (refresh != null) {
                 attachLayout(refresh)
                 return
             }
             val root = fragment.viewDelegate.rootView as FrameLayout?
-            if (root != null) {
-                attachLayout(root)
-                return
-            }
+            root?.let { attachLayout(it) }
         }
-
-        val view = fragment.requireView()
-        val parent = view.parent as ViewGroup
-        val layout = FrameLayout(fragment.requireContext())
-        layout.layoutParams = ViewGroup.LayoutParams(-1, -1)
-
-        // 替换View的位置
-        val index = parent.indexOfChild(view)
-        parent.addView(layout, index)
-        parent.removeView(view)
-        layout.addView(view)
-
-        attachLayout(layout)
     }
 
     fun attachLayout(layout: FrameLayout?) = attachLayout(layout as ViewGroup?)
