@@ -7,6 +7,7 @@ import android.os.Bundle;
 import org.jetbrains.annotations.Nullable;
 
 import cn.cqray.android.app.GetNavActivity;
+import cn.cqray.android.cache.GetCache;
 
 
 public class MainActivity extends GetNavActivity {
@@ -19,5 +20,6 @@ public class MainActivity extends GetNavActivity {
 
         findViewById(R.id.get_nav_content).setOnClickListener(v -> {});
 
+        new GetCache().putAsync("null", "123");
     }
 }

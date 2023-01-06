@@ -219,7 +219,7 @@ class Toolbar2 @JvmOverloads constructor(
             val params = titleView.layoutParams as LayoutParams
             if (center) {
                 val leftWidth = backView.width + if (iconVisible) mTitleSpace - padding else 0
-                val actionWidth = actionLayout!!.width + mTitleSpace - actionLayout!!.actionSpace
+                val actionWidth = actionLayout!!.width + mTitleSpace - actionLayout!!.getActionSpace()
                 val m = leftWidth.coerceAtLeast(actionWidth)
                 params.addRule(if (isNewApi) START_OF else LEFT_OF, -1)
                 params.addRule(if (isNewApi) END_OF else RIGHT_OF, -1)
@@ -230,10 +230,10 @@ class Toolbar2 @JvmOverloads constructor(
                 params.addRule(if (isNewApi) START_OF else LEFT_OF, R.id.starter_toolbar_action_layout)
                 params.addRule(if (isNewApi) END_OF else RIGHT_OF, R.id.starter_toolbar_back_view)
                 params.leftMargin = if (iconVisible) mTitleSpace - padding else 0
-                params.rightMargin = mTitleSpace - actionLayout!!.actionSpace
+                params.rightMargin = mTitleSpace - actionLayout!!.getActionSpace()
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
                     params.marginStart = if (iconVisible) mTitleSpace - padding else 0
-                    params.marginEnd = mTitleSpace - actionLayout!!.actionSpace
+                    params.marginEnd = mTitleSpace - actionLayout!!.getActionSpace()
                 }
                 params.addRule(CENTER_VERTICAL)
                 titleView.gravity = Gravity.START or Gravity.CENTER_VERTICAL
@@ -270,9 +270,9 @@ class Toolbar2 @JvmOverloads constructor(
             // 设置ActionLayout右部间隔
             val params = actionLayout!!.layoutParams as LayoutParams
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-                params.marginEnd = aInteger - actionLayout!!.actionSpace
+                params.marginEnd = aInteger - actionLayout!!.getActionSpace()
             }
-            params.rightMargin = aInteger - actionLayout!!.actionSpace
+            params.rightMargin = aInteger - actionLayout!!.getActionSpace()
         })
     }
 
