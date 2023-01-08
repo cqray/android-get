@@ -1,8 +1,10 @@
-package cn.cqray.android.app
+package cn.cqray.android.app.provider
 
-import androidx.annotation.IdRes
+import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.widget.ViewPager2
+import cn.cqray.android.app.delegate.GetDelegate
+import cn.cqray.android.app.delegate.GetMultiDelegate
 
 /**
  * 多[Fragment]显示提供器
@@ -10,10 +12,10 @@ import androidx.viewpager2.widget.ViewPager2
  */
 @Suppress("unused")
 @JvmDefaultWithoutCompatibility
-interface GetMultiProvider {
+interface GetMultiProvider: GetProvider {
 
     val multiDelegate: GetMultiDelegate
-        get() = GetMultiDelegate.get(this)
+        get() = GetDelegate.get(this, GetMultiProvider::class.java)
 
     val currentIndex: Int
         get() = multiDelegate.currentIndex
@@ -31,12 +33,11 @@ interface GetMultiProvider {
 //        multiDelegate.loadMultiFragments(containerId, list)
 //    }
 //
-//    fun loadMultiFragments(vp: ViewPager2, vararg fragments: Fragment) {
-//        val list = listOf(*fragments)
-//        multiDelegate.loadMultiFragments(vp, list)
-//    }
 
-
+    fun loadMultiFragments(vp: ViewPager2, vararg fragments: Fragment) {
+        val list = listOf(*fragments)
+        multiDelegate.loadMultiFragments(vp, list)
+    }
 
 //    fun loadMultiFragments(vp: ViewPager2, vararg intents: GetIntent?) {
 //        mMultiDelegate.loadMultiFragments(vp, intents)
@@ -50,17 +51,18 @@ interface GetMultiProvider {
 //        mMultiDelegate.loadMultiFragments(vp, intents)
 //    }
 
-    fun showFragment(index: Int?) = multiDelegate.showFragment(index)
+    fun showFragment(index: Int?) = multiDelegate.showFragment(View.NO_ID, index)
 
-    fun showFragment(fragment: Fragment) = multiDelegate.showFragment(fragment)
+    fun showFragment(fragment: Fragment) = multiDelegate.showFragment(View.NO_ID,fragment)
 
-    fun addFragment(cls: Class<out Fragment>) = multiDelegate.addFragment(cls)
+//    fun addFragment(cls: Class<out Fragment>) = multiDelegate.addFragment(View.NO_ID, cls)
 
-    fun addFragment(fragment: Fragment) = multiDelegate.addFragment(fragment)
+    fun addFragment(fragment: Fragment) = multiDelegate.addFragment(View.NO_ID, fragment)
 
-    fun removeFragment(index: Int?) = multiDelegate.removeFragment(index)
+    fun removeFragment(index: Int?) = multiDelegate.removeFragment(View.NO_ID, index)
 
-    fun removeFragment(fragment: Fragment) = multiDelegate.removeFragment(fragment)
+    fun removeFragment(fragment: Fragment) = multiDelegate.removeFragment(View.NO_ID, fragment)
 
-    fun resetFragments() = multiDelegate.reset()
+    fun removeFragments() = multiDelegate.removeFragments(View.NO_ID)
+
 }

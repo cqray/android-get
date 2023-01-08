@@ -1,11 +1,13 @@
 package cn.cqray.android.tip
 
+import cn.cqray.android.app.provider.GetProvider
+
 /**
  * Tip提供者
  * @author Cqray
  */
 @JvmDefaultWithoutCompatibility
-interface GetTipProvider {
+interface GetTipProvider : GetProvider {
 
     /**
      * 获取并初始化[GetTipDelegate]

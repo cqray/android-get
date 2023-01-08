@@ -8,6 +8,7 @@ import org.jetbrains.annotations.Nullable;
 
 import cn.cqray.android.app.GetNavActivity;
 import cn.cqray.android.cache.GetCache;
+import cn.cqray.android.log.GetLog;
 
 
 public class MainActivity extends GetNavActivity {
@@ -15,6 +16,7 @@ public class MainActivity extends GetNavActivity {
     @Override
     public void onCreating(@Nullable Bundle savedInstanceState) {
         super.onCreating(savedInstanceState);
+        GetLog.d("6666666666666666666666");
         loadRootFragment(MainFragment.class);
         setBackgroundColor(Color.YELLOW);
 

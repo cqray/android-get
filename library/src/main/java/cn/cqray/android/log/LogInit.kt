@@ -39,4 +39,6 @@ class LogInit : Serializable {
         set(adapter) {
             field = adapter ?: LogAdapterImpl()
         }
+
+    
 }

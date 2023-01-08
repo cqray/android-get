@@ -1,23 +1,26 @@
-package cn.cqray.android.app
+package cn.cqray.android.app.provider
 
 import android.app.Activity
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import cn.cqray.android.anim.FragmentAnimator
 import cn.cqray.android.Get
+import cn.cqray.android.app.GetIntent
+import cn.cqray.android.app.GetIntentCallback
+import cn.cqray.android.app.delegate.GetDelegate
+import cn.cqray.android.app.delegate.GetNavDelegate
 
 /**
  * [Get]导航功能提供器
  * @author Cqray
  */
 @JvmDefaultWithoutCompatibility
-interface GetNavProvider {
+interface GetNavProvider : GetProvider {
 
     /**
      * 获取[GetNavDelegate]
      */
-    val navDelegate: GetNavDelegate
-        get() = GetNavDelegate.get(this)
+    val navDelegate: GetNavDelegate get() = GetDelegate.get(this, GetNavProvider::class.java)
 
     /**
      * 创建Fragment动画

@@ -10,8 +10,7 @@ import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import cn.cqray.android.Get
 import cn.cqray.android.app.GetManager
-import cn.cqray.android.app.GetNavDelegate.Companion.get
-import cn.cqray.android.app.GetNavProvider
+import cn.cqray.android.app.provider.GetNavProvider
 import cn.cqray.android.log.GetLog
 
 /**
@@ -43,7 +42,8 @@ class GetFragmentLifecycleCallbacks(activity: FragmentActivity) :
         super.onFragmentCreated(fm, f, savedInstanceState)
         printFragmentStateLog(f, "onFragmentCreated")
         if (f is GetNavProvider) {
-            get((f as GetNavProvider)).onCreated()
+            // GetNavDelegate调用onCreated()
+            f.navDelegate.onCreated()
         }
     }
 
@@ -56,7 +56,8 @@ class GetFragmentLifecycleCallbacks(activity: FragmentActivity) :
         super.onFragmentViewCreated(fm, f, v, savedInstanceState)
         printFragmentStateLog(f, "onFragmentViewCreated")
         if (f is GetNavProvider) {
-            get((f as GetNavProvider)).onViewCreated()
+            // GetNavDelegate调用onViewCreated()
+            f.navDelegate.onViewCreated()
         }
     }
 

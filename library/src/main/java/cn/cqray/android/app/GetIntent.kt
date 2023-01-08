@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.os.Parcelable
 import androidx.fragment.app.Fragment
 import cn.cqray.android.anim.FragmentAnimator
+import cn.cqray.android.app.provider.GetNavProvider
 import java.io.Serializable
 import java.util.*
 

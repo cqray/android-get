@@ -5,6 +5,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import cn.cqray.android.app.provider.GetNavProvider
+import cn.cqray.android.app.provider.GetViewProvider
 import cn.cqray.android.state.StateProvider
 import cn.cqray.android.tip.GetTipProvider
 import cn.cqray.android.widget.Toolbar

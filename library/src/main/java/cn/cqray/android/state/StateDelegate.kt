@@ -11,7 +11,7 @@ import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import cn.cqray.android.R
 import cn.cqray.android.app.GetUtils
-import cn.cqray.android.app.GetViewProvider
+import cn.cqray.android.app.provider.GetViewProvider
 
 import cn.cqray.android.util.ContextUtils
 import cn.cqray.android.util.Sizes

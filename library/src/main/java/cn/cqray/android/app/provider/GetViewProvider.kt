@@ -1,8 +1,10 @@
-package cn.cqray.android.app
+package cn.cqray.android.app.provider
 
 import android.graphics.drawable.Drawable
 import android.view.View
 import androidx.annotation.DrawableRes
+import cn.cqray.android.app.delegate.GetDelegate
+import cn.cqray.android.app.delegate.GetViewDelegate
 import cn.cqray.android.widget.Toolbar
 import com.scwang.smart.refresh.layout.SmartRefreshLayout
 
@@ -11,13 +13,13 @@ import com.scwang.smart.refresh.layout.SmartRefreshLayout
  * @author Cqray
  */
 @JvmDefaultWithoutCompatibility
-interface GetViewProvider {
+interface GetViewProvider : GetProvider {
 
     /**
      * 获取并初始化[GetViewDelegate]
      */
     val viewDelegate: GetViewDelegate
-        get() = GetViewDelegate.get(this)
+        get() = GetDelegate.get(this, GetViewProvider::class.java)
 
     /**
      * 获取[Toolbar]，NULL会抛出异常

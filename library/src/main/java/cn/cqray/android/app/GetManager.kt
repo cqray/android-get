@@ -10,7 +10,7 @@ import android.view.WindowManager
 
 import androidx.fragment.app.FragmentActivity
 import cn.cqray.android.Get
-import cn.cqray.android.app.GetNavDelegate.Companion.get
+import cn.cqray.android.app.provider.GetNavProvider
 import cn.cqray.android.lifecycle.GetActivityLifecycleCallbacks
 import cn.cqray.android.lifecycle.GetAppLifecycleCallbacks
 import cn.cqray.android.lifecycle.GetFragmentLifecycleCallbacks
@@ -79,6 +79,7 @@ object GetManager {
         }
 
     @JvmStatic
+    @Suppress("unused")
     fun requireActivity(): Activity {
         val activity = topActivity
         if (activity != null) return activity
@@ -123,7 +124,8 @@ object GetManager {
                 ActivityUtils.hookOrientation(activity)
                 // 监管GetNavProvider
                 if (activity is GetNavProvider) {
-                    get((activity as GetNavProvider)).onCreated()
+                    // GetNavDelegate调用onCreated()
+                    activity.navDelegate.onCreated()
                     GetFragmentLifecycleCallbacks((activity as FragmentActivity))
                 }
                 // 打印日志
@@ -133,7 +135,8 @@ object GetManager {
             override fun onActivityPostCreated(activity: Activity, savedInstanceState: Bundle?) {
                 // 监管GetNavProvider
                 if (activity is GetNavProvider) {
-                    get((activity as GetNavProvider)).onViewCreated()
+                    // GetNavDelegate调用onViewCreated()
+                    activity.navDelegate.onViewCreated()
                 }
                 // 打印日志
                 printActivityStateLog(activity, "onActivityPostCreated")

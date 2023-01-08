@@ -1,4 +1,4 @@
-package cn.cqray.android.app
+package cn.cqray.android.app.delegate
 
 import android.app.Activity
 import android.content.Context
@@ -19,6 +19,10 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.*
 import cn.cqray.android.R
+import cn.cqray.android.app.*
+import cn.cqray.android.app.GetUtils
+import cn.cqray.android.app.provider.GetNavProvider
+import cn.cqray.android.app.provider.GetViewProvider
 import cn.cqray.android.exc.ExceptionDispatcher
 import cn.cqray.android.exc.ExceptionType
 import cn.cqray.android.state.StateDelegate
@@ -36,23 +40,24 @@ import kotlin.collections.HashMap
  * @author Cqray
  */
 @Suppress("unused")
-class GetViewDelegate(private val provider: GetViewProvider) {
+class GetViewDelegate(provider: GetViewProvider) :
+    GetDelegate<GetViewProvider>(provider) {
 
     init {
-        // 验证 ViewProvider 是否继承相关Fragment、Activity
-        GetUtils.checkProvider(provider)
-        // 缓存 ViewDelegate
-        cacheDelegates[provider] = this
-        // 资源回收事件订阅
-        (provider as LifecycleOwner).lifecycle.addObserver(object : DefaultLifecycleObserver {
-            override fun onDestroy(owner: LifecycleOwner) {
-                super.onDestroy(owner)
-                // 从缓存中移除
-                cacheDelegates.remove(provider)
-                // 确保资源回收时间晚于 Fragment、Activity 的 onDestroy
-                GetManager.runOnUiThreadDelayed({ onCleared() }, 0)
-            }
-        })
+//        // 验证 ViewProvider 是否继承相关Fragment、Activity
+//        GetUtils.checkProvider(provider)
+//        // 缓存 ViewDelegate
+//        cacheDelegates[provider] = this
+//        // 资源回收事件订阅
+//        (provider as LifecycleOwner).lifecycle.addObserver(object : DefaultLifecycleObserver {
+//            override fun onDestroy(owner: LifecycleOwner) {
+//                super.onDestroy(owner)
+//                // 从缓存中移除
+//                cacheDelegates.remove(provider)
+//                // 确保资源回收时间晚于 Fragment、Activity 的 onDestroy
+//                GetManager.runOnUiThreadDelayed({ onCleared() }, 0)
+//            }
+//        })
         // 初始化状态委托
         if (provider is StateProvider) StateDelegate(provider).also { stateDelegate = it }
     }
@@ -265,7 +270,8 @@ class GetViewDelegate(private val provider: GetViewProvider) {
     /**
      * 获取内容布局，NULL会抛出异常
      */
-    fun requireContentView(): View = contentView ?: throw RuntimeException("Please make sure contentView is exist.")
+    fun requireContentView(): View =
+        contentView ?: throw RuntimeException("Please make sure contentView is exist.")
 
     /**
      * 设置背景
@@ -329,7 +335,7 @@ class GetViewDelegate(private val provider: GetViewProvider) {
 
 
     /** 清理资源 **/
-    private fun onCleared() {
+    protected override fun onCleared() {
         ButterKnifeUtils.unbind(mUnBinder)
         refreshLayout = null
         mHeaderLayout = null
@@ -440,13 +446,13 @@ class GetViewDelegate(private val provider: GetViewProvider) {
             return true
         }
 
-    companion object {
-        /** 委托缓存 [GetNavDelegate] **/
-        private val cacheDelegates =
-            Collections.synchronizedMap(HashMap<GetViewProvider, GetViewDelegate>())
-
-        @JvmStatic
-        fun get(provider: GetViewProvider): GetViewDelegate =
-            cacheDelegates[provider] ?: GetViewDelegate(provider)
-    }
+//    companion object {
+//        /** 委托缓存 [GetNavDelegate] **/
+//        private val cacheDelegates =
+//            Collections.synchronizedMap(HashMap<GetViewProvider, GetViewDelegate>())
+//
+//        @JvmStatic
+//        fun get(provider: GetViewProvider): GetViewDelegate =
+//            cacheDelegates[provider] ?: GetViewDelegate(provider)
+//    }
 }

@@ -4,6 +4,11 @@ import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
+import cn.cqray.android.app.delegate.GetDelegate
+import cn.cqray.android.app.delegate.GetNavDelegate
+import cn.cqray.android.app.provider.GetNavProvider
+import cn.cqray.android.app.provider.GetProvider
+import cn.cqray.android.app.provider.GetViewProvider
 import cn.cqray.android.state.StateProvider
 import cn.cqray.android.tip.GetTipProvider
 import cn.cqray.android.widget.Toolbar
@@ -13,7 +18,8 @@ open class GetActivity : AppCompatActivity(),
     GetViewProvider,
     GetNavProvider,
     StateProvider,
-    GetTipProvider {
+    GetTipProvider,
+    GetProvider {
 
     /** 刷新容器 **/
     @JvmField
@@ -26,6 +32,7 @@ open class GetActivity : AppCompatActivity(),
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         onCreating(savedInstanceState)
+
     }
 
     open fun onCreating(savedInstanceState: Bundle?) {}

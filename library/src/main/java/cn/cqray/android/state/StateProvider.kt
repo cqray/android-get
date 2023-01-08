@@ -1,7 +1,9 @@
 package cn.cqray.android.state
 
+import cn.cqray.android.app.provider.GetProvider
+
 @JvmDefaultWithoutCompatibility
-interface StateProvider {
+interface StateProvider : GetProvider {
 
     /**
      * 获取并初始化[StateDelegate]

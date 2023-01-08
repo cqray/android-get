@@ -7,7 +7,7 @@ import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
 import cn.cqray.android.R
 import cn.cqray.android.app.GetActivity
 import cn.cqray.android.app.GetIntent
-import cn.cqray.android.app.GetMultiProvider
+import cn.cqray.android.app.provider.GetMultiProvider
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayout.OnTabSelectedListener
 

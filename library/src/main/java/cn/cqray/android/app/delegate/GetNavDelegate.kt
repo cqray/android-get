@@ -1,4 +1,4 @@
-package cn.cqray.android.app
+package cn.cqray.android.app.delegate
 
 import android.app.Activity
 import android.os.Bundle
@@ -8,8 +8,12 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
+import cn.cqray.android.app.*
+import cn.cqray.android.app.GetUtils
+import cn.cqray.android.app.provider.GetNavProvider
 import cn.cqray.android.lifecycle.GetViewModelProvider
 import cn.cqray.android.lifecycle.GetViewModel
+import cn.cqray.android.log.GetLog
 import java.lang.IllegalStateException
 import kotlin.collections.HashMap
 
@@ -17,22 +21,22 @@ import kotlin.collections.HashMap
  * Get框架导航委托
  * @author Cqray
  */
-class GetNavDelegate(private val provider: GetNavProvider) {
+class GetNavDelegate(provider: GetNavProvider) : GetDelegate<GetNavProvider>(provider) {
 
-    init {
-        // 检查Provider是否合法
-        GetUtils.checkProvider(provider)
-        // 加入缓存
-        cacheDelegates[provider] = this
-        // 资源回收事件订阅
-        (provider as LifecycleOwner).lifecycle.addObserver(object : DefaultLifecycleObserver {
-            override fun onDestroy(owner: LifecycleOwner) {
-                super.onDestroy(owner)
-                // 从缓存中移除
-                cacheDelegates.remove(provider)
-            }
-        })
-    }
+//    init {
+//        // 检查Provider是否合法
+//        GetUtils.checkProvider(provider)
+//        // 加入缓存
+//        cacheDelegates[provider] = this
+//        // 资源回收事件订阅
+//        (provider as LifecycleOwner).lifecycle.addObserver(object : DefaultLifecycleObserver {
+//            override fun onDestroy(owner: LifecycleOwner) {
+//                super.onDestroy(owner)
+//                // 从缓存中移除
+//                cacheDelegates.remove(provider)
+//            }
+//        })
+//    }
 
     private var navViewModel: GetNavViewModel? = null
 
@@ -42,6 +46,7 @@ class GetNavDelegate(private val provider: GetNavProvider) {
     /** 导航[GetViewModel] **/
     val viewModel: GetNavViewModel
         get() {
+            GetLog.e("oncreated2222222|${navViewModel == null}")
             if (navViewModel == null) throw IllegalStateException(
                 "The [GetNavViewModel] couldn't be used when Lifecycle state is initialized."
             )
@@ -68,6 +73,7 @@ class GetNavDelegate(private val provider: GetNavProvider) {
         }
         // 初始化GetNavViewModel
         navViewModel = GetViewModelProvider(activity).get(GetNavViewModel::class.java)
+        GetLog.e("oncreated|${navViewModel == null}")
     }
 
     /**
@@ -128,19 +134,19 @@ class GetNavDelegate(private val provider: GetNavProvider) {
      */
     fun backTo(back: Class<*>?, inclusive: Boolean) = viewModel.backTo(back, inclusive)
 
-    companion object {
-
-        /** 委托缓存 [GetNavDelegate] **/
-        private val cacheDelegates = HashMap<GetNavProvider, GetNavDelegate>()
-
-        /**
-         * 获取并初始化[GetNavDelegate]
-         * @param provider [GetNavProvider]实现实例
-         */
-        @JvmStatic
-        @Synchronized
-        fun get(provider: GetNavProvider): GetNavDelegate =
-            cacheDelegates[provider] ?: GetNavDelegate(provider)
-    }
+//    companion object {
+//
+//        /** 委托缓存 [GetNavDelegate] **/
+//        private val cacheDelegates = HashMap<GetNavProvider, GetNavDelegate>()
+//
+//        /**
+//         * 获取并初始化[GetNavDelegate]
+//         * @param provider [GetNavProvider]实现实例
+//         */
+//        @JvmStatic
+//        @Synchronized
+//        fun get(provider: GetNavProvider): GetNavDelegate =
+//            cacheDelegates[provider] ?: GetNavDelegate(provider)
+//    }
 
 }
