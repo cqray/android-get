@@ -258,8 +258,8 @@ class GetMultiDelegate constructor(provider: GetMultiProvider) :
             viewPager?.let {
                 val adapter = it.adapter as? MultiFragmentAdapter
                 adapter?.let {
-                    adapter.fragmentList.add(fragment)
-                    adapter.notifyItemInserted(adapter.fragmentList.size - 1)
+                    adapter.fragments.add(fragment)
+                    adapter.notifyItemInserted(adapter.fragments.size - 1)
                 }
             }
             return
@@ -294,7 +294,7 @@ class GetMultiDelegate constructor(provider: GetMultiProvider) :
         viewPager?.let {
             // 从ViewPager2中移除Fragment
             val adapter = viewPager!!.adapter as MultiFragmentAdapter
-            adapter.fragmentList.remove(fragment)
+            adapter.fragments.remove(fragment)
             adapter.notifyItemRemoved(newIndex)
             // 显示新位置的Fragment
             showFragment(containerId, changedIndex)
@@ -396,7 +396,7 @@ class GetMultiDelegate constructor(provider: GetMultiProvider) :
     /**
      * 生成Fragment适配器[MultiFragmentAdapter]
      */
-    private fun getFragmentAdapter(fragmentList: List<Fragment?>): MultiFragmentAdapter {
+    private fun getFragmentAdapter(fragmentList: List<Fragment>): MultiFragmentAdapter {
         return if (provider is FragmentActivity) {
             MultiFragmentAdapter(provider, fragmentList)
         } else {

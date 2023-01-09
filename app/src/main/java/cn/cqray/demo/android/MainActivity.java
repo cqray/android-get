@@ -31,6 +31,12 @@ public class MainActivity extends MultiNavActivity {
                 new MultiItem(MainFragment.class, "她的")
         );
 
+        FragmentManager fm = getSupportFragmentManager();
+        FragmentTransaction ft = fm.beginTransaction();
 
+        setFragmentDragEnable(false);
+
+        
+//        ft.add("")
     }
 }
