@@ -2,6 +2,7 @@ package cn.cqray.android.app.delegate
 
 import android.app.Activity
 import android.content.Context
+import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import android.util.Log
@@ -166,6 +167,7 @@ class GetViewDelegate(provider: GetViewProvider) :
         contentView = view
         rootView = inflate(R.layout.starter_layout_native)
         (rootView as FrameLayout).addView(view)
+
         toolbar = view.findViewById(R.id.starter_toolbar)
         mHeaderLayout = view.findViewById(R.id.starter_header_layout)
         mFooterLayout = view.findViewById(R.id.starter_footer_layout)

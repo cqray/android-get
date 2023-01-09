@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+
+    <style name="TextAppearance.Active" parent="TextAppearance.AppCompat">
+        <item name="android:textSize">@dimen/caption</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:textColor">@color/colorPrimary</item>
+    </style>
+
+    <style name="TextAppearance.Inactive" parent="TextAppearance.AppCompat">
+        <item name="android:textSize">@dimen/caption</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:textColor">@color/hint</item>
+    </style>
+</resources>

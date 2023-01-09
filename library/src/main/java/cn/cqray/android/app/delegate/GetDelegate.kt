@@ -4,6 +4,7 @@ import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import cn.cqray.android.Get
 import cn.cqray.android.app.GetManager
+import cn.cqray.android.app.provider.GetMultiProvider
 import cn.cqray.android.app.provider.GetNavProvider
 import cn.cqray.android.app.provider.GetProvider
 import cn.cqray.android.app.provider.GetViewProvider
@@ -46,6 +47,7 @@ open class GetDelegate<P : GetProvider>(open val provider: P) {
             val delegate = cacheDelegates[key] ?: when (clazz) {
                 GetViewProvider::class.java -> GetViewDelegate(provider as GetViewProvider)
                 GetNavProvider::class.java -> GetNavDelegate(provider as GetNavProvider)
+                GetMultiProvider::class.java -> GetMultiDelegate(provider as GetMultiProvider)
                 else -> throw RuntimeException()
             }
             delegate.providerClassName = clazz.name

@@ -16,7 +16,17 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/toolbar"
         android:background="@color/foreground"
-        app:itemBackground="@null"/>
-<!--        app:itemTextAppearanceActive="@style/TextAppearance.Active"-->
-<!--        app:itemTextAppearanceInactive="@style/TextAppearance.Inactive" />-->
+        app:elevation="10dp"
+        app:itemRippleColor="@android:color/transparent"
+        app:itemBackground="@null"
+        app:labelVisibilityMode="labeled"
+        app:itemTextAppearanceActive="@style/TextAppearance.Active"
+        app:itemTextAppearanceInactive="@style/TextAppearance.Inactive" >
+
+        <com.flyco.tablayout.CommonTabLayout
+            android:id="@id/get_nav_tab"
+            android:layout_width="match_parent"
+            android:layout_height="52dp"/>
+
+    </com.google.android.material.bottomnavigation.BottomNavigationView>
 </LinearLayout>

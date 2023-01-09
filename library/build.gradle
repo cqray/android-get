@@ -98,4 +98,6 @@ dependencies {
 //implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.3"
 //java版本的（我们一般不用）
 //    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-java:1.3.2'
+
+    api 'io.github.h07000223:flycoTabLayout:3.0.0'
 }

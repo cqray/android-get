@@ -31,40 +31,40 @@ class MultiTabActivity : GetActivity(), GetMultiProvider {
     override fun onCreating(savedInstanceState: Bundle?) {
         super.onCreating(savedInstanceState)
         setNativeContentView(R.layout.get_layout_multi_top)
-        viewPager = findViewById(R.id.get_nav_content)
-        viewPager.registerOnPageChangeCallback(object : OnPageChangeCallback() {
-            override fun onPageSelected(position: Int) {
-                super.onPageSelected(position)
-                tabLayout.selectTab(tabLayout.getTabAt(position), true)
-            }
-        })
-        tabLayout = findViewById(R.id.get_nav_tab)
-        tabLayout.addOnTabSelectedListener(object : OnTabSelectedListener {
-            override fun onTabSelected(tab: TabLayout.Tab) {
-                multiDelegate.showFragment(tab.position)
-            }
-
-            override fun onTabUnselected(tab: TabLayout.Tab) {}
-            override fun onTabReselected(tab: TabLayout.Tab) {}
-        })
+//        viewPager = findViewById(R.id.get_nav_content)
+//        viewPager.registerOnPageChangeCallback(object : OnPageChangeCallback() {
+//            override fun onPageSelected(position: Int) {
+//                super.onPageSelected(position)
+//                tabLayout.selectTab(tabLayout.getTabAt(position), true)
+//            }
+//        })
+//        tabLayout = findViewById(R.id.get_nav_tab)
+//        tabLayout.addOnTabSelectedListener(object : OnTabSelectedListener {
+//            override fun onTabSelected(tab: TabLayout.Tab) {
+//                multiDelegate.showFragment(tab.position)
+//            }
+//
+//            override fun onTabUnselected(tab: TabLayout.Tab) {}
+//            override fun onTabReselected(tab: TabLayout.Tab) {}
+//        })
     }
 
-    fun loadMultiFragments(vararg items: MultiItem) {
-        resetFragments()
-        tabLayout.removeAllTabs()
-        val intents = arrayOfNulls<GetIntent>(items.size)
-        for (i in items.indices) {
-            intents[i] = items[i].intent
-            val ti = items[i]
-            val tab = tabLayout.newTab()
-            if (ti.icon != 0) {
-                tab.setIcon(ti.icon)
-            }
-            tab.text = ti.name
-            tabLayout.addTab(tab)
-        }
-//        multiDelegate.loadMultiFragments(viewPager, intents)
-    }
+//    fun loadMultiFragments(vararg items: MultiItem) {
+//        resetFragments()
+//        tabLayout.removeAllTabs()
+//        val intents = arrayOfNulls<GetIntent>(items.size)
+//        for (i in items.indices) {
+//            intents[i] = items[i].intent
+//            val ti = items[i]
+//            val tab = tabLayout.newTab()
+//            if (ti.icon != 0) {
+//                tab.setIcon(ti.icon)
+//            }
+//            tab.text = ti.name
+//            tabLayout.addTab(tab)
+//        }
+////        multiDelegate.loadMultiFragments(viewPager, intents)
+//    }
 
     //    public void addFragment(@NonNull MultiItem item) {
     //        TabLayout.Tab tab = tabLayout.newTab();
@@ -84,18 +84,18 @@ class MultiTabActivity : GetActivity(), GetMultiProvider {
     //        mViewPager.setUserInputEnabled(enable);
     //    }
 
-    override fun showFragment(index: Int?) {
-        val newIndex = index ?: 0
-        val valid = (0 until fragments.size).contains(newIndex)
-        if (valid) {
-            multiDelegate.showFragment(newIndex)
-            tabLayout.selectTab(tabLayout.getTabAt(newIndex), true)
-            //tabLayout.let { it.selectTab(it.getTabAt(newIndex), true) }
-        }
-    }
-
-    override fun showFragment(fragment: Fragment) {
-        val index = fragments.indexOf(fragment)
-        showFragment(index)
-    }
+//    override fun showFragment(index: Int?) {
+//        val newIndex = index ?: 0
+//        val valid = (0 until fragments.size).contains(newIndex)
+//        if (valid) {
+//            multiDelegate.showFragment(newIndex)
+//            tabLayout.selectTab(tabLayout.getTabAt(newIndex), true)
+//            //tabLayout.let { it.selectTab(it.getTabAt(newIndex), true) }
+//        }
+//    }
+//
+//    override fun showFragment(fragment: Fragment) {
+//        val index = fragments.indexOf(fragment)
+//        showFragment(index)
+//    }
 }

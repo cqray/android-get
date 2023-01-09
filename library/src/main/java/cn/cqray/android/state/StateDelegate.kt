@@ -1,6 +1,7 @@
 package cn.cqray.android.state
 
 import android.app.Activity
+import android.graphics.Color
 import android.util.TypedValue
 import android.view.View
 import android.view.ViewGroup
@@ -12,6 +13,7 @@ import androidx.lifecycle.LifecycleOwner
 import cn.cqray.android.R
 import cn.cqray.android.app.GetUtils
 import cn.cqray.android.app.provider.GetViewProvider
+import cn.cqray.android.log.GetLog
 
 import cn.cqray.android.util.ContextUtils
 import cn.cqray.android.util.Sizes
@@ -58,7 +60,9 @@ class StateDelegate(val provider: StateProvider) {
             it.isClickable = true
             it.isFocusable = true
             it.layoutParams = ViewGroup.MarginLayoutParams(-1, -1)
+            GetLog.e("吾问无为谓无无无无无无无无无")
             field = it
+
         }
 
     internal fun attachActivity(activity: Activity) {
@@ -112,7 +116,7 @@ class StateDelegate(val provider: StateProvider) {
         for (i in (0 until childCount).reversed()) {
             val view = layout.getChildAt(i)
             if (layout is SmartRefreshLayout) {
-                if (view !is RefreshHeader && view !is RefreshFooter) {
+                if (view !is RefreshHeader || view !is RefreshFooter) {
                     layout.removeView(view)
                     stateLayout.addView(view)
                 }
@@ -127,6 +131,7 @@ class StateDelegate(val provider: StateProvider) {
         } else {
             layout.addView(stateLayout)
         }
+        stateLayout.setBackgroundColor(Color.RED)
         // 设置容器偏移
         stateLayout.visibility = View.GONE
         stateLayout.post { refreshOffsets() }
@@ -199,7 +204,7 @@ class StateDelegate(val provider: StateProvider) {
         // 更新属性
         with(stateLayout!!) {
             // 显示或隐藏
-            visibility = if (isIdle()) View.GONE else View.VISIBLE
+            visibility = View.VISIBLE;//if (isIdle()) View.GONE. else View.VISIBLE
             // 设置四周的间距
             val params = layoutParams as ViewGroup.MarginLayoutParams
             params.marginStart = offsets[0] ?: params.marginStart

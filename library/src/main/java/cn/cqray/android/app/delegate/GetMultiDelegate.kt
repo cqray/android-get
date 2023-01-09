@@ -1,5 +1,6 @@
 package cn.cqray.android.app.delegate
 
+import android.os.Bundle
 import android.util.SparseArray
 import android.util.SparseIntArray
 import android.view.View
@@ -16,11 +17,12 @@ import cn.cqray.android.Get
 import cn.cqray.android.app.GetIntent
 import cn.cqray.android.app.provider.GetMultiProvider
 import cn.cqray.android.ui.multi.MultiFragmentAdapter
+import cn.cqray.android.ui.multi.MultiItem
 import java.util.*
 import kotlin.collections.ArrayList
 
 /**
- * 多Fragment管理委托
+ * 多[Fragment]管理委托
  * @author Cqray
  */
 @Suppress("unused")
@@ -30,11 +32,11 @@ class GetMultiDelegate constructor(provider: GetMultiProvider) :
     /** 容器是[ViewPager2] **/
     private var viewPager: ViewPager2? = null
 
-    /** 索引位置（不同容器）列表 **/
-    private val indexArray = SparseIntArray()
+    /** 不同容器下，索引缓存 **/
+    private val indexCache = SparseIntArray()
 
-    /** [Fragment]（不同容器）列表  **/
-    private val fragmentArray = SparseArray<MutableList<Fragment>>()
+    /** 不同容器下Fragment缓存  **/
+    private val fragmentCache = SparseArray<MutableList<Fragment>>()
 
     /** [FragmentManager]实例 **/
     private val fragmentManager: FragmentManager
@@ -43,10 +45,12 @@ class GetMultiDelegate constructor(provider: GetMultiProvider) :
         } else (provider as Fragment).childFragmentManager
 
     /** [ViewPager2]下的[Fragment]列表 **/
-    val fragments = getFragments(View.NO_ID)
+    val fragments: MutableList<Fragment>
+        get() = getFragments(View.NO_ID)
 
     /** [ViewPager2]下的当前索引 **/
-    val currentIndex = getCurrentIndex(View.NO_ID)
+    val currentIndex: Int
+        get() = getCurrentIndex(View.NO_ID)
 
     /**
      * 获取指定容器的[Fragment]列表
@@ -57,11 +61,11 @@ class GetMultiDelegate constructor(provider: GetMultiProvider) :
     fun getFragments(@IdRes containerId: Int?): MutableList<Fragment> {
         val newId = containerId ?: View.NO_ID
         // 获取并初始化对应容器的Fragment列表
-        return fragmentArray.get(newId)?.let {
+        return fragmentCache.get(newId) ?: newId.let {
             val list = ArrayList<Fragment>()
-            fragmentArray.put(newId, list)
+            fragmentCache.put(newId, list)
             list
-        }!!
+        }
     }
 
     /**
@@ -71,7 +75,7 @@ class GetMultiDelegate constructor(provider: GetMultiProvider) :
     @Suppress("unused")
     fun getCurrentIndex(@IdRes containerId: Int?): Int {
         val newId = containerId ?: View.NO_ID
-        return indexArray.get(newId)
+        return indexCache.get(newId)
     }
 
     /**
@@ -96,7 +100,7 @@ class GetMultiDelegate constructor(provider: GetMultiProvider) :
         // 重置列表
         list.clear().also { list.addAll(fragments) }
         // 缓存新的列表
-        fragmentArray.put(containerId, list)
+        fragmentCache.put(containerId, list)
         // 遍历添加新的Fragment
         fragments.forEachIndexed { i, fragment ->
             // 获取Fragment的标识（对应不同的容器）
@@ -111,6 +115,16 @@ class GetMultiDelegate constructor(provider: GetMultiProvider) :
         }
         // 提交事务
         ft.commitAllowingStateLoss()
+    }
+
+    @Suppress("unused")
+    fun loadMultiFragments(vp: ViewPager2, intents: Array<GetIntent>) {
+        val fragments = ArrayList<Fragment>();
+        intents.forEach {
+            val fragment = instantiateFragment(it.toClass as Class<out Fragment>, it.arguments)
+            fragments.add(fragment)
+        }
+        loadMultiFragments(vp, fragments)
     }
 
     /**
@@ -129,7 +143,7 @@ class GetMultiDelegate constructor(provider: GetMultiProvider) :
         // 重置列表
         list.clear().also { list.addAll(fragments) }
         // 缓存Fragment
-        fragmentArray.put(View.NO_ID, list)
+        fragmentCache.put(View.NO_ID, list)
         // 设置ViewPager2
         viewPager = vp
         // 已初始化过，则不需要再注册
@@ -149,7 +163,7 @@ class GetMultiDelegate constructor(provider: GetMultiProvider) :
                 override fun onPageSelected(position: Int) {
                     super.onPageSelected(position)
                     // 缓存索引
-                    indexArray.put(View.NO_ID, position)
+                    indexCache.put(View.NO_ID, position)
                 }
             })
             // 设置当前项
@@ -180,7 +194,7 @@ class GetMultiDelegate constructor(provider: GetMultiProvider) :
         if (newId == View.NO_ID) {
             viewPager?.let {
                 it.setCurrentItem(newIndex, it.isUserInputEnabled)
-                indexArray.put(View.NO_ID, newIndex)
+                indexCache.put(View.NO_ID, newIndex)
             }
             return
         }
@@ -203,31 +217,34 @@ class GetMultiDelegate constructor(provider: GetMultiProvider) :
             ft.show(target)
             ft.setMaxLifecycle(target, State.RESUMED)
             ft.commitAllowingStateLoss()
-            indexArray.put(newId, newIndex)
+            indexCache.put(newId, newIndex)
         }
     }
 
     /**
-     * 显示指定容器指定的[Fragment]
-     * @param containerId   指定容器ID
-     * @param fragment      指定[Fragment]
+     * 显示指定容器指定的Fragment
+     * @param containerId 指定容器ID
+     * @param fragment 指定[Fragment]
      */
     fun showFragment(@IdRes containerId: Int?, fragment: Fragment) {
         val fragments = getFragments(containerId)
         showFragment(containerId, fragments.indexOf(fragment))
     }
 
-//    /**
-//     * 添加Fragment界面
-//     * @param cls Fragment类
-//     */
-//    fun addFragment(cls: Class<out Fragment>) {
-//        //addFragment(instantiateFragments(GetIntent(cls))[0])
-//    }
-
+    /**
+     * 添加Fragment界面
+     * @param containerId 容器ID
+     * @param clazz Fragment
+     * @param args 参数
+     */
+    fun addFragment(@IdRes containerId: Int?, clazz: Class<out Fragment>, args: Bundle?) {
+        val fragment = instantiateFragment(clazz, args)
+        addFragment(containerId, fragment)
+    }
 
     /**
      * 添加Fragment界面
+     * @param containerId 容器ID
      * @param fragment Fragment
      */
     fun addFragment(@IdRes containerId: Int?, fragment: Fragment) {
@@ -235,13 +252,15 @@ class GetMultiDelegate constructor(provider: GetMultiProvider) :
         // 获取Fragment列表
         val fragments = getFragments(newId).also { it.add(fragment) }
         // 存入缓存
-        fragmentArray.put(newId, fragments)
+        fragmentCache.put(newId, fragments)
         // 处理容器是ViewPager2的情况
         if (newId == View.NO_ID) {
             viewPager?.let {
-                val adapter = it.adapter as MultiFragmentAdapter
-                adapter.fragmentList.add(fragment)
-                adapter.notifyItemInserted(adapter.fragmentList.size - 1)
+                val adapter = it.adapter as? MultiFragmentAdapter
+                adapter?.let {
+                    adapter.fragmentList.add(fragment)
+                    adapter.notifyItemInserted(adapter.fragmentList.size - 1)
+                }
             }
             return
         }
@@ -253,7 +272,7 @@ class GetMultiDelegate constructor(provider: GetMultiProvider) :
     }
 
     /**
-     * 移除指定的[Fragment]
+     * 移除指定的Fragment
      * @param index 位置
      */
     fun removeFragment(@IdRes containerId: Int?, index: Int?) {
@@ -293,8 +312,8 @@ class GetMultiDelegate constructor(provider: GetMultiProvider) :
     }
 
     /**
-     * 移除指定的[Fragment]
-     * @param fragment [Fragment]
+     * 移除指定的Fragment
+     * @param fragment Fragment界面
      */
     fun removeFragment(@IdRes containerId: Int?, fragment: Fragment) {
         val fragments = getFragments(containerId)
@@ -302,7 +321,7 @@ class GetMultiDelegate constructor(provider: GetMultiProvider) :
     }
 
     /**
-     * 移除指定容器下所有的[Fragment]
+     * 移除指定容器下所有的Fragment
      * @param containerId 指定容器ID
      */
     fun removeFragments(@IdRes containerId: Int?) {
@@ -319,7 +338,7 @@ class GetMultiDelegate constructor(provider: GetMultiProvider) :
         val fragments = getFragments(newId)
         fragments.forEach { ft.remove(it) }
         fragments.clear()
-        fragmentArray.remove(newId)
+        fragmentCache.remove(newId)
         ft.commitAllowingStateLoss()
     }
 
@@ -331,25 +350,25 @@ class GetMultiDelegate constructor(provider: GetMultiProvider) :
         removeVpFragments()
         // 清理其他容器的Fragment
         val ft = fragmentManager.beginTransaction()
-        for (i in 0 until fragmentArray.size()) {
-            val fragments = fragmentArray.valueAt(i)
+        for (i in 0 until fragmentCache.size()) {
+            val fragments = fragmentCache.valueAt(i)
             fragments.forEach { ft.remove(it) }
             fragments.clear()
         }
         // 清除所有Fragment
-        fragmentArray.clear()
+        fragmentCache.clear()
         // 提交事务
         ft.commitAllowingStateLoss()
     }
 
     /**
-     * 移除[ViewPager2]容器下所有的[Fragment]
+     * 移除[ViewPager2]容器下所有的Fragment
      */
     private fun removeVpFragments() {
         viewPager?.let {
             // 从缓存中移除
             fragments.clear()
-            fragmentArray.remove(View.NO_ID)
+            fragmentCache.remove(View.NO_ID)
             // 更新Adapter
             @Suppress("NotifyDataSetChanged")
             it.adapter?.notifyDataSetChanged()
@@ -359,7 +378,7 @@ class GetMultiDelegate constructor(provider: GetMultiProvider) :
     /**
      * 切换指定容器的Index
      * @param containerId 指定容器
-     * @param fragments [Fragment]列表
+     * @param fragments Fragment列表
      */
     private fun changeIndex(@IdRes containerId: Int?, fragments: List<Fragment>): Int {
         val newId = containerId ?: View.NO_ID
@@ -370,11 +389,12 @@ class GetMultiDelegate constructor(provider: GetMultiProvider) :
             val array = fragments.indices
             if (array.contains(index)) index else 0
         }
+        indexCache.put(newId, index)
         return index
     }
-    
+
     /**
-     * 生成[Fragment]适配器[MultiFragmentAdapter]
+     * 生成Fragment适配器[MultiFragmentAdapter]
      */
     private fun getFragmentAdapter(fragmentList: List<Fragment?>): MultiFragmentAdapter {
         return if (provider is FragmentActivity) {
@@ -388,14 +408,10 @@ class GetMultiDelegate constructor(provider: GetMultiProvider) :
      * 生成Fragment列表
      * @param intents 意图列表
      */
-    private fun instantiateFragments(vararg intents: GetIntent): Array<Fragment?> {
-        val fragments = arrayOfNulls<Fragment>(intents.size)
-        for (i in fragments.indices) {
-            val className = intents[i].toClass!!.name
-            val fragmentFactory = fragmentManager.fragmentFactory
-            fragments[i] = fragmentFactory.instantiate(Get.context.classLoader, className)
-            fragments[i]!!.arguments = intents[i].arguments
-        }
-        return fragments
+    private fun instantiateFragment(clazz: Class<out Fragment>, args: Bundle?): Fragment {
+        val fragmentFactory = fragmentManager.fragmentFactory
+        val fragment = fragmentFactory.instantiate(Get.context.classLoader, clazz.name)
+        fragment.arguments = args
+        return fragment
     }
 }

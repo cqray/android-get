@@ -1,12 +1,15 @@
 package cn.cqray.demo.android;
 
 import android.os.Bundle;
+import android.widget.TextView;
 
 //import androidx.annotation.NonNull;
 //import androidx.lifecycle.DefaultLifecycleObserver;
 //import androidx.lifecycle.LifecycleOwner;
 //
 //import org.jetbrains.annotations.NotNull;
+
+import java.util.UUID;
 
 import cn.cqray.android.app.GetFragment;
 import cn.cqray.android.log.GetLog;
@@ -19,7 +22,12 @@ public class MainFragment extends GetFragment {
         super.onCreate(savedInstanceState);
         setGetContentView(R.layout.activity_main);
 
-        setBusy();
+//        setBusy();
+
+        TextView tv = requireContentView().findViewById(R.id.tv);
+        tv.setText(UUID.randomUUID().toString());
+        tv.append("6666666");
+
 
 //        getLifecycle().addObserver(new DefaultLifecycleObserver() {
 //            @Override

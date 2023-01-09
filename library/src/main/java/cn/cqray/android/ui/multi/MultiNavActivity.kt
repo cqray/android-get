@@ -51,12 +51,13 @@ open class MultiNavActivity : GetActivity(), GetMultiProvider {
         removeFragments()
         val menu = navView.menu
         menu.clear()
-        val intents = arrayOfNulls<GetIntent>(items.size)
+        val intents = Array<GetIntent>(items.size) { items[it].intent }
         for (i in items.indices) {
             intents[i] = items[i].intent
             val ti = items[i]
             menu.add(0, i, i, ti.name).setIcon(ti.icon)
         }
+        multiDelegate.loadMultiFragments(viewPager, intents)
     }
 
     /**
