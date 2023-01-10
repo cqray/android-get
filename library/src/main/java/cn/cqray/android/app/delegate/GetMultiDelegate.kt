@@ -18,6 +18,7 @@ import cn.cqray.android.app.GetIntent
 import cn.cqray.android.app.provider.GetMultiProvider
 import cn.cqray.android.ui.multi.MultiFragmentAdapter
 import cn.cqray.android.ui.multi.MultiItem
+import cn.cqray.android.ui.multi.MultiItem2
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -413,5 +414,21 @@ class GetMultiDelegate constructor(provider: GetMultiProvider) :
         val fragment = fragmentFactory.instantiate(Get.context.classLoader, clazz.name)
         fragment.arguments = args
         return fragment
+    }
+
+    /**
+     * 生成Fragment列表
+     * @param items [MultiItem2]列表
+     */
+    private fun instantiateFragment(vararg items: MultiItem2): List<Fragment> {
+        val fragments = ArrayList<Fragment>();
+        val fragmentFactory = fragmentManager.fragmentFactory
+        val classLoader = Get.context.classLoader
+        items.forEach {
+            val fragment = fragmentFactory.instantiate(classLoader, it.targetClass.name)
+            fragment.arguments = it.arguments
+            fragments.add(fragment)
+        }
+        return fragments
     }
 }

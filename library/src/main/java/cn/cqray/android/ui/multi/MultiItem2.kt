@@ -12,33 +12,23 @@ import java.util.ArrayList
  * @author Cqray
  */
 @Suppress("unused")
-class MultiItem2 {
-    /** **/
-    var name: String
+class MultiItem2(
+    /** 目标Fragment的[Class] **/
+    @Suppress val targetClass: Class<out Fragment>,
+    /** 目标Fragment名称 **/
+    val name: String?
+) {
+
+    /** 对应图标 **/
+    @Suppress
+    var icon: Int? = null
         private set
 
-    /** 图标 **/
-    var icon = 0
-        private set
-//    var intent: GetIntent
-//        private set
-    /** 参数  */
+    /** 传入参数  */
+    @Suppress
     val arguments = Bundle()
 
-    val clazz: Class<out Fragment>
-
-    constructor(clazz: Class<out Fragment>, name: String) {
-//        intent = GetIntent(clazz)
-        this.clazz = clazz
-        this.name = name
-    }
-
-    constructor(clazz: Class<out Fragment>, name: String, @DrawableRes icon: Int) {
-//        intent = GetIntent(clazz)
-        this.clazz = clazz
-        this.name = name
-        this.icon = icon
-    }
+    fun icon(@DrawableRes icon: Int?) = also { this.icon = icon }
 
     fun put(key: String?, value: Boolean?) = also { value?.let { arguments.putBoolean(key, it) } }
 
@@ -87,5 +77,4 @@ class MultiItem2 {
     fun put(key: String?, value: ArrayList<*>?) = also { arguments.putSerializable(key, value) }
 
     fun put(bundle: Bundle) = also { arguments.putAll(bundle) }
-
 }

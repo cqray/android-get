@@ -13,6 +13,7 @@ import java.util.UUID;
 
 import cn.cqray.android.app.GetFragment;
 import cn.cqray.android.log.GetLog;
+import cn.cqray.android.ui.multi.MultiItem2;
 
 
 public class MainFragment extends GetFragment {
@@ -27,6 +28,7 @@ public class MainFragment extends GetFragment {
         TextView tv = requireContentView().findViewById(R.id.tv);
         tv.setText(UUID.randomUUID().toString());
         tv.append("6666666");
+
 
 
 //        getLifecycle().addObserver(new DefaultLifecycleObserver() {
