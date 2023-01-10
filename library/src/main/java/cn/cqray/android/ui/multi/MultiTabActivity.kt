@@ -1,101 +1,103 @@
 package cn.cqray.android.ui.multi
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
+import android.view.View
 import androidx.viewpager2.widget.ViewPager2
-import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
-import cn.cqray.android.R
 import cn.cqray.android.app.GetActivity
-import cn.cqray.android.app.GetIntent
 import cn.cqray.android.app.provider.GetMultiProvider
-import com.google.android.material.tabs.TabLayout
-import com.google.android.material.tabs.TabLayout.OnTabSelectedListener
+import cn.cqray.android.databinding.GetLayoutMultiTabBinding
+import com.flyco.tablayout.CommonTabLayout
+import com.flyco.tablayout.listener.CustomTabEntity
+import com.flyco.tablayout.listener.OnTabSelectListener
 
 /**
  * 底部多Fragment界面
  * @author Cqray
  */
-class MultiTabActivity : GetActivity(), GetMultiProvider {
+open class MultiTabActivity : GetActivity(), GetMultiProvider {
 
-    @Suppress("unused")
-    lateinit var viewPager: ViewPager2
-        private set
 
-    lateinit var tabLayout: TabLayout
-        private set
+    //val tabLayout: CommonTabLayout
 
-    fun requireViewPager(): ViewPager2 = viewPager!!
+    private var tabAtTop = false
 
-    fun requireTabLayout(): TabLayout = tabLayout
+    private lateinit var tabBinding: GetLayoutMultiTabBinding
+
+    private val unusedTabLayout: CommonTabLayout
+        get() {
+            return if (tabAtTop) tabBinding.getBottomTab
+            else tabBinding.getTopTab
+        }
+
+    val tabLayout: CommonTabLayout
+        get() {
+            return if (tabAtTop) tabBinding.getTopTab
+            else tabBinding.getBottomTab
+        }
 
     override fun onCreating(savedInstanceState: Bundle?) {
         super.onCreating(savedInstanceState)
-        setNativeContentView(R.layout.get_layout_multi_top)
-//        viewPager = findViewById(R.id.get_nav_content)
-//        viewPager.registerOnPageChangeCallback(object : OnPageChangeCallback() {
-//            override fun onPageSelected(position: Int) {
-//                super.onPageSelected(position)
-//                tabLayout.selectTab(tabLayout.getTabAt(position), true)
-//            }
-//        })
-//        tabLayout = findViewById(R.id.get_nav_tab)
-//        tabLayout.addOnTabSelectedListener(object : OnTabSelectedListener {
-//            override fun onTabSelected(tab: TabLayout.Tab) {
-//                multiDelegate.showFragment(tab.position)
-//            }
-//
-//            override fun onTabUnselected(tab: TabLayout.Tab) {}
-//            override fun onTabReselected(tab: TabLayout.Tab) {}
-//        })
+        tabBinding = GetLayoutMultiTabBinding.inflate(layoutInflater)
+        setNativeContentView(tabBinding.root)
+
+        tabBinding.getNavContent.registerOnPageChangeCallback(object :
+            ViewPager2.OnPageChangeCallback() {
+            override fun onPageSelected(position: Int) {
+                super.onPageSelected(position)
+                tabLayout.currentTab = position
+            }
+        })
+
+        tabLayout.setOnTabSelectListener(object : OnTabSelectListener {
+            override fun onTabSelect(position: Int) {
+                //TODO("Not yet implemented")
+                multiDelegate.showFragment(View.NO_ID, position)
+            }
+
+            override fun onTabReselect(position: Int) {
+                //TODO("Not yet implemented")
+            }
+
+        })
+
+        unusedTabLayout.visibility = View.GONE
     }
 
-//    fun loadMultiFragments(vararg items: MultiItem) {
-//        resetFragments()
-//        tabLayout.removeAllTabs()
-//        val intents = arrayOfNulls<GetIntent>(items.size)
+    fun loadMultiFragments(vararg items: MultiItem2) {
+        val entries = ArrayList<CustomTabEntity>();
+        items.forEach {
+            val entry = object : CustomTabEntity {
+                override fun getTabTitle(): String {
+                    return it.name ?: ""
+                }
+
+                override fun getTabSelectedIcon(): Int {
+                    //TODO("Not yet implemented")
+                    return it.selectIcon ?: 0
+                }
+
+                override fun getTabUnselectedIcon(): Int {
+                    return it.unselectIcon ?: 0
+                    //TODO("Not yet implemented")
+                }
+            }
+            entries.add(entry)
+        }
+        tabLayout.setTabData(entries)
+
+
+//        removeFragments()
+//        val menu = navView.menu
+//        menu.clear()
+//        val intents = Array<GetIntent>(items.size) { items[it].intent }
 //        for (i in items.indices) {
 //            intents[i] = items[i].intent
 //            val ti = items[i]
-//            val tab = tabLayout.newTab()
-//            if (ti.icon != 0) {
-//                tab.setIcon(ti.icon)
-//            }
-//            tab.text = ti.name
-//            tabLayout.addTab(tab)
+//            menu.add(0, i, i, ti.name).setIcon(ti.icon)
 //        }
-////        multiDelegate.loadMultiFragments(viewPager, intents)
-//    }
+//        viewPager.offscreenPageLimit = items.size
 
-    //    public void addFragment(@NonNull MultiItem item) {
-    //        TabLayout.Tab tab = tabLayout.newTab();
-    //        if (item.getIcon() != 0) {
-    //            tab.setIcon(item.getIcon());
-    //        }
-    //        tab.setText(item.getName());
-    //        tabLayout.addTab(tab);
-    //        //getMultiDelegate().addFragment(item.getIntent());
-    //    }
-    //
-    //    public void removeFragment(int position) {
-    //        mTabLayout.removeTabAt(position);
-    //        mMultiDelegate.removeFragment(position);
-    //    }
-    //    public void setDragEnable(boolean enable) {
-    //        mViewPager.setUserInputEnabled(enable);
-    //    }
 
-//    override fun showFragment(index: Int?) {
-//        val newIndex = index ?: 0
-//        val valid = (0 until fragments.size).contains(newIndex)
-//        if (valid) {
-//            multiDelegate.showFragment(newIndex)
-//            tabLayout.selectTab(tabLayout.getTabAt(newIndex), true)
-//            //tabLayout.let { it.selectTab(it.getTabAt(newIndex), true) }
-//        }
-//    }
-//
-//    override fun showFragment(fragment: Fragment) {
-//        val index = fragments.indexOf(fragment)
-//        showFragment(index)
-//    }
+        multiDelegate.loadMultiFragments(tabBinding.getNavContent, arrayOf(*items))
+    }
 }

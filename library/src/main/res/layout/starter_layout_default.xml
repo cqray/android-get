@@ -7,9 +7,9 @@
     <cn.cqray.android.widget.Toolbar
         android:id="@id/starter_toolbar"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/toolbar">
+        android:layout_height="@dimen/toolbar"/>
 
-    </cn.cqray.android.widget.Toolbar>
+<!--    </cn.cqray.android.widget.Toolbar>-->
 
     <!-- 刷新界面 -->
     <com.scwang.smart.refresh.layout.SmartRefreshLayout

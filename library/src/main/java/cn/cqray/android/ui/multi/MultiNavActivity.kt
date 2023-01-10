@@ -58,7 +58,7 @@ open class MultiNavActivity : GetActivity(), GetMultiProvider {
             menu.add(0, i, i, ti.name).setIcon(ti.icon)
         }
         viewPager.offscreenPageLimit = items.size
-        multiDelegate.loadMultiFragments(viewPager, intents)
+//        multiDelegate.loadMultiFragments(viewPager, intents)
     }
 
     /**

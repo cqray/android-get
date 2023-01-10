@@ -19,16 +19,23 @@ class MultiItem2(
     val name: String?
 ) {
 
-    /** 对应图标 **/
+    /** 选中时的图标 **/
     @Suppress
-    var icon: Int? = null
+    var selectIcon: Int? = null
+        private set
+
+    /** 未选中时的图标 **/
+    @Suppress
+    var unselectIcon: Int? = null
         private set
 
     /** 传入参数  */
     @Suppress
     val arguments = Bundle()
 
-    fun icon(@DrawableRes icon: Int?) = also { this.icon = icon }
+    fun selectIcon(@DrawableRes icon: Int?) = also { selectIcon = icon }
+
+    fun unselectIcon(@DrawableRes icon: Int?) = also { unselectIcon = icon }
 
     fun put(key: String?, value: Boolean?) = also { value?.let { arguments.putBoolean(key, it) } }
 
