@@ -2,6 +2,7 @@ package cn.cqray.demo.android;
 
 import android.graphics.Color;
 import android.os.Bundle;
+import android.view.View;
 
 
 import org.jetbrains.annotations.Nullable;
@@ -11,7 +12,6 @@ import cn.cqray.android.app.GetMultiItem;
 import cn.cqray.android.ui.multi.GetMultiActivity;
 
 public class MainActivity extends GetMultiActivity {
-
 
 
     @Override
@@ -26,17 +26,27 @@ public class MainActivity extends GetMultiActivity {
         setTabElevation(90F);
         setTabHeight(200F);
 
-        tabLayout.setBackgroundColor(Color.BLUE);
-        
+//        tabLayout.setBackgroundColor(Color.BLUE);
         
 
+//        getMultiDelegate().addFragment(View, );
+
         loadMultiFragments(
-                new GetMultiItem(MainFragment.class, "我的"),
-                new GetMultiItem(MainFragment.class, "你的"),
-                new GetMultiItem(MainFragment.class, "你的"),
-                new GetMultiItem(MainFragment.class, "你的"),
-                new GetMultiItem(MainFragment.class, "她的")
+//                new GetMultiItem(MainFragment.class, "我的"),
+//                new GetMultiItem(MainFragment.class, "你的"),
+//                new GetMultiItem(MainFragment.class, "你的"),
+//                new GetMultiItem(MainFragment.class, "你的"),
+//                new GetMultiItem(MainFragment.class, "她的")
         );
+        addFragment(new GetMultiItem(MainFragment.class,"我的"), 0);
+        addFragment(new GetMultiItem(MainFragment.class,"ta"), 0);
+        addFragment(new GetMultiItem(MainFragment.class,"tata"), 1);
+
+
+        showFragment(-1);
+
+        removeFragments();
+//        getMultiDelegate().removeAllFragments();
 
 //        new Handler().postDelayed(new Runnable() {
 //            @Override

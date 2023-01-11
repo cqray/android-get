@@ -19,16 +19,20 @@ import com.flyco.tablayout.listener.OnTabSelectListener
  * 多Fragment控制ViewModel
  * @author Cqray
  */
-internal class GetMultiFragmentViewModel(lifecycleOwner: LifecycleOwner) : GetViewModel(lifecycleOwner) {
+internal class GetMultiFragmentViewModel(lifecycleOwner: LifecycleOwner) :
+    GetViewModel(lifecycleOwner) {
 
     /** TabLayout是否在顶部 **/
     var tabAtTop: Boolean = false
         private set
 
+    /** ViewBinding实例 **/
     private var binding: GetLayoutMultiTabBinding
 
+    /** 多界面管理实例 **/
     private val delegate: GetMultiDelegate?
 
+    /** Tab数据 **/
     private val tabData = ArrayList<CustomTabEntity>()
 
     // 初始化
@@ -44,27 +48,54 @@ internal class GetMultiFragmentViewModel(lifecycleOwner: LifecycleOwner) : GetVi
         initViewPager()
         // 初始化TabLayout
         initTabLayout()
+        // 初始化[GetMultiActivity]及[GetMultiFragment]的控件
+        initGetMultiView()
     }
 
     /** 获取根控件 **/
     val rootView: View get() = binding.root
 
     /** [ViewPager2]组件 **/
-    val viewPager: ViewPager2 get() = binding.getNavContent
+    @Suppress
+    val viewPager: ViewPager2
+        get() {
+            val vp = when (lifecycleOwner) {
+                is GetMultiActivity -> lifecycleOwner.mViewPager
+                is GetMultiFragment -> lifecycleOwner.mViewPager
+                else -> null
+            }
+            return vp ?: binding.getNavContent
+        }
 
     /** TabLayout控件 **/
-    val tabLayout: CommonTabLayout get() = binding.getNavTab
+    @Suppress
+    val tabLayout: CommonTabLayout
+        get() {
+            val vp = when (lifecycleOwner) {
+                is GetMultiActivity -> lifecycleOwner.mTabLayout
+                is GetMultiFragment -> lifecycleOwner.mTabLayout
+                else -> null
+            }
+            return vp ?: binding.getNavTab
+        }
 
     /**
      * 初始化ViewPager2
      */
     private fun initViewPager() {
-        binding.getNavContent.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+        binding.getNavContent.registerOnPageChangeCallback(object :
+            ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
                 super.onPageSelected(position)
-                tabLayout.currentTab = position
+                try {
+
+                    tabLayout.currentTab = position
+                } catch (e: java.lang.Exception) {
+                    e.printStackTrace()
+                }
             }
         })
+
     }
 
     /**
@@ -83,6 +114,24 @@ internal class GetMultiFragmentViewModel(lifecycleOwner: LifecycleOwner) : GetVi
     }
 
     /**
+     * 初始化[GetMultiActivity]及[GetMultiFragment]的控件
+     */
+    private fun initGetMultiView() {
+        when(lifecycleOwner) {
+            // 给GetMultiActivity控件赋值
+            is GetMultiActivity -> {
+                lifecycleOwner.mViewPager = viewPager
+                lifecycleOwner.mTabLayout = tabLayout
+            }
+            // 给GetMultiFragment控件赋值
+            is GetMultiFragment -> {
+                lifecycleOwner.mViewPager = viewPager
+                lifecycleOwner.mTabLayout = tabLayout
+            }
+        }
+    }
+
+    /**
      * 改变TabLayout位置
      */
     private fun changeTabLocation() {
@@ -90,6 +139,21 @@ internal class GetMultiFragmentViewModel(lifecycleOwner: LifecycleOwner) : GetVi
         binding.getTopNav.removeAllViews()
         if (tabAtTop) binding.getTopNav.addView(tabLayout)
         else binding.getBottomNav.addView(tabLayout)
+    }
+
+    @Suppress("unchecked_cast")
+    private fun changeTabData() {
+        if (tabData.isEmpty()) {
+            val field = CommonTabLayout::class.java.getDeclaredField("mTabEntitys")
+            field.isAccessible = true
+            val data = field.get(tabLayout) as ArrayList<CustomTabEntity>
+            data.clear()
+            tabLayout.notifyDataSetChanged()
+        } else {
+            tabLayout.setTabData(tabData)
+            // 改变缓存数量
+            viewPager.offscreenPageLimit = tabData.size
+        }
     }
 
     /**
@@ -134,7 +198,7 @@ internal class GetMultiFragmentViewModel(lifecycleOwner: LifecycleOwner) : GetVi
      */
     fun loadMultiFragments(vararg items: GetMultiItem) {
         // 初始化TabLayout
-        val entries = ArrayList<CustomTabEntity>();
+        val entries = ArrayList<CustomTabEntity>()
         items.forEach {
             val entry = object : CustomTabEntity {
                 override fun getTabTitle() = it.name ?: ""
@@ -148,10 +212,10 @@ internal class GetMultiFragmentViewModel(lifecycleOwner: LifecycleOwner) : GetVi
         with(tabData) {
             clear()
             addAll(entries)
-            tabLayout.setTabData(this)
+            changeTabData()
         }
         // 设置ViewPager2最大缓存数
-        viewPager.offscreenPageLimit = items.size
+        viewPager.offscreenPageLimit = if (items.isEmpty()) 5 else items.size
         // 加载Fragment
         delegate?.loadMultiFragments(viewPager, arrayOf(*items))
     }
@@ -177,6 +241,30 @@ internal class GetMultiFragmentViewModel(lifecycleOwner: LifecycleOwner) : GetVi
         delegate?.let {
             val index = it.fragments.indexOf(fragment)
             showFragment(index)
+        }
+    }
+
+    fun addFragment(item: GetMultiItem, index: Int?) {
+        delegate?.let {
+            // 生成新的Fragment
+            val newIndex = (index ?: it.fragments.size).let { index->
+                if (index < 0) 0
+                else if (index > it.fragments.size - 1) it.fragments.size
+                else index
+            }
+            // 更新Tab的数据
+            val entry = object : CustomTabEntity {
+                override fun getTabTitle() = item.name ?: ""
+
+                override fun getTabSelectedIcon() = item.selectIcon ?: 0
+
+                override fun getTabUnselectedIcon() = item.unselectIcon ?: 0
+            }
+            tabData.add(newIndex, entry)
+            changeTabData()
+            // 添加新的Fragment
+            val fragment = it.instantiateFragment(item)
+            it.addFragment(View.NO_ID, fragment, newIndex)
         }
     }
 
@@ -211,7 +299,7 @@ internal class GetMultiFragmentViewModel(lifecycleOwner: LifecycleOwner) : GetVi
      */
     fun removeFragments() {
         tabData.clear()
-        tabLayout.setTabData(tabData)
+        changeTabData()
         delegate?.removeFragments(View.NO_ID)
     }
 }

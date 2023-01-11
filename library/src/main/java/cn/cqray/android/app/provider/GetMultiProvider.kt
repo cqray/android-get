@@ -29,7 +29,7 @@ interface GetMultiProvider: GetProvider {
 
 //    fun addFragment(cls: Class<out Fragment>) = multiDelegate.addFragment(View.NO_ID, cls)
 
-    fun addFragment(fragment: Fragment) = multiDelegate.addFragment(View.NO_ID, fragment)
+//    fun addFragment(fragment: Fragment) = multiDelegate.addFragment(View.NO_ID, fragment)
 
     fun removeFragment(index: Int?) = multiDelegate.removeFragment(View.NO_ID, index)
 

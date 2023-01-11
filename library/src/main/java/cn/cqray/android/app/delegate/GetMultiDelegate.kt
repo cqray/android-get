@@ -16,6 +16,7 @@ import cn.cqray.android.Get
 import cn.cqray.android.app.provider.GetMultiProvider
 import cn.cqray.android.ui.multi.GetMultiFragmentAdapter
 import cn.cqray.android.app.GetMultiItem
+import cn.cqray.android.log.GetLog
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -23,7 +24,7 @@ import kotlin.collections.ArrayList
  * 多[Fragment]管理委托
  * @author Cqray
  */
-@Suppress("unused")
+@Suppress("unused", "MemberVisibilityCanBePrivate")
 class GetMultiDelegate constructor(provider: GetMultiProvider) :
     GetDelegate<GetMultiProvider>(provider) {
 
@@ -43,19 +44,15 @@ class GetMultiDelegate constructor(provider: GetMultiProvider) :
         } else (provider as Fragment).childFragmentManager
 
     /** [ViewPager2]下的[Fragment]列表 **/
-    val fragments: MutableList<Fragment>
-        get() = getFragments(View.NO_ID)
+    val fragments: MutableList<Fragment> get() = getFragments(View.NO_ID)
 
     /** [ViewPager2]下的当前索引 **/
-    val currentIndex: Int
-        get() = getCurrentIndex(View.NO_ID)
+    val currentIndex: Int get() = getCurrentIndex(View.NO_ID)
 
     /**
      * 获取指定容器的[Fragment]列表
      * @param containerId 指定容器ID
      */
-    @Suppress
-    @Synchronized
     fun getFragments(@IdRes containerId: Int?): MutableList<Fragment> {
         val newId = containerId ?: View.NO_ID
         // 获取并初始化对应容器的Fragment列表
@@ -70,21 +67,67 @@ class GetMultiDelegate constructor(provider: GetMultiProvider) :
      * 获取指定容器的索引位置
      * @param containerId 指定容器ID
      */
-    @Suppress("unused")
     fun getCurrentIndex(@IdRes containerId: Int?): Int {
         val newId = containerId ?: View.NO_ID
         return indexCache.get(newId)
     }
 
+    /**
+     * 生成Fragment适配器[GetMultiFragmentAdapter]
+     */
+    fun getFragmentAdapter(fragmentList: List<Fragment>): GetMultiFragmentAdapter {
+        return if (provider is FragmentActivity) {
+            GetMultiFragmentAdapter(provider, fragmentList)
+        } else {
+            GetMultiFragmentAdapter((provider as Fragment), fragmentList)
+        }
+    }
+
+    /**
+     * 生成Fragment列表
+     * @param item 意图列表
+     */
+    fun instantiateFragment(item: GetMultiItem): Fragment {
+        val name = item.targetClass.name
+        val classLoader = Get.context.classLoader
+        val fragmentFactory = fragmentManager.fragmentFactory
+        val fragment = fragmentFactory.instantiate(classLoader, name)
+        fragment.arguments = item.arguments
+        return fragment
+    }
+
+    /**
+     * 生成Fragment列表
+     * @param items [GetMultiItem]列表
+     */
+    fun instantiateFragments(items: Array<GetMultiItem>): Array<Fragment> {
+        val fragmentFactory = fragmentManager.fragmentFactory
+        val classLoader = Get.context.classLoader
+        return Array(items.size) { i ->
+            val item = items[i]
+            val name = item.targetClass.name
+            val fragment = fragmentFactory.instantiate(classLoader, name)
+            fragment.arguments = item.arguments
+            fragment
+        }
+    }
+
+    @Suppress
+    fun loadMultiFragments(@IdRes containerId: Int?, items: Array<GetMultiItem>) {
+        // 生成Fragment数组
+        val fragments = Array(items.size) { i -> instantiateFragment(items[i]) }
+        // 加载对个Fragment
+        loadMultiFragments(containerId, fragments)
+    }
 
     /**
      * 在指定容器中，加载多个Fragment
      * @param containerId 容器Id
      * @param fragments Fragment列表
      */
+    @Suppress
     fun loadMultiFragments(@IdRes containerId: Int?, fragments: Array<Fragment>) {
         // 列表为空，则不继续处理
-        if (fragments.isEmpty()) return
         if (containerId == null) {
             throw RuntimeException("The container id can't be null.")
         }
@@ -129,10 +172,8 @@ class GetMultiDelegate constructor(provider: GetMultiProvider) :
      * @param vp ViewPager2容器
      * @param fragments Fragment列表
      */
-    @Suppress("unused")
+    @Suppress("NotifyDataSetChanged")
     fun loadMultiFragments(vp: ViewPager2, fragments: Array<Fragment>) {
-        // 列表为空，则不继续处理
-        if (fragments.isEmpty()) return
         // 获取并初始化对应容器的Fragment列表
         val list = getFragments(View.NO_ID)
         // 根据新的Fragment列表生成新的有效的索引
@@ -145,7 +186,7 @@ class GetMultiDelegate constructor(provider: GetMultiProvider) :
         viewPager = vp
         // 已初始化过，则不需要再注册
         vp.adapter?.let {
-            @Suppress("NotifyDataSetChanged")
+            // 更新数据
             it.notifyDataSetChanged()
             // 设置当前项
             vp.setCurrentItem(index, vp.isUserInputEnabled)
@@ -177,21 +218,33 @@ class GetMultiDelegate constructor(provider: GetMultiProvider) :
      * @param index         指定位置
      */
     fun showFragment(@IdRes containerId: Int?, index: Int?) {
+        // 无效的索引，不需要做任何操作
+        if (index == null) {
+            GetLog.w(
+                GetMultiDelegate::class.java,
+                "Index is null, there will do nothing."
+            )
+            return
+        }
         // 获取新的ID
         val newId = containerId ?: View.NO_ID
         // 获取Fragment列表
         val fragments = getFragments(newId)
-        // 判断是否是有效的位置
-        val newIndex = index ?: 0
-        // 队列为空不继续
-        if (fragments.isEmpty()) return
-        // 无效Index不继续
-        if (!(0 until fragments.size).contains(newIndex)) return
+        // 索引判断
+        index.let {
+            if (it < 0 || it > fragments.size - 1) {
+                GetLog.w(
+                    GetMultiDelegate::class.java,
+                    "%d is out of fragments index range, there will do nothing."
+                )
+                return
+            }
+        }
         // 使用[ViewPager2]时，其为空，则不继续处理
         if (newId == View.NO_ID) {
             viewPager?.let {
-                it.setCurrentItem(newIndex, it.isUserInputEnabled)
-                indexCache.put(View.NO_ID, newIndex)
+                it.setCurrentItem(index, it.isUserInputEnabled)
+                indexCache.put(View.NO_ID, index)
             }
             return
         }
@@ -199,7 +252,7 @@ class GetMultiDelegate constructor(provider: GetMultiProvider) :
         // 当前Fragment
         val current = fragments[getCurrentIndex(newId)]
         // 目标Fragment
-        val target = fragments[newIndex]
+        val target = fragments[index]
         // 开启事务
         val ft = fragmentManager.beginTransaction()
         // 切换不同的Fragment时，隐藏当前Fragment，并切换生命周期
@@ -214,7 +267,7 @@ class GetMultiDelegate constructor(provider: GetMultiProvider) :
             ft.show(target)
             ft.setMaxLifecycle(target, State.RESUMED)
             ft.commitAllowingStateLoss()
-            indexCache.put(newId, newIndex)
+            indexCache.put(newId, index)
         }
     }
 
@@ -228,36 +281,34 @@ class GetMultiDelegate constructor(provider: GetMultiProvider) :
         showFragment(containerId, fragments.indexOf(fragment))
     }
 
-//    /**
-//     * 添加Fragment界面
-//     * @param containerId 容器ID
-//     * @param clazz Fragment
-//     * @param args 参数
-//     */
-//    fun addFragment(@IdRes containerId: Int?, clazz: Class<out Fragment>, args: Bundle?) {
-//        val fragment = instantiateFragment(clazz, args)
-//        addFragment(containerId, fragment)
-//    }
-
     /**
      * 添加Fragment界面
      * @param containerId 容器ID
      * @param fragment Fragment
      */
-    fun addFragment(@IdRes containerId: Int?, fragment: Fragment) {
+    @Suppress("NotifyDataSetChanged")
+    fun addFragment(@IdRes containerId: Int?, fragment: Fragment, index: Int?) {
         val newId = containerId ?: View.NO_ID
         // 获取Fragment列表
-        val fragments = getFragments(newId).also { it.add(fragment) }
+        val fragments = getFragments(newId)
+        // 新的位置
+        val newIndex = (index ?: fragments.size).let {
+            if (it < 0) 0
+            else if (it > fragments.size - 1) fragments.size
+            else it
+        }
         // 存入缓存
+        fragments.add(newIndex, fragment)
         fragmentCache.put(newId, fragments)
         // 处理容器是ViewPager2的情况
         if (newId == View.NO_ID) {
             viewPager?.let {
                 val adapter = it.adapter as? GetMultiFragmentAdapter
-                adapter?.let {
-                    adapter.fragments.add(fragment)
-                    adapter.notifyItemInserted(adapter.fragments.size - 1)
-                }
+                    ?: getFragmentAdapter(fragments).also { o -> it.adapter = o }
+                adapter.fragments.clear()
+                adapter.fragments.addAll(fragments)
+                adapter.notifyDataSetChanged()
+                showFragment(View.NO_ID, newIndex)
             }
             return
         }
@@ -266,6 +317,8 @@ class GetMultiDelegate constructor(provider: GetMultiProvider) :
         ft.add(newId, fragment)
         ft.setMaxLifecycle(fragment, State.CREATED)
         ft.commitAllowingStateLoss()
+        // 显示新位置
+        showFragment(containerId, newIndex)
     }
 
     /**
@@ -273,28 +326,43 @@ class GetMultiDelegate constructor(provider: GetMultiProvider) :
      * @param index 位置
      */
     fun removeFragment(@IdRes containerId: Int?, index: Int?) {
+        // 无效的索引，不需要做任何操作
+        if (index == null) {
+            GetLog.w(
+                GetMultiDelegate::class.java,
+                "index is null, there will remove nothing."
+            )
+            return
+        }
         // 获取新的ID
         val newId = containerId ?: View.NO_ID
         // 获取Fragment列表
         val fragments = getFragments(newId)
-        // 判断是否是有效的位置
-        val newIndex = index ?: 0
-        // 队列为空不继续
-        if (fragments.isEmpty()) return
-        // 无效Index不继续
-        if (!(0 until fragments.size).contains(newIndex)) return
+        // 索引判断
+        index.let {
+            if (it < 0 || it > fragments.size - 1) {
+                GetLog.w(
+                    GetMultiDelegate::class.java,
+                    "%d is out of fragments index range, there will remove nothing."
+                )
+                return
+            }
+        }
         // 获取改变后的位置
-        val changedIndex = if (newIndex == 0) 0 else newIndex - 1
+        val changedIndex = if (index == 0) 0 else index - 1
         // 要移除的Fragment
-        val fragment = fragments[newIndex]
+        val fragment = fragments[index]
         // 处理容器是ViewPager2的情况
         viewPager?.let {
             // 从ViewPager2中移除Fragment
-            val adapter = viewPager!!.adapter as GetMultiFragmentAdapter
-            adapter.fragments.remove(fragment)
-            adapter.notifyItemRemoved(newIndex)
-            // 显示新位置的Fragment
-            showFragment(containerId, changedIndex)
+            val adapter = viewPager!!.adapter as? GetMultiFragmentAdapter
+            adapter?.let {
+                // 移除Fragment
+                it.fragments.remove(fragment)
+                it.notifyItemRemoved(index)
+                // 显示新位置的Fragment
+                showFragment(containerId, changedIndex)
+            }
             return
         }
         // 处理是普通容器的情况
@@ -326,7 +394,7 @@ class GetMultiDelegate constructor(provider: GetMultiProvider) :
         // 处理容器是ViewPager2的情况
         if (newId == View.NO_ID) {
             // 清除ViewPager2中的Fragment
-            removeVpFragments()
+            removeViewPagerFragments()
             return
         }
         // 处理是普通容器的情况
@@ -344,7 +412,7 @@ class GetMultiDelegate constructor(provider: GetMultiProvider) :
      */
     fun removeAllFragments() {
         // 清除ViewPager2中的Fragment
-        removeVpFragments()
+        removeViewPagerFragments()
         // 清理其他容器的Fragment
         val ft = fragmentManager.beginTransaction()
         for (i in 0 until fragmentCache.size()) {
@@ -361,33 +429,18 @@ class GetMultiDelegate constructor(provider: GetMultiProvider) :
     /**
      * 移除[ViewPager2]容器下所有的Fragment
      */
-    private fun removeVpFragments() {
+    @Suppress("NotifyDataSetChanged")
+    private fun removeViewPagerFragments() {
         viewPager?.let {
             // 从缓存中移除
             fragments.clear()
             fragmentCache.remove(View.NO_ID)
             // 更新Adapter
-            @Suppress("NotifyDataSetChanged")
-            it.adapter?.notifyDataSetChanged()
+            (it.adapter as? GetMultiFragmentAdapter)?.let { adapter ->
+                adapter.fragments.clear()
+                adapter.notifyDataSetChanged()
+            }
         }
-    }
-
-    /**
-     * 切换指定容器的Index
-     * @param containerId 指定容器
-     * @param fragments Fragment列表
-     */
-    private fun changeIndex(@IdRes containerId: Int?, fragments: List<Fragment>): Int {
-        val newId = containerId ?: View.NO_ID
-        val index = newId.let {
-            // 获取指定容器的Index
-            val index = getCurrentIndex(it)
-            // 获取有效的Index
-            val array = fragments.indices
-            if (array.contains(index)) index else 0
-        }
-        indexCache.put(newId, index)
-        return index
     }
 
     /**
@@ -406,45 +459,5 @@ class GetMultiDelegate constructor(provider: GetMultiProvider) :
         }
         indexCache.put(newId, index)
         return index
-    }
-
-    /**
-     * 生成Fragment适配器[GetMultiFragmentAdapter]
-     */
-    private fun getFragmentAdapter(fragmentList: List<Fragment>): GetMultiFragmentAdapter {
-        return if (provider is FragmentActivity) {
-            GetMultiFragmentAdapter(provider, fragmentList)
-        } else {
-            GetMultiFragmentAdapter((provider as Fragment), fragmentList)
-        }
-    }
-
-    /**
-     * 生成Fragment列表
-     * @param item 意图列表
-     */
-    private fun instantiateFragment(item: GetMultiItem): Fragment {
-        val name = item.targetClass.name
-        val classLoader = Get.context.classLoader
-        val fragmentFactory = fragmentManager.fragmentFactory
-        val fragment = fragmentFactory.instantiate(classLoader, name)
-        fragment.arguments = item.arguments
-        return fragment
-    }
-
-    /**
-     * 生成Fragment列表
-     * @param items [GetMultiItem]列表
-     */
-    private fun instantiateFragments(items: Array<GetMultiItem>): Array<Fragment> {
-        val fragmentFactory = fragmentManager.fragmentFactory
-        val classLoader = Get.context.classLoader
-        return Array(items.size) { i ->
-            val item = items[i]
-            val name = item.targetClass.name
-            val fragment = fragmentFactory.instantiate(classLoader, name)
-            fragment.arguments = item.arguments
-            fragment
-        }
     }
 }
