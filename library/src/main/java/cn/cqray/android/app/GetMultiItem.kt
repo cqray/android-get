@@ -1,4 +1,4 @@
-package cn.cqray.android.ui.multi
+package cn.cqray.android.app
 
 import android.os.Bundle
 import android.os.Parcelable
@@ -12,7 +12,7 @@ import java.util.ArrayList
  * @author Cqray
  */
 @Suppress("unused")
-class MultiItem2(
+class GetMultiItem(
     /** 目标Fragment的[Class] **/
     @Suppress val targetClass: Class<out Fragment>,
     /** 目标Fragment名称 **/

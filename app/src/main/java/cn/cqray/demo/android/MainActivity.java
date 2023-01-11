@@ -1,16 +1,18 @@
 package cn.cqray.demo.android;
 
+import android.graphics.Color;
 import android.os.Bundle;
 
 
 import org.jetbrains.annotations.Nullable;
 
 
-import cn.cqray.android.ui.multi.MultiItem2;
+import cn.cqray.android.app.GetMultiItem;
+import cn.cqray.android.ui.multi.GetMultiActivity;
 
-import cn.cqray.android.ui.multi.MultiTabActivity;
+public class MainActivity extends GetMultiActivity {
 
-public class MainActivity extends MultiTabActivity {
+
 
     @Override
     public void onCreating(@Nullable Bundle savedInstanceState) {
@@ -20,13 +22,28 @@ public class MainActivity extends MultiTabActivity {
 //
 //        findViewById(R.id.get_nav_content).setOnClickListener(v -> {});
 
+        setTabAtTop(true);
+        setTabElevation(90F);
+        setTabHeight(200F);
+
+        tabLayout.setBackgroundColor(Color.BLUE);
+        
+        
+
         loadMultiFragments(
-                new MultiItem2(MainFragment.class, "我的"),
-                new MultiItem2(MainFragment.class, "你的"),
-                new MultiItem2(MainFragment.class, "你的"),
-                new MultiItem2(MainFragment.class, "你的"),
-                new MultiItem2(MainFragment.class, "她的")
+                new GetMultiItem(MainFragment.class, "我的"),
+                new GetMultiItem(MainFragment.class, "你的"),
+                new GetMultiItem(MainFragment.class, "你的"),
+                new GetMultiItem(MainFragment.class, "你的"),
+                new GetMultiItem(MainFragment.class, "她的")
         );
+
+//        new Handler().postDelayed(new Runnable() {
+//            @Override
+//            public void run() {
+//                setTabAtTop(false);
+//            }
+//        }, 3000);
 //
 //        FragmentManager fm = getSupportFragmentManager();
 //        FragmentTransaction ft = fm.beginTransaction();

@@ -14,8 +14,8 @@ import androidx.viewpager2.widget.ViewPager2
 import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
 import cn.cqray.android.Get
 import cn.cqray.android.app.provider.GetMultiProvider
-import cn.cqray.android.ui.multi.MultiFragmentAdapter
-import cn.cqray.android.ui.multi.MultiItem2
+import cn.cqray.android.ui.multi.GetMultiFragmentAdapter
+import cn.cqray.android.app.GetMultiItem
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -117,7 +117,7 @@ class GetMultiDelegate constructor(provider: GetMultiProvider) :
     }
 
     @Suppress("unused")
-    fun loadMultiFragments(vp: ViewPager2, items: Array<MultiItem2>) {
+    fun loadMultiFragments(vp: ViewPager2, items: Array<GetMultiItem>) {
         // 生成Fragment数组
         val fragments = Array(items.size) { i -> instantiateFragment(items[i]) }
         // 加载对个Fragment
@@ -253,7 +253,7 @@ class GetMultiDelegate constructor(provider: GetMultiProvider) :
         // 处理容器是ViewPager2的情况
         if (newId == View.NO_ID) {
             viewPager?.let {
-                val adapter = it.adapter as? MultiFragmentAdapter
+                val adapter = it.adapter as? GetMultiFragmentAdapter
                 adapter?.let {
                     adapter.fragments.add(fragment)
                     adapter.notifyItemInserted(adapter.fragments.size - 1)
@@ -290,7 +290,7 @@ class GetMultiDelegate constructor(provider: GetMultiProvider) :
         // 处理容器是ViewPager2的情况
         viewPager?.let {
             // 从ViewPager2中移除Fragment
-            val adapter = viewPager!!.adapter as MultiFragmentAdapter
+            val adapter = viewPager!!.adapter as GetMultiFragmentAdapter
             adapter.fragments.remove(fragment)
             adapter.notifyItemRemoved(newIndex)
             // 显示新位置的Fragment
@@ -409,13 +409,13 @@ class GetMultiDelegate constructor(provider: GetMultiProvider) :
     }
 
     /**
-     * 生成Fragment适配器[MultiFragmentAdapter]
+     * 生成Fragment适配器[GetMultiFragmentAdapter]
      */
-    private fun getFragmentAdapter(fragmentList: List<Fragment>): MultiFragmentAdapter {
+    private fun getFragmentAdapter(fragmentList: List<Fragment>): GetMultiFragmentAdapter {
         return if (provider is FragmentActivity) {
-            MultiFragmentAdapter(provider, fragmentList)
+            GetMultiFragmentAdapter(provider, fragmentList)
         } else {
-            MultiFragmentAdapter((provider as Fragment), fragmentList)
+            GetMultiFragmentAdapter((provider as Fragment), fragmentList)
         }
     }
 
@@ -423,7 +423,7 @@ class GetMultiDelegate constructor(provider: GetMultiProvider) :
      * 生成Fragment列表
      * @param item 意图列表
      */
-    private fun instantiateFragment(item: MultiItem2): Fragment {
+    private fun instantiateFragment(item: GetMultiItem): Fragment {
         val name = item.targetClass.name
         val classLoader = Get.context.classLoader
         val fragmentFactory = fragmentManager.fragmentFactory
@@ -434,9 +434,9 @@ class GetMultiDelegate constructor(provider: GetMultiProvider) :
 
     /**
      * 生成Fragment列表
-     * @param items [MultiItem2]列表
+     * @param items [GetMultiItem]列表
      */
-    private fun instantiateFragments(items: Array<MultiItem2>): Array<Fragment> {
+    private fun instantiateFragments(items: Array<GetMultiItem>): Array<Fragment> {
         val fragmentFactory = fragmentManager.fragmentFactory
         val classLoader = Get.context.classLoader
         return Array(items.size) { i ->

@@ -8,7 +8,7 @@ import androidx.viewpager2.adapter.FragmentStateAdapter
  * Fragment适配器
  * @author Cqray
  */
-class MultiFragmentAdapter : FragmentStateAdapter {
+class GetMultiFragmentAdapter : FragmentStateAdapter {
 
     val fragments: MutableList<Fragment> = ArrayList()
 
