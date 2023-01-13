@@ -131,7 +131,6 @@ class StateDelegate(val provider: StateProvider) {
         } else {
             layout.addView(stateLayout)
         }
-        stateLayout.setBackgroundColor(Color.RED)
         // 设置容器偏移
         stateLayout.visibility = View.GONE
         stateLayout.post { refreshOffsets() }

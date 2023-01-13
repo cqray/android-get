@@ -62,16 +62,16 @@ open class GetMultiActivity : GetActivity(), GetMultiProvider {
 
     fun loadMultiFragments(vararg items: GetMultiItem) = viewModel.loadMultiFragments(*items)
 
-    override fun showFragment(fragment: Fragment) = viewModel.showFragment(fragment)
+    fun showFragment(fragment: Fragment) = viewModel.showFragment(fragment)
 
-    override fun showFragment(index: Int?) = viewModel.showFragment(index)
+    fun showFragment(index: Int?) = viewModel.showFragment(index)
 
     fun addFragment(item: GetMultiItem, index: Int?) = viewModel.addFragment(item, index)
 
-    override fun removeFragment(index: Int?) = viewModel.removeFragment(index)
+    fun removeFragment(index: Int?) = viewModel.removeFragment(index)
 
-    override fun removeFragment(fragment: Fragment) = viewModel.removeFragment(fragment)
+    fun removeFragment(fragment: Fragment) = viewModel.removeFragment(fragment)
 
-    override fun removeFragments() = viewModel.removeFragments()
+    fun removeFragments() = viewModel.removeFragments()
 
 }

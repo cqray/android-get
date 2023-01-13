@@ -23,8 +23,7 @@ public class MainActivity extends GetMultiActivity {
 //        findViewById(R.id.get_nav_content).setOnClickListener(v -> {});
 
         setTabAtTop(true);
-        setTabElevation(90F);
-        setTabHeight(200F);
+
 
 //        tabLayout.setBackgroundColor(Color.BLUE);
         
@@ -43,9 +42,14 @@ public class MainActivity extends GetMultiActivity {
         addFragment(new GetMultiItem(MainFragment.class,"tata"), 1);
 
 
-        showFragment(-1);
+        removeFragment(1);
+//        showFragment(-1);
+//
+//        getMultiDelegate().removeFragment(R.id.get_nav_view, -1);
 
-        removeFragments();
+//        removeFragments();
+
+//        removeFragments();
 //        getMultiDelegate().removeAllFragments();
 
 //        new Handler().postDelayed(new Runnable() {

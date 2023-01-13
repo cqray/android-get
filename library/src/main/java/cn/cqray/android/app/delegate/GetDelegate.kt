@@ -9,6 +9,7 @@ import cn.cqray.android.app.provider.GetNavProvider
 import cn.cqray.android.app.provider.GetProvider
 import cn.cqray.android.app.provider.GetViewProvider
 import cn.cqray.android.log.GetLog
+import cn.cqray.android.log.LogLevel
 import java.util.HashMap
 
 @Suppress("unchecked_cast", "unused")
@@ -31,6 +32,16 @@ open class GetDelegate<P : GetProvider>(open val provider: P) {
                 })
             }
         })
+    }
+
+    internal open fun printLog(level: LogLevel, method: String, text: String) {
+        // 日志内容
+        val message = " \n" +
+                "       Owner Class: ${provider::class.java.name}\n" +
+                "       Used Method: $method\n" +
+                "       Content: $text"
+        // 打印日志
+        GetLog.print(level, this::class.java, message, null)
     }
 
     protected open fun onCleared() {}

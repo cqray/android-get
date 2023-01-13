@@ -10,6 +10,8 @@ import cn.cqray.android.app.delegate.GetMultiDelegate
 import cn.cqray.android.app.provider.GetMultiProvider
 import cn.cqray.android.databinding.GetLayoutMultiTabBinding
 import cn.cqray.android.lifecycle.GetViewModel
+import cn.cqray.android.log.GetLog
+import cn.cqray.android.log.LogLevel
 import cn.cqray.android.util.Sizes
 import com.flyco.tablayout.CommonTabLayout
 import com.flyco.tablayout.listener.CustomTabEntity
@@ -117,7 +119,7 @@ internal class GetMultiFragmentViewModel(lifecycleOwner: LifecycleOwner) :
      * 初始化[GetMultiActivity]及[GetMultiFragment]的控件
      */
     private fun initGetMultiView() {
-        when(lifecycleOwner) {
+        when (lifecycleOwner) {
             // 给GetMultiActivity控件赋值
             is GetMultiActivity -> {
                 lifecycleOwner.mViewPager = viewPager
@@ -217,7 +219,10 @@ internal class GetMultiFragmentViewModel(lifecycleOwner: LifecycleOwner) :
         // 设置ViewPager2最大缓存数
         viewPager.offscreenPageLimit = if (items.isEmpty()) 5 else items.size
         // 加载Fragment
-        delegate?.loadMultiFragments(viewPager, arrayOf(*items))
+        delegate?.loadMultiFragments(viewPager, Array(items.size) {
+            val item = items[it]
+            delegate.instantiateFragment(item.targetClass, item.arguments)
+        })
     }
 
     /**
@@ -226,8 +231,11 @@ internal class GetMultiFragmentViewModel(lifecycleOwner: LifecycleOwner) :
      */
     fun showFragment(index: Int?) {
         delegate?.let {
-            val newIndex = index ?: 0
-            if (!(0 until it.fragments.size).contains(newIndex)) return
+            val newIndex = index ?: -1
+            if (!(0 until it.fragments.size).contains(newIndex)) {
+                it.printLog(LogLevel.W, "showFragment","[$index] is invalid, there will do nothing.")
+                return
+            }
             it.showFragment(View.NO_ID, newIndex)
             tabLayout.currentTab = newIndex
         }
@@ -247,7 +255,7 @@ internal class GetMultiFragmentViewModel(lifecycleOwner: LifecycleOwner) :
     fun addFragment(item: GetMultiItem, index: Int?) {
         delegate?.let {
             // 生成新的Fragment
-            val newIndex = (index ?: it.fragments.size).let { index->
+            val newIndex = (index ?: it.fragments.size).let { index ->
                 if (index < 0) 0
                 else if (index > it.fragments.size - 1) it.fragments.size
                 else index
@@ -263,7 +271,7 @@ internal class GetMultiFragmentViewModel(lifecycleOwner: LifecycleOwner) :
             tabData.add(newIndex, entry)
             changeTabData()
             // 添加新的Fragment
-            val fragment = it.instantiateFragment(item)
+            val fragment = it.instantiateFragment(item.targetClass, item.arguments)
             it.addFragment(View.NO_ID, fragment, newIndex)
         }
     }
@@ -274,8 +282,11 @@ internal class GetMultiFragmentViewModel(lifecycleOwner: LifecycleOwner) :
      */
     fun removeFragment(index: Int?) {
         delegate?.let {
-            val newIndex = index ?: 0
-            if (!(0 until it.fragments.size).contains(newIndex)) return
+            val newIndex = index ?: -1
+            if (!(0 until it.fragments.size).contains(newIndex)) {
+                it.printLog(LogLevel.W, "removeFragment","[$index] is invalid, there will remove nothing.")
+                return
+            }
             it.removeFragment(View.NO_ID, newIndex)
             tabData.removeAt(newIndex)
             tabLayout.setTabData(tabData)

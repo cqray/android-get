@@ -9,6 +9,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.DrawableRes
+import androidx.annotation.IdRes
 import androidx.annotation.LayoutRes
 import androidx.annotation.StringRes
 import androidx.core.content.ContextCompat
@@ -49,4 +50,7 @@ object ContextUtils {
         Log.e("数据", "我是太难：" + (act == null))
         return LayoutInflater.from(get()).inflate(resId, parent, false)
     }
+
+    @JvmStatic
+    fun getIdName(@IdRes id: Int?) = if (id == null) null else resources.getResourceName(id)
 }
