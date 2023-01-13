@@ -1,14 +1,12 @@
 package cn.cqray.demo.android;
 
-import android.graphics.Color;
 import android.os.Bundle;
-import android.view.View;
 
 
 import org.jetbrains.annotations.Nullable;
 
 
-import cn.cqray.android.app.GetMultiItem;
+import cn.cqray.android.ui.multi.GetMultiItem;
 import cn.cqray.android.ui.multi.GetMultiActivity;
 
 public class MainActivity extends GetMultiActivity {

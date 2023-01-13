@@ -6,7 +6,6 @@ import androidx.annotation.NonNull
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.widget.ViewPager2
 import cn.cqray.android.app.GetActivity
-import cn.cqray.android.app.GetMultiItem
 import cn.cqray.android.app.provider.GetMultiProvider
 import cn.cqray.android.lifecycle.GetViewModelProvider
 import com.flyco.tablayout.CommonTabLayout
@@ -15,6 +14,7 @@ import com.flyco.tablayout.CommonTabLayout
  * 底部多Fragment界面
  * @author Cqray
  */
+@Suppress("unused", "MemberVisibilityCanBePrivate")
 open class GetMultiActivity : GetActivity(), GetMultiProvider {
 
     private lateinit var viewModel: GetMultiFragmentViewModel
@@ -36,11 +36,6 @@ open class GetMultiActivity : GetActivity(), GetMultiProvider {
     @Suppress
     val tabLayout: CommonTabLayout
         get() = viewModel.tabLayout
-
-//        protected set
-//
-//    @JvmField
-//    val tabLayout: CommonTabLayout by lazy { viewModel.tabLayout }
 
 
     override fun onCreating(savedInstanceState: Bundle?) {

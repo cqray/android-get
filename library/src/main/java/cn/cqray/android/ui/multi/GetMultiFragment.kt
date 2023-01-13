@@ -6,7 +6,6 @@ import androidx.annotation.NonNull
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.widget.ViewPager2
 import cn.cqray.android.app.GetFragment
-import cn.cqray.android.app.GetMultiItem
 import cn.cqray.android.app.provider.GetMultiProvider
 import cn.cqray.android.lifecycle.GetViewModelProvider
 import com.flyco.tablayout.CommonTabLayout
@@ -15,6 +14,7 @@ import com.flyco.tablayout.CommonTabLayout
  * 多Fragment界面
  * @author Cqray
  */
+@Suppress("unused", "MemberVisibilityCanBePrivate")
 open class GetMultiFragment : GetFragment(), GetMultiProvider {
 
     /** [GetMultiFragmentViewModel]实例 **/

@@ -187,6 +187,14 @@ class GetMultiDelegate constructor(provider: GetMultiProvider) :
                     super.onPageSelected(position)
                     // 缓存索引
                     indexCache.put(View.NO_ID, position)
+                    // 获取ViewPager2缓存的Fragment
+                    val temp = this@GetMultiDelegate.fragments
+                    // 打印日志
+                    printLog(
+                        LogLevel.D,
+                        "onPageSelected",
+                        "Index has changed to [$position - ${temp[position]::class.java.simpleName}] in ViewPager2."
+                    )
                 }
             })
             // 设置当前项
@@ -225,7 +233,10 @@ class GetMultiDelegate constructor(provider: GetMultiProvider) :
             printLog(
                 LogLevel.D,
                 "showFragment",
-                "Index has changed to [$index - ${fragments[i]::class.java.simpleName}]."
+                "Index has changed to [$index - ${fragments[i]::class.java.simpleName}] in ${
+                    if ((containerId ?: View.NO_ID) == View.NO_ID) "ViewPager2."
+                    else "container[${ContextUtils.getIdName(containerId)}]."
+                }"
             )
         }
         // 新索引

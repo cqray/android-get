@@ -5,13 +5,10 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.LifecycleOwner
 import androidx.viewpager2.widget.ViewPager2
-import cn.cqray.android.app.GetMultiItem
 import cn.cqray.android.app.delegate.GetMultiDelegate
 import cn.cqray.android.app.provider.GetMultiProvider
 import cn.cqray.android.databinding.GetLayoutMultiTabBinding
 import cn.cqray.android.lifecycle.GetViewModel
-import cn.cqray.android.log.GetLog
-import cn.cqray.android.log.LogLevel
 import cn.cqray.android.util.Sizes
 import com.flyco.tablayout.CommonTabLayout
 import com.flyco.tablayout.listener.CustomTabEntity
@@ -58,7 +55,6 @@ internal class GetMultiFragmentViewModel(lifecycleOwner: LifecycleOwner) :
     val rootView: View get() = binding.root
 
     /** [ViewPager2]组件 **/
-    @Suppress
     val viewPager: ViewPager2
         get() {
             val vp = when (lifecycleOwner) {
@@ -70,7 +66,6 @@ internal class GetMultiFragmentViewModel(lifecycleOwner: LifecycleOwner) :
         }
 
     /** TabLayout控件 **/
-    @Suppress
     val tabLayout: CommonTabLayout
         get() {
             val vp = when (lifecycleOwner) {
@@ -97,7 +92,6 @@ internal class GetMultiFragmentViewModel(lifecycleOwner: LifecycleOwner) :
                 }
             }
         })
-
     }
 
     /**
@@ -232,12 +226,10 @@ internal class GetMultiFragmentViewModel(lifecycleOwner: LifecycleOwner) :
     fun showFragment(index: Int?) {
         delegate?.let {
             val newIndex = index ?: -1
-            if (!(0 until it.fragments.size).contains(newIndex)) {
-                it.printLog(LogLevel.W, "showFragment","[$index] is invalid, there will do nothing.")
-                return
-            }
             it.showFragment(View.NO_ID, newIndex)
-            tabLayout.currentTab = newIndex
+            if ((0 until it.fragments.size).contains(newIndex)) {
+                tabLayout.currentTab = newIndex
+            }
         }
     }
 
@@ -248,10 +240,18 @@ internal class GetMultiFragmentViewModel(lifecycleOwner: LifecycleOwner) :
     fun showFragment(fragment: Fragment) {
         delegate?.let {
             val index = it.fragments.indexOf(fragment)
-            showFragment(index)
+            it.showFragment(View.NO_ID, fragment)
+            if ((0 until it.fragments.size).contains(index)) {
+                tabLayout.currentTab = index
+            }
         }
     }
 
+    /**
+     * 添加Fragment
+     * @param item 添加项
+     * @param index 位置
+     */
     fun addFragment(item: GetMultiItem, index: Int?) {
         delegate?.let {
             // 生成新的Fragment
@@ -283,14 +283,15 @@ internal class GetMultiFragmentViewModel(lifecycleOwner: LifecycleOwner) :
     fun removeFragment(index: Int?) {
         delegate?.let {
             val newIndex = index ?: -1
-            if (!(0 until it.fragments.size).contains(newIndex)) {
-                it.printLog(LogLevel.W, "removeFragment","[$index] is invalid, there will remove nothing.")
-                return
-            }
+            val fragments = it.fragments
+            // 移除Fragment
             it.removeFragment(View.NO_ID, newIndex)
-            tabData.removeAt(newIndex)
-            tabLayout.setTabData(tabData)
-            tabLayout.currentTab = it.currentIndex
+            // 有效index，则操作TabLayout
+            if ((0 until fragments.size).contains(newIndex)) {
+                tabData.removeAt(newIndex)
+                tabLayout.setTabData(tabData)
+                tabLayout.currentTab = it.currentIndex
+            }
         }
     }
 
@@ -300,8 +301,16 @@ internal class GetMultiFragmentViewModel(lifecycleOwner: LifecycleOwner) :
      */
     fun removeFragment(fragment: Fragment) {
         delegate?.let {
-            val index = it.fragments.indexOf(fragment)
-            removeFragment(index)
+            val fragments = it.fragments
+            val index = fragments.indexOf(fragment)
+            // 移除Fragment
+            it.removeFragment(View.NO_ID, fragment)
+            // 合法index，则操作TabLayout
+            if ((0 until fragments.size).contains(index)) {
+                tabData.removeAt(index)
+                tabLayout.setTabData(tabData)
+                tabLayout.currentTab = it.currentIndex
+            }
         }
     }
 
