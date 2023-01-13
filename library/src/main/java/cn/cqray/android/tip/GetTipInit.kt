@@ -8,9 +8,9 @@ import java.io.Serializable
  * Tip配置属性
  * @author Cqray
  */
-class TipInit : Serializable {
+class GetTipInit : Serializable {
     /** Tip 适配器  */
-    var tipAdapter: TipAdapter? = null
+    var tipAdapter: GetTipAdapter? = null
 
     /** 在底部  */
     var atBottom = true

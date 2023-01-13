@@ -6,7 +6,7 @@ import androidx.annotation.NonNull
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.widget.ViewPager2
 import cn.cqray.android.app.GetFragment
-import cn.cqray.android.app.provider.GetMultiProvider
+import cn.cqray.android.app.GetMultiProvider
 import cn.cqray.android.lifecycle.GetViewModelProvider
 import com.flyco.tablayout.CommonTabLayout
 
@@ -17,8 +17,8 @@ import com.flyco.tablayout.CommonTabLayout
 @Suppress("unused", "MemberVisibilityCanBePrivate")
 open class GetMultiFragment : GetFragment(), GetMultiProvider {
 
-    /** [GetMultiFragmentViewModel]实例 **/
-    private lateinit var viewModel: GetMultiFragmentViewModel
+    /** [GetMultiViewModel]实例 **/
+    private lateinit var viewModel: GetMultiViewModel
 
     /** [ViewPager2]实例，同[viewPager] **/
     @NonNull
@@ -33,23 +33,19 @@ open class GetMultiFragment : GetFragment(), GetMultiProvider {
     var mTabLayout: CommonTabLayout? = null
 
     /** [ViewPager2]实例，同[mViewPager] **/
-    @Suppress
-    val viewPager: ViewPager2
-        get() = viewModel.viewPager
+
+    val viewPager: ViewPager2 get() = viewModel.viewPager
 
     /** [CommonTabLayout]实例，同[mTabLayout] **/
-    @Suppress
-    val tabLayout: CommonTabLayout
-        get() = viewModel.tabLayout
+
+    val tabLayout: CommonTabLayout get() = viewModel.tabLayout
 
     /** TabLayout是否在头部 **/
-    @Suppress
-    val tabAtTop
-        get() = viewModel.tabAtTop
+    val tabAtTop get() = viewModel.tabAtTop
 
     override fun onCreating(savedInstanceState: Bundle?) {
         super.onCreating(savedInstanceState)
-        viewModel = GetViewModelProvider(this).get(GetMultiFragmentViewModel::class.java)
+        viewModel = GetViewModelProvider(this).get(GetMultiViewModel::class.java)
         setNativeContentView(viewModel.rootView)
     }
 

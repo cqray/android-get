@@ -6,7 +6,7 @@ import java.io.Serializable
  * Tip适配器
  * @author Cqray
  */
-interface TipAdapter : Serializable {
+interface GetTipAdapter : Serializable {
     /**
      * 显示Toast
      * @param tag      Tip标识
@@ -17,9 +17,9 @@ interface TipAdapter : Serializable {
      */
     fun show(
         tag: Any?,
-        level: TipLevel?,
+        level: GetTipLevel?,
         text: CharSequence?,
-        init: TipInit?,
+        init: GetTipInit?,
         callback: GetTipCallback?
     )
 }

@@ -2,6 +2,8 @@ package cn.cqray.android.app
 
 import android.os.Bundle
 import cn.cqray.android.R
+import cn.cqray.android.app.GetActivity
+import cn.cqray.android.app.GetIntent
 
 /**
  * [GetActivity]导航入口界面

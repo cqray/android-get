@@ -1,14 +1,10 @@
-package cn.cqray.android.app.provider
+package cn.cqray.android.app
 
 import android.app.Activity
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import cn.cqray.android.anim.FragmentAnimator
 import cn.cqray.android.Get
-import cn.cqray.android.app.GetIntent
-import cn.cqray.android.app.GetIntentCallback
-import cn.cqray.android.app.delegate.GetDelegate
-import cn.cqray.android.app.delegate.GetNavDelegate
 
 /**
  * [Get]导航功能提供器

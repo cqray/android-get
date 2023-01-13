@@ -2,9 +2,10 @@ package cn.cqray.android.app
 
 import androidx.annotation.Keep
 import cn.cqray.android.Get
+import cn.cqray.android.anim.FragmentAnimator
 import cn.cqray.android.log.LogInit
 import cn.cqray.android.state.StateInit
-import cn.cqray.android.tip.TipInit
+import cn.cqray.android.tip.GetTipInit
 import java.io.Serializable
 
 @Keep
@@ -23,8 +24,11 @@ class GetInit : Serializable {
         }
 
     /** [Get]提示初始化配置  **/
-    var tipInit: TipInit? = TipInit()
+    var tipInit: GetTipInit? = GetTipInit()
         set(init) {
-            field = init ?: TipInit()
+            field = init ?: GetTipInit()
         }
+
+    /** [Get]Fragment全局动画 **/
+    var fragmentAnimator: FragmentAnimator? = null
 }

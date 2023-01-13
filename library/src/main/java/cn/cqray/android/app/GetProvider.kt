@@ -1,4 +1,4 @@
-package cn.cqray.android.app.provider
+package cn.cqray.android.app
 
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner

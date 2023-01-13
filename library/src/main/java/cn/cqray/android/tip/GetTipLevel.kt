@@ -4,7 +4,7 @@ package cn.cqray.android.tip
  * Tip 级别
  * @author Cqray
  */
-enum class TipLevel {
+enum class GetTipLevel {
     /** 一般提示  */
     INFO,
 

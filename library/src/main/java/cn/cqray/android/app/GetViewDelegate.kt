@@ -1,8 +1,7 @@
-package cn.cqray.android.app.delegate
+package cn.cqray.android.app
 
 import android.app.Activity
 import android.content.Context
-import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import android.util.Log
@@ -21,9 +20,6 @@ import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.*
 import cn.cqray.android.R
 import cn.cqray.android.app.*
-import cn.cqray.android.app.GetUtils
-import cn.cqray.android.app.provider.GetNavProvider
-import cn.cqray.android.app.provider.GetViewProvider
 import cn.cqray.android.exc.ExceptionDispatcher
 import cn.cqray.android.exc.ExceptionType
 import cn.cqray.android.state.StateDelegate
@@ -34,7 +30,6 @@ import cn.cqray.android.util.ContextUtils.inflate
 import cn.cqray.android.widget.Toolbar
 import com.scwang.smart.refresh.layout.SmartRefreshLayout
 import java.util.*
-import kotlin.collections.HashMap
 
 /**
  * 界面布局代理

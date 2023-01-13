@@ -5,8 +5,6 @@ import android.app.Activity
 import android.text.TextUtils
 import androidx.activity.ComponentActivity
 import androidx.fragment.app.Fragment
-import cn.cqray.android.app.provider.GetNavProvider
-import cn.cqray.android.app.provider.GetViewProvider
 import cn.cqray.android.util.ContextUtils.resources
 import org.xmlpull.v1.XmlPullParser
 

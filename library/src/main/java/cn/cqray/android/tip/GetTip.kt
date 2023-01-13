@@ -22,6 +22,7 @@ import java.util.*
  * [Get]全局提示
  * @author Cqray
  */
+@Suppress("unused", "MemberVisibilityCanBePrivate")
 object GetTip {
 
     /** 提示[Toast] **/
@@ -66,7 +67,6 @@ object GetTip {
      * 初始化Toast
      * @param tipTask [TipTask]
      */
-
     private fun initTip(tipTask: TipTask) {
         val context = context
         val dm = context.resources.displayMetrics
@@ -117,9 +117,9 @@ object GetTip {
     /**
      * 设置Tip控件背景
      * @param view     文本控件 [TextView]
-     * @param init 配置属性 [TipInit]
+     * @param init 配置属性 [GetTipInit]
      */
-    private fun setTipBackground(view: TextView, init: TipInit) {
+    private fun setTipBackground(view: TextView, init: GetTipInit) {
         val radiiCount = 8
         var radii = init.backgroundRadii
         // 设置默认的圆角
@@ -137,9 +137,9 @@ object GetTip {
 
     /**
      * 设置Tip控件位置
-     * @param init 配置属性 [TipInit]
+     * @param init 配置属性 [GetTipInit]
      */
-    private fun setTipLocation(view: TextView, init: TipInit) {
+    private fun setTipLocation(view: TextView, init: GetTipInit) {
         val params = view.layoutParams as FrameLayout.LayoutParams
         val vGravity = if (init.atBottom) Gravity.BOTTOM else Gravity.TOP
         params.gravity = Gravity.CENTER_HORIZONTAL or vGravity
@@ -171,9 +171,8 @@ object GetTip {
      * @param text Tip内容 [CharSequence]
      */
     @JvmStatic
-    @Suppress("unused")
     fun show(text: CharSequence?) = show(
-        level = TipLevel.INFO,
+        level = GetTipLevel.INFO,
         text = text,
         init = null,
         callback = null
@@ -185,9 +184,8 @@ object GetTip {
      * @param callback TIP回调 [GetTipCallback]
      */
     @JvmStatic
-    @Suppress("unused")
     fun show(text: CharSequence?, callback: GetTipCallback?) = show(
-        level = TipLevel.INFO,
+        level = GetTipLevel.INFO,
         text = text,
         init = null,
         callback = callback
@@ -195,20 +193,20 @@ object GetTip {
 
     /**
      * 显示Tip
-     * @param level    Tip级别 [TipLevel]
-     * @param text     Tip内容 [CharSequence]
-     * @param init Tip属性 [TipInit]
+     * @param level Tip级别 [GetTipLevel]，默认INFO
+     * @param text Tip内容 [CharSequence]
+     * @param init Tip属性 [GetTipInit]
      * @param callback TIP回调 [GetTipCallback]
      */
     @JvmStatic
     fun show(
-        level: TipLevel?,
+        level: GetTipLevel?,
         text: CharSequence?,
-        init: TipInit?,
+        init: GetTipInit?,
         callback: GetTipCallback?
     ) {
         val tipTask = TipTask()
-        tipTask.level = level ?: TipLevel.INFO
+        tipTask.level = level ?: GetTipLevel.INFO
         tipTask.text = text
         tipTask.init = init ?: Get.init.tipInit!!
         tipTask.callback = callback
@@ -218,7 +216,7 @@ object GetTip {
 
 private class TipTask {
     /** Tip等级  */
-    var level: TipLevel? = null
+    var level: GetTipLevel? = null
 
     /** 文本  */
     var text: CharSequence? = null
@@ -227,5 +225,5 @@ private class TipTask {
     var callback: GetTipCallback? = null
 
     /** Tip属性  */
-    lateinit var init: TipInit
+    lateinit var init: GetTipInit
 }

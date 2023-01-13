@@ -1,6 +1,6 @@
 package cn.cqray.android.state
 
-import cn.cqray.android.app.provider.GetProvider
+import cn.cqray.android.app.GetProvider
 
 @JvmDefaultWithoutCompatibility
 interface StateProvider : GetProvider {

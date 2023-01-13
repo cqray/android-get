@@ -1,11 +1,9 @@
-package cn.cqray.android.app.provider
+package cn.cqray.android.app
 
 import android.os.Bundle
 import androidx.annotation.IdRes
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.widget.ViewPager2
-import cn.cqray.android.app.delegate.GetDelegate
-import cn.cqray.android.app.delegate.GetMultiDelegate
 
 /**
  * 多[Fragment]显示提供器

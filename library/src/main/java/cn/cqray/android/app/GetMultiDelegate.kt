@@ -1,4 +1,4 @@
-package cn.cqray.android.app.delegate
+package cn.cqray.android.app
 
 import android.os.Bundle
 import android.util.SparseArray
@@ -14,7 +14,6 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
 import cn.cqray.android.Get
-import cn.cqray.android.app.provider.GetMultiProvider
 import cn.cqray.android.ui.multi.GetMultiFragmentAdapter
 import cn.cqray.android.log.LogLevel
 import cn.cqray.android.util.ContextUtils

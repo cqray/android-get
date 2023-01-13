@@ -4,12 +4,12 @@ package cn.cqray.android.tip
  * Tip适配器实现
  * @author Cqray
  */
-internal class TipAdapterImpl : TipAdapter {
+internal class GetTipAdapterImpl : GetTipAdapter {
     override fun show(
         tag: Any?,
-        level: TipLevel?,
+        level: GetTipLevel?,
         text: CharSequence?,
-        init: TipInit?,
+        init: GetTipInit?,
         callback: GetTipCallback?
     ) {
         // 显示Get框架Tip

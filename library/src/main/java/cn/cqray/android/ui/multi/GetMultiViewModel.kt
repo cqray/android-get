@@ -1,32 +1,34 @@
 package cn.cqray.android.ui.multi
 
+import android.annotation.SuppressLint
 import android.view.View
+import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.LifecycleOwner
 import androidx.viewpager2.widget.ViewPager2
-import cn.cqray.android.app.delegate.GetMultiDelegate
-import cn.cqray.android.app.provider.GetMultiProvider
-import cn.cqray.android.databinding.GetLayoutMultiTabBinding
+import cn.cqray.android.R
+import cn.cqray.android.app.GetMultiDelegate
+import cn.cqray.android.app.GetMultiProvider
 import cn.cqray.android.lifecycle.GetViewModel
+import cn.cqray.android.util.ContextUtils
 import cn.cqray.android.util.Sizes
 import com.flyco.tablayout.CommonTabLayout
 import com.flyco.tablayout.listener.CustomTabEntity
 import com.flyco.tablayout.listener.OnTabSelectListener
+import com.google.android.material.navigation.NavigationView
 
 /**
  * 多Fragment控制ViewModel
  * @author Cqray
  */
-internal class GetMultiFragmentViewModel(lifecycleOwner: LifecycleOwner) :
-    GetViewModel(lifecycleOwner) {
+@SuppressLint("StaticFieldLeak")
+internal class GetMultiViewModel(lifecycleOwner: LifecycleOwner) : GetViewModel(lifecycleOwner) {
 
-    /** TabLayout是否在顶部 **/
-    var tabAtTop: Boolean = false
-        private set
+    /** 所有控件 **/
+    private val views = MutableList<View?>(5) { null }
 
-    /** ViewBinding实例 **/
-    private var binding: GetLayoutMultiTabBinding
+    /** 位置信息，TabLayout是否在顶部 **/
+    private val location = arrayOf(false)
 
     /** 多界面管理实例 **/
     private val delegate: GetMultiDelegate?
@@ -36,13 +38,16 @@ internal class GetMultiFragmentViewModel(lifecycleOwner: LifecycleOwner) :
 
     // 初始化
     init {
-        val layoutInflater = if (lifecycleOwner is Fragment) {
-            lifecycleOwner.layoutInflater
-        } else (lifecycleOwner as FragmentActivity).layoutInflater
+        // 初始化控件
+        views[0] = ContextUtils.inflate(R.layout.get_layout_multi_tab)
+        views[0]?.let {
+            views[1] = it.findViewById(R.id.get_top_nav)
+            views[2] = it.findViewById(R.id.get_bottom_nav)
+            views[3] = it.findViewById(R.id.get_nav_content)
+            views[4] = it.findViewById(R.id.get_nav_tab)
+        }
         // 获取多Fragment委托
         delegate = (lifecycleOwner as? GetMultiProvider)?.multiDelegate
-        // 初始化Binding
-        binding = GetLayoutMultiTabBinding.inflate(layoutInflater)
         // 初始化ViewPager2
         initViewPager()
         // 初始化TabLayout
@@ -51,8 +56,11 @@ internal class GetMultiFragmentViewModel(lifecycleOwner: LifecycleOwner) :
         initGetMultiView()
     }
 
-    /** 获取根控件 **/
-    val rootView: View get() = binding.root
+    /** TabLayout是否在顶部 **/
+    val tabAtTop: Boolean get() = location[0]
+
+    /** 根布局 **/
+    val rootView : View get() = views[0]!!
 
     /** [ViewPager2]组件 **/
     val viewPager: ViewPager2
@@ -62,33 +70,35 @@ internal class GetMultiFragmentViewModel(lifecycleOwner: LifecycleOwner) :
                 is GetMultiFragment -> lifecycleOwner.mViewPager
                 else -> null
             }
-            return vp ?: binding.getNavContent
+            return vp ?: views[3] as ViewPager2
         }
 
     /** TabLayout控件 **/
     val tabLayout: CommonTabLayout
         get() {
-            val vp = when (lifecycleOwner) {
+            val tl = when (lifecycleOwner) {
                 is GetMultiActivity -> lifecycleOwner.mTabLayout
                 is GetMultiFragment -> lifecycleOwner.mTabLayout
                 else -> null
             }
-            return vp ?: binding.getNavTab
+            return tl ?: views[4] as CommonTabLayout
         }
+
+    override fun onCleared() {
+        super.onCleared()
+        views.clear()
+    }
 
     /**
      * 初始化ViewPager2
      */
     private fun initViewPager() {
-        binding.getNavContent.registerOnPageChangeCallback(object :
-            ViewPager2.OnPageChangeCallback() {
+        viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
                 super.onPageSelected(position)
                 try {
-
                     tabLayout.currentTab = position
-                } catch (e: java.lang.Exception) {
-                    e.printStackTrace()
+                } catch (ignore: Exception) {
                 }
             }
         })
@@ -131,10 +141,16 @@ internal class GetMultiFragmentViewModel(lifecycleOwner: LifecycleOwner) :
      * 改变TabLayout位置
      */
     private fun changeTabLocation() {
-        binding.getBottomNav.removeAllViews()
-        binding.getTopNav.removeAllViews()
-        if (tabAtTop) binding.getTopNav.addView(tabLayout)
-        else binding.getBottomNav.addView(tabLayout)
+        // 底部
+        (views[2] as? ViewGroup)?.let {
+            it.removeAllViews()
+            if (!tabAtTop) it.addView(tabLayout)
+        }
+        // 顶部
+        (views[1] as? ViewGroup)?.let {
+            it.removeAllViews()
+            if (tabAtTop) it.addView(tabLayout)
+        }
     }
 
     @Suppress("unchecked_cast")
@@ -157,7 +173,7 @@ internal class GetMultiFragmentViewModel(lifecycleOwner: LifecycleOwner) :
      * @param top 是否在顶部
      */
     fun setTabAtTop(top: Boolean?) = top?.let {
-        tabAtTop = it
+        location[0] = it
         changeTabLocation()
     }
 
@@ -168,8 +184,8 @@ internal class GetMultiFragmentViewModel(lifecycleOwner: LifecycleOwner) :
     fun setTabElevation(elevation: Float?) {
         elevation?.let {
             val size = Sizes.dp2px(elevation)
-            binding.getTopNav.elevation = size.toFloat()
-            binding.getBottomNav.elevation = size.toFloat()
+            (views[1] as? NavigationView)?.elevation = size.toFloat()
+            (views[2] as? NavigationView)?.elevation = size.toFloat()
         }
     }
 

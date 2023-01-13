@@ -10,7 +10,7 @@ import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import cn.cqray.android.Get
 import cn.cqray.android.app.GetManager
-import cn.cqray.android.app.provider.GetNavProvider
+import cn.cqray.android.app.GetNavProvider
 import cn.cqray.android.log.GetLog
 
 /**

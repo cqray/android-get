@@ -1,20 +1,22 @@
-package cn.cqray.android.app.delegate
+package cn.cqray.android.app
 
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import cn.cqray.android.Get
-import cn.cqray.android.app.GetManager
-import cn.cqray.android.app.provider.GetMultiProvider
-import cn.cqray.android.app.provider.GetNavProvider
-import cn.cqray.android.app.provider.GetProvider
-import cn.cqray.android.app.provider.GetViewProvider
 import cn.cqray.android.log.GetLog
 import cn.cqray.android.log.LogLevel
+import cn.cqray.android.tip.GetTipDelegate
+import cn.cqray.android.tip.GetTipProvider
 import java.util.HashMap
 
-@Suppress("unchecked_cast", "unused")
-open class GetDelegate<P : GetProvider>(open val provider: P) {
+/**
+ * [Get]委托基类
+ * @author Cqray
+ */
+@Suppress("unused")
+open class GetDelegate<P : GetProvider>(val provider: P) {
 
+    /** [GetProvider]子类类名 **/
     private lateinit var providerClassName: String
 
     init {
@@ -25,7 +27,6 @@ open class GetDelegate<P : GetProvider>(open val provider: P) {
                 super.onDestroy(owner)
                 // 延时回收资源
                 GetManager.runOnUiThreadDelayed({
-
                     val key = "${provider.hashCode()}-$providerClassName"
                     cacheDelegates[key]?.onCleared()
                     cacheDelegates.remove(key)
@@ -34,14 +35,21 @@ open class GetDelegate<P : GetProvider>(open val provider: P) {
         })
     }
 
-    internal open fun printLog(level: LogLevel, method: String, text: String) {
+    /**
+     * 打印日志
+     * @param level 日志等级
+     * @param method 所在方法
+     * @param text 日志内容
+     * @param th 异常信息
+     */
+    internal fun printLog(level: LogLevel, method: String, text: String, th: Throwable? = null) {
         // 日志内容
         val message = " \n" +
                 "       Owner Class: ${provider::class.java.name}\n" +
                 "       Used Method: $method\n" +
                 "       Content: $text"
         // 打印日志
-        GetLog.print(level, this::class.java, message, null)
+        GetLog.print(level, this::class.java, message, th)
     }
 
     protected open fun onCleared() {}
@@ -53,12 +61,14 @@ open class GetDelegate<P : GetProvider>(open val provider: P) {
 
         @JvmStatic
         @Synchronized
+        @Suppress("unchecked_cast")
         fun <P : GetProvider, D : GetDelegate<*>> get(provider: P, clazz: Class<P>): D {
             val key = "${provider.hashCode()}-${clazz.name}"
             val delegate = cacheDelegates[key] ?: when (clazz) {
-                GetViewProvider::class.java -> GetViewDelegate(provider as GetViewProvider)
-                GetNavProvider::class.java -> GetNavDelegate(provider as GetNavProvider)
                 GetMultiProvider::class.java -> GetMultiDelegate(provider as GetMultiProvider)
+                GetNavProvider::class.java -> GetNavDelegate(provider as GetNavProvider)
+                GetTipProvider::class.java -> GetTipDelegate(provider as GetTipProvider)
+                GetViewProvider::class.java -> GetViewDelegate(provider as GetViewProvider)
                 else -> throw RuntimeException()
             }
             delegate.providerClassName = clazz.name

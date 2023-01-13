@@ -4,11 +4,6 @@ import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
-import cn.cqray.android.app.delegate.GetDelegate
-import cn.cqray.android.app.delegate.GetNavDelegate
-import cn.cqray.android.app.provider.GetNavProvider
-import cn.cqray.android.app.provider.GetProvider
-import cn.cqray.android.app.provider.GetViewProvider
 import cn.cqray.android.state.StateProvider
 import cn.cqray.android.tip.GetTipProvider
 import cn.cqray.android.widget.Toolbar

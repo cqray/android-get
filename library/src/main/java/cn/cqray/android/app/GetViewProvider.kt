@@ -1,10 +1,9 @@
-package cn.cqray.android.app.provider
+package cn.cqray.android.app
 
 import android.graphics.drawable.Drawable
 import android.view.View
 import androidx.annotation.DrawableRes
-import cn.cqray.android.app.delegate.GetDelegate
-import cn.cqray.android.app.delegate.GetViewDelegate
+import androidx.annotation.IdRes
 import cn.cqray.android.widget.Toolbar
 import com.scwang.smart.refresh.layout.SmartRefreshLayout
 
@@ -101,4 +100,5 @@ interface GetViewProvider : GetProvider {
     fun setBackgroundColor(color: Int) = viewDelegate.setBackgroundColor(color)
 
     fun setBackground(drawable: Drawable) = viewDelegate.setBackground(drawable)
+
 }

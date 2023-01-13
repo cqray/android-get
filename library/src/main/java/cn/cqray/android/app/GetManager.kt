@@ -2,6 +2,7 @@ package cn.cqray.android.app
 
 import android.app.Activity
 import android.app.Application
+import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -10,7 +11,6 @@ import android.view.WindowManager
 
 import androidx.fragment.app.FragmentActivity
 import cn.cqray.android.Get
-import cn.cqray.android.app.provider.GetNavProvider
 import cn.cqray.android.lifecycle.GetActivityLifecycleCallbacks
 import cn.cqray.android.lifecycle.GetAppLifecycleCallbacks
 import cn.cqray.android.lifecycle.GetFragmentLifecycleCallbacks
@@ -24,6 +24,7 @@ import java.util.*
  * [Get]生命周期管理器
  * @author Cqray
  */
+@Suppress("unused", "MemberVisibilityCanBePrivate")
 object GetManager {
 
     /** 通用[Handler]what值 **/
@@ -312,5 +313,20 @@ object GetManager {
         message.what = normalHandlerWhat
         message.obj = runnable
         handler.sendMessageDelayed(message, (delayed ?: 0).toLong())
+    }
+
+    @JvmStatic
+    fun toActivity(cls: Class<out Activity>) {
+
+    }
+
+    @JvmStatic
+    fun toActivity(intent: Intent) {
+
+    }
+
+    @JvmStatic
+    fun backToActivity(cls: Class<out Activity>, inclusive: Boolean?) {
+
     }
 }

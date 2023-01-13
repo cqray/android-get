@@ -1,7 +1,6 @@
 package cn.cqray.android.state
 
 import android.app.Activity
-import android.graphics.Color
 import android.util.TypedValue
 import android.view.View
 import android.view.ViewGroup
@@ -12,7 +11,7 @@ import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import cn.cqray.android.R
 import cn.cqray.android.app.GetUtils
-import cn.cqray.android.app.provider.GetViewProvider
+import cn.cqray.android.app.GetViewProvider
 import cn.cqray.android.log.GetLog
 
 import cn.cqray.android.util.ContextUtils
