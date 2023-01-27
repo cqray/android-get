@@ -1,5 +1,6 @@
 package cn.cqray.android.app
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.graphics.drawable.ColorDrawable
@@ -18,6 +19,7 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.*
+import cn.cqray.android.Get
 import cn.cqray.android.R
 import cn.cqray.android.app.*
 import cn.cqray.android.exc.ExceptionDispatcher
@@ -297,7 +299,7 @@ class GetViewDelegate(provider: GetViewProvider) :
     private fun setBackground(background: Any?) {
         if (mBackground == null) {
             mBackground = MutableLiveData()
-            mBackground!!.observe(provider as LifecycleOwner, { any: Any? ->
+            mBackground!!.observe(provider as LifecycleOwner) { any: Any? ->
                 if (provider is ComponentActivity) {
                     val isTranslucentOrFloating = ActivityUtils.isTranslucentOrFloating(provider)
                     if (isTranslucentOrFloating && rootView != null) {
@@ -325,7 +327,7 @@ class GetViewDelegate(provider: GetViewProvider) :
                         else -> rootView!!.background = null
                     }
                 }
-            })
+            }
         }
         mBackground!!.value = background
     }
@@ -396,6 +398,22 @@ class GetViewDelegate(provider: GetViewProvider) :
                 delegate.back()
             }
         }
+        if (toolbar == null) return
+        if (provider !is GetNavProvider) return
+
+        with(toolbar!!) {
+            val init = Get.init.toolbarInit!!
+            setUseRipple(init.useRipple)
+            setTitleCenter(init.titleCenter)
+            setTitleTextColor(init.titleTextColor)
+            setTitleTextSize(init.titleTextSize)
+
+            // 回退按钮部分
+            setBackIcon(init.backIcon)
+            setBackTextColor(init.backTextColor)
+            setBackTextSize(init.backTextSize)
+        }
+
 
 //        val strategy = Starter.getInstance().starterStrategy
 //        if (mToolbar != null) {
@@ -442,14 +460,4 @@ class GetViewDelegate(provider: GetViewProvider) :
             }
             return true
         }
-
-//    companion object {
-//        /** 委托缓存 [GetNavDelegate] **/
-//        private val cacheDelegates =
-//            Collections.synchronizedMap(HashMap<GetViewProvider, GetViewDelegate>())
-//
-//        @JvmStatic
-//        fun get(provider: GetViewProvider): GetViewDelegate =
-//            cacheDelegates[provider] ?: GetViewDelegate(provider)
-//    }
 }

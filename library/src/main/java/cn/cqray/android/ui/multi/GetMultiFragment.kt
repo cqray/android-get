@@ -2,6 +2,7 @@ package cn.cqray.android.ui.multi
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import androidx.annotation.Keep
 import androidx.annotation.NonNull
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.widget.ViewPager2
@@ -18,36 +19,31 @@ import com.flyco.tablayout.CommonTabLayout
 open class GetMultiFragment : GetFragment(), GetMultiProvider {
 
     /** [GetMultiViewModel]实例 **/
-    private lateinit var viewModel: GetMultiViewModel
+    private val viewModel: GetMultiViewModel by lazy {
+        GetViewModelProvider(this).get(GetMultiViewModel::class.java)
+    }
 
-    /** [ViewPager2]实例，同[viewPager] **/
+    /** [ViewPager2]实例 **/
+    @Keep
     @NonNull
     @JvmField
-    @SuppressLint("KotlinNullnessAnnotation")
-    var mViewPager: ViewPager2? = null
+    @Suppress("KotlinNullnessAnnotation")
+    val viewPager: ViewPager2? = null
 
-    /** [CommonTabLayout]实例，同[tabLayout] **/
+    /** [CommonTabLayout]实例 **/
+    @Keep
     @NonNull
     @JvmField
-    @SuppressLint("KotlinNullnessAnnotation")
-    var mTabLayout: CommonTabLayout? = null
-
-    /** [ViewPager2]实例，同[mViewPager] **/
-
-    val viewPager: ViewPager2 get() = viewModel.viewPager
-
-    /** [CommonTabLayout]实例，同[mTabLayout] **/
-
-    val tabLayout: CommonTabLayout get() = viewModel.tabLayout
-
-    /** TabLayout是否在头部 **/
-    val tabAtTop get() = viewModel.tabAtTop
+    @Suppress("KotlinNullnessAnnotation")
+    val tabLayout: CommonTabLayout? = null
 
     override fun onCreating(savedInstanceState: Bundle?) {
         super.onCreating(savedInstanceState)
-        viewModel = GetViewModelProvider(this).get(GetMultiViewModel::class.java)
         setNativeContentView(viewModel.rootView)
     }
+
+    /** TabLayout是否在头部 **/
+    fun isTabAtTop() = viewModel.tabAtTop
 
     fun setTabAtTop(tabAtTop: Boolean?) = viewModel.setTabAtTop(tabAtTop)
 

@@ -15,6 +15,7 @@ import cn.cqray.android.app.GetViewProvider
 import cn.cqray.android.log.GetLog
 
 import cn.cqray.android.util.ContextUtils
+import cn.cqray.android.util.SizeUnit
 import cn.cqray.android.util.Sizes
 import com.scwang.smart.refresh.layout.SmartRefreshLayout
 import com.scwang.smart.refresh.layout.api.RefreshFooter
@@ -165,8 +166,7 @@ class StateDelegate(val provider: StateProvider) {
      * @param bottom bottom方向偏移
      */
     fun setOffsets(start: Float?, top: Float?, end: Float?, bottom: Float?) {
-        val unit = TypedValue.COMPLEX_UNIT_DIP
-        setOffsets(start, top, end, bottom, unit)
+        setOffsets(start, top, end, bottom, SizeUnit.DIP)
     }
 
     /**
@@ -178,8 +178,8 @@ class StateDelegate(val provider: StateProvider) {
      * @param unit 单位，默认DIP
      */
     @Synchronized
-    fun setOffsets(start: Float?, top: Float?, end: Float?, bottom: Float?, unit: Int?) {
-        val newUnit = unit ?: TypedValue.COMPLEX_UNIT_DIP
+    fun setOffsets(start: Float?, top: Float?, end: Float?, bottom: Float?, unit: SizeUnit?) {
+        val newUnit = unit ?: SizeUnit.DIP
         if (start != null) offsets[0] = Sizes.applyDimension(start, newUnit).toInt()
         if (top != null) offsets[1] = Sizes.applyDimension(top, newUnit).toInt()
         if (end != null) offsets[2] = Sizes.applyDimension(end, newUnit).toInt()

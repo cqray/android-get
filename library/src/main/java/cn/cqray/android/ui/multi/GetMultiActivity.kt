@@ -1,16 +1,14 @@
 package cn.cqray.android.ui.multi
 
-import android.annotation.SuppressLint
 import android.os.Bundle
+import androidx.annotation.Keep
 import androidx.annotation.NonNull
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.widget.ViewPager2
-import cn.cqray.android.R
 import cn.cqray.android.app.GetActivity
 import cn.cqray.android.app.GetMultiProvider
 import cn.cqray.android.lifecycle.GetViewModelProvider
 import com.flyco.tablayout.CommonTabLayout
-import com.google.android.material.navigation.NavigationView
 
 /**
  * 底部多Fragment界面
@@ -20,34 +18,30 @@ import com.google.android.material.navigation.NavigationView
 open class GetMultiActivity : GetActivity(), GetMultiProvider {
 
     /** [GetMultiViewModel]实例 **/
-    private lateinit var viewModel: GetMultiViewModel
+    private val viewModel: GetMultiViewModel by lazy {
+        GetViewModelProvider(this).get(GetMultiViewModel::class.java)
+    }
 
-    /** [ViewPager2]实例，同[viewPager] **/
+    /** [ViewPager2]实例 **/
+    @Keep
     @NonNull
     @JvmField
-    @SuppressLint("KotlinNullnessAnnotation")
-    var mViewPager: ViewPager2? = null
+    @Suppress("KotlinNullnessAnnotation")
+    val viewPager: ViewPager2? = null
 
-    /** [CommonTabLayout]实例，同[tabLayout] **/
+    /** [CommonTabLayout]实例 **/
+    @Keep
     @NonNull
     @JvmField
-    @SuppressLint("KotlinNullnessAnnotation")
-    var mTabLayout: CommonTabLayout? = null
-
-    /** [ViewPager2]实例，同[mViewPager] **/
-
-    val viewPager: ViewPager2 get() = viewModel.viewPager
-
-    /** [CommonTabLayout]实例，同[mTabLayout] **/
-
-    val tabLayout: CommonTabLayout get() = viewModel.tabLayout
+    @Suppress("KotlinNullnessAnnotation")
+    val tabLayout: CommonTabLayout? = null
 
     /** TabLayout是否在头部 **/
     val tabAtTop get() = viewModel.tabAtTop
 
     override fun onCreating(savedInstanceState: Bundle?) {
         super.onCreating(savedInstanceState)
-        viewModel = GetViewModelProvider(this).get(GetMultiViewModel::class.java)
+        //viewModel = GetViewModelProvider(this).get(GetMultiViewModel::class.java)
         setNativeContentView(viewModel.rootView)
     }
 

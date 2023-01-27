@@ -19,6 +19,7 @@ import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.content.ContextCompat
 import androidx.core.widget.ImageViewCompat
 import cn.cqray.android.R
+import cn.cqray.android.util.SizeUnit
 import cn.cqray.android.util.Sizes
 import cn.cqray.android.util.ViewUtils
 
@@ -115,10 +116,10 @@ class ActionLayout @JvmOverloads constructor(
     }
 
     fun setDefaultActionTextSize(size: Float): ActionLayout {
-        return setDefaultActionTextSize(size, TypedValue.COMPLEX_UNIT_SP)
+        return setDefaultActionTextSize(size, SizeUnit.SP)
     }
 
-    fun setDefaultActionTextSize(size: Float, unit: Int): ActionLayout {
+    fun setDefaultActionTextSize(size: Float, unit: SizeUnit): ActionLayout {
         actionTextSize = Sizes.applyDimension(size, unit).toInt()
         for (i in 0 until viewArray.size()) {
             val view = viewArray.valueAt(i)
@@ -252,10 +253,10 @@ class ActionLayout @JvmOverloads constructor(
     }
 
     fun setActionSpace(space: Float): ActionLayout {
-        return setActionSpace(space, TypedValue.COMPLEX_UNIT_DIP)
+        return setActionSpace(space, SizeUnit.DIP)
     }
 
-    fun setActionSpace(space: Float, unit: Int): ActionLayout {
+    fun setActionSpace(space: Float, unit: SizeUnit): ActionLayout {
         actionSpace = Sizes.applyDimension(space, unit).toInt()
         val horizontal = orientation == HORIZONTAL
         startSpace.layoutParams.width = if (horizontal) actionSpace else 0
@@ -326,6 +327,6 @@ class ActionLayout @JvmOverloads constructor(
         endSpace = Space(context)
         addView(startSpace)
         addView(endSpace)
-        setActionSpace(actionSpace.toFloat(), TypedValue.COMPLEX_UNIT_PX)
+        setActionSpace(actionSpace.toFloat(), SizeUnit.DIP)
     }
 }

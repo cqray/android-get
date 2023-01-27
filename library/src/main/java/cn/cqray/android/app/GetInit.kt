@@ -6,6 +6,7 @@ import cn.cqray.android.anim.FragmentAnimator
 import cn.cqray.android.log.LogInit
 import cn.cqray.android.state.StateInit
 import cn.cqray.android.tip.GetTipInit
+import cn.cqray.android.widget.ToolbarInit
 import java.io.Serializable
 
 @Keep
@@ -27,6 +28,11 @@ class GetInit : Serializable {
     var tipInit: GetTipInit? = GetTipInit()
         set(init) {
             field = init ?: GetTipInit()
+        }
+
+    var toolbarInit: ToolbarInit? = ToolbarInit()
+        set(init) {
+            field = init ?: field
         }
 
     /** [Get]Fragment全局动画 **/

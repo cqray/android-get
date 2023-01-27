@@ -1,13 +1,18 @@
 package cn.cqray.demo.android;
 
 import android.os.Bundle;
+import android.util.Log;
 
+
+import com.blankj.utilcode.util.SizeUtils;
 
 import org.jetbrains.annotations.Nullable;
 
 
 import cn.cqray.android.ui.multi.GetMultiItem;
 import cn.cqray.android.ui.multi.GetMultiActivity;
+import cn.cqray.android.util.Sizes;
+import cn.cqray.android.widget.Toolbar;
 
 public class MainActivity extends GetMultiActivity {
 
@@ -21,6 +26,12 @@ public class MainActivity extends GetMultiActivity {
 //        findViewById(R.id.get_nav_content).setOnClickListener(v -> {});
 
         setTabAtTop(true);
+
+        Log.e("数据22", String.valueOf(Sizes.divider()));
+        Log.e("数据22", String.valueOf(Sizes.px2dp(Sizes.divider())));
+
+
+        new Toolbar(this);
 
 
 //        tabLayout.setBackgroundColor(Color.BLUE);
@@ -41,6 +52,9 @@ public class MainActivity extends GetMultiActivity {
 
 
         removeFragment(1);
+
+
+        viewPager.setCurrentItem(1);
 //        showFragment(-1);
 //
 //        getMultiDelegate().removeFragment(R.id.get_nav_view, -1);

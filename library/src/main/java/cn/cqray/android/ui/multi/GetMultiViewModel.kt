@@ -1,6 +1,5 @@
 package cn.cqray.android.ui.multi
 
-import android.annotation.SuppressLint
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
@@ -11,6 +10,7 @@ import cn.cqray.android.app.GetMultiDelegate
 import cn.cqray.android.app.GetMultiProvider
 import cn.cqray.android.lifecycle.GetViewModel
 import cn.cqray.android.util.ContextUtils
+import cn.cqray.android.util.ReflectUtil
 import cn.cqray.android.util.Sizes
 import com.flyco.tablayout.CommonTabLayout
 import com.flyco.tablayout.listener.CustomTabEntity
@@ -21,7 +21,7 @@ import com.google.android.material.navigation.NavigationView
  * 多Fragment控制ViewModel
  * @author Cqray
  */
-@SuppressLint("StaticFieldLeak")
+@Suppress("StaticFieldLeak", "MemberVisibilityCanBePrivate")
 internal class GetMultiViewModel(lifecycleOwner: LifecycleOwner) : GetViewModel(lifecycleOwner) {
 
     /** 所有控件 **/
@@ -60,29 +60,13 @@ internal class GetMultiViewModel(lifecycleOwner: LifecycleOwner) : GetViewModel(
     val tabAtTop: Boolean get() = location[0]
 
     /** 根布局 **/
-    val rootView : View get() = views[0]!!
+    val rootView: View get() = views[0]!!
 
     /** [ViewPager2]组件 **/
-    val viewPager: ViewPager2
-        get() {
-            val vp = when (lifecycleOwner) {
-                is GetMultiActivity -> lifecycleOwner.mViewPager
-                is GetMultiFragment -> lifecycleOwner.mViewPager
-                else -> null
-            }
-            return vp ?: views[3] as ViewPager2
-        }
+    val viewPager: ViewPager2 get() = views[3] as ViewPager2
 
     /** TabLayout控件 **/
-    val tabLayout: CommonTabLayout
-        get() {
-            val tl = when (lifecycleOwner) {
-                is GetMultiActivity -> lifecycleOwner.mTabLayout
-                is GetMultiFragment -> lifecycleOwner.mTabLayout
-                else -> null
-            }
-            return tl ?: views[4] as CommonTabLayout
-        }
+    val tabLayout: CommonTabLayout get() = views[4] as CommonTabLayout
 
     override fun onCleared() {
         super.onCleared()
@@ -123,17 +107,11 @@ internal class GetMultiViewModel(lifecycleOwner: LifecycleOwner) : GetViewModel(
      * 初始化[GetMultiActivity]及[GetMultiFragment]的控件
      */
     private fun initGetMultiView() {
-        when (lifecycleOwner) {
-            // 给GetMultiActivity控件赋值
-            is GetMultiActivity -> {
-                lifecycleOwner.mViewPager = viewPager
-                lifecycleOwner.mTabLayout = tabLayout
-            }
-            // 给GetMultiFragment控件赋值
-            is GetMultiFragment -> {
-                lifecycleOwner.mViewPager = viewPager
-                lifecycleOwner.mTabLayout = tabLayout
-            }
+        if (lifecycleOwner is GetMultiActivity
+            || lifecycleOwner is GetMultiFragment
+        ) {
+            ReflectUtil.setField(lifecycleOwner, "viewPager", viewPager)
+            ReflectUtil.setField(lifecycleOwner, "tabLayout", tabLayout)
         }
     }
 
@@ -148,7 +126,7 @@ internal class GetMultiViewModel(lifecycleOwner: LifecycleOwner) : GetViewModel(
         }
         // 顶部
         (views[1] as? ViewGroup)?.let {
-            it.removeAllViews()
+            it.removeAllViews() 
             if (tabAtTop) it.addView(tabLayout)
         }
     }

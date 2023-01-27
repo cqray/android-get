@@ -28,6 +28,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 import cn.cqray.android.R;
+import cn.cqray.android.util.SizeUnit;
 import cn.cqray.android.util.Sizes;
 import cn.cqray.android.util.ViewUtils;
 
@@ -126,10 +127,10 @@ public class IconTextView extends LinearLayout {
     }
 
     public IconTextView setViewSpace(float space) {
-        return setViewSpace(space, TypedValue.COMPLEX_UNIT_DIP);
+        return setViewSpace(space, SizeUnit.DIP);
     }
 
-    public IconTextView setViewSpace(float space, int unit) {
+    public IconTextView setViewSpace(float space, SizeUnit unit) {
         boolean horizontal = mItvLocation == LOCATION_LEFT || mItvLocation == LOCATION_RIGHT;
         mItvSpace = (int) Sizes.applyDimension(space, unit);
         mSpaceView.setLayoutParams(new ViewGroup.LayoutParams(horizontal ? mItvSpace : -1, !horizontal ? mItvSpace : -1));

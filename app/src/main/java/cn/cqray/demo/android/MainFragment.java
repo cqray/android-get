@@ -14,7 +14,6 @@ import java.util.UUID;
 import cn.cqray.android.app.GetFragment;
 import cn.cqray.android.log.GetLog;
 
-
 public class MainFragment extends GetFragment {
 
     @Override
@@ -22,6 +21,12 @@ public class MainFragment extends GetFragment {
         super.onCreate(savedInstanceState);
         setGetContentView(R.layout.activity_main);
 
+        toolbar.setTitle((Integer) null);
+
+        toolbar.setTitleSpace(0);
+
+        toolbar.setActionSpace(0);
+        toolbar.setActionText(0, "666");
 //        setBusy();
 
         TextView tv = requireContentView().findViewById(R.id.tv);

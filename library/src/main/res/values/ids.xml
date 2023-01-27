@@ -23,6 +23,10 @@
     <item name="starter_toolbar_back_view" type="id" />
     <item name="starter_toolbar_action_layout" type="id" />
 
+    <item name="get_toolbar_title" type="id" />
+    <item name="get_toolbar_back_view" type="id" />
+    <item name="get_toolbar_action_layout" type="id" />
+
 
 
     <item name="get_toolbar" type="id"/>
