@@ -1,224 +1,193 @@
-package cn.cqray.android.widget;
+package cn.cqray.android.widget
 
-import android.content.Context;
-import android.content.res.ColorStateList;
-import android.content.res.TypedArray;
-import android.graphics.Bitmap;
-import android.graphics.Typeface;
-import android.graphics.drawable.Drawable;
-import android.text.TextUtils;
-import android.util.AttributeSet;
-import android.util.TypedValue;
-import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.Space;
-import android.widget.TextView;
-
-import androidx.annotation.DrawableRes;
-import androidx.annotation.IntDef;
-import androidx.annotation.Nullable;
-import androidx.annotation.StringRes;
-import androidx.appcompat.widget.AppCompatImageView;
-import androidx.appcompat.widget.AppCompatTextView;
-import androidx.core.content.ContextCompat;
-import androidx.core.widget.ImageViewCompat;
-
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-
-import cn.cqray.android.R;
-import cn.cqray.android.util.SizeUnit;
-import cn.cqray.android.util.Sizes;
-import cn.cqray.android.util.ViewUtils;
+import android.content.Context
+import android.content.res.ColorStateList
+import android.graphics.Bitmap
+import android.graphics.Typeface
+import android.graphics.drawable.Drawable
+import android.text.TextUtils
+import android.util.AttributeSet
+import android.util.TypedValue
+import android.view.Gravity
+import android.widget.LinearLayout
+import android.widget.Space
+import androidx.annotation.ColorInt
+import androidx.annotation.DrawableRes
+import androidx.annotation.StringRes
+import androidx.appcompat.widget.AppCompatImageView
+import androidx.appcompat.widget.AppCompatTextView
+import androidx.core.content.ContextCompat
+import androidx.core.widget.ImageViewCompat
+import cn.cqray.android.R
+import cn.cqray.android.util.SizeUnit
+import cn.cqray.android.util.Sizes.applyDimension
+import cn.cqray.android.util.ViewUtils
 
 /**
  * 图标文本控件
  * @author Cqray
  */
-public class IconTextView extends LinearLayout {
+@Suppress("unused", "MemberVisibilityCanBePrivate")
+class IconTextView @JvmOverloads constructor(
+    context: Context,
+    attrs: AttributeSet? = null,
+    defStyleAttr: Int = 0
+) : LinearLayout(context, attrs, defStyleAttr) {
 
-    public static final int LOCATION_LEFT = 0;
-    public static final int LOCATION_TOP = 1;
-    public static final int LOCATION_RIGHT = 2;
-    public static final int LOCATION_BOTTOM = 3;
+    /** 图标位置 **/
+    private var iconLocation = IconLocation.START
 
-    @IntDef({LOCATION_LEFT, LOCATION_TOP, LOCATION_RIGHT, LOCATION_BOTTOM})
-    @Retention(RetentionPolicy.RUNTIME)
-    public @interface Location{}
+    /** 是否是垂直方向 **/
+    private val vertical get() = iconLocation == IconLocation.TOP || iconLocation == IconLocation.BOTTOM
 
-    /** 间隔控件 **/
-    private final Space mSpaceView;
+    /** 是否先绘制图标 **/
+    private val iconFirst get() = iconLocation == IconLocation.START || iconLocation == IconLocation.END
+
     /** 图标控件 **/
-    private final AppCompatImageView mIconView;
+    val iconView: AppCompatImageView
+        get() = AppCompatImageView(context).also {
+            it.layoutParams = LayoutParams(if (vertical) -1 else -2, if (vertical) -2 else -1)
+            it.isFocusable = true
+            it.isClickable = true
+        }
+
     /** 文本控件 **/
-    private final AppCompatTextView mTextView;
-    /** 图标的位置 **/
-    private int mItvLocation;
-    /** 图标与文字的间隔 **/
-    private int mItvSpace;
+    val textView: AppCompatTextView
+        get() = AppCompatTextView(context).also {
+            it.layoutParams = LayoutParams(if (vertical) -1 else -2, if (vertical) -2 else -1)
+            it.gravity = Gravity.CENTER
+            it.ellipsize = TextUtils.TruncateAt.END
+        }
 
-    public IconTextView(Context context) {
-        this(context, null);
-    }
+    /** 间隔控件  */
+    val spaceView: Space get() = Space(context).also { it.layoutParams = LayoutParams(-2, -2) }
 
-    public IconTextView(Context context, @Nullable AttributeSet attrs) {
-        this(context, attrs, 0);
-    }
+    init {
+        val ta = context.obtainStyledAttributes(attrs, R.styleable.IconTextView)
+        val space = ta.getDimensionPixelSize(
+            R.styleable.IconTextView_sViewSpace,
+            resources.getDimensionPixelSize(R.dimen.small)
+        )
+        val text = ta.getString(R.styleable.IconTextView_android_text) ?: ""
+        val textColor = ta.getColor(
+            R.styleable.IconTextView_android_textColor,
+            ContextCompat.getColor(context, R.color.text)
+        )
+        val textSize = ta.getDimensionPixelSize(
+            R.styleable.IconTextView_android_textSize,
+            resources.getDimensionPixelSize(R.dimen.body)
+        )
+        val textStyle = ta.getInt(R.styleable.IconTextView_android_textStyle, 0)
+        val useRipple = ta.getBoolean(R.styleable.IconTextView_useRipple, true)
+        val drawable = ta.getDrawable(R.styleable.IconTextView_android_src)
 
-    public IconTextView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
-        super(context, attrs, defStyleAttr);
-        // 获取属性
-        TypedArray ta = context.obtainStyledAttributes(attrs, R.styleable.IconTextView);
-        mItvLocation = ta.getInt(R.styleable.IconTextView_sIconLocation, LOCATION_LEFT);
-        mItvSpace = ta.getDimensionPixelSize(R.styleable.IconTextView_sViewSpace, getResources().getDimensionPixelSize(R.dimen.small));
-        String text = ta.getString(R.styleable.IconTextView_android_text);
-        int textColor = ta.getColor(R.styleable.IconTextView_android_textColor, ContextCompat.getColor(context, R.color.text));
-        int textSize = ta.getDimensionPixelSize(R.styleable.IconTextView_android_textSize, getResources().getDimensionPixelSize(R.dimen.body));
-        int textStyle = ta.getInt(R.styleable.IconTextView_android_textStyle, 0);
-        boolean useRipple = ta.getBoolean(R.styleable.IconTextView_useRipple, true);
-        Drawable drawable = ta.getDrawable(R.styleable.IconTextView_android_src);
-        ta.recycle();
-        // 设置方向
-        boolean horizontal = mItvLocation == LOCATION_LEFT || mItvLocation == LOCATION_RIGHT;
-        boolean iconBefore = mItvLocation == LOCATION_LEFT || mItvLocation == LOCATION_TOP;
-        setOrientation(horizontal ? HORIZONTAL : VERTICAL);
-        // 初始化图标
-        mIconView = new AppCompatImageView(context);
-        mIconView.setLayoutParams(new ViewGroup.LayoutParams(horizontal ? -2 : -1, horizontal ? -1 : -2));
-        mIconView.setImageDrawable(drawable);
-        mIconView.setFocusable(true);
-        mIconView.setClickable(true);
-        // 初始化文本
-        mTextView = new AppCompatTextView(context);
-        mTextView.setLayoutParams(new ViewGroup.LayoutParams(horizontal ? -2 : -1, horizontal ? -1 : -2));
-        mTextView.setGravity(android.view.Gravity.CENTER);
-        mTextView.setEllipsize(TextUtils.TruncateAt.END);
-        mTextView.setText(text);
-        mTextView.setTextColor(textColor);
-        mTextView.setTextSize(TypedValue.COMPLEX_UNIT_PX, textSize);
-        mTextView.setTypeface(Typeface.defaultFromStyle(textStyle));
-        // 初始化间隔
-        mSpaceView = new Space(context);
-        mSpaceView.setLayoutParams(new ViewGroup.LayoutParams(horizontal ? mItvSpace : -1, !horizontal ? mItvSpace : -1));
-        mSpaceView.setVisibility(TextUtils.isEmpty(text) ? GONE : VISIBLE);
-        // 添加控件
-        addView(iconBefore ? mIconView : mTextView);
-        addView(mSpaceView);
-        addView(!iconBefore ? mIconView : mTextView);
+        iconLocation = IconLocation.values()[ta.getInt(R.styleable.IconTextView_sIconLocation, 0)]
+        ta.recycle()
+
+        // 设置图标属性
+        iconView.setImageDrawable(drawable)
+        // 设置文本属性
+        textView.let {
+            it.text = text
+            it.setTextColor(textColor)
+            it.setTextSize(TypedValue.COMPLEX_UNIT_PX, textSize.toFloat())
+            it.typeface = Typeface.defaultFromStyle(textStyle)
+        }
+        // 设置间隔属性
+        spaceView.let {
+            it.layoutParams.width = if (vertical) -1 else space
+            it.layoutParams.height = if (vertical) space else -1
+            it.visibility = if (text.isEmpty()) GONE else VISIBLE
+        }
+        // 添加相应的控件
+        addView(if (iconFirst) iconView else textView)
+        addView(spaceView)
+        addView(if (iconFirst) textView else iconView)
         // 设置背景
-        ViewUtils.setRippleBackground(mIconView, useRipple);
-        ViewUtils.setRippleBackground(mTextView, useRipple);
+        ViewUtils.setRippleBackground(iconView, useRipple)
+        ViewUtils.setRippleBackground(textView, useRipple)
         // 设置点击事件
-        setOnClickListener(null);
+        setOnClickListener(null)
     }
 
-    public IconTextView setIconLocation(@Location int location) {
-        removeAllViews();
-        mItvLocation = location;
-        boolean horizontal = mItvLocation == LOCATION_LEFT || mItvLocation == LOCATION_RIGHT;
-        boolean iconBefore = mItvLocation == LOCATION_LEFT || mItvLocation == LOCATION_TOP;
-        // 重新添加控件，以改变位置
-        mSpaceView.setLayoutParams(new ViewGroup.LayoutParams(horizontal ? mItvSpace : -1, !horizontal ? mItvSpace : -1));
-        addView(iconBefore ? mIconView : mTextView);
-        addView(mSpaceView);
-        addView(!iconBefore ? mIconView : mTextView);
-        return this;
+    fun setIconLocation(location: IconLocation) = also {
+        // 获取间隔大小
+        val params = spaceView.layoutParams
+        val space = if (vertical) params.height else params.width
+        // 更新位置
+        iconLocation = location
+        removeAllViews()
+        // 更新间隔控件尺寸
+        spaceView.layoutParams.width = if (vertical) -1 else space
+        spaceView.layoutParams.height = if (vertical) space else -1
+        // 重新添加控件
+        addView(if (iconFirst) iconView else textView)
+        addView(spaceView)
+        addView(if (iconFirst) textView else iconView)
     }
 
-    public IconTextView setViewSpace(float space) {
-        return setViewSpace(space, SizeUnit.DIP);
+    fun setViewSpace(space: Float?) = also { setViewSpace(space, SizeUnit.DIP) }
+
+    fun setViewSpace(space: Float?, unit: SizeUnit) = also {
+        val viewSpace = applyDimension(space ?: 0F, unit).toInt()
+        with(spaceView) {
+            layoutParams.width = if (vertical) -1 else viewSpace
+            layoutParams.height = if (vertical) viewSpace else -1
+            requestLayout()
+        }
     }
 
-    public IconTextView setViewSpace(float space, SizeUnit unit) {
-        boolean horizontal = mItvLocation == LOCATION_LEFT || mItvLocation == LOCATION_RIGHT;
-        mItvSpace = (int) Sizes.applyDimension(space, unit);
-        mSpaceView.setLayoutParams(new ViewGroup.LayoutParams(horizontal ? mItvSpace : -1, !horizontal ? mItvSpace : -1));
-        return this;
+    fun setUseRipple(useRipple: Boolean?) = also {
+        ViewUtils.setRippleBackground(iconView, useRipple)
+        ViewUtils.setRippleBackground(textView, useRipple)
     }
 
-    public IconTextView setUseRipple(boolean useRipple) {
-        ViewUtils.setRippleBackground(mIconView, useRipple);
-        ViewUtils.setRippleBackground(mTextView, useRipple);
-        return this;
+    fun setIconDrawable(drawable: Drawable?) = also { iconView.setImageDrawable(drawable) }
+
+    fun setIconBitmap(bitmap: Bitmap?) = also { iconView.setImageBitmap(bitmap) }
+
+    fun setIconResource(@DrawableRes resId: Int?) = also {
+        if (resId == null) iconView.setImageDrawable(null)
+        else iconView.setImageResource(resId)
     }
 
-    public IconTextView setIconDrawable(Drawable drawable) {
-        mIconView.setImageDrawable(drawable);
-        return this;
+    fun setIconTintColor(@ColorInt color: Int?) = also {
+        if (color == null)
+            ImageViewCompat.setImageTintList(iconView, null)
+        else
+            ImageViewCompat.setImageTintList(iconView, ColorStateList.valueOf(color))
     }
 
-    public IconTextView setIconBitmap(Bitmap bitmap) {
-        mIconView.setImageBitmap(bitmap);
-        return this;
+    fun setIconTintList(tintList: ColorStateList?) = also {
+        ImageViewCompat.setImageTintList(iconView, tintList)
     }
 
-    public IconTextView setIconResource(@DrawableRes int resId) {
-        mIconView.setImageResource(resId);
-        return this;
+    fun setText(@StringRes resId: Int?) = also {
+        if (resId == null) textView.text = null
+        else textView.setText(resId)
+        spaceView.visibility = if (TextUtils.isEmpty(textView.text)) GONE else VISIBLE
     }
 
-    public IconTextView setIconTintColor(int color) {
-        ImageViewCompat.setImageTintList(mIconView, ColorStateList.valueOf(color));
-        return this;
+    fun setText(text: CharSequence?) = also {
+        textView.text = text
+        spaceView.visibility = if ((text ?: "").isEmpty()) GONE else VISIBLE
     }
 
-    public IconTextView setIconTintList(ColorStateList tintList) {
-        ImageViewCompat.setImageTintList(mIconView, tintList);
-        return this;
-    }
+    fun setTextColor(color: Int?) = also { color?.let { textView.setTextColor(it) } }
 
-    public IconTextView setText(@StringRes int resId) {
-        mTextView.setText(resId);
-        mSpaceView.setVisibility(TextUtils.isEmpty(mTextView.getText()) ? GONE : VISIBLE);
-        return this;
-    }
+    fun setTextSize(textSize: Float?) = also { textSize?.let { textView.textSize = it } }
 
-    public IconTextView setText(CharSequence text) {
-        mTextView.setText(text);
-        mSpaceView.setVisibility(TextUtils.isEmpty(mTextView.getText()) ? GONE : VISIBLE);
-        return this;
-    }
+    fun setTextSize(textSize: Float?, unit: SizeUnit) =
+        also { textSize?.let { textView.setTextSize(unit.type, it) } }
 
-    public IconTextView setTextColor(int color) {
-        mTextView.setTextColor(color);
-        return this;
-    }
+    fun setTypeface(typeface: Typeface?) = also { textView.typeface = typeface }
 
-    public IconTextView setTextSize(float textSize) {
-        mTextView.setTextSize(textSize);
-        return this;
-    }
-
-    public IconTextView setTextSize(float textSize, int unit) {
-        mTextView.setTextSize(unit, textSize);
-        return this;
-    }
-
-    public IconTextView setTypeface(Typeface typeface) {
-        mTextView.setTypeface(typeface);
-        return this;
-    }
-
-    public ImageView getIconView() {
-        return mIconView;
-    }
-
-    public TextView getTextView() {
-        return mTextView;
-    }
-
-    public int getIconLocation() {
-        return mItvLocation;
-    }
-
-    @Override
-    public void setOnClickListener(@Nullable OnClickListener l) {
-        mIconView.setOnClickListener(l);
-        mTextView.setOnClickListener(l);
-        super.setOnClickListener(v -> {
-            mIconView.setPressed(true);
-            mIconView.performClick();
-        });
+    override fun setOnClickListener(l: OnClickListener?) {
+        iconView.setOnClickListener(l)
+        textView.setOnClickListener(l)
+        super.setOnClickListener {
+            iconView.isPressed = true
+            iconView.performClick()
+        }
     }
 }

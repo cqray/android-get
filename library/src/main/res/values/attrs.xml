@@ -107,6 +107,8 @@
     <!-- Action布局控件 -->
     <declare-styleable name="ActionLayout">
         <attr name="sUseRipple" />
+        <attr name="defaultActionRipple" format="boolean" />
+        <attr name="defaultActionVisible" format="boolean" />
         <attr name="sActionTextColor" />
         <attr name="sActionTextSize" />
         <attr name="sActionTextStyle" />

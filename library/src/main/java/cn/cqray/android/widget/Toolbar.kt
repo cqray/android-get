@@ -169,7 +169,7 @@ class Toolbar @JvmOverloads constructor(
         // 设置Back布局
         backView.setText(text)
             .setTextColor(textColor)
-            .setTextSize(textSize, COMPLEX_UNIT_PX)
+            .setTextSize(textSize, SizeUnit.PX)
             .setTypeface(Typeface.defaultFromStyle(textStyle))
             .iconView.visibility = if (visible) VISIBLE else GONE
         // 设置图标
@@ -358,7 +358,7 @@ class Toolbar @JvmOverloads constructor(
     }
 
     fun setBackTextSize(size: Float?, unit: SizeUnit) = also {
-        size?.let {  backView.setTextSize(it, unit.type)}
+        size?.let {  backView.setTextSize(it, unit)}
     }
 
     fun setBackTypeface(typeface: Typeface?) = also { backView.setTypeface(typeface) }

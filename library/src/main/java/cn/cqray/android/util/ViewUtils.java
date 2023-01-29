@@ -51,9 +51,10 @@ public class ViewUtils {
         }
     }
 
-    public static void setRippleBackground(@NonNull View view, boolean rippleEnable) {
+    public static void setRippleBackground(@NonNull View view, @Nullable Boolean rippleEnable) {
         Context context = view.getContext();
-        if (rippleEnable) {
+        boolean ripple = rippleEnable == null || rippleEnable;
+        if (ripple) {
             Drawable drawable = null;
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
                 TypedArray ta = context.obtainStyledAttributes(new int[]{

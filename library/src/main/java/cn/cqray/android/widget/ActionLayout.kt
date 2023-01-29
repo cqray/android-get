@@ -58,6 +58,11 @@ class ActionLayout @JvmOverloads constructor(
     /** 是否显示水波纹  */
     private var useRipple: Boolean
 
+    private val defaults = arrayOf(
+        true, // 是否显示水波纹
+        true, // 是否显示控件
+    )
+
     /** 控件列表  */
     private val viewArray = SparseArray<View>()
 
@@ -71,11 +76,10 @@ class ActionLayout @JvmOverloads constructor(
         // do nothing.
     }
 
-    fun setActionText(key: Int, @StringRes resId: Int): ActionLayout {
-        return setActionText(key, resources.getString(resId))
-    }
+    fun setActionText(key: Int, @StringRes resId: Int) =
+        also { setActionText(key, resources.getString(resId)) }
 
-    fun setActionText(key: Int?, text: CharSequence?): ActionLayout {
+    fun setActionText(key: Int?, text: CharSequence?) = also {
         if (key == null) return this
         val index = indexOf(key)
         val horizontal = orientation == HORIZONTAL
@@ -96,7 +100,7 @@ class ActionLayout @JvmOverloads constructor(
         return this
     }
 
-    fun setDefaultActionTextColor(@ColorInt color: Int): ActionLayout {
+    fun setDefaultActionTextColor(@ColorInt color: Int) = also {
         actionTextColor = color
         for (i in 0 until viewArray.size()) {
             val view = viewArray.valueAt(i)
@@ -107,7 +111,7 @@ class ActionLayout @JvmOverloads constructor(
         return this
     }
 
-    fun setActionTextColor(key: Int, @ColorInt color: Int): ActionLayout {
+    fun setActionTextColor(key: Int, @ColorInt color: Int) = also {
         val view = viewArray[key]
         if (view is TextView) {
             view.setTextColor(color)
@@ -115,11 +119,11 @@ class ActionLayout @JvmOverloads constructor(
         return this
     }
 
-    fun setDefaultActionTextSize(size: Float): ActionLayout {
+    fun setDefaultActionTextSize(size: Float) = also {
         return setDefaultActionTextSize(size, SizeUnit.SP)
     }
 
-    fun setDefaultActionTextSize(size: Float, unit: SizeUnit): ActionLayout {
+    fun setDefaultActionTextSize(size: Float, unit: SizeUnit) = also {
         actionTextSize = Sizes.applyDimension(size, unit).toInt()
         for (i in 0 until viewArray.size()) {
             val view = viewArray.valueAt(i)
@@ -130,11 +134,11 @@ class ActionLayout @JvmOverloads constructor(
         return this
     }
 
-    fun setActionTextSize(key: Int, size: Float): ActionLayout {
+    fun setActionTextSize(key: Int, size: Float) = also {
         return setActionTextSize(key, size, TypedValue.COMPLEX_UNIT_SP)
     }
 
-    fun setActionTextSize(key: Int, size: Float, unit: Int): ActionLayout {
+    fun setActionTextSize(key: Int, size: Float, unit: Int) = also {
         val view = viewArray[key]
         if (view is TextView) {
             view.setTextSize(unit, size)
@@ -142,7 +146,7 @@ class ActionLayout @JvmOverloads constructor(
         return this
     }
 
-    fun setDefaultActionTypeface(typeface: Typeface?): ActionLayout {
+    fun setDefaultActionTypeface(typeface: Typeface?) = also {
         for (i in 0 until viewArray.size()) {
             val view = viewArray.valueAt(i)
             if (view is TextView) {
@@ -152,7 +156,7 @@ class ActionLayout @JvmOverloads constructor(
         return this
     }
 
-    fun setActionTypeface(key: Int, typeface: Typeface?): ActionLayout {
+    fun setActionTypeface(key: Int, typeface: Typeface?) = also {
         val view = viewArray[key]
         if (view is TextView) {
             view.typeface = typeface
@@ -160,19 +164,19 @@ class ActionLayout @JvmOverloads constructor(
         return this
     }
 
-    fun setActionIcon(key: Int, @DrawableRes resId: Int): ActionLayout {
+    fun setActionIcon(key: Int, @DrawableRes resId: Int) = also {
         return setActionIcon(key, ContextCompat.getDrawable(context, resId))
     }
 
-    fun setActionIcon(key: Int, @DrawableRes resId: Int, @ColorInt tint: Int): ActionLayout {
+    fun setActionIcon(key: Int, @DrawableRes resId: Int, @ColorInt tint: Int) = also {
         return setActionIcon(key, ContextCompat.getDrawable(context, resId), tint)
     }
 
-    fun setActionIcon(key: Int, drawable: Drawable?): ActionLayout {
+    fun setActionIcon(key: Int, drawable: Drawable?) = also {
         return setActionIcon(key, drawable, null)
     }
 
-    fun setActionIcon(key: Int, drawable: Drawable?, @ColorInt tintColor: Int?): ActionLayout {
+    fun setActionIcon(key: Int, drawable: Drawable?, @ColorInt tintColor: Int?) = also {
         val index = indexOf(key)
         val horizontal = orientation == HORIZONTAL
         val iv: ImageView = AppCompatImageView(context)
@@ -183,7 +187,8 @@ class ActionLayout @JvmOverloads constructor(
         iv.setPadding(actionSpace, 0, actionSpace, 0)
         iv.visibility = if (visibleArray[key]) VISIBLE else GONE
         addView(iv, index)
-        ViewUtils.setRippleBackground(iv, useRipple)
+        // 设置水波纹
+        ViewUtils.setRippleBackground(iv, defaults[ACTION_RIPPLE])
         val tintList = when {
             tintColor != null -> ColorStateList.valueOf(tintColor)
             tintColorArray[key] != 0 -> ColorStateList.valueOf(tintColorArray[key])
@@ -195,7 +200,7 @@ class ActionLayout @JvmOverloads constructor(
         return this
     }
 
-    fun setActionIconColor(@ColorInt color: Int): ActionLayout {
+    fun setActionIconColor(@ColorInt color: Int) = also {
         actionIconColor = color
         for (i in 0 until viewArray.size()) {
             val view = viewArray.valueAt(i)
@@ -206,7 +211,7 @@ class ActionLayout @JvmOverloads constructor(
         return this
     }
 
-    fun setActionIconColor(key: Int, @ColorInt color: Int): ActionLayout {
+    fun setActionIconColor(key: Int, @ColorInt color: Int) = also {
         tintColorArray.put(key, color)
         val view = viewArray[key]
         if (view is ImageView) {
@@ -215,7 +220,7 @@ class ActionLayout @JvmOverloads constructor(
         return this
     }
 
-    fun setActionVisible(visible: Boolean): ActionLayout {
+    fun setActionVisible(visible: Boolean) = also {
         for (i in 0 until viewArray.size()) {
             val view = viewArray.valueAt(i)
             if (view != null) {
@@ -225,7 +230,7 @@ class ActionLayout @JvmOverloads constructor(
         return this
     }
 
-    fun setActionVisible(key: Int, visible: Boolean): ActionLayout {
+    fun setActionVisible(key: Int, visible: Boolean) = also {
         visibleArray.put(key, visible)
         val view = viewArray[key]
         if (view != null) {
@@ -234,29 +239,22 @@ class ActionLayout @JvmOverloads constructor(
         return this
     }
 
-    fun setDefaultUseRipple(useRipple: Boolean): ActionLayout {
-        this.useRipple = useRipple
+    fun setDefaultUseRipple(useRipple: Boolean) = also {
+        defaults[ACTION_RIPPLE] = useRipple
         for (i in 0 until viewArray.size()) {
-            val view = viewArray.valueAt(i)
-            ViewUtils.setRippleBackground(view, useRipple)
+            viewArray.valueAt(i)?.let { ViewUtils.setRippleBackground(it, useRipple) }
         }
-        return this
     }
 
-    fun setUseRipple(key: Int, useRipple: Boolean): ActionLayout {
-        this.useRipple = useRipple
-        val view = viewArray[key]
-        if (view != null) {
-            ViewUtils.setRippleBackground(view, useRipple)
-        }
-        return this
+    fun setUseRipple(key: Int, useRipple: Boolean?) = also {
+        viewArray[key]?.let { ViewUtils.setRippleBackground(it, useRipple) }
     }
 
-    fun setActionSpace(space: Float): ActionLayout {
+    fun setActionSpace(space: Float) = also {
         return setActionSpace(space, SizeUnit.DIP)
     }
 
-    fun setActionSpace(space: Float, unit: SizeUnit): ActionLayout {
+    fun setActionSpace(space: Float, unit: SizeUnit) = also {
         actionSpace = Sizes.applyDimension(space, unit).toInt()
         val horizontal = orientation == HORIZONTAL
         startSpace.layoutParams.width = if (horizontal) actionSpace else 0
@@ -277,7 +275,7 @@ class ActionLayout @JvmOverloads constructor(
         return this
     }
 
-    fun setActionListener(key: Int, listener: OnClickListener?): ActionLayout {
+    fun setActionListener(key: Int, listener: OnClickListener?) = also {
         val view = viewArray[key]
         view?.setOnClickListener(listener)
         return this
@@ -322,11 +320,20 @@ class ActionLayout @JvmOverloads constructor(
         )
         actionTextStyle = ta.getInt(R.styleable.ActionLayout_sActionTextStyle, 0)
         useRipple = ta.getBoolean(R.styleable.ActionLayout_sUseRipple, true)
+
+        defaults[ACTION_RIPPLE] = ta.getBoolean(R.styleable.ActionLayout_defaultActionRipple, true)
+        defaults[ACTION_VISIBLE] = ta.getBoolean(R.styleable.ActionLayout_defaultActionVisible, true)
+
         ta.recycle()
         startSpace = Space(context)
         endSpace = Space(context)
         addView(startSpace)
         addView(endSpace)
         setActionSpace(actionSpace.toFloat(), SizeUnit.DIP)
+    }
+
+    private companion object {
+        const val ACTION_RIPPLE = 0
+        const val ACTION_VISIBLE = 1
     }
 }
