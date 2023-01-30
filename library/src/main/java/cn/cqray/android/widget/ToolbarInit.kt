@@ -4,6 +4,7 @@ import androidx.annotation.ColorInt
 import androidx.annotation.DrawableRes
 import androidx.annotation.IdRes
 import androidx.annotation.Keep
+import cn.cqray.android.R
 
 @Keep
 class ToolbarInit {
@@ -16,7 +17,7 @@ class ToolbarInit {
     var titleTypeFace: Boolean? = null
 
     @DrawableRes
-    var backIcon: Int? = null
+    var backIcon: Int? = R.drawable.def_back_material_light
     @ColorInt
     var backIconTintColor: Int? = null
     var backText: String? = null

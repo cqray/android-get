@@ -125,7 +125,7 @@ object Sizes {
     fun px2dp(pxValue: Float) = pxValue / dpScale
 
     @JvmStatic
-    fun sp2px(spValue: Float) = (spValue * spScale + 0.5f).toInt()
+    fun sp2px(spValue: Float) = (spValue * spScale + 0.5f)
 
     @JvmStatic
     fun px2sp(pxValue: Float) = pxValue / spScale

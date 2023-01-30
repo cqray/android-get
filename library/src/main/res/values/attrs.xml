@@ -25,9 +25,8 @@
     <declare-styleable name="Toolbar">
         <!-- 一般属性 -->
         <attr name="ripple" />
-        <attr name="paddingStart" />
-        <attr name="paddingEnd" />
         <attr name="elevation" />
+        <attr name="contentPadding" format="dimension"/>
         <!-- 标题属性 -->
         <attr name="titleText" format="string" localization="suggested" />
         <attr name="titleTextColor" format="color" />

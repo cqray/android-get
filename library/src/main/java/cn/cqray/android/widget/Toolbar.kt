@@ -9,6 +9,7 @@ import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import android.os.Build
 import android.util.AttributeSet
+import android.util.Log
 import android.util.TypedValue.*
 import android.view.Gravity
 import android.view.View
@@ -171,7 +172,7 @@ class Toolbar @JvmOverloads constructor(
         val elev = Sizes.px(R.dimen.elevation)
         // 获取默认属性
         val ta = context.obtainStyledAttributes(attrs, R.styleable.Toolbar)
-        //val pd = ta.getDimension(R.styleable.Toolbar_sPadding, size)
+        val cp = ta.getDimension(R.styleable.Toolbar_contentPadding, Sizes.content())
         val ripple = ta.getBoolean(R.styleable.Toolbar_ripple, true)
         val elevation = ta.getDimension(R.styleable.Toolbar_elevation, elev)
         val editable = ta.getBoolean(R.styleable.Toolbar_titleEditable, false)
@@ -187,7 +188,7 @@ class Toolbar @JvmOverloads constructor(
         titleSpace.value = defaultTitleSpace.toInt()
         titleCenter.value = defaultTitleCenter
         titleEditable.value = editable
-//        padding.value = pd.toInt()
+        padding.value = cp.toInt()
 //        ripple.value = ripple
         setElevation(elevation)
     }
@@ -213,8 +214,8 @@ class Toolbar @JvmOverloads constructor(
         backView.iconView.visibility = if (visible) VISIBLE else GONE
         defaults[BACK_VISIBLE] = visible
         // 设置图标
-        if (drawable != null) backView.setIconDrawable(drawable)
-        else backView.setIconResource(R.drawable.def_back_material_light)
+        if (drawable == null) backView.setIconResource(R.drawable.def_back_material_light)
+        else backView.setIconDrawable(drawable)
         // 添加到容器
         addView(backView)
     }
@@ -233,7 +234,7 @@ class Toolbar @JvmOverloads constructor(
         // 设置ActionLayout属性
         actionLayout.setSpace(space, SizeUnit.PX)
         actionLayout.setTextColor(textColor)
-        actionLayout.setTextSize(textSize)
+        actionLayout.setTextSize(textSize, SizeUnit.PX)
         actionLayout.setTextTypeface(Typeface.defaultFromStyle(textStyle))
         // 添加到容器
         addView(actionLayout)
@@ -283,29 +284,28 @@ class Toolbar @JvmOverloads constructor(
     }
 
     private fun initLiveData() {
-        titleSpace.observe(lifecycleOwner) {
-            val space = titleSpace.value ?: 0
-            val center = titleCenter.value ?: false
-            val padding = padding.value ?: 0
-            val visible = backView.iconView.visibility == VISIBLE
-            val startSpace = if (visible) space - padding else 0
-            val endSpace = space// - actionLayout.getActionSpace()
-            val params = titleView.layoutParams as LayoutParams
-            if (center) {
-                val m = max(
-                    backView.width + startSpace,
-                    actionLayout.width + endSpace
-                )
-                params.marginStart = m
-                params.marginEnd = m
-            } else {
-                params.marginStart = startSpace
-                params.marginEnd = endSpace
-            }
-            // 更新布局参数
-            titleView.layoutParams = params
-        }
-
+//        titleSpace.observe(lifecycleOwner) {
+//            //val space = titleSpace.value ?: 0
+//            val center = titleCenter.value ?: false
+//            val padding = padding.value ?: 0
+//            val visible = backView.iconView.visibility == VISIBLE
+//            val startSpace = if (visible) it - padding else 0
+//            val endSpace = (it- actionLayout.defaultSpace).toInt()
+//            val params = titleView.layoutParams as LayoutParams
+//            if (center) {
+//                val m = max(
+//                    backView.width + startSpace,
+//                    actionLayout.width + endSpace
+//                )
+//                params.marginStart = m
+//                params.marginEnd = m
+//            } else {
+//                params.marginStart = startSpace
+//                params.marginEnd = endSpace
+//            }
+//            // 更新布局参数
+//            titleView.layoutParams = params
+//        }
         // 标题居中监听
         titleCenter.observe(lifecycleOwner) {
             val params = titleView.layoutParams as LayoutParams
@@ -328,12 +328,9 @@ class Toolbar @JvmOverloads constructor(
             titleView.isFocusable = it
             titleView.isEnabled = it
             if (it) {
-                val ta = context.obtainStyledAttributes(
-                    intArrayOf(android.R.attr.editTextBackground)
-                )
-                val drawable = ta.getDrawable(0)
+                val ta = context.obtainStyledAttributes(intArrayOf(android.R.attr.editTextBackground))
+                ViewCompat.setBackground(titleView, ta.getDrawable(0))
                 ta.recycle()
-                ViewCompat.setBackground(titleView, drawable)
             } else {
                 ViewCompat.setBackground(titleView, null)
             }
@@ -347,12 +344,14 @@ class Toolbar @JvmOverloads constructor(
         }
         // 间隔大小监听
         padding.observe(lifecycleOwner) {
-            // 设置BackLayout内部间隔
-            val iconVisible = backView.iconView.visibility == VISIBLE
-            backView.setPadding(it, 0, (if (iconVisible) it else 0), 0)
-            // 设置ActionLayout右部间隔
-            val params = actionLayout.layoutParams as LayoutParams
-            params.marginEnd = it// - actionLayout.getActionSpace()
+//            // 设置BackLayout内部间隔
+//            val iconVisible = backView.iconView.visibility == VISIBLE
+//
+//            Log.e("数据", "是否显示：" + iconVisible)
+//            backView.setPadding(it, 0, (if (iconVisible) it else 0), 0)
+//            // 设置ActionLayout右部间隔
+//            val params = actionLayout.layoutParams as LayoutParams
+//            params.marginEnd = (it - actionLayout.defaultSpace).toInt()
         }
     }
 
@@ -477,8 +476,8 @@ class Toolbar @JvmOverloads constructor(
 
     fun setActionSpace(space: Float?, unit: SizeUnit) = also {
         actionLayout.setSpace(space, unit)
-        padding.value = padding.value!!
-        titleCenter.value = titleCenter.value
+//        padding.value = padding.value!!
+//        titleCenter.value = titleCenter.value
     }
 
     fun setActionText(key: Int?, @StringRes resId: Int) = also { actionLayout.setText(key, resId) }

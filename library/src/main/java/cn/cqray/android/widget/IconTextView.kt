@@ -8,7 +8,6 @@ import android.graphics.Typeface
 import android.graphics.drawable.Drawable
 import android.text.TextUtils
 import android.util.AttributeSet
-import android.util.TypedValue
 import android.view.Gravity
 import android.widget.LinearLayout
 import android.widget.Space
@@ -35,30 +34,42 @@ class IconTextView @JvmOverloads constructor(
     defStyleAttr: Int = 0
 ) : LinearLayout(context, attrs, defStyleAttr) {
 
+    /** 默认位置 **/
+    var iconLocation: IconLocation
+
     /** 图标控件 **/
-    val iconView: AppCompatImageView
-        get() = AppCompatImageView(context).also {
+    val iconView: AppCompatImageView by lazy {
+        AppCompatImageView(context).also {
             it.layoutParams = LayoutParams(if (vertical) -1 else -2, if (vertical) -2 else -1)
             it.isFocusable = true
             it.isClickable = true
+            it.setBackgroundColor(Color.BLUE)
         }
+    }
 
     /** 文本控件 **/
-    val textView: AppCompatTextView
-        get() = AppCompatTextView(context).also {
+    val textView: AppCompatTextView by lazy {
+        AppCompatTextView(context).also {
             it.layoutParams = LayoutParams(if (vertical) -1 else -2, if (vertical) -2 else -1)
             it.gravity = Gravity.CENTER
             it.ellipsize = TextUtils.TruncateAt.END
+            it.setBackgroundColor(Color.BLUE)
         }
+    }
 
     /** 间隔控件  */
-    private val spaceView: Space get() = Space(context).also { it.layoutParams = LayoutParams(-2, -2) }
+    private val spaceView: Space by lazy {
+        Space(context).also {
+            it.layoutParams = LayoutParams(-2, -2)
+            it.tag = IconLocation.START
+        }
+    }
 
     /** 默认参数，主要是对应值为空时，赋值 **/
     private val defaults: HashMap<Int, Any?> by lazy {
         val map = HashMap<Int, Any?>()
         map[RIPPLE] = true
-        map[SPACE] = Sizes.small()
+        map[SPACE] = 0F//Sizes.small()
         map[TEXT_COLOR] = ContextCompat.getColor(context, R.color.text)
         map[TEXT_SIZE] = Sizes.body()
         map[TEXT_STYLE] = 0
@@ -68,12 +79,14 @@ class IconTextView @JvmOverloads constructor(
     init {
         val ta = context.obtainStyledAttributes(attrs, R.styleable.IconTextView)
         val text = ta.getString(R.styleable.IconTextView_text) ?: ""
-        val drawable = ta.getDrawable(R.styleable.IconTextView_src)
-        val tintColor = ta.getColor(R.styleable.IconTextView_tint, Color.TRANSPARENT)
-        val location = IconLocation.values()[ta.getInt(R.styleable.IconTextView_iconLocation, 0)]
+        val drawable = ta.getDrawable(R.styleable.IconTextView_iconSrc)
+        val tintColor = ta.getColor(R.styleable.IconTextView_iconTint, -1)
+        // 图标位置信息
+        iconLocation = IconLocation.values()[ta.getInt(R.styleable.IconTextView_iconLocation, 0)]
         // 初始化默认属性
-        defaults[RIPPLE] = ta.getBoolean(R.styleable.IconTextView_useRipple, defaultRipple)
-        defaults[SPACE] = ta.getBoolean(R.styleable.IconTextView_viewSpace, defaultRipple)
+        defaults[RIPPLE] = ta.getBoolean(R.styleable.IconTextView_ripple, defaultRipple)
+        defaults[SPACE] =
+            ta.getDimension(R.styleable.IconTextView_viewSpace, defaultSpace.toFloat())
         defaults[TEXT_COLOR] = ta.getColor(R.styleable.IconTextView_textColor, defaultTextColor)
         defaults[TEXT_SIZE] = ta.getDimension(R.styleable.IconTextView_textSize, defaultTextSize)
         defaults[TEXT_STYLE] = ta.getInt(R.styleable.IconTextView_textStyle, defaultTextStyle)
@@ -81,17 +94,19 @@ class IconTextView @JvmOverloads constructor(
         ta.recycle()
         // 设置图标属性
         iconView.setImageDrawable(drawable)
-        ImageViewCompat.setImageTintList(iconView, ColorStateList.valueOf(tintColor))
+        ImageViewCompat.setImageTintList(iconView, when(tintColor) {
+            -1 -> null
+            else -> ColorStateList.valueOf(tintColor)
+        })
         // 设置文本属性
         textView.let {
             it.text = text
             it.setTextColor(defaultTextColor)
-            it.setTextSize(TypedValue.COMPLEX_UNIT_PX, defaultTextSize)
+            it.setTextSize(SizeUnit.PX.type, defaultTextSize)
             it.typeface = Typeface.defaultFromStyle(defaultTextStyle)
         }
         // 设置间隔属性
         spaceView.let {
-            it.tag = location
             it.layoutParams.width = if (vertical) -1 else defaultSpace
             it.layoutParams.height = if (vertical) defaultSpace else -1
             it.visibility = if (text.isEmpty()) GONE else VISIBLE
@@ -108,10 +123,10 @@ class IconTextView @JvmOverloads constructor(
     }
 
     /** 是否是垂直方向 **/
-    private val vertical get() = (spaceView.tag as IconLocation).let { it == IconLocation.TOP || it == IconLocation.BOTTOM }
+    private val vertical get() = iconLocation == IconLocation.TOP || iconLocation == IconLocation.BOTTOM
 
     /** 是否先绘制图标 **/
-    private val iconFirst get() = (spaceView.tag as IconLocation).let { it == IconLocation.TOP || it == IconLocation.START }
+    private val iconFirst get() = iconLocation == IconLocation.TOP || iconLocation == IconLocation.START
 
     /** 默认是否显示水波纹 **/
     private val defaultRipple get() = defaults[RIPPLE] as Boolean
@@ -131,7 +146,7 @@ class IconTextView @JvmOverloads constructor(
     fun setIconLocation(location: IconLocation) = also {
         // 更新控件信息
         removeAllViews()
-        spaceView.tag = location
+        iconLocation = location
         // 获取间隔大小
         val params = spaceView.layoutParams
         val space = if (vertical) params.height else params.width

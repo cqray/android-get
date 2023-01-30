@@ -21,17 +21,17 @@ public class MainFragment extends GetFragment {
         super.onCreate(savedInstanceState);
         setGetContentView(R.layout.activity_main);
 
-        toolbar.setTitle((Integer) null);
+        toolbar.setTitle("77777");
 
-        toolbar.setTitleSpace(0);
-
-        toolbar.setActionSpace(0);
+//        toolbar.setTitleSpace(0F);
+//
+//        toolbar.setActionSpace(0F);
         toolbar.setActionText(0, "666");
 //        setBusy();
 
-        TextView tv = requireContentView().findViewById(R.id.tv);
-        tv.setText(UUID.randomUUID().toString());
-        tv.append("6666666");
+//        TextView tv = requireContentView().findViewById(R.id.tv);
+//        tv.setText(UUID.randomUUID().toString());
+//        tv.append("6666666");
 
 
 

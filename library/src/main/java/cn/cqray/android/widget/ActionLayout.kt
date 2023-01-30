@@ -94,7 +94,7 @@ class ActionLayout @JvmOverloads constructor(
     private val defaultVisible get() = defaults[ACTION_VISIBLE] as Boolean
 
     /** 默认组件间隔 **/
-    private val defaultSpace get() = defaults[ACTION_SPACE] as Float
+    val defaultSpace get() = defaults[ACTION_SPACE] as Float
 
     /** 默认组件文本颜色 **/
     private val defaultTextColor get() = defaults[ACTION_TEXT_COLOR] as Int

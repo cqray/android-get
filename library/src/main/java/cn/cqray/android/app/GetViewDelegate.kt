@@ -403,10 +403,10 @@ class GetViewDelegate(provider: GetViewProvider) :
 
         with(toolbar!!) {
             val init = Get.init.toolbarInit!!
-            setUseRipple(init.useRipple)
-            setTitleCenter(init.titleCenter)
-            setTitleTextColor(init.titleTextColor)
-            setTitleTextSize(init.titleTextSize)
+//            setRipple(init.useRipple)
+//            setTitleCenter(init.titleCenter)
+//            setTitleTextColor(init.titleTextColor)
+//            setTitleTextSize(init.titleTextSize)
 
             // 回退按钮部分
             setBackIcon(init.backIcon)

@@ -27,17 +27,6 @@ public class MainActivity extends GetMultiActivity {
 
         setTabAtTop(true);
 
-        Log.e("数据22", String.valueOf(Sizes.divider()));
-        Log.e("数据22", String.valueOf(Sizes.px2dp(Sizes.divider())));
-
-
-        new Toolbar(this);
-
-
-//        tabLayout.setBackgroundColor(Color.BLUE);
-        
-
-//        getMultiDelegate().addFragment(View, );
 
         loadMultiFragments(
 //                new GetMultiItem(MainFragment.class, "我的"),
