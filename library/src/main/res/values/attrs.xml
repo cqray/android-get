@@ -5,71 +5,28 @@
     <attr name="sUseRipple" format="boolean" />
     <attr name="sPadding" format="dimension" />
     <attr name="useRipple" format="boolean" />
-    <attr name="sActionTextColor" format="color" />
-    <attr name="sActionTextSize" format="dimension" />
-    <attr name="sActionTextStyle">
-        <enum name="normal" value="0" />
-        <enum name="bold" value="1" />
-        <enum name="italic" value="2" />
-    </attr>
-    <attr name="sActionSpace" format="dimension" />
+
+    <attr name="ripple" format="boolean" />
+<!--    <attr name="sActionTextColor" format="color" />-->
+<!--    <attr name="sActionTextSize" format="dimension" />-->
+<!--    <attr name="sActionTextStyle">-->
+<!--        <enum name="normal" value="0" />-->
+<!--        <enum name="bold" value="1" />-->
+<!--        <enum name="italic" value="2" />-->
+<!--    </attr>-->
+<!--    <attr name="sActionSpace" format="dimension" />-->
 
     <declare-styleable name="FullTextView">
         <attr name="sUseDefault" format="boolean" />
         <attr name="sParagraphSpacing" format="dimension" />
     </declare-styleable>
 
-    <!--    &lt;!&ndash; 标题栏 &ndash;&gt;-->
-    <!--    <declare-styleable name="Toolbar">-->
-    <!--        &lt;!&ndash; 一般属性 &ndash;&gt;-->
-    <!--        <attr name="sUseRipple" />-->
-    <!--        <attr name="sPadding" />-->
-    <!--        &lt;!&ndash;        <attr name="sPadding" format="dimension" />&ndash;&gt;-->
-    <!--        <attr name="sElevation" format="dimension" />-->
-    <!--        &lt;!&ndash; 标题属性 &ndash;&gt;-->
-    <!--        <attr name="sTitleText" format="string" localization="suggested" />-->
-    <!--        <attr name="sTitleTextColor" format="color" />-->
-    <!--        <attr name="sTitleTextSize" format="dimension" />-->
-    <!--        <attr name="sTitleTextStyle">-->
-    <!--            <enum name="normal" value="0" />-->
-    <!--            <enum name="bold" value="1" />-->
-    <!--            <enum name="italic" value="2" />-->
-    <!--        </attr>-->
-    <!--        <attr name="sTitleEditable" format="boolean" />-->
-    <!--        <attr name="sTitleCenter" format="boolean" />-->
-    <!--        <attr name="sTitleSpace" format="dimension" />-->
-
-
-    <!--        &lt;!&ndash; 返回 &ndash;&gt;-->
-    <!--        <attr name="sBackIcon" format="reference" />-->
-    <!--        <attr name="sBackIconVisible" format="boolean" />-->
-    <!--        <attr name="sBackText" format="string" localization="suggested" />-->
-    <!--        <attr name="sBackTextColor" format="color" />-->
-    <!--        <attr name="sBackTextSize" format="dimension" />-->
-    <!--        <attr name="sBackTextStyle">-->
-    <!--            <enum name="normal" value="0" />-->
-    <!--            <enum name="bold" value="1" />-->
-    <!--            <enum name="italic" value="2" />-->
-    <!--        </attr>-->
-    <!--        <attr name="sBackSpace" format="dimension" />-->
-
-    <!--        &lt;!&ndash; ActionLayout相关属性 &ndash;&gt;-->
-    <!--        <attr name="sActionTextColor" />-->
-    <!--        <attr name="sActionTextSize" />-->
-    <!--        <attr name="sActionTextStyle" />-->
-    <!--        <attr name="sActionSpace" />-->
-    <!--        &lt;!&ndash; 分割线相关属性 &ndash;&gt;-->
-    <!--        <attr name="sDividerColor" format="color" />-->
-    <!--        <attr name="sDividerHeight" format="dimension" />-->
-    <!--        <attr name="sDividerMargin" format="dimension" />-->
-    <!--        <attr name="sDividerVisible" format="boolean" />-->
-    <!--    </declare-styleable>-->
-
     <!-- 标题栏 -->
     <declare-styleable name="Toolbar">
         <!-- 一般属性 -->
-        <attr name="sUseRipple" />
-        <attr name="sPadding" />
+        <attr name="ripple" />
+        <attr name="paddingStart" />
+        <attr name="paddingEnd" />
         <attr name="elevation" />
         <!-- 标题属性 -->
         <attr name="titleText" format="string" localization="suggested" />
@@ -91,12 +48,17 @@
             <enum name="italic" value="2" />
         </attr>
         <attr name="backSpace" format="dimension" />
-
         <!-- ActionLayout相关属性 -->
-        <attr name="sActionTextColor" />
-        <attr name="sActionTextSize" />
-        <attr name="sActionTextStyle" />
-        <attr name="sActionSpace" />
+        <attr name="actionSpace" format="dimension" />
+        <attr name="actionTextColor" format="color" />
+        <attr name="actionTextSize" format="dimension" />
+        <attr name="actionTextStyle">
+            <enum name="normal" value="0" />
+            <enum name="bold" value="1" />
+            <enum name="italic" value="2" />
+            <enum name="boldItalic" value="3"/>
+        </attr>
+
         <!-- 分割线相关属性 -->
         <attr name="dividerColor" format="color" />
         <attr name="dividerHeight" format="dimension" />
@@ -104,43 +66,6 @@
         <attr name="dividerVisible" format="boolean" />
     </declare-styleable>
 
-    <!-- Action布局控件 -->
-    <declare-styleable name="ActionLayout">
-        <attr name="sUseRipple" />
-        <attr name="defaultActionRipple" format="boolean" />
-        <attr name="defaultActionSpace" format="dimension" />
-        <attr name="defaultActionTextColor" format="color" />
-        <attr name="defaultActionTextSize" format="dimension" />
-        <attr name="defaultActionTextStyle">
-            <enum name="normal" value="0" />
-            <enum name="bold" value="1" />
-            <enum name="italic" value="2" />
-        </attr>
-        <attr name="defaultActionVisible" format="boolean" />
 
-        <attr name="sActionTextColor" />
-        <attr name="sActionTextSize" />
-        <attr name="sActionTextStyle" />
-        <attr name="sActionSpace" />
-    </declare-styleable>
 
-    <!-- 文本图标控件 -->
-    <declare-styleable name="IconTextView">
-        <!-- 图标位置 -->
-        <attr name="sIconLocation" format="enum">
-            <enum name="left" value="0" />
-            <enum name="top" value="1" />
-            <enum name="right" value="2" />
-            <enum name="bottom" value="3" />
-        </attr>
-        <!--        <attr name="icon"-->
-        <!-- 图标文本间隔 -->
-        <attr name="sViewSpace" format="dimension" />
-        <attr name="useRipple" />
-        <attr name="android:src" />
-        <attr name="android:text" />
-        <attr name="android:textColor" />
-        <attr name="android:textSize" />
-        <attr name="android:textStyle" />
-    </declare-styleable>
 </resources>

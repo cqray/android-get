@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Action布局控件 -->
+    <declare-styleable name="ActionLayout">
+        <attr name="defaultRipple" format="boolean" />
+        <attr name="defaultVisible" format="boolean" />
+        <attr name="defaultSpace" format="dimension" />
+        <attr name="defaultTextColor" format="color" />
+        <attr name="defaultTextSize" format="dimension" />
+        <attr name="defaultTextStyle">
+            <enum name="normal" value="0" />
+            <enum name="bold" value="1" />
+            <enum name="italic" value="2" />
+            <enum name="boldItalic" value="3"/>
+        </attr>
+    </declare-styleable>
+</resources>

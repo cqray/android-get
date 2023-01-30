@@ -75,7 +75,7 @@ class Toolbar @JvmOverloads constructor(
     private val padding = MutableLiveData<Int>()
 
     /** 是否使用水波纹 **/
-    private val useRipple = MutableLiveData<Boolean>()
+    private val ripple = MutableLiveData<Boolean>()
 
     /** 标题居中 **/
     private val titleCenter = MutableLiveData<Boolean>()
@@ -96,6 +96,21 @@ class Toolbar @JvmOverloads constructor(
     /** 生命周期持有对象 **/
     val lifecycleOwner: LifecycleOwner by lazy { LifecycleOwner { lifecycleRegistry } }
 
+
+    /** 默认参数，主要是对应值为空时，赋值 **/
+    private val defaults: HashMap<Int, Any?> by lazy {
+        val map = HashMap<Int, Any?>()
+        map[RIPPLE] = true
+        map[BACK_VISIBLE] = true
+        map[TITLE_CENTER] = false
+        map[TITLE_SPACE] = Sizes.content()
+        map[TITLE_TEXT_COLOR] = ContextCompat.getColor(context, R.color.foreground)
+        map[TITLE_TEXT_SIZE] = Sizes.h2()
+        map[TITLE_TEXT_STYLE] = Typeface.BOLD
+//        map[ACTION_ICON_TINT_COLOR] = Color.TRANSPARENT
+        map
+    }
+
     init {
         // 设置默认Id
         if (id == NO_ID) id = R.id.get_toolbar
@@ -112,6 +127,30 @@ class Toolbar @JvmOverloads constructor(
         // 初始化LiveData
         initLiveData()
     }
+
+    /** 默认是否显示水波纹 **/
+    private val defaultRipple get() = defaults[RIPPLE] as Boolean
+
+    /** 默认是否显示回退组件 **/
+    private val defaultBackVisible get() = defaults[BACK_VISIBLE] as Boolean
+
+    /** 默认标题间隔 **/
+    private val defaultTitleSpace get() = defaults[TITLE_SPACE] as Float
+
+    /** 默认标题间隔 **/
+    private val defaultTitleCenter get() = defaults[TITLE_CENTER] as Boolean
+
+    /** 默认标题文本颜色 **/
+    private val defaultTitleTextColor get() = defaults[TITLE_TEXT_COLOR] as Int
+
+    /** 默认标题文本大小 **/
+    private val defaultTitleTextSize get() = defaults[TITLE_TEXT_SIZE] as Float
+
+    /** 默认标题文本样式 **/
+    private val defaultTitleTextStyle get() = defaults[TITLE_TEXT_STYLE] as Int
+//
+//    /** 默认组件图标TintColor **/
+//    private val defaultActionTintColor get() = defaults[ACTION_ICON_TINT_COLOR] as Int
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
@@ -132,23 +171,24 @@ class Toolbar @JvmOverloads constructor(
         val elev = Sizes.px(R.dimen.elevation)
         // 获取默认属性
         val ta = context.obtainStyledAttributes(attrs, R.styleable.Toolbar)
-        val pd = ta.getDimension(R.styleable.Toolbar_sPadding, size)
-        val ripple = ta.getBoolean(R.styleable.Toolbar_sUseRipple, true)
+        //val pd = ta.getDimension(R.styleable.Toolbar_sPadding, size)
+        val ripple = ta.getBoolean(R.styleable.Toolbar_ripple, true)
         val elevation = ta.getDimension(R.styleable.Toolbar_elevation, elev)
         val editable = ta.getBoolean(R.styleable.Toolbar_titleEditable, false)
-        val center = ta.getBoolean(R.styleable.Toolbar_titleCenter, false)
-        val space = ta.getDimension(R.styleable.Toolbar_titleSpace, size)
+        // 默认属性
+        defaults[TITLE_SPACE] = ta.getDimension(R.styleable.Toolbar_titleSpace, defaultTitleSpace)
+        defaults[TITLE_CENTER] = ta.getBoolean(R.styleable.Toolbar_titleCenter, defaultTitleCenter)
         ta.recycle()
         // 设置标题栏背景
         val primaryColor = ContextCompat.getColor(context, R.color.colorPrimary)
         val background = background ?: ColorDrawable(primaryColor)
         ViewCompat.setBackground(this, createMaterialShapeDrawableBackground(background))
         // 其他属性
-        titleSpace.value = space.toInt()
-        titleCenter.value = center
+        titleSpace.value = defaultTitleSpace.toInt()
+        titleCenter.value = defaultTitleCenter
         titleEditable.value = editable
-        padding.value = pd.toInt()
-        useRipple.value = ripple
+//        padding.value = pd.toInt()
+//        ripple.value = ripple
         setElevation(elevation)
     }
 
@@ -156,22 +196,22 @@ class Toolbar @JvmOverloads constructor(
      * 初始化回退控件
      */
     private fun initToolbarBack(attrs: AttributeSet?) {
-        val size = Sizes.h3()
         // 获取属性
         val ta = context.obtainStyledAttributes(attrs, R.styleable.Toolbar)
         val drawable = ta.getDrawable(R.styleable.Toolbar_backIcon)
-        val visible = ta.getBoolean(R.styleable.Toolbar_backIconVisible, true)
+        val visible = ta.getBoolean(R.styleable.Toolbar_backIconVisible, defaultBackVisible)
         val text = ta.getString(R.styleable.Toolbar_backText)
-        val textColor = ta.getColor(R.styleable.Toolbar_backTextColor, Color.WHITE)
-        val textSize = ta.getDimension(R.styleable.Toolbar_backTextSize, size)
+        val textColor = ta.getColor(R.styleable.Toolbar_backTextColor, defaultTitleTextColor)
+        val textSize = ta.getDimension(R.styleable.Toolbar_backTextSize, Sizes.h3())
         val textStyle = ta.getInt(R.styleable.Toolbar_backTextStyle, 0)
         ta.recycle()
         // 设置Back布局
         backView.setText(text)
-            .setTextColor(textColor)
-            .setTextSize(textSize, SizeUnit.PX)
-            .setTypeface(Typeface.defaultFromStyle(textStyle))
-            .iconView.visibility = if (visible) VISIBLE else GONE
+        backView.setTextColor(textColor)
+        backView.setTextSize(textSize, SizeUnit.PX)
+        backView.setTypeface(Typeface.defaultFromStyle(textStyle))
+        backView.iconView.visibility = if (visible) VISIBLE else GONE
+        defaults[BACK_VISIBLE] = visible
         // 设置图标
         if (drawable != null) backView.setIconDrawable(drawable)
         else backView.setIconResource(R.drawable.def_back_material_light)
@@ -182,26 +222,39 @@ class Toolbar @JvmOverloads constructor(
     /**
      * 初始化行为控件
      */
-    private fun initToolbarAction(attrs: AttributeSet?) = addView(actionLayout)
+    private fun initToolbarAction(attrs: AttributeSet?) {
+        // 获取属性
+        val ta = context.obtainStyledAttributes(attrs, R.styleable.Toolbar)
+        val space = ta.getDimension(R.styleable.Toolbar_actionSpace, Sizes.content())
+        val textColor = ta.getColor(R.styleable.Toolbar_actionTextColor, Color.WHITE)
+        val textSize = ta.getDimension(R.styleable.Toolbar_actionTextSize, Sizes.h3())
+        val textStyle = ta.getInt(R.styleable.Toolbar_actionTextStyle, 0)
+        ta.recycle()
+        // 设置ActionLayout属性
+        actionLayout.setSpace(space, SizeUnit.PX)
+        actionLayout.setTextColor(textColor)
+        actionLayout.setTextSize(textSize)
+        actionLayout.setTextTypeface(Typeface.defaultFromStyle(textStyle))
+        // 添加到容器
+        addView(actionLayout)
+    }
 
     /**
      * 初始化标题文本
      */
     private fun initToolbarTittle(attrs: AttributeSet?) {
-        val size = Sizes.h2()
         // 获取属性
         val ta = context.obtainStyledAttributes(attrs, R.styleable.Toolbar)
         val text = ta.getString(R.styleable.Toolbar_titleText)
-        val textColor = ta.getColor(R.styleable.Toolbar_titleTextColor, Color.WHITE)
-        val textSize = ta.getDimension(R.styleable.Toolbar_titleTextSize, size)
-        val textStyle = ta.getInt(R.styleable.Toolbar_titleTextStyle, 0)
+        defaults[TITLE_TEXT_COLOR] = ta.getColor(R.styleable.Toolbar_titleTextColor, defaultTitleTextColor)
+        defaults[TITLE_TEXT_SIZE] = ta.getDimension(R.styleable.Toolbar_titleTextSize, defaultTitleTextSize)
+        defaults[TITLE_TEXT_STYLE] = ta.getInt(R.styleable.Toolbar_titleTextStyle, defaultTitleTextStyle)
         ta.recycle()
         // 设置标题
         titleView.text = text
-        titleView.setTextColor(textColor)
-        titleView.setTextSize(COMPLEX_UNIT_PX, textSize)
-        titleView.typeface = Typeface.defaultFromStyle(textStyle)
-        titleView.setBackgroundColor(Color.RED)
+        titleView.setTextColor(defaultTitleTextColor)
+        titleView.setTextSize(COMPLEX_UNIT_PX, defaultTitleTextSize)
+        titleView.typeface = Typeface.defaultFromStyle(defaultTitleTextStyle)
         // 添加到容器
         addView(titleView)
     }
@@ -288,9 +341,9 @@ class Toolbar @JvmOverloads constructor(
             actionLayout.bringToFront()
         }
         // 是否使用水波纹
-        useRipple.observe(lifecycleOwner) {
-            backView.setUseRipple(it)
-            //actionLayout.setDefaultUseRipple(it)
+        ripple.observe(lifecycleOwner) {
+            backView.setRipple(it)
+            actionLayout.setRipple(it)
         }
         // 间隔大小监听
         padding.observe(lifecycleOwner) {
@@ -319,7 +372,7 @@ class Toolbar @JvmOverloads constructor(
         this.padding.setValue(size)
     }
 
-    fun setUseRipple(useRipple: Boolean?) = also { this.useRipple.setValue(useRipple ?: true) }
+    fun setRipple(ripple: Boolean?) = also { this.ripple.setValue(ripple ?: defaultRipple) }
 
     fun setTitleCenter(center: Boolean?) = also { titleCenter.value = center ?: false }
 
@@ -341,11 +394,10 @@ class Toolbar @JvmOverloads constructor(
 
     fun setBackIconTintColor(@ColorInt color: Int?) = also { backView.setIconTintColor(color) }
 
-    fun setBackIconTintList(tintList: ColorStateList?) = also { backView.setIconTintList(tintList) }
-
     fun setBackIconVisible(visible: Boolean?) = also {
-        if (visible != (backView.iconView.visibility == VISIBLE)) {
-            backView.iconView.visibility = if (visible) VISIBLE else GONE
+        val newVisible = visible ?: defaultBackVisible
+        if (newVisible != (backView.iconView.visibility == VISIBLE)) {
+            backView.iconView.visibility = if (newVisible) VISIBLE else GONE
             padding.value = padding.value!!
         }
     }
@@ -370,35 +422,42 @@ class Toolbar @JvmOverloads constructor(
     //============================================================//
 
     fun setTitle(@StringRes id: Int?) = also {
-        if (id != null) titleView.setText(id)
-        else setTitle(null as String?)
+        // 无ID资源
+        if (id == null) titleView.text = null
+        // 有ID资源
+        else titleView.setText(id)
     }
 
     fun setTitle(text: CharSequence?) = also { titleView.text = text }
 
     fun setTitleTextColor(@ColorInt color: Int?) = also {
-        color?.let { titleView.setTextColor(it) }
+        val newColor = color ?: defaultTitleTextColor
+        titleView.setTextColor(newColor)
     }
 
-    fun setTitleTextSize(size: Float?) = also {
-        size?.let { titleView.setTextSize(COMPLEX_UNIT_SP, it) }
-    }
+    fun setTitleTextSize(size: Float?) = also { setTitleTextSize(size, SizeUnit.SP) }
 
     fun setTitleTextSize(size: Float?, unit: SizeUnit) = also {
-        size?.let { titleView.setTextSize(unit.type, it) }
+        val newSize =
+            if (size == null) defaultTitleTextSize
+            else Sizes.applyDimension(size, unit)
+        titleView.setTextSize(SizeUnit.PX.type, newSize)
     }
 
-    fun setTitleTextStyle(typeface: Typeface?) = also { }
+    fun setTitleTypeface(typeface: Typeface?) = also {
+        val newTypeface = typeface ?: Typeface.defaultFromStyle(defaultTitleTextStyle)
+        titleView.typeface = newTypeface
+    }
 
-    fun setTitleTypeface(typeface: Typeface?) = also { titleView.typeface = typeface }
+    fun setTitleEditable(editable: Boolean?) = also { titleEditable.value = editable ?: false }
 
-    fun setTitleEditable(editable: Boolean) = also { titleEditable.value = editable }
+    fun setTitleSpace(space: Float?) = also { setTitleSpace(space, SizeUnit.DIP) }
 
-    fun setTitleSpace(space: Float) = also { setTitleSpace(space, SizeUnit.DIP) }
-
-    fun setTitleSpace(space: Float, unit: SizeUnit) = also {
-        val value = Sizes.applyDimension(space, unit).toInt()
-        titleSpace.value = value
+    fun setTitleSpace(space: Float?, unit: SizeUnit) = also {
+        val newSpace =
+            if (space == null) defaultTitleSpace
+            else Sizes.applyDimension(space, unit)
+        titleSpace.value = newSpace.toInt()
     }
 
     //============================================================//
@@ -406,66 +465,66 @@ class Toolbar @JvmOverloads constructor(
     //====================ACTION部分 START========================//
     //============================================================//
 
-    fun setActionRipple(ripple: Boolean?) = also { actionLayout.setActionRipple(ripple) }
+    fun setActionRipple(ripple: Boolean?) = also { actionLayout.setRipple(ripple) }
 
-    fun setActionRipple(key: Int?, ripple: Boolean?) = also { actionLayout.setActionRipple(key, ripple) }
+    fun setActionRipple(key: Int?, ripple: Boolean?) = also { actionLayout.setRipple(key, ripple) }
 
-    fun setActionVisible(visible: Boolean?) = also { actionLayout.setActionVisible(visible) }
+    fun setActionVisible(visible: Boolean?) = also { actionLayout.setVisible(visible) }
 
-    fun setActionVisible(key: Int?, visible: Boolean?) = also { actionLayout.setActionVisible(key, visible) }
+    fun setActionVisible(key: Int?, visible: Boolean?) = also { actionLayout.setVisible(key, visible) }
 
     fun setActionSpace(space: Float?) = also { setActionSpace(space, SizeUnit.DIP) }
 
     fun setActionSpace(space: Float?, unit: SizeUnit) = also {
-        actionLayout.setActionSpace(space, unit)
+        actionLayout.setSpace(space, unit)
         padding.value = padding.value!!
         titleCenter.value = titleCenter.value
     }
 
-    fun setActionText(key: Int?, @StringRes resId: Int) = also { actionLayout.setActionText(key, resId) }
+    fun setActionText(key: Int?, @StringRes resId: Int) = also { actionLayout.setText(key, resId) }
 
-    fun setActionText(key: Int?, text: CharSequence?) = also { actionLayout.setActionText(key, text) }
+    fun setActionText(key: Int?, text: CharSequence?) = also { actionLayout.setText(key, text) }
 
-    fun setActionTextColor(@ColorInt color: Int?) = also { actionLayout.setActionTextColor(color) }
+    fun setActionTextColor(@ColorInt color: Int?) = also { actionLayout.setTextColor(color) }
 
-    fun setActionTextColor(key: Int?, @ColorInt color: Int?) = also { actionLayout.setActionTextColor(key, color) }
+    fun setActionTextColor(key: Int?, @ColorInt color: Int?) = also { actionLayout.setTextColor(key, color) }
 
-    fun setActionTextSize(size: Float?) = also { actionLayout.setActionTextSize(size) }
+    fun setActionTextSize(size: Float?) = also { actionLayout.setTextSize(size) }
 
-    fun setActionTextSize(size: Float?, unit: SizeUnit) = also { actionLayout.setActionTextSize(size, unit) }
+    fun setActionTextSize(size: Float?, unit: SizeUnit) = also { actionLayout.setTextSize(size, unit) }
 
-    fun setActionTextSize(key: Int?, size: Float?) = also { actionLayout.setActionTextSize(key, size) }
+    fun setActionTextSize(key: Int?, size: Float?) = also { actionLayout.setTextSize(key, size) }
 
     fun setActionTextSize(key: Int?, size: Float?, unit: SizeUnit) = also {
-        actionLayout.setActionTextSize(key, size, unit)
+        actionLayout.setTextSize(key, size, unit)
     }
 
-    fun setActionTextTypeface(typeface: Typeface?) = also { actionLayout.setActionTextTypeface(typeface) }
+    fun setActionTextTypeface(typeface: Typeface?) = also { actionLayout.setTextTypeface(typeface) }
 
     fun setActionTextTypeface(key: Int?, typeface: Typeface?) = also {
-        actionLayout.setActionTextTypeface(key, typeface)
+        actionLayout.setTextTypeface(key, typeface)
     }
 
-    fun setActionIcon(key: Int?, @DrawableRes resId: Int?) = also { actionLayout.setActionIcon(key, resId) }
+    fun setActionIcon(key: Int?, @DrawableRes resId: Int?) = also { actionLayout.setIcon(key, resId) }
 
     fun setActionIcon(key: Int?, @DrawableRes resId: Int?, @ColorInt tintColor: Int?) = also {
-        actionLayout.setActionIcon(key, resId, tintColor)
+        actionLayout.setIcon(key, resId, tintColor)
     }
 
-    fun setActionIcon(key: Int?, drawable: Drawable?) = also { actionLayout.setActionIcon(key, drawable) }
+    fun setActionIcon(key: Int?, drawable: Drawable?) = also { actionLayout.setIcon(key, drawable) }
 
     fun setActionIcon(key: Int?, drawable: Drawable?, @ColorInt tintColor: Int?) = also {
-        actionLayout.setActionIcon(key, drawable, tintColor)
+        actionLayout.setIcon(key, drawable, tintColor)
     }
 
-    fun setActionIconTintColor(@ColorInt color: Int) = also { actionLayout.setActionIconTintColor(color) }
+    fun setActionIconTintColor(@ColorInt color: Int) = also { actionLayout.setIconTintColor(color) }
 
     fun setActionIconTintColor(key: Int?, @ColorInt tintColor: Int) = also {
-        actionLayout.setActionIconTintColor(key, tintColor)
+        actionLayout.setIconTintColor(key, tintColor)
     }
 
     fun setActionListener(key: Int?, listener: OnClickListener?) = also {
-        actionLayout.setActionListener(key, listener)
+        actionLayout.setListener(key, listener)
     }
 
     //============================================================//
@@ -473,33 +532,40 @@ class Toolbar @JvmOverloads constructor(
     //===================DIVIDER部分 START=========================//
     //============================================================//
 
-    fun setDividerColor(@ColorInt color: Int) = also {
-        dividerView.setBackgroundColor(color)
+    fun setDividerColor(@ColorInt color: Int?) = also {
+        // 无色值
+        if (color == null) dividerView.background = null
+        // 有色值
+        else dividerView.setBackgroundColor(color)
     }
 
-    fun setDividerHeight(height: Float) = also {
-        return setDividerHeight(height, SizeUnit.DIP)
-    }
+    fun setDividerDrawable(drawable: Drawable?) = also { dividerView.background = drawable }
 
-    fun setDividerHeight(height: Float, unit: SizeUnit) = also {
-        dividerView.layoutParams.height = Sizes.applyDimension(height, unit).toInt()
+    fun setDividerHeight(height: Float?) = also { return setDividerHeight(height, SizeUnit.DIP) }
+
+    fun setDividerHeight(height: Float?, unit: SizeUnit) = also {
+        dividerView.layoutParams.height =
+            if (height == null) 0
+            else Sizes.applyDimension(height, unit).toInt()
         dividerView.requestLayout()
     }
 
-    fun setDividerMargin(margin: Float) = also {
-        return setDividerMargin(margin, SizeUnit.DIP)
-    }
+    fun setDividerMargin(margin: Float?) = also { setDividerMargin(margin, SizeUnit.DIP) }
 
-    fun setDividerMargin(margin: Float, unit: SizeUnit) = also {
-        val m = Sizes.applyDimension(margin, unit).toInt()
+    fun setDividerMargin(margin: Float?, unit: SizeUnit) = also {
+        val newMargin =
+            if (margin == null) 0
+            else Sizes.applyDimension(margin, unit).toInt()
         val params = dividerView.layoutParams as LayoutParams
-        params.setMargins(m, 0, m, 0)
+        params.setMargins(newMargin, 0, newMargin, 0)
         dividerView.requestLayout()
     }
 
-    fun setDividerVisible(visible: Boolean) = also {
-        dividerView.visibility = if (visible) VISIBLE else INVISIBLE
-    }
+    fun setDividerVisible(visible: Boolean?) = also { dividerView.visibility = if (visible == true) VISIBLE else GONE }
+
+    //============================================================//
+    //=====================DIVIDER部分 END========================//
+    //============================================================//
 
     private fun createMaterialShapeDrawableBackground(background: Drawable): Drawable {
         return if (background is ColorDrawable) {
@@ -510,5 +576,17 @@ class Toolbar @JvmOverloads constructor(
         } else {
             background
         }
+    }
+
+    private companion object {
+        const val RIPPLE = 0
+        const val BACK_VISIBLE = 1
+        const val TITLE_CENTER = 2
+        const val TITLE_SPACE = 3
+        const val TITLE_TEXT_COLOR = 4
+        const val TITLE_TEXT_SIZE = 5
+        const val TITLE_TEXT_STYLE = 6
+//        const val ACTION_ICON_TINT_COLOR = 6
+
     }
 }

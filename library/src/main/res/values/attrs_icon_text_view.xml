@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- 文本图标控件 -->
+    <declare-styleable name="IconTextView">
+        <!-- 图标位置 -->
+        <attr name="iconLocation" format="enum">
+            <enum name="left" value="0" />
+            <enum name="top" value="1" />
+            <enum name="right" value="2" />
+            <enum name="bottom" value="3" />
+        </attr>
+        <!-- 图标文本间隔 -->
+        <attr name="viewSpace" format="dimension" />
+        <attr name="useRipple" />
+        <attr name="src" />
+        <attr name="tint" />
+        <attr name="text" />
+        <attr name="textColor" />
+        <attr name="textSize" />
+        <attr name="textStyle" />
+    </declare-styleable>
+</resources>

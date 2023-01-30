@@ -3,6 +3,7 @@ package cn.cqray.android.widget
 import android.content.Context
 import android.content.res.ColorStateList
 import android.graphics.Bitmap
+import android.graphics.Color
 import android.graphics.Typeface
 import android.graphics.drawable.Drawable
 import android.text.TextUtils
@@ -20,7 +21,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.widget.ImageViewCompat
 import cn.cqray.android.R
 import cn.cqray.android.util.SizeUnit
-import cn.cqray.android.util.Sizes.applyDimension
+import cn.cqray.android.util.Sizes
 import cn.cqray.android.util.ViewUtils
 
 /**
@@ -33,15 +34,6 @@ class IconTextView @JvmOverloads constructor(
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
 ) : LinearLayout(context, attrs, defStyleAttr) {
-
-    /** 图标位置 **/
-    private var iconLocation = IconLocation.START
-
-    /** 是否是垂直方向 **/
-    private val vertical get() = iconLocation == IconLocation.TOP || iconLocation == IconLocation.BOTTOM
-
-    /** 是否先绘制图标 **/
-    private val iconFirst get() = iconLocation == IconLocation.START || iconLocation == IconLocation.END
 
     /** 图标控件 **/
     val iconView: AppCompatImageView
@@ -62,41 +54,46 @@ class IconTextView @JvmOverloads constructor(
     /** 间隔控件  */
     private val spaceView: Space get() = Space(context).also { it.layoutParams = LayoutParams(-2, -2) }
 
+    /** 默认参数，主要是对应值为空时，赋值 **/
+    private val defaults: HashMap<Int, Any?> by lazy {
+        val map = HashMap<Int, Any?>()
+        map[RIPPLE] = true
+        map[SPACE] = Sizes.small()
+        map[TEXT_COLOR] = ContextCompat.getColor(context, R.color.text)
+        map[TEXT_SIZE] = Sizes.body()
+        map[TEXT_STYLE] = 0
+        map
+    }
+
     init {
         val ta = context.obtainStyledAttributes(attrs, R.styleable.IconTextView)
-        val space = ta.getDimensionPixelSize(
-            R.styleable.IconTextView_sViewSpace,
-            resources.getDimensionPixelSize(R.dimen.small)
-        )
-        val text = ta.getString(R.styleable.IconTextView_android_text) ?: ""
-        val textColor = ta.getColor(
-            R.styleable.IconTextView_android_textColor,
-            ContextCompat.getColor(context, R.color.text)
-        )
-        val textSize = ta.getDimensionPixelSize(
-            R.styleable.IconTextView_android_textSize,
-            resources.getDimensionPixelSize(R.dimen.body)
-        )
-        val textStyle = ta.getInt(R.styleable.IconTextView_android_textStyle, 0)
-        val useRipple = ta.getBoolean(R.styleable.IconTextView_useRipple, true)
-        val drawable = ta.getDrawable(R.styleable.IconTextView_android_src)
-
-        iconLocation = IconLocation.values()[ta.getInt(R.styleable.IconTextView_sIconLocation, 0)]
+        val text = ta.getString(R.styleable.IconTextView_text) ?: ""
+        val drawable = ta.getDrawable(R.styleable.IconTextView_src)
+        val tintColor = ta.getColor(R.styleable.IconTextView_tint, Color.TRANSPARENT)
+        val location = IconLocation.values()[ta.getInt(R.styleable.IconTextView_iconLocation, 0)]
+        // 初始化默认属性
+        defaults[RIPPLE] = ta.getBoolean(R.styleable.IconTextView_useRipple, defaultRipple)
+        defaults[SPACE] = ta.getBoolean(R.styleable.IconTextView_viewSpace, defaultRipple)
+        defaults[TEXT_COLOR] = ta.getColor(R.styleable.IconTextView_textColor, defaultTextColor)
+        defaults[TEXT_SIZE] = ta.getDimension(R.styleable.IconTextView_textSize, defaultTextSize)
+        defaults[TEXT_STYLE] = ta.getInt(R.styleable.IconTextView_textStyle, defaultTextStyle)
+        // 释放资源
         ta.recycle()
-
         // 设置图标属性
         iconView.setImageDrawable(drawable)
+        ImageViewCompat.setImageTintList(iconView, ColorStateList.valueOf(tintColor))
         // 设置文本属性
         textView.let {
             it.text = text
-            it.setTextColor(textColor)
-            it.setTextSize(TypedValue.COMPLEX_UNIT_PX, textSize.toFloat())
-            it.typeface = Typeface.defaultFromStyle(textStyle)
+            it.setTextColor(defaultTextColor)
+            it.setTextSize(TypedValue.COMPLEX_UNIT_PX, defaultTextSize)
+            it.typeface = Typeface.defaultFromStyle(defaultTextStyle)
         }
         // 设置间隔属性
         spaceView.let {
-            it.layoutParams.width = if (vertical) -1 else space
-            it.layoutParams.height = if (vertical) space else -1
+            it.tag = location
+            it.layoutParams.width = if (vertical) -1 else defaultSpace
+            it.layoutParams.height = if (vertical) defaultSpace else -1
             it.visibility = if (text.isEmpty()) GONE else VISIBLE
         }
         // 添加相应的控件
@@ -104,19 +101,40 @@ class IconTextView @JvmOverloads constructor(
         addView(spaceView)
         addView(if (iconFirst) textView else iconView)
         // 设置背景
-        ViewUtils.setRippleBackground(iconView, useRipple)
-        ViewUtils.setRippleBackground(textView, useRipple)
+        ViewUtils.setRippleBackground(iconView, defaultRipple)
+        ViewUtils.setRippleBackground(textView, defaultRipple)
         // 设置点击事件
         setOnClickListener(null)
     }
 
+    /** 是否是垂直方向 **/
+    private val vertical get() = (spaceView.tag as IconLocation).let { it == IconLocation.TOP || it == IconLocation.BOTTOM }
+
+    /** 是否先绘制图标 **/
+    private val iconFirst get() = (spaceView.tag as IconLocation).let { it == IconLocation.TOP || it == IconLocation.START }
+
+    /** 默认是否显示水波纹 **/
+    private val defaultRipple get() = defaults[RIPPLE] as Boolean
+
+    /** 默认间隔 **/
+    private val defaultSpace get() = (defaults[SPACE] as Float).toInt()
+
+    /** 默认组件文本颜色 **/
+    private val defaultTextColor get() = defaults[TEXT_COLOR] as Int
+
+    /** 默认组件文本大小 **/
+    private val defaultTextSize get() = defaults[TEXT_SIZE] as Float
+
+    /** 默认组件文本样式 **/
+    private val defaultTextStyle get() = defaults[TEXT_STYLE] as Int
+
     fun setIconLocation(location: IconLocation) = also {
+        // 更新控件信息
+        removeAllViews()
+        spaceView.tag = location
         // 获取间隔大小
         val params = spaceView.layoutParams
         val space = if (vertical) params.height else params.width
-        // 更新位置
-        iconLocation = location
-        removeAllViews()
         // 更新间隔控件尺寸
         spaceView.layoutParams.width = if (vertical) -1 else space
         spaceView.layoutParams.height = if (vertical) space else -1
@@ -129,17 +147,20 @@ class IconTextView @JvmOverloads constructor(
     fun setViewSpace(space: Float?) = also { setViewSpace(space, SizeUnit.DIP) }
 
     fun setViewSpace(space: Float?, unit: SizeUnit) = also {
-        val viewSpace = applyDimension(space ?: 0F, unit).toInt()
+        val newSpace =
+            if (space == null) defaultSpace
+            else Sizes.applyDimension(space, unit)
         with(spaceView) {
-            layoutParams.width = if (vertical) -1 else viewSpace
-            layoutParams.height = if (vertical) viewSpace else -1
+            layoutParams.width = if (vertical) -1 else newSpace.toInt()
+            layoutParams.height = if (vertical) newSpace.toInt() else -1
             requestLayout()
         }
     }
 
-    fun setUseRipple(useRipple: Boolean?) = also {
-        ViewUtils.setRippleBackground(iconView, useRipple)
-        ViewUtils.setRippleBackground(textView, useRipple)
+    fun setRipple(ripple: Boolean?) = also {
+        val newRipple = ripple ?: defaultRipple
+        ViewUtils.setRippleBackground(iconView, newRipple)
+        ViewUtils.setRippleBackground(textView, newRipple)
     }
 
     fun setIconDrawable(drawable: Drawable?) = also { iconView.setImageDrawable(drawable) }
@@ -147,40 +168,50 @@ class IconTextView @JvmOverloads constructor(
     fun setIconBitmap(bitmap: Bitmap?) = also { iconView.setImageBitmap(bitmap) }
 
     fun setIconResource(@DrawableRes resId: Int?) = also {
+        // 无ID资源
         if (resId == null) iconView.setImageDrawable(null)
+        // 有ID资源
         else iconView.setImageResource(resId)
     }
 
     fun setIconTintColor(@ColorInt color: Int?) = also {
-        if (color == null)
-            ImageViewCompat.setImageTintList(iconView, null)
-        else
-            ImageViewCompat.setImageTintList(iconView, ColorStateList.valueOf(color))
-    }
-
-    fun setIconTintList(tintList: ColorStateList?) = also {
-        ImageViewCompat.setImageTintList(iconView, tintList)
+        // 无色值
+        if (color == null) ImageViewCompat.setImageTintList(iconView, null)
+        // 有色值
+        else ImageViewCompat.setImageTintList(iconView, ColorStateList.valueOf(color))
     }
 
     fun setText(@StringRes resId: Int?) = also {
-        if (resId == null) textView.text = null
-        else textView.setText(resId)
-        spaceView.visibility = if (TextUtils.isEmpty(textView.text)) GONE else VISIBLE
+        val newText =
+            if (resId == null) null
+            else context.getString(resId)
+        setText(newText)
     }
 
     fun setText(text: CharSequence?) = also {
-        textView.text = text
-        spaceView.visibility = if ((text ?: "").isEmpty()) GONE else VISIBLE
+        val newText = text ?: ""
+        textView.text = newText
+        spaceView.visibility = if (newText.isEmpty()) GONE else VISIBLE
     }
 
-    fun setTextColor(color: Int?) = also { color?.let { textView.setTextColor(it) } }
+    fun setTextColor(color: Int?) = also {
+        val newColor = color ?: defaultTextColor
+        textView.setTextColor(newColor)
+    }
 
-    fun setTextSize(textSize: Float?) = also { textSize?.let { textView.textSize = it } }
+    fun setTextSize(size: Float?) = also { setTextSize(size, SizeUnit.SP) }
 
-    fun setTextSize(textSize: Float?, unit: SizeUnit) =
-        also { textSize?.let { textView.setTextSize(unit.type, it) } }
+    fun setTextSize(size: Float?, unit: SizeUnit) = also {
+        val newSize =
+            if (size == null) defaultTextSize
+            else Sizes.applyDimension(size, unit)
+        textView.setTextSize(SizeUnit.PX.type, newSize)
+    }
 
-    fun setTypeface(typeface: Typeface?) = also { textView.typeface = typeface }
+    fun setTypeface(typeface: Typeface?) = also {
+        val newTypeface = typeface ?: Typeface.defaultFromStyle(defaultTextStyle)
+        textView.typeface = newTypeface
+    }
 
     override fun setOnClickListener(l: OnClickListener?) {
         iconView.setOnClickListener(l)
@@ -189,5 +220,13 @@ class IconTextView @JvmOverloads constructor(
             iconView.isPressed = true
             iconView.performClick()
         }
+    }
+
+    private companion object {
+        const val RIPPLE = 0
+        const val SPACE = 1
+        const val TEXT_COLOR = 2
+        const val TEXT_SIZE = 3
+        const val TEXT_STYLE = 4
     }
 }
