@@ -19,51 +19,51 @@
         <attr name="sParagraphSpacing" format="dimension" />
     </declare-styleable>
 
-<!--    &lt;!&ndash; 标题栏 &ndash;&gt;-->
-<!--    <declare-styleable name="Toolbar">-->
-<!--        &lt;!&ndash; 一般属性 &ndash;&gt;-->
-<!--        <attr name="sUseRipple" />-->
-<!--        <attr name="sPadding" />-->
-<!--        &lt;!&ndash;        <attr name="sPadding" format="dimension" />&ndash;&gt;-->
-<!--        <attr name="sElevation" format="dimension" />-->
-<!--        &lt;!&ndash; 标题属性 &ndash;&gt;-->
-<!--        <attr name="sTitleText" format="string" localization="suggested" />-->
-<!--        <attr name="sTitleTextColor" format="color" />-->
-<!--        <attr name="sTitleTextSize" format="dimension" />-->
-<!--        <attr name="sTitleTextStyle">-->
-<!--            <enum name="normal" value="0" />-->
-<!--            <enum name="bold" value="1" />-->
-<!--            <enum name="italic" value="2" />-->
-<!--        </attr>-->
-<!--        <attr name="sTitleEditable" format="boolean" />-->
-<!--        <attr name="sTitleCenter" format="boolean" />-->
-<!--        <attr name="sTitleSpace" format="dimension" />-->
+    <!--    &lt;!&ndash; 标题栏 &ndash;&gt;-->
+    <!--    <declare-styleable name="Toolbar">-->
+    <!--        &lt;!&ndash; 一般属性 &ndash;&gt;-->
+    <!--        <attr name="sUseRipple" />-->
+    <!--        <attr name="sPadding" />-->
+    <!--        &lt;!&ndash;        <attr name="sPadding" format="dimension" />&ndash;&gt;-->
+    <!--        <attr name="sElevation" format="dimension" />-->
+    <!--        &lt;!&ndash; 标题属性 &ndash;&gt;-->
+    <!--        <attr name="sTitleText" format="string" localization="suggested" />-->
+    <!--        <attr name="sTitleTextColor" format="color" />-->
+    <!--        <attr name="sTitleTextSize" format="dimension" />-->
+    <!--        <attr name="sTitleTextStyle">-->
+    <!--            <enum name="normal" value="0" />-->
+    <!--            <enum name="bold" value="1" />-->
+    <!--            <enum name="italic" value="2" />-->
+    <!--        </attr>-->
+    <!--        <attr name="sTitleEditable" format="boolean" />-->
+    <!--        <attr name="sTitleCenter" format="boolean" />-->
+    <!--        <attr name="sTitleSpace" format="dimension" />-->
 
 
-<!--        &lt;!&ndash; 返回 &ndash;&gt;-->
-<!--        <attr name="sBackIcon" format="reference" />-->
-<!--        <attr name="sBackIconVisible" format="boolean" />-->
-<!--        <attr name="sBackText" format="string" localization="suggested" />-->
-<!--        <attr name="sBackTextColor" format="color" />-->
-<!--        <attr name="sBackTextSize" format="dimension" />-->
-<!--        <attr name="sBackTextStyle">-->
-<!--            <enum name="normal" value="0" />-->
-<!--            <enum name="bold" value="1" />-->
-<!--            <enum name="italic" value="2" />-->
-<!--        </attr>-->
-<!--        <attr name="sBackSpace" format="dimension" />-->
+    <!--        &lt;!&ndash; 返回 &ndash;&gt;-->
+    <!--        <attr name="sBackIcon" format="reference" />-->
+    <!--        <attr name="sBackIconVisible" format="boolean" />-->
+    <!--        <attr name="sBackText" format="string" localization="suggested" />-->
+    <!--        <attr name="sBackTextColor" format="color" />-->
+    <!--        <attr name="sBackTextSize" format="dimension" />-->
+    <!--        <attr name="sBackTextStyle">-->
+    <!--            <enum name="normal" value="0" />-->
+    <!--            <enum name="bold" value="1" />-->
+    <!--            <enum name="italic" value="2" />-->
+    <!--        </attr>-->
+    <!--        <attr name="sBackSpace" format="dimension" />-->
 
-<!--        &lt;!&ndash; ActionLayout相关属性 &ndash;&gt;-->
-<!--        <attr name="sActionTextColor" />-->
-<!--        <attr name="sActionTextSize" />-->
-<!--        <attr name="sActionTextStyle" />-->
-<!--        <attr name="sActionSpace" />-->
-<!--        &lt;!&ndash; 分割线相关属性 &ndash;&gt;-->
-<!--        <attr name="sDividerColor" format="color" />-->
-<!--        <attr name="sDividerHeight" format="dimension" />-->
-<!--        <attr name="sDividerMargin" format="dimension" />-->
-<!--        <attr name="sDividerVisible" format="boolean" />-->
-<!--    </declare-styleable>-->
+    <!--        &lt;!&ndash; ActionLayout相关属性 &ndash;&gt;-->
+    <!--        <attr name="sActionTextColor" />-->
+    <!--        <attr name="sActionTextSize" />-->
+    <!--        <attr name="sActionTextStyle" />-->
+    <!--        <attr name="sActionSpace" />-->
+    <!--        &lt;!&ndash; 分割线相关属性 &ndash;&gt;-->
+    <!--        <attr name="sDividerColor" format="color" />-->
+    <!--        <attr name="sDividerHeight" format="dimension" />-->
+    <!--        <attr name="sDividerMargin" format="dimension" />-->
+    <!--        <attr name="sDividerVisible" format="boolean" />-->
+    <!--    </declare-styleable>-->
 
     <!-- 标题栏 -->
     <declare-styleable name="Toolbar">
@@ -108,7 +108,16 @@
     <declare-styleable name="ActionLayout">
         <attr name="sUseRipple" />
         <attr name="defaultActionRipple" format="boolean" />
+        <attr name="defaultActionSpace" format="dimension" />
+        <attr name="defaultActionTextColor" format="color" />
+        <attr name="defaultActionTextSize" format="dimension" />
+        <attr name="defaultActionTextStyle">
+            <enum name="normal" value="0" />
+            <enum name="bold" value="1" />
+            <enum name="italic" value="2" />
+        </attr>
         <attr name="defaultActionVisible" format="boolean" />
+
         <attr name="sActionTextColor" />
         <attr name="sActionTextSize" />
         <attr name="sActionTextStyle" />

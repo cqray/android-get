@@ -2,6 +2,7 @@ package cn.cqray.android.widget
 
 import android.content.Context
 import android.content.res.ColorStateList
+import android.graphics.Color
 import android.graphics.Typeface
 import android.graphics.drawable.Drawable
 import android.util.*
@@ -27,313 +28,329 @@ import cn.cqray.android.util.ViewUtils
  * Action布局控件
  * @author Cqray
  */
-@Suppress("unchecked_cast", "unused")
+@Suppress("unchecked_cast", "unused", "MemberVisibilityCanBePrivate")
 class ActionLayout @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
-) :
-    LinearLayout(context, attrs, defStyleAttr) {
+) : LinearLayout(context, attrs, defStyleAttr) {
+
     /** 左间隔  */
-    private val startSpace: Space
+    private val startSpace: Space by lazy { Space(context) }
 
     /** 右间隔  */
-    private val endSpace: Space
+    private val endSpace: Space by lazy { Space(context) }
 
-    /** 间隔  */
-    private var actionSpace: Int
-
-    /** 文字大小  */
-    private var actionTextSize: Int
-
-    /** 文字颜色  */
-    private var actionTextColor: Int
-
-    /** 文本样式  */
-    private val actionTextStyle: Int
-
-    /** 图标颜色  */
-    private var actionIconColor: Int? = null
-
-    /** 是否显示水波纹  */
-    private var useRipple: Boolean
-
-    private val defaults = arrayOf(
-        true, // 是否显示水波纹
-        true, // 是否显示控件
-    )
-
-    /** 控件列表  */
-    private val viewArray = SparseArray<View>()
-
-    /** 控件是否显示列表  */
-    private val visibleArray = SparseBooleanArray()
-
-    /** 图片控件TintColor  */
-    private val tintColorArray = SparseIntArray()
-
-    override fun setPaddingRelative(start: Int, top: Int, end: Int, bottom: Int) {
-        // do nothing.
+    /** 默认参数 **/
+    private val defaults: HashMap<Int, Any?> by lazy {
+        val map = HashMap<Int, Any?>()
+        map[ACTION_RIPPLE] = true
+        map[ACTION_VISIBLE] = true
+        map[ACTION_SPACE] = Sizes.content()
+        map[ACTION_TEXT_COLOR] = ContextCompat.getColor(context, R.color.foreground)
+        map[ACTION_TEXT_SIZE] = Sizes.body()
+        map[ACTION_TEXT_STYLE] = 0
+        map[ACTION_ICON_TINT_COLOR] = Color.TRANSPARENT
+        map
     }
 
-    fun setActionText(key: Int, @StringRes resId: Int) =
-        also { setActionText(key, resources.getString(resId)) }
+    /** 控件缓存 **/
+    private val actionViews = HashMap<Int?, View>()
 
-    fun setActionText(key: Int?, text: CharSequence?) = also {
-        if (key == null) return this
-        val index = indexOf(key)
-        val horizontal = orientation == HORIZONTAL
-        val tv: TextView = AppCompatTextView(context)
-        tv.text = text
-        tv.setTextSize(TypedValue.COMPLEX_UNIT_PX, actionTextSize.toFloat())
-        tv.setTextColor(actionTextColor)
-        tv.gravity = Gravity.CENTER
-        tv.setPadding(actionSpace, 0, actionSpace, 0)
-        tv.layoutParams = MarginLayoutParams(if (horizontal) -2 else -1, if (horizontal) -1 else -2)
-        tv.isClickable = true
-        tv.isFocusable = true
-        tv.visibility = if (visibleArray[key]) VISIBLE else GONE
-        tv.typeface = Typeface.defaultFromStyle(actionTextStyle)
-        addView(tv, index)
-        ViewUtils.setRippleBackground(tv, useRipple)
-        viewArray.put(key, tv)
-        return this
-    }
+    /** 控件是否显示水波纹缓存 **/
+    private val actionRipple = HashMap<Int?, Boolean>()
 
-    fun setDefaultActionTextColor(@ColorInt color: Int) = also {
-        actionTextColor = color
-        for (i in 0 until viewArray.size()) {
-            val view = viewArray.valueAt(i)
-            if (view is TextView) {
-                view.setText(actionTextColor)
-            }
-        }
-        return this
-    }
-
-    fun setActionTextColor(key: Int, @ColorInt color: Int) = also {
-        val view = viewArray[key]
-        if (view is TextView) {
-            view.setTextColor(color)
-        }
-        return this
-    }
-
-    fun setDefaultActionTextSize(size: Float) = also {
-        return setDefaultActionTextSize(size, SizeUnit.SP)
-    }
-
-    fun setDefaultActionTextSize(size: Float, unit: SizeUnit) = also {
-        actionTextSize = Sizes.applyDimension(size, unit).toInt()
-        for (i in 0 until viewArray.size()) {
-            val view = viewArray.valueAt(i)
-            if (view is TextView) {
-                view.setTextSize(TypedValue.COMPLEX_UNIT_PX, actionTextSize.toFloat())
-            }
-        }
-        return this
-    }
-
-    fun setActionTextSize(key: Int, size: Float) = also {
-        return setActionTextSize(key, size, TypedValue.COMPLEX_UNIT_SP)
-    }
-
-    fun setActionTextSize(key: Int, size: Float, unit: Int) = also {
-        val view = viewArray[key]
-        if (view is TextView) {
-            view.setTextSize(unit, size)
-        }
-        return this
-    }
-
-    fun setDefaultActionTypeface(typeface: Typeface?) = also {
-        for (i in 0 until viewArray.size()) {
-            val view = viewArray.valueAt(i)
-            if (view is TextView) {
-                view.typeface = typeface
-            }
-        }
-        return this
-    }
-
-    fun setActionTypeface(key: Int, typeface: Typeface?) = also {
-        val view = viewArray[key]
-        if (view is TextView) {
-            view.typeface = typeface
-        }
-        return this
-    }
-
-    fun setActionIcon(key: Int, @DrawableRes resId: Int) = also {
-        return setActionIcon(key, ContextCompat.getDrawable(context, resId))
-    }
-
-    fun setActionIcon(key: Int, @DrawableRes resId: Int, @ColorInt tint: Int) = also {
-        return setActionIcon(key, ContextCompat.getDrawable(context, resId), tint)
-    }
-
-    fun setActionIcon(key: Int, drawable: Drawable?) = also {
-        return setActionIcon(key, drawable, null)
-    }
-
-    fun setActionIcon(key: Int, drawable: Drawable?, @ColorInt tintColor: Int?) = also {
-        val index = indexOf(key)
-        val horizontal = orientation == HORIZONTAL
-        val iv: ImageView = AppCompatImageView(context)
-        iv.setImageDrawable(drawable)
-        iv.layoutParams = MarginLayoutParams(if (horizontal) -2 else -1, if (horizontal) -1 else -2)
-        iv.isClickable = true
-        iv.isFocusable = true
-        iv.setPadding(actionSpace, 0, actionSpace, 0)
-        iv.visibility = if (visibleArray[key]) VISIBLE else GONE
-        addView(iv, index)
-        // 设置水波纹
-        ViewUtils.setRippleBackground(iv, defaults[ACTION_RIPPLE])
-        val tintList = when {
-            tintColor != null -> ColorStateList.valueOf(tintColor)
-            tintColorArray[key] != 0 -> ColorStateList.valueOf(tintColorArray[key])
-            actionIconColor != null -> ColorStateList.valueOf(actionIconColor!!)
-            else -> null
-        }
-        ImageViewCompat.setImageTintList(iv, tintList)
-        viewArray.put(key, iv)
-        return this
-    }
-
-    fun setActionIconColor(@ColorInt color: Int) = also {
-        actionIconColor = color
-        for (i in 0 until viewArray.size()) {
-            val view = viewArray.valueAt(i)
-            if (view is ImageView) {
-                ImageViewCompat.setImageTintList(view, ColorStateList.valueOf(color))
-            }
-        }
-        return this
-    }
-
-    fun setActionIconColor(key: Int, @ColorInt color: Int) = also {
-        tintColorArray.put(key, color)
-        val view = viewArray[key]
-        if (view is ImageView) {
-            ImageViewCompat.setImageTintList(view, ColorStateList.valueOf(color))
-        }
-        return this
-    }
-
-    fun setActionVisible(visible: Boolean) = also {
-        for (i in 0 until viewArray.size()) {
-            val view = viewArray.valueAt(i)
-            if (view != null) {
-                view.visibility = if (visible) VISIBLE else GONE
-            }
-        }
-        return this
-    }
-
-    fun setActionVisible(key: Int, visible: Boolean) = also {
-        visibleArray.put(key, visible)
-        val view = viewArray[key]
-        if (view != null) {
-            view.visibility = if (visible) VISIBLE else GONE
-        }
-        return this
-    }
-
-    fun setDefaultUseRipple(useRipple: Boolean) = also {
-        defaults[ACTION_RIPPLE] = useRipple
-        for (i in 0 until viewArray.size()) {
-            viewArray.valueAt(i)?.let { ViewUtils.setRippleBackground(it, useRipple) }
-        }
-    }
-
-    fun setUseRipple(key: Int, useRipple: Boolean?) = also {
-        viewArray[key]?.let { ViewUtils.setRippleBackground(it, useRipple) }
-    }
-
-    fun setActionSpace(space: Float) = also {
-        return setActionSpace(space, SizeUnit.DIP)
-    }
-
-    fun setActionSpace(space: Float, unit: SizeUnit) = also {
-        actionSpace = Sizes.applyDimension(space, unit).toInt()
-        val horizontal = orientation == HORIZONTAL
-        startSpace.layoutParams.width = if (horizontal) actionSpace else 0
-        startSpace.layoutParams.height = if (!horizontal) actionSpace else 0
-        endSpace.layoutParams.width = if (horizontal) actionSpace else 0
-        endSpace.layoutParams.height = if (!horizontal) actionSpace else 0
-        startSpace.requestLayout()
-        endSpace.requestLayout()
-        for (i in 0 until viewArray.size()) {
-            val view = viewArray.valueAt(i)
-            view.setPadding(
-                if (horizontal) actionSpace else 0,
-                if (!horizontal) actionSpace else 0,
-                if (horizontal) actionSpace else 0,
-                if (!horizontal) actionSpace else 0
-            )
-        }
-        return this
-    }
-
-    fun setActionListener(key: Int, listener: OnClickListener?) = also {
-        val view = viewArray[key]
-        view?.setOnClickListener(listener)
-        return this
-    }
-
-    fun <T : View> getActionView(key: Int) = viewArray[key] as T?
-
-    fun getActionSpace() = actionSpace * 2
-
-    /**
-     * 获取对应键值的控件索引
-     * @param key 键值
-     */
-    private fun indexOf(key: Int): Int {
-        var index = viewArray.size()
-        val view = viewArray[key]
-        if (view != null) {
-            // 对应键值已添加过控件，则移除控件
-            index = viewArray.indexOfKey(key)
-            viewArray.remove(key)
-            removeView(view)
-        } else {
-            // 未添加做控件，则直接设置为可见
-            visibleArray.put(key, true)
-        }
-        return index + 1
-    }
+    /** 控件是否显示缓存 **/
+    private val actionVisible = HashMap<Int?, Boolean>()
 
     init {
+        // 初始化属性
         val ta = context.obtainStyledAttributes(attrs, R.styleable.ActionLayout)
-        actionSpace = ta.getDimensionPixelSize(
-            R.styleable.ActionLayout_sActionSpace,
-            resources.getDimensionPixelSize(R.dimen.content)
-        ) / 2
-        actionTextSize = ta.getDimensionPixelSize(
-            R.styleable.ActionLayout_sActionTextSize,
-            resources.getDimensionPixelSize(R.dimen.body)
-        )
-        actionTextColor = ta.getColor(
-            R.styleable.ActionLayout_sActionTextColor,
-            ContextCompat.getColor(context, R.color.text)
-        )
-        actionTextStyle = ta.getInt(R.styleable.ActionLayout_sActionTextStyle, 0)
-        useRipple = ta.getBoolean(R.styleable.ActionLayout_sUseRipple, true)
-
-        defaults[ACTION_RIPPLE] = ta.getBoolean(R.styleable.ActionLayout_defaultActionRipple, true)
-        defaults[ACTION_VISIBLE] = ta.getBoolean(R.styleable.ActionLayout_defaultActionVisible, true)
-
+        // 默认是否启用水波纹
+        defaults[ACTION_RIPPLE] = ta.getBoolean(R.styleable.ActionLayout_defaultActionRipple, defaultActionRipple)
+        // 默认是否显示Action组件
+        defaults[ACTION_VISIBLE] = ta.getBoolean(R.styleable.ActionLayout_defaultActionVisible, defaultActionVisible)
+        // 默认组件间隔
+        defaults[ACTION_SPACE] = ta.getDimension(R.styleable.ActionLayout_defaultActionSpace, defaultActionSpace)
+        // 默认文本颜色
+        defaults[ACTION_TEXT_COLOR] =
+            ta.getColor(R.styleable.ActionLayout_defaultActionTextColor, defaultActionTextColor)
+        // 默认文本大小
+        defaults[ACTION_TEXT_SIZE] =
+            ta.getDimension(R.styleable.ActionLayout_defaultActionTextSize, defaultActionTextSize)
+        // 默认文本样式
+        defaults[ACTION_TEXT_STYLE] = ta.getInt(R.styleable.ActionLayout_defaultActionTextStyle, defaultActionTextStyle)
+        // 释放资源
         ta.recycle()
-        startSpace = Space(context)
-        endSpace = Space(context)
+        // 天剑间隔容器
         addView(startSpace)
         addView(endSpace)
-        setActionSpace(actionSpace.toFloat(), SizeUnit.DIP)
+        // 设置间隔信息
+        setActionSpace(defaultActionSpace, SizeUnit.PX)
     }
+
+    /** 默认是否显示水波纹 **/
+    private val defaultActionRipple get() = defaults[ACTION_RIPPLE] as Boolean
+
+    /** 默认是否显示组件 **/
+    private val defaultActionVisible get() = defaults[ACTION_VISIBLE] as Boolean
+
+    /** 默认组件间隔 **/
+    private val defaultActionSpace get() = defaults[ACTION_SPACE] as Float
+
+    /** 默认组件文本颜色 **/
+    private val defaultActionTextColor get() = defaults[ACTION_TEXT_COLOR] as Int
+
+    /** 默认组件文本大小 **/
+    private val defaultActionTextSize get() = defaults[ACTION_TEXT_SIZE] as Float
+
+    /** 默认组件文本样式 **/
+    private val defaultActionTextStyle get() = defaults[ACTION_TEXT_STYLE] as Int
+
+    /** 默认组件图标TintColor **/
+    private val defaultActionTintColor get() = defaults[ACTION_ICON_TINT_COLOR] as Int
+
+    fun setActionRipple(ripple: Boolean?) = also {
+        (ripple ?: defaultActionRipple).let {
+            // 更新组件属性
+            actionViews.forEach { entry -> ViewUtils.setRippleBackground(entry.value, it) }
+            // 设置默认属性
+            defaults[ACTION_RIPPLE] = it
+        }
+    }
+
+    fun setActionRipple(key: Int?, ripple: Boolean?) = also {
+        // 获取新的属性
+        val newRipple = ripple ?: actionRipple[key] ?: defaultActionRipple
+        // 缓存数据
+        actionRipple[key] = newRipple
+        // 更改对应控件属性
+        actionViews[key]?.let { ViewUtils.setRippleBackground(it, newRipple) }
+    }
+
+    fun setActionVisible(visible: Boolean?) = also {
+        (visible ?: defaultActionVisible).let {
+            // 更新组件属性
+            actionViews.forEach { entry -> entry.value.visibility = if (it) VISIBLE else GONE }
+            // 设置默认属性
+            defaults[ACTION_VISIBLE] = it
+        }
+    }
+
+    fun setActionVisible(key: Int?, visible: Boolean?) = also {
+        // 获取新的属性
+        val newVisible = visible ?: actionVisible[key] ?: defaultActionVisible
+        // 缓存数据
+        actionVisible[key] = newVisible
+        // 更改对应控件属性
+        actionViews[key]?.let { it.visibility = if (newVisible) VISIBLE else GONE }
+    }
+
+    fun setActionSpace(space: Float?) = also { setActionSpace(space, SizeUnit.DIP) }
+
+    fun setActionSpace(space: Float?, unit: SizeUnit) = also {
+        // 获取新的间隔值
+        val newSpace =
+            if (space == null) defaultActionSpace
+            else Sizes.applyDimension(space, unit)
+        // 获取横纵向间隔值
+        val hSize = (if (orientation == HORIZONTAL) newSpace / 2 else 0).toInt()
+        val vSize = (if (orientation == VERTICAL) newSpace / 2 else 0).toInt()
+        // 更新所有组件的外部间隔
+        (startSpace.layoutParams as MarginLayoutParams).setMargins(hSize, vSize, hSize, vSize)
+        (endSpace.layoutParams as MarginLayoutParams).setMargins(hSize, vSize, hSize, vSize)
+        actionViews.forEach {
+            val view = it.value
+            (view.layoutParams as MarginLayoutParams).setMargins(hSize, vSize, hSize, vSize)
+        }
+        // 设置默认属性
+        defaults[ACTION_SPACE] = newSpace
+    }
+
+    fun setActionView(key: Int?, view: View) = also {
+        // 获取相关属性
+        val old = actionViews[key]
+        val visible = actionVisible[key] ?: defaultActionVisible
+        val space = defaultActionSpace.toInt() / 2
+        // 获取全新的索引位置
+        val index = old.let {
+            // 因为左右有间隔控件
+            if (old == null) childCount - 1
+            else {
+                val i = indexOfChild(old)
+                removeView(old)
+                // 因为左右有间隔控件
+                if (i == -1) 1 else i
+            }
+        }
+        // 设置View通用属性
+        with(view) {
+            setPadding(space, 0, space, 0)
+            isClickable = true
+            isFocusable = true
+            visibility = if (visible) VISIBLE else GONE
+            layoutParams = MarginLayoutParams(
+                if (orientation == HORIZONTAL) -2 else -1,
+                if (orientation == VERTICAL) -2 else -1
+            )
+        }
+        // 缓存控件
+        actionViews[key] = view
+        // 设置水波纹背景
+        ViewUtils.setRippleBackground(view, defaultActionRipple)
+        // 添加至容器
+        addView(view, index)
+    }
+
+    fun setActionText(key: Int?, @StringRes resId: Int?) = also {
+        // 无资源ID
+        if (resId == null) setActionText(key, null as CharSequence?)
+        // 有资源ID
+        else setActionText(key, resources.getString(resId))
+    }
+
+    fun setActionText(key: Int?, text: CharSequence?) = also {
+        // 初始化文本属性
+        val tv = AppCompatTextView(context)
+        tv.text = text
+        tv.gravity = Gravity.CENTER
+        tv.typeface = Typeface.defaultFromStyle(defaultActionTextStyle)
+        tv.setTextColor(defaultActionTextColor)
+        tv.setTextSize(SizeUnit.PX.type, defaultActionTextSize)
+        // 设置ActionView
+        setActionView(key, tv)
+    }
+
+    fun setActionTextColor(@ColorInt color: Int?) = also {
+        (color ?: defaultActionTextColor).let {
+            // 更新组件属性
+            actionViews.forEach { entry ->
+                val view = entry.value
+                if (view is TextView) view.setTextColor(it)
+            }
+            // 设置默认属性
+            defaults[ACTION_TEXT_COLOR] = it
+        }
+    }
+
+    fun setActionTextColor(key: Int?, @ColorInt color: Int?) = also {
+        actionViews[key]?.let {
+            if (it is TextView) {
+                it.setTextColor(color ?: defaultActionTextColor)
+            }
+        }
+    }
+
+    fun setActionTextSize(size: Float?) = also { setActionTextSize(size, SizeUnit.SP) }
+
+    fun setActionTextSize(size: Float?, unit: SizeUnit) {
+        // 获取新的文本大小
+        val newSize =
+            if (size == null) defaultActionTextSize
+            else Sizes.applyDimension(size, unit)
+        // 更新组件属性
+        actionViews.forEach { entry ->
+            val view = entry.value
+            if (view is TextView) view.setTextSize(SizeUnit.PX.type, newSize)
+        }
+        // 设置默认属性
+        defaults[ACTION_TEXT_SIZE] = newSize
+    }
+
+    fun setActionTextSize(key: Int?, size: Float?) = also { setActionTextSize(key, size, SizeUnit.SP) }
+
+    fun setActionTextSize(key: Int?, size: Float?, unit: SizeUnit) = also {
+        // 获取新的文本大小
+        val newSize =
+            if (size == null) defaultActionTextSize
+            else Sizes.applyDimension(size, unit)
+        // 设置新的文本大小
+        actionViews[key]?.let {
+            if (it is TextView) {
+                it.setTextSize(SizeUnit.PX.type, newSize)
+            }
+        }
+    }
+
+    fun setActionTextTypeface(typeface: Typeface?) {
+        // 获取新的文本样式
+        val newTypeface = typeface ?: Typeface.defaultFromStyle(defaultActionTextStyle)
+        // 更新组件属性
+        actionViews.forEach { entry ->
+            val view = entry.value
+            if (view is TextView) view.typeface = newTypeface
+        }
+        // 设置默认属性
+        defaults[ACTION_TEXT_STYLE] = newTypeface.style
+    }
+
+    fun setActionTextTypeface(key: Int?, typeface: Typeface?) = also {
+        actionViews[key]?.let {
+            if (it is TextView) {
+                it.typeface = typeface
+            }
+        }
+    }
+
+    fun setActionIcon(key: Int?, @DrawableRes resId: Int?) = also { setActionIcon(key, resId, null) }
+
+    fun setActionIcon(key: Int?, @DrawableRes resId: Int?, @ColorInt tint: Int?) = also {
+        // 无资源ID
+        if (resId == null) setActionIcon(key, null as Drawable?, tint)
+        // 有资源ID
+        else setActionIcon(key, ContextCompat.getDrawable(context, resId), tint)
+    }
+
+    fun setActionIcon(key: Int?, drawable: Drawable?) = also { setActionIcon(key, drawable, null) }
+
+    fun setActionIcon(key: Int?, drawable: Drawable?, @ColorInt tintColor: Int?) = also {
+        // 初始化图片控件
+        val iv: ImageView = AppCompatImageView(context).also {
+            // 设置图片
+            it.setImageDrawable(drawable)
+            // 设置TintColor
+            ImageViewCompat.setImageTintList(it, ColorStateList.valueOf(tintColor ?: defaultActionTintColor))
+        }
+        // 设置ActionView组件
+        setActionView(key, iv)
+    }
+
+    fun setActionIconTintColor(@ColorInt color: Int?) {
+        (color ?: defaultActionTintColor).let {
+            // 更新组件属性
+            actionViews.forEach { entry ->
+                val view = entry.value
+                if (view is ImageView) ImageViewCompat.setImageTintList(view, ColorStateList.valueOf(it))
+            }
+            // 设置默认属性
+            defaults[ACTION_ICON_TINT_COLOR] = it
+        }
+    }
+
+    fun setActionIconTintColor(key: Int?, @ColorInt color: Int?) = also {
+        actionViews[key]?.let {
+            if (it is ImageView) {
+                // 获取属性
+                val newColor = color ?: defaultActionTintColor
+                // 更新组件属性
+                ImageViewCompat.setImageTintList(it, ColorStateList.valueOf(newColor))
+            }
+        }
+    }
+
+    fun setActionListener(key: Int?, listener: OnClickListener?) = also {
+        actionViews[key]?.setOnClickListener(listener)
+    }
+
+    fun <T : View> getActionView(key: Int?) = actionViews[key] as T?
 
     private companion object {
         const val ACTION_RIPPLE = 0
         const val ACTION_VISIBLE = 1
+        const val ACTION_SPACE = 2
+        const val ACTION_TEXT_COLOR = 3
+        const val ACTION_TEXT_SIZE = 4
+        const val ACTION_TEXT_STYLE = 5
+        const val ACTION_ICON_TINT_COLOR = 6
     }
 }

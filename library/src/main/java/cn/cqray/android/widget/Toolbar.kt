@@ -236,7 +236,7 @@ class Toolbar @JvmOverloads constructor(
             val padding = padding.value ?: 0
             val visible = backView.iconView.visibility == VISIBLE
             val startSpace = if (visible) space - padding else 0
-            val endSpace = space - actionLayout.getActionSpace()
+            val endSpace = space// - actionLayout.getActionSpace()
             val params = titleView.layoutParams as LayoutParams
             if (center) {
                 val m = max(
@@ -290,7 +290,7 @@ class Toolbar @JvmOverloads constructor(
         // 是否使用水波纹
         useRipple.observe(lifecycleOwner) {
             backView.setUseRipple(it)
-            actionLayout.setDefaultUseRipple(it)
+            //actionLayout.setDefaultUseRipple(it)
         }
         // 间隔大小监听
         padding.observe(lifecycleOwner) {
@@ -299,7 +299,7 @@ class Toolbar @JvmOverloads constructor(
             backView.setPadding(it, 0, (if (iconVisible) it else 0), 0)
             // 设置ActionLayout右部间隔
             val params = actionLayout.layoutParams as LayoutParams
-            params.marginEnd = it - actionLayout.getActionSpace()
+            params.marginEnd = it// - actionLayout.getActionSpace()
         }
     }
 
@@ -323,7 +323,12 @@ class Toolbar @JvmOverloads constructor(
 
     fun setTitleCenter(center: Boolean?) = also { titleCenter.value = center ?: false }
 
-    fun setBackViewSpace(space: Float) = also { backView.setViewSpace(space) }
+    //============================================================//
+    //======================BACK部分 END==========================//
+    //=====================BACK部分 START=========================//
+    //============================================================//
+
+    fun setBackSpace(space: Float?) = also { backView.setViewSpace(space) }
 
     fun setBackIcon(@DrawableRes resId: Int?) = also {
         if (resId == null) backView.setIconDrawable(null)
@@ -334,11 +339,11 @@ class Toolbar @JvmOverloads constructor(
 
     fun setBackIcon(bitmap: Bitmap?) = also { backView.setIconBitmap(bitmap) }
 
-    fun setBackIconTintColor(@ColorInt color: Int) = also { backView.setIconTintColor(color) }
+    fun setBackIconTintColor(@ColorInt color: Int?) = also { backView.setIconTintColor(color) }
 
     fun setBackIconTintList(tintList: ColorStateList?) = also { backView.setIconTintList(tintList) }
 
-    fun setBackIconVisible(visible: Boolean) = also {
+    fun setBackIconVisible(visible: Boolean?) = also {
         if (visible != (backView.iconView.visibility == VISIBLE)) {
             backView.iconView.visibility = if (visible) VISIBLE else GONE
             padding.value = padding.value!!
@@ -347,23 +352,22 @@ class Toolbar @JvmOverloads constructor(
 
     fun setBackText(text: CharSequence?) = also { backView.setText(text) }
 
-    fun setBackText(@StringRes id: Int) = also { backView.setText(id) }
+    fun setBackText(@StringRes id: Int?) = also { backView.setText(id) }
 
-    fun setBackTextColor(@ColorInt color: Int?) = also {
-        color?.let { backView.setTextColor(it) }
-    }
+    fun setBackTextColor(@ColorInt color: Int?) = also { color?.let { backView.setTextColor(it) } }
 
-    fun setBackTextSize(size: Float?) = also {
-        size?.let { backView.setTextSize(it) }
-    }
+    fun setBackTextSize(size: Float?) = also { size?.let { backView.setTextSize(it) } }
 
-    fun setBackTextSize(size: Float?, unit: SizeUnit) = also {
-        size?.let {  backView.setTextSize(it, unit)}
-    }
+    fun setBackTextSize(size: Float?, unit: SizeUnit) = also { size?.let { backView.setTextSize(it, unit) } }
 
-    fun setBackTypeface(typeface: Typeface?) = also { backView.setTypeface(typeface) }
+    fun setBackTextTypeface(typeface: Typeface?) = also { backView.setTypeface(typeface) }
 
     fun setBackListener(listener: OnClickListener?) = also { backView.setOnClickListener(listener) }
+
+    //============================================================//
+    //======================BACK部分 END==========================//
+    //=====================TITLE部分 START=========================//
+    //============================================================//
 
     fun setTitle(@StringRes id: Int?) = also {
         if (id != null) titleView.setText(id)
@@ -397,95 +401,77 @@ class Toolbar @JvmOverloads constructor(
         titleSpace.value = value
     }
 
-    fun setActionText(key: Int, text: CharSequence?) = also {
-        actionLayout.setActionText(key, text)
-    }
+    //============================================================//
+    //======================TITLE部分 END=========================//
+    //====================ACTION部分 START========================//
+    //============================================================//
 
-    fun setActionText(key: Int, @StringRes resId: Int) = also {
-        actionLayout.setActionText(key, resId)
-    }
+    fun setActionRipple(ripple: Boolean?) = also { actionLayout.setActionRipple(ripple) }
 
-    fun setDefaultActionTextColor(@ColorInt color: Int) = also {
-        actionLayout.setDefaultActionTextColor(color)
-    }
+    fun setActionRipple(key: Int?, ripple: Boolean?) = also { actionLayout.setActionRipple(key, ripple) }
 
-    fun setActionTextColor(key: Int, @ColorInt color: Int) = also {
-        actionLayout.setActionTextColor(key, color)
-    }
+    fun setActionVisible(visible: Boolean?) = also { actionLayout.setActionVisible(visible) }
 
-    fun setDefaultActionTextSize(size: Float) = also {
-        actionLayout.setDefaultActionTextSize(size)
-    }
+    fun setActionVisible(key: Int?, visible: Boolean?) = also { actionLayout.setActionVisible(key, visible) }
 
-    fun setActionTextSize(key: Int, size: Float) = also {
-        actionLayout.setActionTextSize(key, size)
-    }
+    fun setActionSpace(space: Float?) = also { setActionSpace(space, SizeUnit.DIP) }
 
-    fun setActionTextSize(key: Int, size: Float, unit: Int) = also {
-        actionLayout.setActionTextSize(key, size, unit)
-    }
-
-    fun setDefaultActionTextSize(size: Float, unit: SizeUnit) = also {
-        actionLayout.setDefaultActionTextSize(size, unit)
-    }
-
-    fun setDefaultActionTypeface(typeface: Typeface?) = also {
-        actionLayout.setDefaultActionTypeface(typeface)
-    }
-
-    fun setActionTypeface(key: Int, typeface: Typeface?) = also {
-        actionLayout.setActionTypeface(key, typeface)
-    }
-
-    fun setActionIcon(key: Int, @DrawableRes resId: Int) = also {
-        actionLayout.setActionIcon(key, resId)
-    }
-
-    fun setActionIcon(key: Int, @DrawableRes resId: Int, @ColorInt tintColor: Int) = also {
-        actionLayout.setActionIcon(key, resId, tintColor)
-    }
-
-    fun setActionIcon(key: Int, drawable: Drawable?) = also {
-        actionLayout.setActionIcon(key, drawable)
-    }
-
-    fun setActionIcon(key: Int, drawable: Drawable?, @ColorInt tintColor: Int) = also {
-        actionLayout.setActionIcon(key, drawable, tintColor)
-    }
-
-    fun setActionIconColor(@ColorInt tintColor: Int) = also {
-        actionLayout.setActionIconColor(tintColor)
-    }
-
-    fun setActionIconColor(key: Int, @ColorInt tintColor: Int) = also {
-        actionLayout.setActionIconColor(key, tintColor)
-    }
-
-    fun setActionVisible(visible: Boolean) = also {
-        actionLayout.setActionVisible(visible)
-    }
-
-    fun setActionVisible(key: Int, visible: Boolean) = also {
-        actionLayout.setActionVisible(key, visible)
-    }
-
-    fun setActionUseRipple(key: Int, useRipple: Boolean) = also {
-        actionLayout.setUseRipple(key, useRipple)
-    }
-
-    fun setActionSpace(space: Float) = also {
-        return setActionSpace(space, SizeUnit.DIP)
-    }
-
-    fun setActionSpace(space: Float, unit: SizeUnit) = also {
+    fun setActionSpace(space: Float?, unit: SizeUnit) = also {
         actionLayout.setActionSpace(space, unit)
         padding.value = padding.value!!
         titleCenter.value = titleCenter.value
     }
 
-    fun setActionListener(key: Int, listener: OnClickListener?) = also {
+    fun setActionText(key: Int?, @StringRes resId: Int) = also { actionLayout.setActionText(key, resId) }
+
+    fun setActionText(key: Int?, text: CharSequence?) = also { actionLayout.setActionText(key, text) }
+
+    fun setActionTextColor(@ColorInt color: Int?) = also { actionLayout.setActionTextColor(color) }
+
+    fun setActionTextColor(key: Int?, @ColorInt color: Int?) = also { actionLayout.setActionTextColor(key, color) }
+
+    fun setActionTextSize(size: Float?) = also { actionLayout.setActionTextSize(size) }
+
+    fun setActionTextSize(size: Float?, unit: SizeUnit) = also { actionLayout.setActionTextSize(size, unit) }
+
+    fun setActionTextSize(key: Int?, size: Float?) = also { actionLayout.setActionTextSize(key, size) }
+
+    fun setActionTextSize(key: Int?, size: Float?, unit: SizeUnit) = also {
+        actionLayout.setActionTextSize(key, size, unit)
+    }
+
+    fun setActionTextTypeface(typeface: Typeface?) = also { actionLayout.setActionTextTypeface(typeface) }
+
+    fun setActionTextTypeface(key: Int?, typeface: Typeface?) = also {
+        actionLayout.setActionTextTypeface(key, typeface)
+    }
+
+    fun setActionIcon(key: Int?, @DrawableRes resId: Int?) = also { actionLayout.setActionIcon(key, resId) }
+
+    fun setActionIcon(key: Int?, @DrawableRes resId: Int?, @ColorInt tintColor: Int?) = also {
+        actionLayout.setActionIcon(key, resId, tintColor)
+    }
+
+    fun setActionIcon(key: Int?, drawable: Drawable?) = also { actionLayout.setActionIcon(key, drawable) }
+
+    fun setActionIcon(key: Int?, drawable: Drawable?, @ColorInt tintColor: Int?) = also {
+        actionLayout.setActionIcon(key, drawable, tintColor)
+    }
+
+    fun setActionIconTintColor(@ColorInt color: Int) = also { actionLayout.setActionIconTintColor(color) }
+
+    fun setActionIconTintColor(key: Int?, @ColorInt tintColor: Int) = also {
+        actionLayout.setActionIconTintColor(key, tintColor)
+    }
+
+    fun setActionListener(key: Int?, listener: OnClickListener?) = also {
         actionLayout.setActionListener(key, listener)
     }
+
+    //============================================================//
+    //=====================ACTION部分 END=========================//
+    //===================DIVIDER部分 START=========================//
+    //============================================================//
 
     fun setDividerColor(@ColorInt color: Int) = also {
         dividerView.setBackgroundColor(color)

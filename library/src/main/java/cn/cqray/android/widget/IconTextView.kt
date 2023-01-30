@@ -60,7 +60,7 @@ class IconTextView @JvmOverloads constructor(
         }
 
     /** 间隔控件  */
-    val spaceView: Space get() = Space(context).also { it.layoutParams = LayoutParams(-2, -2) }
+    private val spaceView: Space get() = Space(context).also { it.layoutParams = LayoutParams(-2, -2) }
 
     init {
         val ta = context.obtainStyledAttributes(attrs, R.styleable.IconTextView)
