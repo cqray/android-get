@@ -25,7 +25,7 @@ public class MainFragment extends GetFragment {
         toolbar.setTitle("777779999999999999");
 //        toolbar.setBackText("452");
 //        toolbar.setBackVisible(false);
-        toolbar.setTitleCenter(false);
+        toolbar.setTitleCenter(true);
 
 
 //        toolbar.setTitleSpace(0F);
@@ -34,7 +34,7 @@ public class MainFragment extends GetFragment {
         toolbar.setActionText(0, "666");
         toolbar.setActionText(1, "777");
 //
-        toolbar.setContentPadding(16F);
+        toolbar.setContentPadding(0F);
         toolbar.setActionSpace(0F);
 //
 //        toolbar.setTitleSpace(0f);

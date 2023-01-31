@@ -4,122 +4,134 @@ import android.app.Activity
 import android.content.Context
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
-import android.util.Log
+
 
 import android.view.View
 import android.widget.FrameLayout
 import android.widget.RelativeLayout
 import androidx.activity.ComponentActivity
+import androidx.annotation.ColorInt
 import androidx.annotation.DrawableRes
 import androidx.annotation.IdRes
 import androidx.annotation.LayoutRes
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
-import androidx.lifecycle.*
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.MutableLiveData
 import cn.cqray.android.Get
 import cn.cqray.android.R
-import cn.cqray.android.app.*
-import cn.cqray.android.exc.ExceptionDispatcher
-import cn.cqray.android.exc.ExceptionType
 import cn.cqray.android.state.StateDelegate
 import cn.cqray.android.state.StateProvider
 import cn.cqray.android.util.ActivityUtils
 import cn.cqray.android.util.ButterKnifeUtils
 import cn.cqray.android.util.ContextUtils.inflate
+import cn.cqray.android.util.ReflectUtil
 import cn.cqray.android.util.Sizes
 import cn.cqray.android.widget.Toolbar
 import com.scwang.smart.refresh.layout.SmartRefreshLayout
-import java.util.*
+import java.util.concurrent.atomic.AtomicBoolean
+import java.util.concurrent.atomic.AtomicReference
 
 /**
  * 界面布局代理
  * @author Cqray
  */
-@Suppress("unused")
+@Suppress("unused", "MemberVisibilityCanBePrivate")
 class GetViewDelegate(provider: GetViewProvider) :
     GetDelegate<GetViewProvider>(provider) {
 
-    init {
-//        // 验证 ViewProvider 是否继承相关Fragment、Activity
-//        GetUtils.checkProvider(provider)
-//        // 缓存 ViewDelegate
-//        cacheDelegates[provider] = this
-//        // 资源回收事件订阅
-//        (provider as LifecycleOwner).lifecycle.addObserver(object : DefaultLifecycleObserver {
-//            override fun onDestroy(owner: LifecycleOwner) {
-//                super.onDestroy(owner)
-//                // 从缓存中移除
-//                cacheDelegates.remove(provider)
-//                // 确保资源回收时间晚于 Fragment、Activity 的 onDestroy
-//                GetManager.runOnUiThreadDelayed({ onCleared() }, 0)
-//            }
-//        })
-        // 初始化状态委托
-        if (provider is StateProvider) StateDelegate(provider).also { stateDelegate = it }
-    }
+    /** ButterKnife绑定（原子对象，无特殊作用，为了让变量变为 final） **/
+    private val knifeUnBinder = AtomicReference<Any?>()
 
-    /** 是否设置Get扩展界面 **/
-    private var setGetContentView = true
+    /** 是否设置Get扩展界面（原子性，无特殊作用，为了让变量变为 final） **/
+    private val setGetContentView = AtomicBoolean(true)
+
+    /** 关联的内容控件（原子对象，无特殊作用，为了让变量变为 final） **/
+    private val attachedContentView = AtomicReference<View?>()
+
+    /** 内容容器 **/
+    private val contentLayout: FrameLayout by lazy { rootView.findViewById(R.id.get_content) }
 
     /** 根控件 **/
-    @Suppress("unused")
-    var rootView: View? = null
-        private set
-
-    /** 内容控件 **/
-    @Suppress("unused")
-    var contentView: View? = null
-        private set
+    val rootView: View by lazy { inflate(R.layout.get_layout_view_default) }
 
     /** 标题 **/
-    @Suppress("unused")
-    private var toolbar: Toolbar? = null
-
-    /** 刷新控件 **/
-    @Suppress("unused")
-    var refreshLayout: SmartRefreshLayout? = null
-        private set
+    val toolbar: Toolbar by lazy { rootView.findViewById(R.id.get_toolbar) }
 
     /** 头部容器 **/
-    private var mHeaderLayout: FrameLayout? = null
+    val headerLayout: FrameLayout by lazy { rootView.findViewById(R.id.get_header) }
 
     /** 底部容器 **/
-    private var mFooterLayout: FrameLayout? = null
+    val footerLayout: FrameLayout by lazy { rootView.findViewById(R.id.get_footer) }
 
-    /** ButterKnife绑定 **/
-    private var mUnBinder: Any? = null
+    /** 刷新控件 **/
+    val refreshLayout: SmartRefreshLayout by lazy {
+        SmartRefreshLayout(context).also {
 
-    /** Fragment、Activity背景 **/
-    private var mBackground: MutableLiveData<Any?>? = null
+        }
+    }
 
-//    /** Handler控制 **/
-//    private var mHandler = Handler(Looper.getMainLooper())
+    /** 界面背景 **/
+    private val background: MutableLiveData<Any?> by lazy {
+        MutableLiveData<Any?>().also {
+            it.observe(provider as LifecycleOwner) { any ->
+                // 常规设置背景
+                val normalSet = { any_: Any? ->
+                    when (any_) {
+                        is Int -> rootView.setBackgroundResource(any_)
+                        is Drawable -> rootView.background = any_
+                        else -> rootView.background = null
+                    }
+                }
+                if (provider is ComponentActivity) {
+                    val isTranslucentOrFloating = ActivityUtils.isTranslucentOrFloating(provider)
+                    if (isTranslucentOrFloating) normalSet(any) else {
+                        // 在Window窗口上设置背景
+                        when (any) {
+                            is Int -> provider.window.setBackgroundDrawableResource(any)
+                            is Drawable -> provider.window.setBackgroundDrawable(any)
+                            else -> provider.window.setBackgroundDrawable(null)
+                        }
+                    }
+                } else normalSet(any)
+            }
+        }
+    }
 
-    private var stateDelegate: StateDelegate? = null
+    /** 状态管理器 **/
+    private val stateDelegate: StateDelegate? by lazy {
+        if (provider !is StateProvider) null
+        else StateDelegate(provider)
+    }
+
+    /** 内容控件 **/
+    val contentView: View? get() = attachedContentView.get()
 
     /**
      * 上下文
      **/
     val context: Context
-        get() = if (provider is FragmentActivity) {
-            provider
-        } else {
-            (provider as Fragment).requireContext()
-        }
+        get() = if (provider is FragmentActivity) provider
+        else (provider as Fragment).requireContext()
+
+    /** 清理资源 **/
+    override fun onCleared() {
+        ButterKnifeUtils.unbind(knifeUnBinder.get())
+        System.gc()
+    }
 
     /**
-     * 确认[setGetContentView]不被[setNativeContentView]替代
+     * 确认[GetActivity.setContentView]被[setGetContentView]替代
      * 主要是考虑到以后可能兼容AndroidX Compose框架
      **/
-    fun ensureSetGetContentView(): () -> Unit = { setGetContentView = true }
+    fun ensureSetGetContentView(): () -> Unit = { setGetContentView.set(true) }
 
     /**
-     * 确认[setGetContentView]被[setNativeContentView]替代
+     * 确认[GetActivity.setContentView]被[setNativeContentView]替代
      * 主要是考虑到以后可能兼容AndroidX Compose框架
      **/
-    fun ensureSetNativeContentView(): () -> Unit = { setGetContentView = false }
+    fun ensureSetNativeContentView(): () -> Unit = { setGetContentView.set(false) }
 
     /**
      * 设置默认布局
@@ -132,19 +144,13 @@ class GetViewDelegate(provider: GetViewProvider) :
      * @param view 布局
      **/
     fun setGetContentView(view: View) {
-        if (!setGetContentView) {
+        if (!setGetContentView.get()) {
             setNativeContentView(view)
             return
         }
-        contentView = view
-        rootView = inflate(R.layout.starter_layout_default)
-        rootView?.let {
-            toolbar = it.findViewById(R.id.starter_toolbar)
-            mHeaderLayout = it.findViewById(R.id.starter_header_layout)
-            mFooterLayout = it.findViewById(R.id.starter_footer_layout)
-            refreshLayout = it.findViewById(R.id.starter_refresh_layout)
-            refreshLayout?.addView(view)
-        }
+        attachedContentView.set(view)
+        contentLayout.removeAllViews()
+        contentLayout.addView(refreshLayout.also { it.addView(view) })
         initContentView()
         initGetView()
     }
@@ -160,84 +166,59 @@ class GetViewDelegate(provider: GetViewProvider) :
      * @param view 布局
      **/
     fun setNativeContentView(view: View) {
-        setGetContentView = false
-        contentView = view
-        rootView = inflate(R.layout.starter_layout_native)
-        (rootView as FrameLayout).addView(view)
-
-        toolbar = view.findViewById(R.id.starter_toolbar)
-        mHeaderLayout = view.findViewById(R.id.starter_header_layout)
-        mFooterLayout = view.findViewById(R.id.starter_footer_layout)
-        refreshLayout = view.findViewById(R.id.starter_refresh_layout)
+        setGetContentView.set(false)
+        attachedContentView.set(view)
+        contentLayout.removeAllViews()
+        contentLayout.addView(view)
+        toolbar.visibility = View.GONE
         initContentView()
         initGetView()
     }
 
-    /**
-     * 设置头部布局
-     * @param id 布局ID
-     **/
-    fun setHeaderView(@LayoutRes id: Int) = setHeaderView(inflate(id))
+    fun setHeaderView(@LayoutRes id: Int?) = setHeaderView(id, null)
 
-    /**
-     * 设置头部布局
-     * @param view 布局
-     **/
-    fun setHeaderView(view: View?) {
-        if (mHeaderLayout == null) {
-            ExceptionDispatcher.dispatchThrowable(provider, ExceptionType.HEADER_UNSUPPORTED)
-        } else {
-            mHeaderLayout!!.removeAllViews()
-            mHeaderLayout!!.addView(view)
-            initUnBinder()
+    fun setHeaderView(@LayoutRes id: Int?, floating: Boolean?) {
+        // 无资源ID，清空Footer
+        if (id == null) setHeaderView(null as View?, floating)
+        // 有资源ID，设置Footer
+        else setHeaderView(inflate(id), floating)
+    }
+
+    fun setHeaderView(view: View?) = setHeaderView(view, false)
+
+    fun setHeaderView(view: View?, floating: Boolean?) {
+        // 添加或移除Header
+        headerLayout.removeAllViews()
+        view?.let { headerLayout.addView(it) }
+        initUnBinder()
+        // 更新Header位置
+        floating?.let {
+            val params = contentLayout.layoutParams as RelativeLayout.LayoutParams
+            params.addRule(RelativeLayout.BELOW, if (it) R.id.get_toolbar else R.id.get_header)
+            contentLayout.requestLayout()
         }
     }
 
-    /**
-     * 设置头部布局悬浮
-     * @param floating 是否悬浮
-     **/
-    fun setHeaderFloating(floating: Boolean) {
-        if (mHeaderLayout == null) {
-            ExceptionDispatcher.dispatchThrowable(provider, ExceptionType.HEADER_UNSUPPORTED)
-        } else {
-            val params = refreshLayout!!.layoutParams as RelativeLayout.LayoutParams
-            params.addRule(RelativeLayout.BELOW, if (floating) R.id.toolbar else R.id.header_layout)
-            refreshLayout!!.requestLayout()
-        }
+    fun setFooterView(@LayoutRes id: Int?) = setFooterView(id, null)
+
+    fun setFooterView(@LayoutRes id: Int?, floating: Boolean?) {
+        // 无资源ID，清空Footer
+        if (id == null) setFooterView(null as View?, floating)
+        // 有资源ID，设置Footer
+        else setFooterView(inflate(id), floating)
     }
 
-    /**
-     * 设置底部布局
-     * @param id 布局ID
-     **/
-    fun setFooterView(@LayoutRes id: Int) = setFooterView(inflate(id))
+    fun setFooterView(view: View?) = setFooterView(view, false)
 
-    /**
-     * 设置底部布局
-     * @param view 布局
-     **/
-    fun setFooterView(view: View?) {
-        if (mFooterLayout == null) {
-            ExceptionDispatcher.dispatchThrowable(provider, ExceptionType.FOOTER_UNSUPPORTED)
-        } else {
-            mFooterLayout!!.removeAllViews()
-            mFooterLayout!!.addView(view)
-            initUnBinder()
-        }
-    }
-
-    /**
-     * 设置底部布局悬浮
-     * @param floating 是否悬浮
-     **/
-    fun setFooterFloating(floating: Boolean) {
-        if (mFooterLayout == null) {
-            ExceptionDispatcher.dispatchThrowable(provider, ExceptionType.FOOTER_UNSUPPORTED)
-        } else {
-            val params = refreshLayout!!.layoutParams as RelativeLayout.LayoutParams
-            params.addRule(RelativeLayout.ABOVE, if (floating) 0 else R.id.footer_layout)
-            refreshLayout!!.requestLayout()
+    fun setFooterView(view: View?, floating: Boolean?) {
+        footerLayout.removeAllViews()
+        view?.let { footerLayout.addView(it) }
+        initUnBinder()
+        // 更新Footer位置
+        floating?.let {
+            val params = contentLayout.layoutParams as RelativeLayout.LayoutParams
+            params.addRule(RelativeLayout.ABOVE, if (it) 0 else R.id.get_footer)
+            contentLayout.requestLayout()
         }
     }
 
@@ -274,88 +255,40 @@ class GetViewDelegate(provider: GetViewProvider) :
 
     /**
      * 设置背景
-     * @param resId 资源ID
+     * @param id 资源ID
      **/
-    fun setBackgroundResource(@DrawableRes resId: Int) =
-        setBackground(ContextCompat.getDrawable(context, resId))
+    fun setBackgroundResource(@DrawableRes id: Int?) = id.also { background.value = it }
 
     /**
      * 设置背景颜色
      * @param color 颜色
      **/
-    fun setBackgroundColor(color: Int) = setBackground(ColorDrawable(color))
+    fun setBackgroundColor(@ColorInt color: Int?) = color.also {
+        if (color == null) setBackground(null as Drawable?)
+        else setBackground(ColorDrawable(color))
+    }
 
     /**
      * 设置背景颜色
      * @param drawable 图像
      **/
-    fun setBackground(drawable: Drawable) = setBackground(drawable as Any?)
-
-    /**
-     * 设置背景
-     * @param background 背景
-     **/
-    @Synchronized
-    private fun setBackground(background: Any?) {
-        if (mBackground == null) {
-            mBackground = MutableLiveData()
-            mBackground!!.observe(provider as LifecycleOwner) { any: Any? ->
-                if (provider is ComponentActivity) {
-                    val isTranslucentOrFloating = ActivityUtils.isTranslucentOrFloating(provider)
-                    if (isTranslucentOrFloating && rootView != null) {
-                        // 根据内容设置背景
-                        when (any) {
-                            is Int -> rootView!!.setBackgroundResource(any)
-                            is Drawable -> rootView!!.background = any
-                            else -> rootView!!.background = null
-                        }
-                        Log.e("数据", "88888888888888888")
-                    } else if (!isTranslucentOrFloating) {
-                        // 根据内容设置背景
-                        when (any) {
-                            is Int -> provider.window.setBackgroundDrawableResource(any)
-                            is Drawable -> provider.window.setBackgroundDrawable(any)
-                            else -> provider.window.setBackgroundDrawable(null)
-                        }
-                        Log.e("数据", "777777777777777777")
-                    }
-                } else if (rootView != null) {
-                    // 根据内容设置背景
-                    when (any) {
-                        is Int -> rootView!!.setBackgroundResource(any)
-                        is Drawable -> rootView!!.background = any
-                        else -> rootView!!.background = null
-                    }
-                }
-            }
-        }
-        mBackground!!.value = background
-    }
-
-    /** 清理资源 **/
-    override fun onCleared() {
-        ButterKnifeUtils.unbind(mUnBinder)
-        refreshLayout = null
-        mHeaderLayout = null
-        mFooterLayout = null
-        toolbar = null
-        contentView = null
-        rootView = null
-        System.gc()
-    }
+    fun setBackground(drawable: Drawable?) = drawable.also { background.value = it }
 
     /** 设置内容界面 **/
     private fun initContentView() {
         if (provider is AppCompatActivity) {
             provider.delegate.setContentView(rootView)
-            Log.e("数据u", "施工方")
         } else if (provider is ComponentActivity) {
             // 考虑到有可能重写了 setContentView
             // 所以需要临时改变 mSetGetContentView 的值
-            val tmp = setGetContentView
-            setGetContentView = false
-            provider.setContentView(rootView)
-            setGetContentView = tmp
+            setGetContentView.get().let {
+                // 暂时设置为False
+                setGetContentView.set(false)
+                // 设置界面
+                provider.setContentView(rootView)
+                // 重置为原始状态
+                setGetContentView.set(it)
+            }
         }
     }
 
@@ -363,12 +296,11 @@ class GetViewDelegate(provider: GetViewProvider) :
      * 初始化界面相关控件
      **/
     private fun initGetView() {
-        if (provider is GetActivity) {
-            toolbar?.let { provider.toolbar = it }
-            refreshLayout?.let { provider.refreshLayout = it }
-        } else if (provider is GetFragment) {
-            toolbar?.let { provider.toolbar = it }
-            refreshLayout?.let { provider.refreshLayout = it }
+        if (provider is GetActivity || provider is GetFragment) {
+            ReflectUtil.setField(provider, "toolbar", toolbar)
+            ReflectUtil.setField(provider, "refreshLayout", refreshLayout)
+//            toolbar.let { ReflectUtil.setField(provider, "toolbar", it) }
+//            refreshLayout.let { ReflectUtil.setField(provider, "refreshLayout", it) }
         }
         // 状态委托连接界面
         stateDelegate?.let {
@@ -383,16 +315,16 @@ class GetViewDelegate(provider: GetViewProvider) :
 
     private fun initToolbar() {
         // 初始化标题栏监听事件
-        if (toolbar != null && provider is GetNavProvider) {
-            toolbar!!.setBackListener {
+        if (provider is GetNavProvider) {
+            toolbar.setBackListener {
                 val delegate = (provider as GetNavProvider).navDelegate
                 delegate.back()
             }
         }
-        if (toolbar == null) return
+
         if (provider !is GetNavProvider) return
 
-        with(toolbar!!) {
+        with(toolbar) {
             val init = Get.init.toolbarInit!!
             elevation = init.elevation ?: Sizes.dp(R.dimen.elevation)
             setContentPadding(init.contentPadding)
@@ -427,24 +359,7 @@ class GetViewDelegate(provider: GetViewProvider) :
 
     /** 初始化ButterKnife **/
     private fun initUnBinder() {
-        if (isRootViewExist) {
-            ButterKnifeUtils.unbind(mUnBinder)
-            mUnBinder = ButterKnifeUtils.bind(provider, rootView!!)
-        }
+        ButterKnifeUtils.unbind(knifeUnBinder.get())
+        knifeUnBinder.set(ButterKnifeUtils.bind(this, rootView))
     }
-
-    /**
-     * RootView是否存在
-     **/
-    private val isRootViewExist: Boolean
-        get() {
-            if (rootView == null) {
-                ExceptionDispatcher.dispatchThrowable(
-                    provider,
-                    ExceptionType.CONTENT_VIEW_NULL
-                )
-                return false
-            }
-            return true
-        }
 }

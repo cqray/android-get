@@ -376,8 +376,10 @@ class Toolbar @JvmOverloads constructor(
             // 设置BackLayout内部间隔
             val backVisible = backView.visibility == VISIBLE
             if (backVisible) {
+                backView.setPadding(it / 2, 0, it / 2, 0);
                 val bParams = backView.layoutParams as LayoutParams
-                bParams.marginStart = it
+                bParams.marginEnd = -it / 2
+                bParams.marginStart = it / 2
             }
             // 设置ActionLayout右部间隔
             val params = actionLayout.layoutParams as LayoutParams

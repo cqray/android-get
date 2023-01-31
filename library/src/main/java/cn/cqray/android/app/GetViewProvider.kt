@@ -3,9 +3,7 @@ package cn.cqray.android.app
 import android.graphics.drawable.Drawable
 import android.view.View
 import androidx.annotation.DrawableRes
-import androidx.annotation.IdRes
-import cn.cqray.android.widget.Toolbar
-import com.scwang.smart.refresh.layout.SmartRefreshLayout
+import androidx.annotation.LayoutRes
 
 /**
  * [GetViewDelegate]功能提供者
@@ -19,21 +17,6 @@ interface GetViewProvider : GetProvider {
      */
     val viewDelegate: GetViewDelegate
         get() = GetDelegate.get(this, GetViewProvider::class.java)
-
-    /**
-     * 获取[Toolbar]，NULL会抛出异常
-     */
-    fun requireToolbar() = viewDelegate.requireToolbar()
-
-    /**
-     * 获取[SmartRefreshLayout]，NULL会抛出异常
-     */
-    fun requireRefreshLayout() = viewDelegate.requireRefreshLayout()
-
-    /**
-     * 获取内容布局，NULL会抛出异常
-     */
-    fun requireContentView() = viewDelegate.requireContentView()
 
     /**
      * 确认[setGetContentView]不被[setNativeContentView]替代
@@ -55,45 +38,21 @@ interface GetViewProvider : GetProvider {
 
     fun setNativeContentView(layoutResId: Int) = viewDelegate.setNativeContentView(layoutResId)
 
-    fun setHeaderView(layoutResId: Int) {
-        viewDelegate.setHeaderView(layoutResId)
-    }
+    fun setHeaderView(@LayoutRes id: Int?) = viewDelegate.setHeaderView(id)
 
-    fun setHeaderView(view: View?) {
-        viewDelegate.setHeaderView(view)
-    }
+    fun setHeaderView(@LayoutRes id: Int?, floating: Boolean?) = viewDelegate.setHeaderView(id, floating)
 
-    fun setFloatingHeaderView(layoutResId: Int) {
-        viewDelegate.setHeaderView(layoutResId)
-    }
+    fun setHeaderView(view: View?) = viewDelegate.setHeaderView(view)
 
-    fun setFloatingHeaderView(view: View?) {
-        viewDelegate.setHeaderView(view)
-    }
+    fun setHeaderView(view: View?, floating: Boolean?) = viewDelegate.setHeaderView(view, floating)
 
-    fun setHeaderFloating(floating: Boolean) {
-        viewDelegate.setHeaderFloating(floating)
-    }
+    fun setFooterView(@LayoutRes id: Int?) = viewDelegate.setFooterView(id)
 
-    fun setFooterView(layoutResId: Int) {
-        viewDelegate.setFooterView(layoutResId)
-    }
+    fun setFooterView(@LayoutRes id: Int?, floating: Boolean?) = viewDelegate.setFooterView(id, floating)
 
-    fun setFooterView(view: View?) {
-        viewDelegate.setFooterView(view)
-    }
+    fun setFooterView(view: View?) = viewDelegate.setFooterView(view)
 
-    fun setFloatingFooterView(layoutResId: Int) {
-        viewDelegate.setFooterView(layoutResId)
-    }
-
-    fun setFloatingFooterView(view: View?) {
-        viewDelegate.setFooterView(view)
-    }
-
-    fun setFooterFloating(floating: Boolean) {
-        viewDelegate.setFooterFloating(floating)
-    }
+    fun setFooterView(view: View?, floating: Boolean?) = viewDelegate.setFooterView(view, floating)
 
     fun setBackgroundResource(@DrawableRes resId: Int) = viewDelegate.setBackgroundResource(resId)
 

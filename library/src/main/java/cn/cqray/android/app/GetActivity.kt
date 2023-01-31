@@ -3,6 +3,8 @@ package cn.cqray.android.app
 import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.Keep
+import androidx.annotation.NonNull
 import androidx.appcompat.app.AppCompatActivity
 import cn.cqray.android.state.StateProvider
 import cn.cqray.android.tip.GetTipProvider
@@ -17,17 +19,22 @@ open class GetActivity : AppCompatActivity(),
     GetProvider {
 
     /** 刷新容器 **/
+    @Keep
+    @NonNull
     @JvmField
-    var refreshLayout: SmartRefreshLayout? = null
+    @Suppress("KotlinNullnessAnnotation")
+    val refreshLayout: SmartRefreshLayout? = null
 
     /** 标题栏 **/
+    @Keep
+    @NonNull
     @JvmField
-    var toolbar: Toolbar? = null
+    @Suppress("KotlinNullnessAnnotation")
+    val toolbar: Toolbar? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         onCreating(savedInstanceState)
-
     }
 
     open fun onCreating(savedInstanceState: Bundle?) {}
