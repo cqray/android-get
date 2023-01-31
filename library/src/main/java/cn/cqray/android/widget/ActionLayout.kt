@@ -36,10 +36,10 @@ class ActionLayout @JvmOverloads constructor(
 ) : LinearLayout(context, attrs, defStyleAttr) {
 
     /** 左间隔  */
-    private val startSpace: Space by lazy { Space(context) }
+    private val startSpaceView: Space by lazy { Space(context) }
 
     /** 右间隔  */
-    private val endSpace: Space by lazy { Space(context) }
+    private val endSpaceView: Space by lazy { Space(context) }
 
     /** 默认参数，主要是对应值为空时，赋值 **/
     private val defaults: HashMap<Int, Any?> by lazy {
@@ -81,8 +81,8 @@ class ActionLayout @JvmOverloads constructor(
         // 释放资源
         ta.recycle()
         // 天剑间隔容器
-        addView(startSpace)
-        addView(endSpace)
+        addView(startSpaceView)
+        addView(endSpaceView)
         // 设置间隔信息
         setSpace(defaultSpace, SizeUnit.PX)
     }
@@ -151,25 +151,21 @@ class ActionLayout @JvmOverloads constructor(
         val newSpace =
             if (space == null) defaultSpace
             else Sizes.applyDimension(space, unit)
-        // 获取横纵向间隔值
-        val hSize = (if (orientation == HORIZONTAL) newSpace / 2 else 0).toInt()
-        val vSize = (if (orientation == VERTICAL) newSpace / 2 else 0).toInt()
-        // 更新所有组件的外部间隔
-        (startSpace.layoutParams as MarginLayoutParams).setMargins(hSize, vSize, hSize, vSize)
-        (endSpace.layoutParams as MarginLayoutParams).setMargins(hSize, vSize, hSize, vSize)
-        actionViews.forEach {
-            val view = it.value
-            (view.layoutParams as MarginLayoutParams).setMargins(hSize, vSize, hSize, vSize)
-        }
         // 设置默认属性
         defaults[ACTION_SPACE] = newSpace
+        // 更新所有控件的间隔
+        changeViewMargin(startSpaceView, newSpace / 2)
+        changeViewMargin(endSpaceView, newSpace / 2)
+        actionViews.forEach {
+            val view = it.value
+            changeViewMargin(view, defaultSpace)
+        }
     }
 
     fun setView(key: Int?, view: View) = also {
         // 获取相关属性
         val old = actionViews[key]
         val visible = actionVisible[key] ?: defaultVisible
-        val space = defaultSpace.toInt() / 2
         // 获取全新的索引位置
         val index = old.let {
             // 因为左右有间隔控件
@@ -183,14 +179,14 @@ class ActionLayout @JvmOverloads constructor(
         }
         // 设置View通用属性
         with(view) {
-            setPadding(space, 0, space, 0)
             isClickable = true
             isFocusable = true
             visibility = if (visible) VISIBLE else GONE
-            layoutParams = MarginLayoutParams(
+            layoutParams = LayoutParams(
                 if (orientation == HORIZONTAL) -2 else -1,
                 if (orientation == VERTICAL) -2 else -1
             )
+            changeViewMargin(this, defaultSpace)
         }
         // 缓存控件
         actionViews[key] = view
@@ -342,6 +338,14 @@ class ActionLayout @JvmOverloads constructor(
     }
 
     fun <T : View> getActionView(key: Int?) = actionViews[key] as T?
+
+    private fun changeViewMargin(view: View, space: Float) {
+        // 获取横纵向间隔值
+        val hSize = (if (orientation == HORIZONTAL) space / 2 else 0).toInt()
+        val vSize = (if (orientation == VERTICAL) space / 2 else 0).toInt()
+        val params = view.layoutParams as LayoutParams
+        params.setMargins(hSize, vSize, hSize, vSize)
+    }
 
     private companion object {
         const val ACTION_RIPPLE = 0

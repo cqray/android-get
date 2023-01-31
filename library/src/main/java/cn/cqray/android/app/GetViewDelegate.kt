@@ -1,6 +1,5 @@
 package cn.cqray.android.app
 
-import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.graphics.drawable.ColorDrawable
@@ -29,6 +28,7 @@ import cn.cqray.android.state.StateProvider
 import cn.cqray.android.util.ActivityUtils
 import cn.cqray.android.util.ButterKnifeUtils
 import cn.cqray.android.util.ContextUtils.inflate
+import cn.cqray.android.util.Sizes
 import cn.cqray.android.widget.Toolbar
 import com.scwang.smart.refresh.layout.SmartRefreshLayout
 import java.util.*
@@ -332,9 +332,8 @@ class GetViewDelegate(provider: GetViewProvider) :
         mBackground!!.value = background
     }
 
-
     /** 清理资源 **/
-    protected override fun onCleared() {
+    override fun onCleared() {
         ButterKnifeUtils.unbind(mUnBinder)
         refreshLayout = null
         mHeaderLayout = null
@@ -360,14 +359,6 @@ class GetViewDelegate(provider: GetViewProvider) :
         }
     }
 
-    /** 初始化ButterKnife **/
-    private fun initUnBinder() {
-        if (isRootViewExist) {
-            ButterKnifeUtils.unbind(mUnBinder)
-            mUnBinder = ButterKnifeUtils.bind(provider, rootView!!)
-        }
-    }
-
     /**
      * 初始化界面相关控件
      **/
@@ -390,7 +381,7 @@ class GetViewDelegate(provider: GetViewProvider) :
         initUnBinder()
     }
 
-    fun initToolbar() {
+    private fun initToolbar() {
         // 初始化标题栏监听事件
         if (toolbar != null && provider is GetNavProvider) {
             toolbar!!.setBackListener {
@@ -403,47 +394,43 @@ class GetViewDelegate(provider: GetViewProvider) :
 
         with(toolbar!!) {
             val init = Get.init.toolbarInit!!
-//            setRipple(init.useRipple)
-//            setTitleCenter(init.titleCenter)
-//            setTitleTextColor(init.titleTextColor)
-//            setTitleTextSize(init.titleTextSize)
-
+            elevation = init.elevation ?: Sizes.dp(R.dimen.elevation)
+            setContentPadding(init.contentPadding)
             // 回退按钮部分
+            setBackRipple(init.backRipple)
             setBackIcon(init.backIcon)
+            setBackIconSpace(init.backIconSpace)
+            setBackIconTintColor(init.backIconTintColor)
+            setBackText(init.backText)
             setBackTextColor(init.backTextColor)
             setBackTextSize(init.backTextSize)
+            setBackTextTypeface(init.backTextTypeface)
+            // 标题部分
+            setTitleCenter(init.titleCenter)
+            setTitleSpace(init.titleSpace)
+            setTitleTextColor(init.titleTextColor)
+            setTitleTextSize(init.titleTextSize)
+            setTitleTextTypeface(init.titleTextTypeFace)
+            // Action部分
+            setActionRipple(init.actionRipple)
+            setActionSpace(init.actionSpace)
+            setActionTextColor(init.actionTextColor)
+            setActionTextSize(init.actionTextSize)
+            setActionTextTypeface(init.actionTextTypeface)
+            // 分割线部分
+            setDividerDrawable(init.dividerDrawable)
+            setDividerHeight(init.dividerHeight)
+            setDividerMargin(init.dividerMargin)
+            setDividerVisible(init.dividerVisible)
         }
+    }
 
-
-//        val strategy = Starter.getInstance().starterStrategy
-//        if (mToolbar != null) {
-//            mToolbar!!.setUseRipple(strategy.isToolbarUserRipple).background =
-//                strategy.toolbarBackground
-//            // 设置标题栏标题属性
-//            mToolbar!!.setTitleCenter(strategy.isToolbarTitleCenter)
-//                .setTitleTextColor(strategy.toolbarTitleTextColor)
-//                .setTitleTextSize(strategy.toolbarTitleTextSize)
-//                .setTitleTypeface(strategy.toolbarTitleTypeface)
-//                .setTitleSpace(strategy.toolbarTitleSpace)
-//            // 设置标题栏返回控件属性
-//            mToolbar!!.setBackText(strategy.toolbarBackText)
-//                .setBackIcon(strategy.toolbarBackIcon)
-//                .setBackTextColor(strategy.toolbarBackTextColor)
-//                .setBackTextSize(strategy.toolbarBackTextSize)
-//                .setBackTypeface(strategy.toolbarBackTypeface)
-//            if (strategy.toolbarBackIconTintColor != null) {
-//                mToolbar!!.setBackIconTintColor(strategy.toolbarBackIconTintColor)
-//            }
-//            // 设置标题栏Action控件属性
-//            mToolbar!!.setDefaultActionTextColor(strategy.toolbarActionTextColor)
-//                .setDefaultActionTextSize(strategy.toolbarActionTextSize)
-//                .setDefaultActionTypeface(strategy.toolbarActionTypeface)
-//            // 设置标题栏分割线属性
-//            mToolbar!!.setDividerColor(strategy.toolbarDividerColor)
-//                .setDividerHeight(strategy.toolbarDividerHeight)
-//                .setDividerMargin(strategy.toolbarDividerMargin)
-//                .setDividerVisible(strategy.isToolbarDividerVisible)
-//        }
+    /** 初始化ButterKnife **/
+    private fun initUnBinder() {
+        if (isRootViewExist) {
+            ButterKnifeUtils.unbind(mUnBinder)
+            mUnBinder = ButterKnifeUtils.bind(provider, rootView!!)
+        }
     }
 
     /**

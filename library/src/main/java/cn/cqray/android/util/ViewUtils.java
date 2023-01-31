@@ -63,9 +63,10 @@ public class ViewUtils {
                 ta.recycle();
             }
             ViewCompat.setBackground(view, drawable);
-        } else {
-            ViewCompat.setBackground(view, null);
         }
+//        else {
+//            ViewCompat.setBackground(view, null);
+//        }
     }
 
     public static void setElevation(@NonNull View view, float elevation) {

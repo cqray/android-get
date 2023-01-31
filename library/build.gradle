@@ -36,6 +36,11 @@ android {
         ]
     }
 
+    lintOptions {
+        // 忽略ID non-final 警告
+        disable 'NonConstantResourceId'
+    }
+
     // 强制限定版本依赖版本
     configurations.all {
         resolutionStrategy {

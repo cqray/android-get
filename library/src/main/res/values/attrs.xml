@@ -36,6 +36,7 @@
         <attr name="titleCenter" format="boolean" />
         <attr name="titleSpace" format="dimension" />
         <!-- 返回 -->
+        <attr name="backRipple" format="boolean" />
         <attr name="backIcon" format="reference" />
         <attr name="backIconVisible" format="boolean" />
         <attr name="backText" format="string" localization="suggested" />
@@ -45,9 +46,11 @@
             <enum name="normal" value="0" />
             <enum name="bold" value="1" />
             <enum name="italic" value="2" />
+            <enum name="boldItalic" value="3" />
         </attr>
         <attr name="backSpace" format="dimension" />
         <!-- ActionLayout相关属性 -->
+        <attr name="actionRipple" format="boolean" />
         <attr name="actionSpace" format="dimension" />
         <attr name="actionTextColor" format="color" />
         <attr name="actionTextSize" format="dimension" />

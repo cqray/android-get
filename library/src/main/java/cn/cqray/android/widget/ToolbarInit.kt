@@ -1,36 +1,51 @@
 package cn.cqray.android.widget
 
+import android.graphics.Typeface
+import android.graphics.drawable.Drawable
 import androidx.annotation.ColorInt
 import androidx.annotation.DrawableRes
 import androidx.annotation.IdRes
 import androidx.annotation.Keep
+import cn.cqray.android.Get
 import cn.cqray.android.R
+import cn.cqray.android.util.ContextUtils
 
 @Keep
 class ToolbarInit {
 
-    var useRipple : Boolean? = null
-    var titleCenter: Boolean? = null
-    @ColorInt
-    var titleTextColor: Int? = null
-    var titleTextSize: Float? = null
-    var titleTypeFace: Boolean? = null
+    var ripple: Boolean? = null
 
+    var elevation: Float? = null
+
+    var contentPadding: Float? = null
+
+    var backRipple: Boolean? = null
     @DrawableRes
     var backIcon: Int? = R.drawable.def_back_material_light
+    var backIconSpace: Float? = null
     @ColorInt
     var backIconTintColor: Int? = null
     var backText: String? = null
     @ColorInt
     var backTextColor: Int? = null
     var backTextSize: Float? = null
+    var backTextTypeface: Typeface? = null
 
+    var titleCenter: Boolean? = null
+    var titleSpace: Float? = null
+    @ColorInt
+    var titleTextColor: Int? = null
+    var titleTextSize: Float? = null
+    var titleTextTypeFace: Typeface? = null
+
+    var actionRipple: Boolean? = null
+    var actionSpace: Float? = null
     @ColorInt
     var actionTextColor: Int? = null
     var actionTextSize: Float? = null
+    var actionTextTypeface: Typeface? = null
 
-    @ColorInt
-    var dividerColor: Int? = null
+    var dividerDrawable: Drawable? = null
     var dividerHeight: Float? = null
     var dividerMargin: Float? = null
     var dividerVisible: Boolean? = null

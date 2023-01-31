@@ -33,7 +33,7 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <cn.cqray.android.widget.IconTextView
+        <cn.cqray.android.widget.BackView
             android:layout_width="200dp"
             android:layout_height="200dp"
             app:iconSrc="@drawable/empty2"
