@@ -27,6 +27,7 @@ public class MainActivity extends GetMultiActivity {
         Double a = null;
         GetIntent intent = new GetIntent();
         intent.put("44", a);
+        intent.setTo(MainActivity.class);
 //        intent.putBoolean("44", a);
 
 //        new GetFragment();

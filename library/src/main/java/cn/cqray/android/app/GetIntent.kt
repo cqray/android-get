@@ -15,6 +15,19 @@ import java.util.*
 @Suppress("unused", "MemberVisibilityCanBePrivate")
 class GetIntent : Serializable {
 
+    constructor()
+
+    constructor(toClass: Class<*>) {
+        checkClass(toClass)
+        intentCache[0] = toClass
+    }
+
+    constructor(toClass: Class<*>, args: Bundle) {
+        checkClass(toClass)
+        intentCache[0] = toClass
+        arguments.putAll(args)
+    }
+
     /** 缓存，无实际意义，只是为了字段为final，好看 **/
     private val intentCache = arrayOfNulls<Any>(4)
 
@@ -32,19 +45,6 @@ class GetIntent : Serializable {
 
     /** Fragment动画  */
     val fragmentAnimator get() = intentCache[3] as FragmentAnimator?
-
-    constructor()
-
-    constructor(toClass: Class<*>) {
-        checkClass(toClass)
-        intentCache[0] = toClass
-    }
-
-    constructor(toClass: Class<*>, args: Bundle) {
-        checkClass(toClass)
-        intentCache[0] = toClass
-        arguments.putAll(args)
-    }
 
     /**
      * 跳转指定目标界面
@@ -120,13 +120,17 @@ class GetIntent : Serializable {
 
     fun put(bundle: Bundle) = also { arguments.putAll(bundle) }
 
+    fun remove(key: String?) = also { arguments.remove(key) }
+
+    fun clear() = also { arguments.clear() }
+
     /**
      * 处理存放基础类型数据为null的情况
      * @param key 键
      * @param value 值
      */
     private fun put(key: String?, value: Any?) = also {
-        when(value) {
+        when (value) {
             null -> arguments.remove(key)
             is Boolean -> arguments.putBoolean(key, value)
             is Byte -> arguments.putByte(key, value)
