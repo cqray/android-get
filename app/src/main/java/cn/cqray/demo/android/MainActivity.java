@@ -24,9 +24,10 @@ public class MainActivity extends GetMultiActivity {
 
         setTabAtTop(true);
 
-        Boolean a = null;
+        Double a = null;
         GetIntent intent = new GetIntent();
         intent.put("44", a);
+//        intent.putBoolean("44", a);
 
 //        new GetFragment();
 

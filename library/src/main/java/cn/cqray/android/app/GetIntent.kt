@@ -12,43 +12,54 @@ import java.util.*
  * 导航意图
  * @author Cqray
  */
-@Suppress("unused")
-class GetIntent {
-    /** 目标界面[Class]，仅支持实现[GetNavProvider]的[Fragment]以及[Activity] **/
-    var toClass: Class<*>? = null
-        private set
+@Suppress("unused", "MemberVisibilityCanBePrivate")
+class GetIntent : Serializable {
 
-    /** 回退目标界面[Class]，仅支持实现[GetNavProvider]的[Fragment]以及[Activity] **/
-    var backToClass: Class<*>? = null
-        private set
-
-    /** 是否包含指定回退的界面  */
-    var isPopToInclusive = false
-        private set
-
-    /** Fragment动画  */
-    var fragmentAnimator: FragmentAnimator? = null
-        private set
+    /** 缓存，无实际意义，只是为了字段为final，好看 **/
+    private val intentCache = arrayOfNulls<Any>(4)
 
     /** 参数  */
     val arguments = Bundle()
 
+    /** 目标界面[Class]，仅支持实现[GetNavProvider]的[Fragment]以及[Activity] **/
+    val toClass get() = intentCache[0] as Class<*>?
+
+    /** 回退目标界面[Class]，仅支持实现[GetNavProvider]的[Fragment]以及[Activity] **/
+    val backToClass get() = intentCache[1] as Class<*>?
+
+    /** 是否包含指定回退的界面  */
+    val backInclusive get() = (intentCache[2] as Boolean?) ?: false
+
+    /** Fragment动画  */
+    val fragmentAnimator get() = intentCache[3] as FragmentAnimator?
+
     constructor()
 
-    constructor(cls: Class<*>?) {
-        if (isValidClass(cls)) toClass = cls
+    constructor(toClass: Class<*>) {
+        checkClass(toClass)
+        intentCache[0] = toClass
     }
 
-    constructor(cls: Class<*>?, arguments: Bundle?) {
-        if (isValidClass(cls)) toClass = cls
-        this.arguments.putAll(arguments ?: Bundle())
+    constructor(toClass: Class<*>, args: Bundle) {
+        checkClass(toClass)
+        intentCache[0] = toClass
+        arguments.putAll(args)
     }
 
     /**
      * 跳转指定目标界面
      * @param to 指定界面Class，仅支持实现[GetNavProvider]的[Fragment]以及[Activity]
      */
-    fun setTo(to: Class<*>?) = also { if (isValidClass(to)) toClass = to }
+    fun setTo(to: Class<*>) = also {
+        checkClass(to)
+        intentCache[0] = to
+    }
+
+    /**
+     * 回退到指定目标界面（包含自身）
+     * @param backTo 指定目标界面Class，仅支持实现[GetNavProvider]的[Fragment]以及[Activity]
+     */
+    fun setBackTo(backTo: Class<*>) = setBackTo(backTo, true)
 
     /**
      * 回退到指定目标界面
@@ -56,37 +67,38 @@ class GetIntent {
      * @param inclusive 是否包含自身
      */
     fun setBackTo(backTo: Class<*>?, inclusive: Boolean) = also {
-        if (isValidClass(backTo)) backToClass = backTo
-        isPopToInclusive = inclusive
+        backTo?.let { checkClass(backTo) }
+        intentCache[1] = backTo
+        intentCache[2] = inclusive
     }
 
-    fun setFragmentAnimator(animator: FragmentAnimator?) = also { fragmentAnimator = animator }
+    fun setFragmentAnimator(animator: FragmentAnimator?) = also { intentCache[3] = animator }
 
-    fun put(key: String?, value: Boolean?) = also { value?.let { arguments.putBoolean(key, it) } }
+    fun put(key: String?, value: Boolean?) = put(key, value as Any?)
 
     fun put(key: String?, value: BooleanArray?) = also { arguments.putBooleanArray(key, value) }
 
-    fun put(key: String?, value: Byte?) = also { value?.let { arguments.putByte(key, it) } }
+    fun put(key: String?, value: Byte?) = put(key, value as Any?)
 
     fun put(key: String?, value: ByteArray?) = also { arguments.putByteArray(key, value) }
 
-    fun put(key: String?, value: Char?) = also { value?.let { arguments.putChar(key, it) } }
+    fun put(key: String?, value: Char?) = put(key, value as Any?)
 
     fun put(key: String?, value: CharArray?) = also { arguments.putCharArray(key, value) }
 
-    fun put(key: String?, value: Short?) = also { value?.let { arguments.putShort(key, it) } }
+    fun put(key: String?, value: Short?) = put(key, value as Any?)
 
     fun put(key: String?, value: ShortArray?) = also { arguments.putShortArray(key, value) }
 
-    fun put(key: String?, value: Int?) = also { value?.let { arguments.putInt(key, it) } }
+    fun put(key: String?, value: Int?) = put(key, value as Any?)
 
     fun put(key: String?, value: IntArray?) = also { arguments.putIntArray(key, value) }
 
-    fun put(key: String?, value: Float?) = also { value?.let { arguments.putFloat(key, it) } }
+    fun put(key: String?, value: Float?) = put(key, value as Any?)
 
     fun put(key: String?, value: FloatArray?) = also { arguments.putFloatArray(key, value) }
 
-    fun put(key: String?, value: Double?) = also { value?.let { arguments.putDouble(key, it) } }
+    fun put(key: String?, value: Double?) = put(key, value as Any?)
 
     fun put(key: String?, value: DoubleArray?) = also { arguments.putDoubleArray(key, value) }
 
@@ -108,15 +120,33 @@ class GetIntent {
 
     fun put(bundle: Bundle) = also { arguments.putAll(bundle) }
 
-    private fun isValidClass(cls: Class<*>?): Boolean {
-        val isNull = cls == null
-        val isActivity = !isNull && Activity::class.java.isAssignableFrom(cls!!)
-        val isFragment = !isNull && Fragment::class.java.isAssignableFrom(cls!!)
-        val isProvider = !isNull && GetNavProvider::class.java.isAssignableFrom(cls!!)
+    /**
+     * 处理存放基础类型数据为null的情况
+     * @param key 键
+     * @param value 值
+     */
+    private fun put(key: String?, value: Any?) = also {
+        when(value) {
+            null -> arguments.remove(key)
+            is Boolean -> arguments.putBoolean(key, value)
+            is Byte -> arguments.putByte(key, value)
+            is Char -> arguments.putChar(key, value)
+            is Short -> arguments.putShort(key, value)
+            is Int -> arguments.putInt(key, value)
+            is Float -> arguments.putFloat(key, value)
+            is Double -> arguments.putDouble(key, value)
+        }
+    }
 
-
-        if (isActivity || isProvider) return true
-        //TODO
-        return false
+    /**
+     * 检查Class是否符合预期
+     * @param clazz 待检查类
+     */
+    private fun checkClass(clazz: Class<*>) {
+        val isActivity = Activity::class.java.isAssignableFrom(clazz)
+        val isFragment = Fragment::class.java.isAssignableFrom(clazz)
+        val isProvider = GetNavProvider::class.java.isAssignableFrom(clazz)
+        if (!isProvider) throw RuntimeException("[${clazz.simpleName}] must implements GetNavProvider.")
+        if (!isActivity || !isFragment) throw RuntimeException("[${clazz.simpleName}] must be Activity or Fragment.")
     }
 }

@@ -156,7 +156,7 @@ class GetNavViewModel(owner: LifecycleOwner) : GetViewModel(owner) {
         // 检查To Class 就绪
         if (!checkToClassReady(intent)) return
         // 处理回退
-        backTo(intent.backToClass, intent.toClass, intent.isPopToInclusive)
+        backTo(intent.backToClass, intent.toClass, intent.backInclusive)
         // 跳转Activity
         if (Activity::class.java.isAssignableFrom(intent.toClass!!)) {
             val actIntent = Intent(activity, intent.toClass)
