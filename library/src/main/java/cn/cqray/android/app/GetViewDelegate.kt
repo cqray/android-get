@@ -4,8 +4,6 @@ import android.app.Activity
 import android.content.Context
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
-
-
 import android.view.View
 import android.widget.FrameLayout
 import android.widget.RelativeLayout
@@ -68,7 +66,11 @@ class GetViewDelegate(provider: GetViewProvider) :
     /** 刷新控件 **/
     val refreshLayout: SmartRefreshLayout by lazy {
         SmartRefreshLayout(context).also {
-
+            it.overScrollMode = View.OVER_SCROLL_NEVER
+            it.setEnableLoadMore(false)
+            it.setEnableOverScrollDrag(true)
+            it.setEnablePureScrollMode(true)
+            it.setEnableScrollContentWhenRefreshed(false)
         }
     }
 
@@ -175,14 +177,9 @@ class GetViewDelegate(provider: GetViewProvider) :
         initGetView()
     }
 
-    fun setHeaderView(@LayoutRes id: Int?) = setHeaderView(id, null)
+    fun setHeaderView(@LayoutRes id: Int) = setHeaderView(id, null)
 
-    fun setHeaderView(@LayoutRes id: Int?, floating: Boolean?) {
-        // 无资源ID，清空Footer
-        if (id == null) setHeaderView(null as View?, floating)
-        // 有资源ID，设置Footer
-        else setHeaderView(inflate(id), floating)
-    }
+    fun setHeaderView(@LayoutRes id: Int, floating: Boolean?) = setHeaderView(inflate(id), floating)
 
     fun setHeaderView(view: View?) = setHeaderView(view, false)
 
@@ -199,14 +196,9 @@ class GetViewDelegate(provider: GetViewProvider) :
         }
     }
 
-    fun setFooterView(@LayoutRes id: Int?) = setFooterView(id, null)
+    fun setFooterView(@LayoutRes id: Int) = setFooterView(id, null)
 
-    fun setFooterView(@LayoutRes id: Int?, floating: Boolean?) {
-        // 无资源ID，清空Footer
-        if (id == null) setFooterView(null as View?, floating)
-        // 有资源ID，设置Footer
-        else setFooterView(inflate(id), floating)
-    }
+    fun setFooterView(@LayoutRes id: Int, floating: Boolean?) = setFooterView(inflate(id), floating)
 
     fun setFooterView(view: View?) = setFooterView(view, false)
 
@@ -227,46 +219,19 @@ class GetViewDelegate(provider: GetViewProvider) :
      * @param resId 控件Id
      * @param <T> 控件类型
      **/
-    fun <T : View> findViewById(@IdRes resId: Int): T? = contentView?.findViewById(resId)
-
-    /**
-     * 获取[Toolbar]，NULL会抛出异常
-     */
-    fun requireToolbar(): Toolbar = when (provider) {
-        is GetActivity -> provider.toolbar
-        is GetFragment -> provider.toolbar
-        else -> toolbar
-    } ?: throw RuntimeException("Please make sure toolbar is exist.")
-
-    /**
-     * 获取[SmartRefreshLayout]，NULL会抛出异常
-     */
-    fun requireRefreshLayout(): SmartRefreshLayout = when (provider) {
-        is GetActivity -> provider.refreshLayout
-        is GetFragment -> provider.refreshLayout
-        else -> refreshLayout
-    } ?: throw RuntimeException("Please make sure refreshLayout is exist.")
-
-    /**
-     * 获取内容布局，NULL会抛出异常
-     */
-    fun requireContentView(): View =
-        contentView ?: throw RuntimeException("Please make sure contentView is exist.")
+    fun <T : View> findViewById(@IdRes resId: Int): T = contentView?.findViewById(resId)!!
 
     /**
      * 设置背景
      * @param id 资源ID
      **/
-    fun setBackgroundResource(@DrawableRes id: Int?) = id.also { background.value = it }
+    fun setBackgroundResource(@DrawableRes id: Int) = id.also { background.value = it }
 
     /**
      * 设置背景颜色
      * @param color 颜色
      **/
-    fun setBackgroundColor(@ColorInt color: Int?) = color.also {
-        if (color == null) setBackground(null as Drawable?)
-        else setBackground(ColorDrawable(color))
-    }
+    fun setBackgroundColor(@ColorInt color: Int) = setBackground(ColorDrawable(color))
 
     /**
      * 设置背景颜色
@@ -299,8 +264,6 @@ class GetViewDelegate(provider: GetViewProvider) :
         if (provider is GetActivity || provider is GetFragment) {
             ReflectUtil.setField(provider, "toolbar", toolbar)
             ReflectUtil.setField(provider, "refreshLayout", refreshLayout)
-//            toolbar.let { ReflectUtil.setField(provider, "toolbar", it) }
-//            refreshLayout.let { ReflectUtil.setField(provider, "refreshLayout", it) }
         }
         // 状态委托连接界面
         stateDelegate?.let {

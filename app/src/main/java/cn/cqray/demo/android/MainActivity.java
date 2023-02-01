@@ -9,6 +9,7 @@ import com.blankj.utilcode.util.SizeUtils;
 import org.jetbrains.annotations.Nullable;
 
 
+import cn.cqray.android.app.GetFragment;
 import cn.cqray.android.ui.multi.GetMultiItem;
 import cn.cqray.android.ui.multi.GetMultiActivity;
 import cn.cqray.android.util.Sizes;
@@ -26,6 +27,8 @@ public class MainActivity extends GetMultiActivity {
 //        findViewById(R.id.get_nav_content).setOnClickListener(v -> {});
 
         setTabAtTop(true);
+
+//        new GetFragment();
 
 
         loadMultiFragments(

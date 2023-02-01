@@ -30,34 +30,38 @@ interface GetViewProvider : GetProvider {
      */
     fun ensureSetNativeContentView() = viewDelegate.ensureSetNativeContentView()
 
+    fun setContentView(@LayoutRes id: Int) = viewDelegate.setGetContentView(id)
+
+    fun setContentView(view: View) = viewDelegate.setGetContentView(view)
+
     fun setGetContentView(view: View) = viewDelegate.setGetContentView(view)
 
-    fun setGetContentView(layoutResId: Int) = viewDelegate.setGetContentView(layoutResId)
+    fun setGetContentView(@LayoutRes id: Int) = viewDelegate.setGetContentView(id)
 
     fun setNativeContentView(view: View) = viewDelegate.setNativeContentView(view)
 
-    fun setNativeContentView(layoutResId: Int) = viewDelegate.setNativeContentView(layoutResId)
+    fun setNativeContentView(@LayoutRes id: Int) = viewDelegate.setNativeContentView(id)
 
-    fun setHeaderView(@LayoutRes id: Int?) = viewDelegate.setHeaderView(id)
+    fun setHeaderView(@LayoutRes id: Int) = viewDelegate.setHeaderView(id)
 
-    fun setHeaderView(@LayoutRes id: Int?, floating: Boolean?) = viewDelegate.setHeaderView(id, floating)
+    fun setHeaderView(@LayoutRes id: Int, floating: Boolean?) = viewDelegate.setHeaderView(id, floating)
 
     fun setHeaderView(view: View?) = viewDelegate.setHeaderView(view)
 
     fun setHeaderView(view: View?, floating: Boolean?) = viewDelegate.setHeaderView(view, floating)
 
-    fun setFooterView(@LayoutRes id: Int?) = viewDelegate.setFooterView(id)
+    fun setFooterView(@LayoutRes id: Int) = viewDelegate.setFooterView(id)
 
-    fun setFooterView(@LayoutRes id: Int?, floating: Boolean?) = viewDelegate.setFooterView(id, floating)
+    fun setFooterView(@LayoutRes id: Int, floating: Boolean?) = viewDelegate.setFooterView(id, floating)
 
     fun setFooterView(view: View?) = viewDelegate.setFooterView(view)
 
     fun setFooterView(view: View?, floating: Boolean?) = viewDelegate.setFooterView(view, floating)
 
-    fun setBackgroundResource(@DrawableRes resId: Int) = viewDelegate.setBackgroundResource(resId)
+    fun setBackgroundResource(@DrawableRes id: Int) = viewDelegate.setBackgroundResource(id)
 
     fun setBackgroundColor(color: Int) = viewDelegate.setBackgroundColor(color)
 
-    fun setBackground(drawable: Drawable) = viewDelegate.setBackground(drawable)
+    fun setBackground(drawable: Drawable?) = viewDelegate.setBackground(drawable)
 
 }

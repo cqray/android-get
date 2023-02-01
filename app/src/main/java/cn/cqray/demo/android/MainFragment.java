@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import java.util.UUID;
 
+import cn.cqray.android.GetX;
 import cn.cqray.android.app.GetFragment;
 import cn.cqray.android.log.GetLog;
 
@@ -20,6 +21,10 @@ public class MainFragment extends GetFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setGetContentView(R.layout.activity_main);
+
+//        Integer a = null;
+//        setGetContentView(a);
+//        GetX.INSTANCE.test(null);
 
         toolbar.setTitle("777779999999999999999999999999");
         toolbar.setTitle("777779999999999999");
