@@ -1,19 +1,15 @@
 package cn.cqray.demo.android;
 
 import android.os.Bundle;
-import android.util.Log;
 
-
-import com.blankj.utilcode.util.SizeUtils;
 
 import org.jetbrains.annotations.Nullable;
 
 
-import cn.cqray.android.app.GetFragment;
-import cn.cqray.android.ui.multi.GetMultiItem;
-import cn.cqray.android.ui.multi.GetMultiActivity;
-import cn.cqray.android.util.Sizes;
-import cn.cqray.android.widget.Toolbar;
+import cn.cqray.android.Get;
+import cn.cqray.android.app.GetIntent;
+import cn.cqray.android.multi.GetMultiItem;
+import cn.cqray.android.multi.GetMultiActivity;
 
 public class MainActivity extends GetMultiActivity {
 
@@ -27,6 +23,10 @@ public class MainActivity extends GetMultiActivity {
 //        findViewById(R.id.get_nav_content).setOnClickListener(v -> {});
 
         setTabAtTop(true);
+
+        Boolean a = null;
+        GetIntent intent = new GetIntent();
+        intent.put("44", a);
 
 //        new GetFragment();
 

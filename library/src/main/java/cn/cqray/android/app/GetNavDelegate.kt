@@ -7,9 +7,10 @@ import androidx.annotation.IdRes
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.LifecycleOwner
+import cn.cqray.android.anim.AnimUtils
+import cn.cqray.android.helper.GetResultHelper
 import cn.cqray.android.lifecycle.GetViewModelProvider
 import cn.cqray.android.lifecycle.GetViewModel
-import java.lang.IllegalStateException
 
 /**
  * Get框架导航委托
@@ -17,31 +18,28 @@ import java.lang.IllegalStateException
  */
 class GetNavDelegate(provider: GetNavProvider) : GetDelegate<GetNavProvider>(provider) {
 
-    private var navViewModel: GetNavViewModel? = null
-
     /** [LifecycleOwner]生命周期管理持有 **/
-    val lifecycleOwner: LifecycleOwner get() = provider as LifecycleOwner
+    val lifecycleOwner: LifecycleOwner = provider as LifecycleOwner
+
+    /** [FragmentActivity]实例 **/
+    val activity: FragmentActivity by lazy {
+        if (provider is FragmentActivity) provider
+        else (provider as Fragment).requireActivity()
+    }
 
     /** 导航[GetViewModel] **/
-    val viewModel: GetNavViewModel
-        get() {
-            if (navViewModel == null) throw IllegalStateException(
-                "The [GetNavViewModel] couldn't be used when Lifecycle state is not after created."
-            )
-            return navViewModel!!
-        }
+    private val viewModel: GetNavViewModel by lazy {
+        // 获取ViewModel实例
+        GetViewModelProvider(activity).get(GetNavViewModel::class.java)
+    }
 
     /**
      * 主要是初始化[GetNavViewModel]以及管理[Activity.onBackPressed]事件
      */
     internal fun onCreated() {
-        val activity: FragmentActivity
-        if (provider is Fragment) {
-            activity = (provider as Fragment).requireActivity()
-        } else {
-            activity = provider as FragmentActivity
+        if (provider is FragmentActivity) {
             // 监听Activity的back事件
-            activity.onBackPressedDispatcher.addCallback(activity,
+            provider.onBackPressedDispatcher.addCallback(activity,
                 object : OnBackPressedCallback(true) {
                     override fun handleOnBackPressed() {
                         // 处理回退事件
@@ -49,8 +47,6 @@ class GetNavDelegate(provider: GetNavProvider) : GetDelegate<GetNavProvider>(pro
                     }
                 })
         }
-        // 初始化GetNavViewModel
-        navViewModel = GetViewModelProvider(activity).get(GetNavViewModel::class.java)
     }
 
     /**
@@ -59,10 +55,10 @@ class GetNavDelegate(provider: GetNavProvider) : GetDelegate<GetNavProvider>(pro
     internal fun onViewCreated() {
         // 获取动画时长
         val enterAnimDuration: Int = if (provider is Fragment) {
-            navViewModel!!.enterAnimDuration
+            viewModel.enterAnimDuration
         } else {
-            val animResId = GetUtils.getActivityOpenEnterAnimationResId((provider as Activity))
-            GetUtils.getAnimDurationFromResource(animResId)
+            val animResId = AnimUtils.getActivityOpenEnterAnimResId((provider as Activity))
+            AnimUtils.getAnimDurationFromResource(animResId)
         }
         // 动画结束回调
         GetManager.runOnUiThreadDelayed({ provider.onEnterAnimEnd() }, enterAnimDuration)
@@ -81,7 +77,7 @@ class GetNavDelegate(provider: GetNavProvider) : GetDelegate<GetNavProvider>(pro
      * 设置返回数据
      * @param data [Bundle]数据
      */
-    fun setGetResult(data: Bundle?) = GetResultManager.sendToTopReceiver(data)
+    fun setGetResult(data: Bundle?) = GetResultHelper.sendToTopReceiver(data)
 
     /**
      * 启动界面
@@ -96,7 +92,7 @@ class GetNavDelegate(provider: GetNavProvider) : GetDelegate<GetNavProvider>(pro
      */
     fun to(intent: GetIntent, callback: GetIntentCallback?) {
         viewModel.to(intent)
-        callback?.let { GetResultManager.registerReceiver(lifecycleOwner, callback) }
+        callback?.let { GetResultHelper.registerReceiver(lifecycleOwner, it) }
     }
 
     /**

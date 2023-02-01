@@ -1,10 +1,11 @@
-package cn.cqray.android.app
+package cn.cqray.android.helper
 
 import android.os.Bundle
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.MutableLiveData
 import cn.cqray.android.Get
+import cn.cqray.android.app.GetIntentCallback
 import java.util.*
 import kotlin.collections.HashMap
 
@@ -12,7 +13,7 @@ import kotlin.collections.HashMap
  * [Get]框架Result请求管理器
  * @author Cqray
  */
-object GetResultManager {
+object GetResultHelper {
 
     /** 接收者列表 **/
     private val receiverList = LinkedList<LifecycleOwner>()
@@ -34,8 +35,7 @@ object GetResultManager {
      * @param callback 接收结果回调 [GetIntentCallback]
      */
     @Synchronized
-    fun registerReceiver(receiver: LifecycleOwner?, callback: GetIntentCallback?) {
-        if (receiver == null) return
+    fun registerReceiver(receiver: LifecycleOwner, callback: GetIntentCallback) {
         // 设置顶级接收者
         setTopReceiver(receiver)
         // 获取对应的MutableLiveData
@@ -47,7 +47,7 @@ object GetResultManager {
         // 移除所有订阅
         data.removeObservers(receiver)
         // 重新订阅
-        data.observe(receiver) { bundle -> callback?.onResult(bundle) }
+        data.observe(receiver) { bundle -> callback.onResult(bundle) }
     }
 
     /**

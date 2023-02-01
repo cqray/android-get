@@ -1,6 +1,5 @@
 package cn.cqray.android.app
 
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 
 @JvmDefaultWithoutCompatibility

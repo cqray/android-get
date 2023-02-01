@@ -1,6 +1,6 @@
-package cn.cqray.android.app
+package cn.cqray.android.helper
 
-class GetChecker {
+class GetClickHelper {
 
     private var lastClickTime = 0L
 

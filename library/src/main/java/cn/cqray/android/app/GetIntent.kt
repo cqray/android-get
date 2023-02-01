@@ -48,26 +48,19 @@ class GetIntent {
      * 跳转指定目标界面
      * @param to 指定界面Class，仅支持实现[GetNavProvider]的[Fragment]以及[Activity]
      */
-    fun setTo(to: Class<*>?) : GetIntent {
-        if (isValidClass(to)) toClass = to
-        return this
-    }
+    fun setTo(to: Class<*>?) = also { if (isValidClass(to)) toClass = to }
 
     /**
      * 回退到指定目标界面
      * @param backTo 指定目标界面Class，仅支持实现[GetNavProvider]的[Fragment]以及[Activity]
      * @param inclusive 是否包含自身
      */
-    fun setBackTo(backTo: Class<*>?, inclusive: Boolean): GetIntent {
+    fun setBackTo(backTo: Class<*>?, inclusive: Boolean) = also {
         if (isValidClass(backTo)) backToClass = backTo
         isPopToInclusive = inclusive
-        return this
     }
 
-    fun setFragmentAnimator(animator: FragmentAnimator?): GetIntent {
-        fragmentAnimator = animator
-        return this
-    }
+    fun setFragmentAnimator(animator: FragmentAnimator?) = also { fragmentAnimator = animator }
 
     fun put(key: String?, value: Boolean?) = also { value?.let { arguments.putBoolean(key, it) } }
 
@@ -99,8 +92,7 @@ class GetIntent {
 
     fun put(key: String?, value: CharSequence?) = also { arguments.putCharSequence(key, value) }
 
-    fun put(key: String?, value: Array<CharSequence>?) =
-        also { arguments.putCharSequenceArray(key, value) }
+    fun put(key: String?, value: Array<CharSequence>?) = also { arguments.putCharSequenceArray(key, value) }
 
     fun put(key: String?, value: String?) = also { arguments.putString(key, value) }
 
@@ -110,8 +102,7 @@ class GetIntent {
 
     fun put(key: String?, value: Parcelable?) = also { arguments.putParcelable(key, value) }
 
-    fun put(key: String?, value: Array<Parcelable>?) =
-        also { arguments.putParcelableArray(key, value) }
+    fun put(key: String?, value: Array<Parcelable>?) = also { arguments.putParcelableArray(key, value) }
 
     fun put(key: String?, value: ArrayList<*>?) = also { arguments.putSerializable(key, value) }
 
@@ -120,8 +111,11 @@ class GetIntent {
     private fun isValidClass(cls: Class<*>?): Boolean {
         val isNull = cls == null
         val isActivity = !isNull && Activity::class.java.isAssignableFrom(cls!!)
-        val isNavProvider = !isNull && GetNavProvider::class.java.isAssignableFrom(cls!!)
-        if (isActivity || isNavProvider) return true
+        val isFragment = !isNull && Fragment::class.java.isAssignableFrom(cls!!)
+        val isProvider = !isNull && GetNavProvider::class.java.isAssignableFrom(cls!!)
+
+
+        if (isActivity || isProvider) return true
         //TODO
         return false
     }

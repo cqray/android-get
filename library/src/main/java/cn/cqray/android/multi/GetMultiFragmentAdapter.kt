@@ -1,4 +1,4 @@
-package cn.cqray.android.ui.multi
+package cn.cqray.android.multi
 
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity

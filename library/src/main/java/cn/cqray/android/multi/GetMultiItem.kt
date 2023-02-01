@@ -1,4 +1,4 @@
-package cn.cqray.android.ui.multi
+package cn.cqray.android.multi
 
 import android.os.Bundle
 import android.os.Parcelable

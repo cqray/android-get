@@ -1,13 +1,11 @@
-package cn.cqray.android.ui.multi
+package cn.cqray.android.multi
 
-import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.annotation.Keep
 import androidx.annotation.NonNull
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.widget.ViewPager2
 import cn.cqray.android.app.GetFragment
-import cn.cqray.android.app.GetMultiProvider
 import cn.cqray.android.lifecycle.GetViewModelProvider
 import com.flyco.tablayout.CommonTabLayout
 

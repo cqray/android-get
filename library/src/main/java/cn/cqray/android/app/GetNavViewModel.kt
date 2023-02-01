@@ -10,10 +10,12 @@ import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import cn.cqray.android.Get
+import cn.cqray.android.anim.AnimUtils
 
 import cn.cqray.android.anim.DefaultVerticalAnimator
 import cn.cqray.android.anim.FragmentAnimator
 import cn.cqray.android.exc.ExceptionDispatcher
+import cn.cqray.android.helper.GetClickHelper
 import cn.cqray.android.lifecycle.GetViewModel
 import cn.cqray.android.log.GetLog
 
@@ -35,7 +37,7 @@ class GetNavViewModel(owner: LifecycleOwner) : GetViewModel(owner) {
     /** 回退栈  */
     private val backStack = Stack<String>()
 
-    private val getChecker = GetChecker()
+    private val getChecker = GetClickHelper()
 
     init {
         if (owner !is FragmentActivity || owner !is GetNavProvider) {
@@ -175,7 +177,7 @@ class GetNavViewModel(owner: LifecycleOwner) : GetViewModel(owner) {
                 // 设置自定义动画
                 ft.setCustomAnimations(enter, exit, popEnter, popExit)
                 // 计算进入动画时长
-                openEnterAnimDuration = GetUtils.getAnimDurationFromResource(enter)
+                openEnterAnimDuration = AnimUtils.getAnimDurationFromResource(enter)
             }
         }
         // 隐藏当前正在显示的Fragment

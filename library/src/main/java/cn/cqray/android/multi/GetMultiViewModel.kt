@@ -1,4 +1,4 @@
-package cn.cqray.android.ui.multi
+package cn.cqray.android.multi
 
 import android.view.View
 import android.view.ViewGroup
@@ -6,8 +6,6 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.LifecycleOwner
 import androidx.viewpager2.widget.ViewPager2
 import cn.cqray.android.R
-import cn.cqray.android.app.GetMultiDelegate
-import cn.cqray.android.app.GetMultiProvider
 import cn.cqray.android.lifecycle.GetViewModel
 import cn.cqray.android.util.ContextUtils
 import cn.cqray.android.util.ReflectUtil

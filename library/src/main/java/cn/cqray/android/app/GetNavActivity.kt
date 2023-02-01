@@ -1,9 +1,9 @@
 package cn.cqray.android.app
 
 import android.os.Bundle
+import android.view.ViewGroup
+import android.widget.FrameLayout
 import cn.cqray.android.R
-import cn.cqray.android.app.GetActivity
-import cn.cqray.android.app.GetIntent
 
 /**
  * [GetActivity]导航入口界面
@@ -12,9 +12,16 @@ import cn.cqray.android.app.GetIntent
 @Suppress("unused")
 open class GetNavActivity : GetActivity() {
 
+    private val contentLayout: FrameLayout by lazy {
+        FrameLayout(this).also {
+            it.id = R.id.get_nav_content
+            it.layoutParams = ViewGroup.LayoutParams(-1, -1)
+        }
+    }
+
     override fun onCreating(savedInstanceState: Bundle?) {
         super.onCreating(savedInstanceState)
-        setNativeContentView(R.layout.get_activity_layout_nav)
+        setNativeContentView(contentLayout)
     }
 
     fun loadRootFragment(fragmentClass: Class<*>) {

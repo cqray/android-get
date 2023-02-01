@@ -5,9 +5,12 @@ import androidx.lifecycle.LifecycleOwner
 import cn.cqray.android.Get
 import cn.cqray.android.log.GetLog
 import cn.cqray.android.log.LogLevel
+import cn.cqray.android.multi.GetMultiDelegate
+import cn.cqray.android.multi.GetMultiProvider
 import cn.cqray.android.tip.GetTipDelegate
 import cn.cqray.android.tip.GetTipProvider
 import java.util.HashMap
+import java.util.concurrent.atomic.AtomicReference
 
 /**
  * [Get]委托基类
@@ -16,8 +19,8 @@ import java.util.HashMap
 @Suppress("unused")
 open class GetDelegate<P : GetProvider>(val provider: P) {
 
-    /** [GetProvider]子类类名 **/
-    private lateinit var providerClassName: String
+    /** [GetProvider]子类类名（原子对象，实际意义，仅为让变量为 final） **/
+    private val providerName = AtomicReference<String>()
 
     init {
         // 订阅资源回收
@@ -27,7 +30,7 @@ open class GetDelegate<P : GetProvider>(val provider: P) {
                 super.onDestroy(owner)
                 // 延时回收资源
                 GetManager.runOnUiThreadDelayed({
-                    val key = "${provider.hashCode()}-$providerClassName"
+                    val key = "${provider.hashCode()}-${providerName.get()}"
                     cacheDelegates[key]?.onCleared()
                     cacheDelegates.remove(key)
                 })
@@ -71,7 +74,7 @@ open class GetDelegate<P : GetProvider>(val provider: P) {
                 GetViewProvider::class.java -> GetViewDelegate(provider as GetViewProvider)
                 else -> throw RuntimeException()
             }
-            delegate.providerClassName = clazz.name
+            delegate.providerName.set(clazz.name)
             // 存入缓存中
             cacheDelegates[key] = delegate
             return delegate as D
