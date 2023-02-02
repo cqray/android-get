@@ -45,7 +45,7 @@ interface GetNavProvider : GetProvider {
      * 启动界面
      * @param to 目标界面[Class]
      */
-    fun to(to: Class<*>?) = navDelegate.to(GetIntent(to))
+    fun to(to: Class<*>) = navDelegate.to(GetIntent(to))
 
     /**
      * 启动界面
@@ -58,7 +58,7 @@ interface GetNavProvider : GetProvider {
      * @param to 目标界面[Class]
      * @param callback 回调[GetIntentCallback]
      */
-    fun to(to: Class<*>?, callback: GetIntentCallback?) = navDelegate.to(GetIntent(to), callback)
+    fun to(to: Class<*>, callback: GetIntentCallback?) = navDelegate.to(GetIntent(to), callback)
 
     /**
      * 启动界面
@@ -76,12 +76,12 @@ interface GetNavProvider : GetProvider {
      * 回退到指定的界面
      * @param back 目标界面[Class]，仅支持实现[GetNavProvider]的[Fragment]以及[Activity]
      */
-    fun backTo(back: Class<*>?) = navDelegate.backTo(back, true)
+    fun backTo(back: Class<*>) = navDelegate.backTo(back, true)
 
     /**
      * 回退到指定的界面
      * @param back 目标界面[Class]，仅支持实现[GetNavProvider]的[Fragment]以及[Activity]
      * @param inclusive 是否包含指定回退的界面
      */
-    fun backTo(back: Class<*>?, inclusive: Boolean) = navDelegate.backTo(back, inclusive)
+    fun backTo(back: Class<*>, inclusive: Boolean) = navDelegate.backTo(back, inclusive)
 }

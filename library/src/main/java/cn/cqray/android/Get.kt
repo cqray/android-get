@@ -9,8 +9,9 @@ import cn.cqray.android.app.GetInit
 import cn.cqray.android.app.GetManager
 import cn.cqray.android.log.GetLog
 import cn.cqray.android.util.ThirdCheckUtils
+import com.blankj.utilcode.util.Utils
 
-/**
+ /**
  * [Get]框架
  * @author Cqray
  */
@@ -33,6 +34,9 @@ object Get {
         // 初始化配置
         this.application = application
         this.init = getInit ?: this.init
+//        // 初始化工具类
+//        Utils.init(application)
+
         // 初始化Get管理器
         GetManager.init(application)
 

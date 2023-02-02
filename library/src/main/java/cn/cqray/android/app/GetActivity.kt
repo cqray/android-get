@@ -38,7 +38,6 @@ open class GetActivity : AppCompatActivity(),
     @Suppress("KotlinNullnessAnnotation")
     val refreshLayout: SmartRefreshLayout? = null
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         onCreating(savedInstanceState)

@@ -6,11 +6,13 @@ import androidx.activity.OnBackPressedCallback
 import androidx.annotation.IdRes
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import cn.cqray.android.anim.AnimUtils
 import cn.cqray.android.helper.GetResultHelper
 import cn.cqray.android.lifecycle.GetViewModelProvider
 import cn.cqray.android.lifecycle.GetViewModel
+import java.lang.IllegalStateException
 
 /**
  * Get框架导航委托
@@ -29,6 +31,10 @@ class GetNavDelegate(provider: GetNavProvider) : GetDelegate<GetNavProvider>(pro
 
     /** 导航[GetViewModel] **/
     private val viewModel: GetNavViewModel by lazy {
+        // 确保ViewModel是在CREATED之后调用
+        val currentState = lifecycleOwner.lifecycle.currentState
+        if (!currentState.isAtLeast(Lifecycle.State.CREATED))
+            throw IllegalStateException("Please make sure ${provider.javaClass.simpleName}'s state is created.")
         // 获取ViewModel实例
         GetViewModelProvider(activity).get(GetNavViewModel::class.java)
     }
@@ -55,7 +61,7 @@ class GetNavDelegate(provider: GetNavProvider) : GetDelegate<GetNavProvider>(pro
     internal fun onViewCreated() {
         // 获取动画时长
         val enterAnimDuration: Int = if (provider is Fragment) {
-            viewModel.enterAnimDuration
+            viewModel.getFragmentEnterAnimDuration(provider)
         } else {
             val animResId = AnimUtils.getActivityOpenEnterAnimResId((provider as Activity))
             AnimUtils.getAnimDurationFromResource(animResId)
@@ -67,10 +73,19 @@ class GetNavDelegate(provider: GetNavProvider) : GetDelegate<GetNavProvider>(pro
     /**
      * 设置根Fragment
      * @param containerId 容器ID
+     * @param rootClass 根Fragment类
+     */
+    fun loadRootFragment(@IdRes containerId: Int, rootClass: Class<*>) {
+        viewModel.loadRootFragment(containerId, GetIntent(rootClass))
+    }
+
+    /**
+     * 设置根Fragment
+     * @param containerId 容器ID
      * @param intent [GetIntent]
      */
-    fun loadRootFragment(@IdRes containerId: Int, intent: GetIntent?) {
-        viewModel.loadRootFragment(containerId, intent!!)
+    fun loadRootFragment(@IdRes containerId: Int, intent: GetIntent) {
+        viewModel.loadRootFragment(containerId, intent)
     }
 
     /**
@@ -78,6 +93,12 @@ class GetNavDelegate(provider: GetNavProvider) : GetDelegate<GetNavProvider>(pro
      * @param data [Bundle]数据
      */
     fun setGetResult(data: Bundle?) = GetResultHelper.sendToTopReceiver(data)
+
+    /**
+     * 启动界面
+     * @param toClass 目标Class
+     */
+    fun to(toClass: Class<*>) = viewModel.to(GetIntent(toClass))
 
     /**
      * 启动界面
@@ -101,9 +122,15 @@ class GetNavDelegate(provider: GetNavProvider) : GetDelegate<GetNavProvider>(pro
     fun back() = viewModel.back()
 
     /**
+     * 回退到指定的界面（包含自身）
+     * @param back 目标界面[Class]，仅支持实现[GetNavProvider]的[Fragment]以及[Activity]
+     */
+    fun backTo(back: Class<*>) = viewModel.backTo(back, true)
+
+    /**
      * 回退到指定的界面
      * @param back 目标界面[Class]，仅支持实现[GetNavProvider]的[Fragment]以及[Activity]
      * @param inclusive 是否包含指定回退的界面
      */
-    fun backTo(back: Class<*>?, inclusive: Boolean?) = viewModel.backTo(back, inclusive)
+    fun backTo(back: Class<*>, inclusive: Boolean) = viewModel.backTo(back, inclusive)
 }

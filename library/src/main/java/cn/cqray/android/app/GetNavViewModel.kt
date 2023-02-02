@@ -18,48 +18,41 @@ import cn.cqray.android.exc.ExceptionDispatcher
 import cn.cqray.android.helper.GetClickHelper
 import cn.cqray.android.lifecycle.GetViewModel
 import cn.cqray.android.log.GetLog
-
 import java.util.*
+import java.util.concurrent.atomic.AtomicInteger
 import kotlin.Exception
 
 @Suppress("unused", "MemberVisibilityCanBePrivate")
 class GetNavViewModel(owner: LifecycleOwner) : GetViewModel(owner) {
 
-    /** Fragment ID 关键字 **/
-    private val fragmentIdKey = "Get:fragmentId"
+    init {
+        if (owner !is FragmentActivity || owner !is GetNavProvider) {
+            throw IllegalArgumentException(
+                String.format(
+                    "%s can only get by FragmentActivity which implements %s.",
+                    javaClass.simpleName,
+                    GetNavProvider::class.java.simpleName
+                )
+            )
+        }
+    }
 
     /** 容器Id  */
-    private var containerId = View.NO_ID
-
-    /** 进入动画时长  */
-    private var openEnterAnimDuration = 0
+    private val containerId = AtomicInteger(View.NO_ID)
 
     /** 回退栈  */
     private val backStack = Stack<String>()
 
-    private val getChecker = GetClickHelper()
-
-    init {
-        if (owner !is FragmentActivity || owner !is GetNavProvider) {
-            val exc = String.format(
-                "%s can only get by FragmentActivity which implements %s.",
-                GetNavViewModel::class.java.name,
-                GetNavProvider::class.java.name
-            )
-            throw RuntimeException(exc)
-        }
-    }
+    /** 点击事件帮助类 **/
+    private val clickHelper = GetClickHelper()
 
     /** 栈顶的Fragment **/
     val topFragment: Fragment?
         get() = if (backStack.isEmpty()) null
         else fragmentManager.findFragmentByTag(backStack.peek())
 
-    /** 动画时长 **/
-    val enterAnimDuration: Int get() = openEnterAnimDuration
-
     /** 容器View **/
-    val containerView: View get() = activity.findViewById(containerId)
+    val containerView: View get() = activity.findViewById(containerId.get())
 
     /** 持有的Activity **/
     val activity: FragmentActivity get() = lifecycleOwner as FragmentActivity
@@ -105,24 +98,29 @@ class GetNavViewModel(owner: LifecycleOwner) : GetViewModel(owner) {
         val factory = fragmentManager.fragmentFactory
         // 创建Fragment
         val fragment = factory.instantiate(activity.classLoader, intent.toClass!!.name)
-        // 获取参数
-        val arguments = intent.arguments
-        // 设置ID
-        arguments.putString(fragmentIdKey, uuid)
         // 设置参数
-        fragment.arguments = arguments
+        fragment.arguments = intent.arguments.also { it.putString(FRAGMENT_ID_TAG, uuid) }
         // 返回Fragment
         return fragment
     }
 
     /**
-     * 获取Fragment对应的标识
+     * 获取Fragment对应的标识，结构为[类名-UUID]
      * @param fragment fragment对象
      */
     fun getFragmentTag(fragment: Fragment): String {
         val className = fragment::class.java.name
         val arguments = fragment.arguments
-        return "$className-" + arguments?.getString(fragmentIdKey)
+        return "$className-" + arguments?.getString(FRAGMENT_ID_TAG)
+    }
+
+    /**
+     * 获取Fragment对应的启动动画时长
+     * @param fragment fragment对象
+     */
+    fun getFragmentEnterAnimDuration(fragment: Fragment): Int {
+        val arguments = fragment.arguments
+        return arguments?.getInt(FRAGMENT_ANIM_DURATION_Tag) ?: 0
     }
 
     /**
@@ -139,8 +137,8 @@ class GetNavViewModel(owner: LifecycleOwner) : GetViewModel(owner) {
      * @param containerId 容器ID
      * @param intent [GetIntent]
      */
-    fun loadRootFragment(@IdRes containerId: Int?, intent: GetIntent) {
-        this.containerId = containerId ?: View.NO_ID
+    fun loadRootFragment(@IdRes containerId: Int, intent: GetIntent) {
+        this.containerId.set(containerId)
         to(intent)
     }
 
@@ -150,7 +148,7 @@ class GetNavViewModel(owner: LifecycleOwner) : GetViewModel(owner) {
      */
     fun to(intent: GetIntent) {
         // 拦截快速点击
-        if (getChecker.isFastClick()) return
+        if (clickHelper.isQuickClick()) return
         // 检查容器就绪
         if (!checkContainerReady()) return
         // 检查To Class 就绪
@@ -176,8 +174,9 @@ class GetNavViewModel(owner: LifecycleOwner) : GetViewModel(owner) {
             with(animator) {
                 // 设置自定义动画
                 ft.setCustomAnimations(enter, exit, popEnter, popExit)
-                // 计算进入动画时长
-                openEnterAnimDuration = AnimUtils.getAnimDurationFromResource(enter)
+                // 计算并设置Fragment动画时长
+                val duration = AnimUtils.getAnimDurationFromResource(enter)
+                fragment.arguments?.putInt(FRAGMENT_ANIM_DURATION_Tag, duration)
             }
         }
         // 隐藏当前正在显示的Fragment
@@ -188,7 +187,7 @@ class GetNavViewModel(owner: LifecycleOwner) : GetViewModel(owner) {
         // 获取FragmentTag
         val fTag = getFragmentTag(fragment)
         // 添加Fragment
-        ft.add(containerId, fragment, fTag)
+        ft.add(containerId.get(), fragment, fTag)
         // 设置初始化生命周期
         ft.setMaxLifecycle(fragment, Lifecycle.State.RESUMED)
         // 设置当前Fragment
@@ -287,11 +286,14 @@ class GetNavViewModel(owner: LifecycleOwner) : GetViewModel(owner) {
     /**
      * 检查容器是否准备就绪
      */
-    private fun checkContainerReady() = (containerId != View.NO_ID).also {
-        if (it) return true
-        ExceptionDispatcher.dispatchStarterThrowable(
-            null, "请先调用loadRootFragment()。", "未设置containerId，便开始调用to()方法。"
-        )
+    private fun checkContainerReady(): Boolean {
+        if (containerId.get() == View.NO_ID) {
+            ExceptionDispatcher.dispatchStarterThrowable(
+                null, "请先调用loadRootFragment()。", "未设置containerId，便开始调用to()方法。"
+            )
+            return false
+        }
+        return true
     }
 
     /**
@@ -316,9 +318,11 @@ class GetNavViewModel(owner: LifecycleOwner) : GetViewModel(owner) {
      */
     private fun getFragmentAnimator(fragment: Fragment, intent: GetIntent): FragmentAnimator {
         // 从下至上，一级级获取优先级高的动画设置
-        return intent.fragmentAnimator ?: (fragment as? GetNavProvider)?.onCreateFragmentAnimator()
-        ?: (lifecycleOwner as? GetNavProvider)?.onCreateFragmentAnimator() ?: Get.init.fragmentAnimator
-        ?: DefaultVerticalAnimator()
+        return intent.fragmentAnimator
+            ?: (fragment as? GetNavProvider)?.onCreateFragmentAnimator()
+            ?: (lifecycleOwner as? GetNavProvider)?.onCreateFragmentAnimator()
+            ?: Get.init.fragmentAnimator
+            ?: DefaultVerticalAnimator()
     }
 
     /**
@@ -335,5 +339,13 @@ class GetNavViewModel(owner: LifecycleOwner) : GetViewModel(owner) {
                 "       Content: $text"
         // 打印日志
         GetLog.e(GetNavDelegate::class.java, message, th)
+    }
+
+    private companion object {
+        /** Fragment ID 关键字 **/
+        const val FRAGMENT_ID_TAG = "Get:Fragment_id"
+
+        /** Fragment 动画时长关键字 **/
+        const val FRAGMENT_ANIM_DURATION_Tag = "Get:Fragment_anim_duration"
     }
 }

@@ -15,8 +15,7 @@ interface GetViewProvider : GetProvider {
     /**
      * 获取并初始化[GetViewDelegate]
      */
-    val viewDelegate: GetViewDelegate
-        get() = GetDelegate.get(this, GetViewProvider::class.java)
+    val viewDelegate: GetViewDelegate get() = GetDelegate.get(this, GetViewProvider::class.java)
 
     /**
      * 确认[setGetContentView]不被[setNativeContentView]替代

@@ -48,14 +48,14 @@ class GetViewDelegate(provider: GetViewProvider) :
     /** 关联的内容控件（原子对象，无特殊作用，为了让变量变为 final） **/
     private val attachedContentView = AtomicReference<View?>()
 
-    /** 内容容器 **/
-    private val contentLayout: FrameLayout by lazy { rootView.findViewById(R.id.get_content) }
-
     /** 根控件 **/
     val rootView: View by lazy { inflate(R.layout.get_layout_view_default) }
 
     /** 标题 **/
     val toolbar: Toolbar by lazy { rootView.findViewById(R.id.get_toolbar) }
+
+    /** 内容容器 **/
+    val contentLayout: FrameLayout by lazy { rootView.findViewById(R.id.get_content) }
 
     /** 头部容器 **/
     val headerLayout: FrameLayout by lazy { rootView.findViewById(R.id.get_header) }
@@ -153,6 +153,7 @@ class GetViewDelegate(provider: GetViewProvider) :
         attachedContentView.set(view)
         contentLayout.removeAllViews()
         contentLayout.addView(refreshLayout.also { it.addView(view) })
+        toolbar.visibility = View.VISIBLE
         initContentView()
         initGetView()
     }
@@ -242,6 +243,7 @@ class GetViewDelegate(provider: GetViewProvider) :
     /** 设置内容界面 **/
     private fun initContentView() {
         if (provider is AppCompatActivity) {
+            // 设置界面
             provider.delegate.setContentView(rootView)
         } else if (provider is ComponentActivity) {
             // 考虑到有可能重写了 setContentView
@@ -262,8 +264,10 @@ class GetViewDelegate(provider: GetViewProvider) :
      **/
     private fun initGetView() {
         if (provider is GetActivity || provider is GetFragment) {
+            // Toolbar赋值
             ReflectUtil.setField(provider, "toolbar", toolbar)
-            ReflectUtil.setField(provider, "refreshLayout", refreshLayout)
+            // 使用了SmartRefreshLayout才赋值
+            if (setGetContentView.get()) ReflectUtil.setField(provider, "refreshLayout", refreshLayout)
         }
         // 状态委托连接界面
         stateDelegate?.let {
@@ -284,9 +288,7 @@ class GetViewDelegate(provider: GetViewProvider) :
                 delegate.back()
             }
         }
-
-        if (provider !is GetNavProvider) return
-
+        // 设置全局属性
         with(toolbar) {
             val init = Get.init.toolbarInit!!
             elevation = init.elevation ?: Sizes.dp(R.dimen.elevation)

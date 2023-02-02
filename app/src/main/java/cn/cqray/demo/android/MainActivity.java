@@ -78,4 +78,9 @@ public class MainActivity extends GetMultiActivity {
         
 //        ft.add("")
     }
+
+    @Override
+    public boolean onBackPressedGet() {
+        return true;
+    }
 }

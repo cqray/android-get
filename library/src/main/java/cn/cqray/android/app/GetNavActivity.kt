@@ -3,6 +3,7 @@ package cn.cqray.android.app
 import android.os.Bundle
 import android.view.ViewGroup
 import android.widget.FrameLayout
+import androidx.fragment.app.Fragment
 import cn.cqray.android.R
 
 /**
@@ -12,9 +13,13 @@ import cn.cqray.android.R
 @Suppress("unused")
 open class GetNavActivity : GetActivity() {
 
+    /** 容器ID **/
+    private val containerId = R.id.get_nav_content
+
+    /** [Fragment]内容容器 **/
     private val contentLayout: FrameLayout by lazy {
         FrameLayout(this).also {
-            it.id = R.id.get_nav_content
+            it.id = containerId
             it.layoutParams = ViewGroup.LayoutParams(-1, -1)
         }
     }
@@ -24,10 +29,7 @@ open class GetNavActivity : GetActivity() {
         setNativeContentView(contentLayout)
     }
 
-    fun loadRootFragment(fragmentClass: Class<*>) {
-        val intent = GetIntent(fragmentClass)
-        navDelegate.loadRootFragment(R.id.get_nav_content, intent)
-    }
+    fun loadRootFragment(rootClass: Class<*>) = navDelegate.loadRootFragment(containerId, rootClass)
 
-    fun loadRootFragment(intent: GetIntent) = navDelegate.loadRootFragment(R.id.get_nav_content, intent)
+    fun loadRootFragment(intent: GetIntent) = navDelegate.loadRootFragment(containerId, intent)
 }
