@@ -18,6 +18,10 @@ interface GetMultiProvider : GetProvider {
     val multiDelegate: GetMultiDelegate
         get() = GetDelegate.get(this, GetMultiProvider::class.java)
 
+
+    val multiDelegate2: GetMultiDelegate2
+        get() = GetDelegate.get(this, GetMultiProvider::class.java)
+
     /** [ViewPager2]下的当前索引 **/
     val currentIndex: Int
         get() = multiDelegate.currentIndex
