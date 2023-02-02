@@ -1,138 +1,202 @@
-package cn.cqray.android.util;
+package cn.cqray.android.util
 
-import android.annotation.SuppressLint;
-import android.app.Activity;
-import android.content.Context;
-import android.content.ContextWrapper;
-import android.content.Intent;
-import android.content.pm.ActivityInfo;
-import android.content.pm.PackageManager;
-import android.content.res.TypedArray;
-import android.os.Build;
-import android.os.Bundle;
-import android.util.Log;
+import android.annotation.SuppressLint
+import android.app.Activity
+import android.content.ComponentName
+import android.content.Context
+import android.content.ContextWrapper
+import android.content.Intent
+import android.content.pm.ActivityInfo
+import android.content.pm.PackageManager
+import android.content.pm.PackageManager.NameNotFoundException
+import android.content.res.TypedArray
+import android.graphics.drawable.Drawable
+import android.os.Build
+import android.os.Bundle
+import android.view.View
+import androidx.core.app.ActivityOptionsCompat
+import androidx.core.util.Pair
+import androidx.fragment.app.Fragment
+import cn.cqray.android.Get
+import cn.cqray.android.Get.context
+import cn.cqray.android.app.GetManager
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
+@Suppress("unused", "MemberVisibilityCanBePrivate")
+object ActivityUtils {
 
 
-import java.lang.ref.WeakReference;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.List;
+//    fun start(intent: Intent) {
+//
+//        ActivityUtils.startActivity()
+//
+//    }
 
-import cn.cqray.android.Get;
-import cn.cqray.android.app.GetManager;
 
-public class ActivityUtils {
-
-    /**
-     * Return the activity by context.
-     *
-     * @param context The context.
-     * @return the activity by context.
-     */
-    @Nullable
-    public static Activity getActivityByContext(@Nullable Context context) {
-        if (context == null) {
-            return null;
-        }
-        Activity activity = getActivityByContextInner(context);
-        if (!isActivityAlive(activity)) {
-            return null;
-        }
-        return activity;
-    }
-
-    @Nullable
-    private static Activity getActivityByContextInner(@Nullable Context context) {
-        if (context == null) {
-            return null;
-        }
-        List<Context> list = new ArrayList<>();
-        while (context instanceof ContextWrapper) {
-            if (context instanceof Activity) {
-                return (Activity) context;
-            }
-            Activity activity = getActivityFromDecorContext(context);
-            if (activity != null) {
-                return activity;
-            }
-            list.add(context);
-            context = ((ContextWrapper) context).getBaseContext();
-            if (context == null) {
-                return null;
-            }
-            if (list.contains(context)) {
-                // loop context
-                return null;
-            }
-        }
-        return null;
-    }
-
-    @Nullable
-    private static Activity getActivityFromDecorContext(@Nullable Context context) {
-        if (context == null) {
-            return null;
-        }
-        if (context.getClass().getName().equals("com.android.internal.policy.DecorContext")) {
-            try {
-                Field mActivityContextField = context.getClass().getDeclaredField("mActivityContext");
-                mActivityContextField.setAccessible(true);
-                //noinspection ConstantConditions,unchecked
-                return ((WeakReference<Activity>) mActivityContextField.get(context)).get();
-            } catch (Exception ignore) {
-            }
-        }
-        return null;
-    }
+    fun toActivity(intent: Intent) = toActivity(intent, null as Bundle?)
 
     /**
-     * Return whether the activity is alive.
-     *
-     * @param context The context.
-     * @return {@code true}: yes<br>{@code false}: no
+     * 跳转指定Activity
+     * @param intent 目标意图
+     * @param options 配置参数
      */
-    public static boolean isActivityAlive(final Context context) {
-        return isActivityAlive(getActivityByContext(context));
+    fun toActivity(intent: Intent, options: Bundle?): Boolean {
+        // 获取上下文
+        val context = GetManager.topActivity ?: Get.application
+        // 判断目标Activity是否可用
+        if (!isIntentAvailable(intent)) {
+            return false
+        }
+        // 不是Activity，需要添加FLAG_ACTIVITY_NEW_TASK标识
+        if (context !is Activity) intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        // 启动Activity
+        context.startActivity(intent, options)
+        return true
     }
 
-    /**
-     * Return whether the activity is alive.
-     *
-     * @param activity The activity.
-     * @return {@code true}: yes<br>{@code false}: no
-     */
-    public static boolean isActivityAlive(final Activity activity) {
-        return activity != null && !activity.isFinishing()
-                && (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN_MR1 || !activity.isDestroyed());
+    @JvmStatic
+    fun backToActivity(backTo: Class<out Activity>, inclusive: Boolean) {
+
     }
+
+    @SuppressLint("QueryPermissionsNeeded")
+    private fun isIntentAvailable(intent: Intent): Boolean {
+        return Get.application
+            .packageManager
+            .queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY)
+            .size > 0
+    }
+
+//    /**
+//     * Return the activity by context.
+//     *
+//     * @param context The context.
+//     * @return the activity by context.
+//     */
+//    fun getActivityByContext(context: Context?): Activity? {
+//        if (context == null) {
+//            return null
+//        }
+//        val activity = getActivityByContextInner(context)
+//        return if (!isActivityAlive(activity)) {
+//            null
+//        } else activity
+//    }
+
+
+//    private fun getOptionsBundle(fragment: Fragment, enterAnim: Int, exitAnim: Int): Bundle? {
+//        val activity = fragment.activity ?: return null
+//        return ActivityOptionsCompat.makeCustomAnimation(activity, enterAnim, exitAnim).toBundle()
+//    }
+//
+//    private fun getOptionsBundle(
+//        context: Context,
+//        enterAnim: Int,
+//        exitAnim: Int
+//    ): Bundle? {
+//        return ActivityOptionsCompat.makeCustomAnimation(context, enterAnim, exitAnim).toBundle()
+//    }
+//
+//    private fun getOptionsBundle(
+//        fragment: Fragment,
+//        sharedElements: Array<View>
+//    ): Bundle? {
+//        val activity = fragment.activity ?: return null
+//        return getOptionsBundle(activity, sharedElements)
+//    }
+//
+//    private fun getOptionsBundle(activity: Activity, sharedElements: Array<View>?): Bundle? {
+//        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) return null
+//        if (sharedElements == null) return null
+//        val len = sharedElements.size
+//        if (len <= 0) return null
+//        val pairs: Array<Pair<View, String>> = arrayOfNulls<Pair<*, *>>(len)
+//        for (i in 0 until len) {
+//            pairs[i] = Pair.create(sharedElements[i], sharedElements[i].transitionName)
+//        }
+//        return ActivityOptionsCompat.makeSceneTransitionAnimation(activity, *pairs).toBundle()
+//    }
+
+
+    fun context2Activity(context: Context): Activity? {
+        var temp = context
+        while (temp is ContextWrapper) {
+            if (temp is Activity) return temp
+            temp = temp.baseContext
+        }
+        return null
+    }
+
+//    private fun getActivityByContextInner(context: Context?): Activity? {
+//        var context: Context? = context ?: return null
+//        val list: MutableList<Context> = ArrayList()
+//        while (context is ContextWrapper) {
+//            if (context is Activity) {
+//                return context
+//            }
+//            val activity = getActivityFromDecorContext(context)
+//            if (activity != null) {
+//                return activity
+//            }
+//            list.add(context)
+//            context = context.baseContext
+//            if (context == null) {
+//                return null
+//            }
+//            if (list.contains(context)) {
+//                // loop context
+//                return null
+//            }
+//        }
+//        return null
+//    }
+//
+//    private fun getActivityFromDecorContext(context: Context?): Activity? {
+//        if (context == null) {
+//            return null
+//        }
+//        if (context.javaClass.name == "com.android.internal.policy.DecorContext") {
+//            try {
+//                val mActivityContextField = context.javaClass.getDeclaredField("mActivityContext")
+//                mActivityContextField.isAccessible = true
+//                return (mActivityContextField[context] as WeakReference<Activity?>).get()
+//            } catch (ignore: Exception) {
+//            }
+//        }
+//        return null
+//    }
+
+//    /**
+//     * Return whether the activity is alive.
+//     *
+//     * @param context The context.
+//     * @return `true`: yes<br></br>`false`: no
+//     */
+//    fun isActivityAlive(context: Context?): Boolean {
+//        return isActivityAlive(getActivityByContext(context))
+//    }
+
+    fun isActivityAlive(activity: Activity) = !activity.isFinishing && !activity.isDestroyed
 
     /**
      * 检查屏幕横竖屏或者锁定就是固定
      */
-    @SuppressWarnings("all")
-    public static boolean isTranslucentOrFloating(Activity activity) {
-        Boolean isTranslucentOrFloating = false;
+    fun isTranslucentOrFloating(activity: Activity): Boolean {
+        var isTranslucentOrFloating = false
         try {
-            @SuppressLint("PrivateApi")
-            Class<?> styleableClass = Class.forName("com.android.internal.R$styleable");
-            Field windowField = styleableClass.getDeclaredField("Window");
-            windowField.setAccessible(true);
-            int[] styleableRes = (int[]) windowField.get(null);
-            // 先获取到TypedArray
-            assert styleableRes != null;
-            final TypedArray typedArray = activity.obtainStyledAttributes(styleableRes);
-            Class<?> activityInfoClass = ActivityInfo.class;
+            @SuppressLint("PrivateApi") val styleableClass = Class.forName("com.android.internal.R\$styleable")
+            val windowField = styleableClass.getDeclaredField("Window")
+            windowField.isAccessible = true
+            val styleableRes = (windowField[null] as IntArray)
+            val typedArray = activity.obtainStyledAttributes(styleableRes)
+            val activityInfoClass: Class<*> = ActivityInfo::class.java
             // 调用检查是否屏幕旋转
-            @SuppressLint("DiscouragedPrivateApi")
-            Method isTranslucentOrFloatingMethod = activityInfoClass.getDeclaredMethod("isTranslucentOrFloating", TypedArray.class);
-            isTranslucentOrFloatingMethod.setAccessible(true);
-            isTranslucentOrFloating = (Boolean) isTranslucentOrFloatingMethod.invoke(null, typedArray);
-        } catch (Exception ignored) {}
-        return Boolean.valueOf(true).equals(isTranslucentOrFloating);
+            @SuppressLint("DiscouragedPrivateApi") val isTranslucentOrFloatingMethod =
+                activityInfoClass.getDeclaredMethod("isTranslucentOrFloating", TypedArray::class.java)
+            isTranslucentOrFloatingMethod.isAccessible = true
+            isTranslucentOrFloating = isTranslucentOrFloatingMethod.invoke(null, typedArray) as Boolean
+        } catch (ignored: Exception) {
+        }
+        return java.lang.Boolean.valueOf(true) == isTranslucentOrFloating
     }
 
     /**
@@ -140,11 +204,11 @@ public class ActivityUtils {
      * 修复android 8.0存在的问题
      * 在Activity中onCreate()中super之前调用
      */
-    public static void hookOrientation(@NonNull Activity activity) {
+    fun hookOrientation(activity: Activity) {
         // 目标版本8.0及其以上
-        if (activity.getApplicationInfo().targetSdkVersion >= Build.VERSION_CODES.O) {
+        if (activity.applicationInfo.targetSdkVersion >= Build.VERSION_CODES.O) {
             if (isTranslucentOrFloating(activity)) {
-                fixOrientation(activity);
+                fixOrientation(activity)
             }
         }
     }
@@ -152,96 +216,72 @@ public class ActivityUtils {
     /**
      * 设置屏幕不固定，绕过检查
      */
-    private static void fixOrientation(@NonNull Activity activity) {
+    private fun fixOrientation(activity: Activity) {
         try {
-            Class<Activity> activityClass = Activity.class;
-            Field mActivityInfoField = activityClass.getDeclaredField("mActivityInfo");
-            mActivityInfoField.setAccessible(true);
-            ActivityInfo activityInfo = (ActivityInfo) mActivityInfoField.get(activity);
-            // 设置屏幕不固定
-            assert activityInfo != null;
-            activityInfo.screenOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED;
-        } catch (Exception ignored) {}
+            val activityClass = Activity::class.java
+            val mActivityInfoField = activityClass.getDeclaredField("mActivityInfo")
+            mActivityInfoField.isAccessible = true
+            val activityInfo = (mActivityInfoField[activity] as ActivityInfo)
+            activityInfo.screenOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
+        } catch (ignored: Exception) {
+        }
     }
+    //    static void autoHideKeyboard(Object target) {
+    //        if (target instanceof ViewProvider) {
+    //            boolean autoHide = ((ViewProvider) target).onKeyboardAutoHide();
+    //            if (autoHide) {
+    //                View view;
+    //                if (target instanceof Activity) {
+    //                    view = ((Activity) target).findViewById(android.R.id.content);
+    //                } else {
+    //                    view = ((Fragment) target).requireView();
+    //                }
+    //                KeyboardUtils.hideSoftInput(view);
+    //                View focusView = view.findFocus();
+    //                if (focusView != null) {
+    //                    focusView.clearFocus();
+    //                }
+    //            }
+    //        }
+    //    }
+    //    public static void onDestroyed(FragmentActivity activity, Function0<FragmentActivity> function) {
+    //        activity.getLifecycle().addObserver();
+    //    }
 
-//    static void autoHideKeyboard(Object target) {
-//        if (target instanceof ViewProvider) {
-//            boolean autoHide = ((ViewProvider) target).onKeyboardAutoHide();
-//            if (autoHide) {
-//                View view;
-//                if (target instanceof Activity) {
-//                    view = ((Activity) target).findViewById(android.R.id.content);
-//                } else {
-//                    view = ((Fragment) target).requireView();
-//                }
-//                KeyboardUtils.hideSoftInput(view);
-//                View focusView = view.findFocus();
-//                if (focusView != null) {
-//                    focusView.clearFocus();
-//                }
-//            }
+
+
+//    private val topActivityOrApp: Context
+//        private get() = if (isAppForeground) {
+//            val topActivity = topActivity
+//            topActivity ?: context
+//        } else {
+//            context
 //        }
-//    }
-
-//    public static void onDestroyed(FragmentActivity activity, Function0<FragmentActivity> function) {
-//        activity.getLifecycle().addObserver();
-//    }
-
-    /**
-     * Start the activity.
-     *
-     * @param intent The description of the activity to start.
-     * @return {@code true}: success<br>{@code false}: fail
-     */
-    public static boolean startActivity(@NonNull final Intent intent) {
-        return startActivity(intent, getTopActivityOrApp(), null);
-    }
-
-    /**
-     * Start the activity.
-     *
-     * @param intent  The description of the activity to start.
-     * @param options Additional options for how the Activity should be started.
-     * @return {@code true}: success<br>{@code false}: fail
-     */
-    public static boolean startActivity(@NonNull final Intent intent,
-                                        @Nullable final Bundle options) {
-        return startActivity(intent, getTopActivityOrApp(), options);
-    }
 
 
-    private static boolean startActivity(final Intent intent,
-                                         final Context context,
-                                         final Bundle options) {
-        if (!isIntentAvailable(intent)) {
-            Log.e("ActivityUtils", "intent is unavailable");
-            return false;
+    fun getActivityIcon(activity: Activity): Drawable? = getActivityIcon(activity.componentName)
+
+    fun getActivityIcon(clz: Class<out Activity?>): Drawable? = getActivityIcon(ComponentName(context, clz))
+
+    fun getActivityIcon(activityName: ComponentName): Drawable? {
+        val pm = Get.application.packageManager
+        return try {
+            pm.getActivityIcon(activityName)
+        } catch (e: NameNotFoundException) {
+            null
         }
-        if (!(context instanceof Activity)) {
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        }
-        if (options != null) {
-            context.startActivity(intent, options);
-        } else {
-            context.startActivity(intent);
-        }
-        return true;
     }
 
-    private static boolean isIntentAvailable(final Intent intent) {
-        return Get.getContext()
-                .getPackageManager()
-                .queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY)
-                .size() > 0;
-    }
+    fun getActivityLogo(activity: Activity): Drawable? = getActivityLogo(activity.componentName)
 
-    @NonNull
-    private static Context getTopActivityOrApp() {
-        if (GetManager.isAppForeground()) {
-            Activity topActivity = Get.getTopActivity();
-            return topActivity == null ? Get.getContext() : topActivity;
-        } else {
-            return Get.getContext();
+    fun getActivityLogo(clz: Class<out Activity?>): Drawable? = getActivityLogo(ComponentName(context, clz))
+
+    fun getActivityLogo(activityName: ComponentName): Drawable? {
+        val pm = Get.application.packageManager
+        return try {
+            pm.getActivityLogo(activityName)
+        } catch (e: NameNotFoundException) {
+            null
         }
     }
 }

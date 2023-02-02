@@ -18,16 +18,8 @@ import java.lang.IllegalStateException
  * Get框架导航委托
  * @author Cqray
  */
+@Suppress("unused", "MemberVisibilityCanBePrivate")
 class GetNavDelegate(provider: GetNavProvider) : GetDelegate<GetNavProvider>(provider) {
-
-    /** [LifecycleOwner]生命周期管理持有 **/
-    val lifecycleOwner: LifecycleOwner = provider as LifecycleOwner
-
-    /** [FragmentActivity]实例 **/
-    val activity: FragmentActivity by lazy {
-        if (provider is FragmentActivity) provider
-        else (provider as Fragment).requireActivity()
-    }
 
     /** 导航[GetViewModel] **/
     private val viewModel: GetNavViewModel by lazy {
@@ -38,6 +30,24 @@ class GetNavDelegate(provider: GetNavProvider) : GetDelegate<GetNavProvider>(pro
         // 获取ViewModel实例
         GetViewModelProvider(activity).get(GetNavViewModel::class.java)
     }
+
+    /** [LifecycleOwner]生命周期管理持有 **/
+    val lifecycleOwner: LifecycleOwner = provider as LifecycleOwner
+
+    /** [FragmentActivity]实例 **/
+    val activity: FragmentActivity by lazy {
+        if (provider is FragmentActivity) provider
+        else (provider as Fragment).requireActivity()
+    }
+
+    /** 栈顶Fragment **/
+    val topFragment get() = viewModel.topFragment
+
+    /** 回退栈Fragments **/
+    val fragments get() = viewModel.fragments
+
+    /** Fragment容器ID **/
+    val fragmentContainerId get() = viewModel.fragmentContainerId
 
     /**
      * 主要是初始化[GetNavViewModel]以及管理[Activity.onBackPressed]事件

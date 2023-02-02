@@ -74,8 +74,8 @@ dependencies {
     api "com.google.android.material:material:1.2.1"
     //JetPack Lifecycle、LiveData、ViewModel扩展
     api "androidx.lifecycle:lifecycle-common-java8:2.4.0"
-//    // 常用工具类
-//    api "com.blankj:utilcodex:1.31.0"
+    // 常用工具类
+    api "com.blankj:utilcodex:1.31.0"
     // 加载动画
     api "com.github.ybq:Android-SpinKit:1.4.0"
     // 刷新框架

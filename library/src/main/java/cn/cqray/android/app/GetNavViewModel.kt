@@ -18,12 +18,17 @@ import cn.cqray.android.exc.ExceptionDispatcher
 import cn.cqray.android.helper.GetClickHelper
 import cn.cqray.android.lifecycle.GetViewModel
 import cn.cqray.android.log.GetLog
+import cn.cqray.android.util.ActivityUtils
 import java.util.*
 import java.util.concurrent.atomic.AtomicInteger
 import kotlin.Exception
 
+/**
+ * [GetNavDelegate]逻辑实现，由[FragmentActivity]持有
+ * @author Cqray
+ */
 @Suppress("unused", "MemberVisibilityCanBePrivate")
-class GetNavViewModel(owner: LifecycleOwner) : GetViewModel(owner) {
+internal class GetNavViewModel(owner: LifecycleOwner) : GetViewModel(owner) {
 
     init {
         if (owner !is FragmentActivity || owner !is GetNavProvider) {
@@ -46,25 +51,25 @@ class GetNavViewModel(owner: LifecycleOwner) : GetViewModel(owner) {
     /** 点击事件帮助类 **/
     private val clickHelper = GetClickHelper()
 
+    /** 持有的Activity **/
+    private val activity: FragmentActivity get() = lifecycleOwner as FragmentActivity
+
+    /** Fragment管理器 **/
+    private val fragmentManager: FragmentManager get() = activity.supportFragmentManager
+
     /** 栈顶的Fragment **/
     val topFragment: Fragment?
         get() = if (backStack.isEmpty()) null
         else fragmentManager.findFragmentByTag(backStack.peek())
-
-    /** 容器View **/
-    val containerView: View get() = activity.findViewById(containerId.get())
-
-    /** 持有的Activity **/
-    val activity: FragmentActivity get() = lifecycleOwner as FragmentActivity
-
-    /** Fragment管理器 **/
-    val fragmentManager: FragmentManager get() = activity.supportFragmentManager
 
     /** 获取堆栈的Fragment列表 **/
     val fragments: MutableList<Fragment>
         get() = MutableList(backStack.size) {
             fragmentManager.findFragmentByTag(backStack[it])!!
         }
+
+    /** Fragment容器ID **/
+    val fragmentContainerId get() = containerId.get()
 
     /**
      * 资源回收
@@ -125,11 +130,12 @@ class GetNavViewModel(owner: LifecycleOwner) : GetViewModel(owner) {
 
     /**
      * 是否是最先加载的Fragment
-     * @param cls fragment对应class
+     * @param clazz fragment对应class
      */
-    fun isRootFragment(cls: Class<*>): Boolean {
+    fun isRootFragment(clazz: Class<*>): Boolean {
+        if (!Fragment::class.java.isAssignableFrom(clazz)) return false
         if (backStack.isEmpty()) return false
-        return backStack.firstElement().split("-").toTypedArray()[0] == cls.name
+        return backStack.firstElement().split("-")[0] == clazz.name
     }
 
     /**
@@ -159,7 +165,7 @@ class GetNavViewModel(owner: LifecycleOwner) : GetViewModel(owner) {
         if (Activity::class.java.isAssignableFrom(intent.toClass!!)) {
             val actIntent = Intent(activity, intent.toClass)
             actIntent.putExtras(intent.arguments)
-            GetManager.toActivity(actIntent)
+            ActivityUtils.toActivity(actIntent)
             return
         }
         // 跳转Fragment
@@ -214,7 +220,7 @@ class GetNavViewModel(owner: LifecycleOwner) : GetViewModel(owner) {
      * @param back 目标界面[Class]，仅支持实现[GetNavProvider]的[Fragment]以及[Activity]
      * @param inclusive 是否包含指定回退的界面，默认true
      */
-    fun backTo(back: Class<*>?, inclusive: Boolean?) = backTo(back, null, inclusive ?: true)
+    fun backTo(back: Class<*>, inclusive: Boolean) = backTo(back, null, inclusive)
 
     /**
      * 回退到指定的界面
@@ -232,7 +238,7 @@ class GetNavViewModel(owner: LifecycleOwner) : GetViewModel(owner) {
         val isToFragment = GetUtils.isGetFragmentClass(to)
         // 回退到指定的Activity
         if (isBackToActivity) {
-            GetManager.backToActivity(back as Class<out Activity>, inclusive)
+            ActivityUtils.backToActivity(back as Class<out Activity>, inclusive)
             return
         }
         // 回退至根Fragment（包含），不启动新的Fragment，则销毁Activity
@@ -246,7 +252,7 @@ class GetNavViewModel(owner: LifecycleOwner) : GetViewModel(owner) {
         for (i in backStack.indices) {
             val fTag = backStack[i]
             // 匹配到对应的Fragment
-            if (fTag.split("-").toTypedArray()[0] == back.name) {
+            if (fTag.split("-")[0] == back.name) {
                 backTag =
                     if (!inclusive)
                         if (i == backStack.size - 1) null
@@ -267,9 +273,7 @@ class GetNavViewModel(owner: LifecycleOwner) : GetViewModel(owner) {
             if (fragmentManager.isStateSaved) return
             try {
                 // FragmentManager回退到指定标签（包含自身）
-                fragmentManager.popBackStackImmediate(
-                    name, FragmentManager.POP_BACK_STACK_INCLUSIVE
-                )
+                fragmentManager.popBackStackImmediate(name, FragmentManager.POP_BACK_STACK_INCLUSIVE)
                 // FragmentManager回退成功，则清除回退栈指定数据
                 for (i in backStack.indices.reversed()) {
                     if (name == backStack.removeAt(i)) {

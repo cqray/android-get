@@ -1,7 +1,6 @@
 package cn.cqray.android.multi
 
 import android.view.View
-import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.LifecycleOwner
 import androidx.viewpager2.widget.ViewPager2
@@ -19,33 +18,11 @@ import com.google.android.material.navigation.NavigationView
  * 多Fragment控制ViewModel
  * @author Cqray
  */
-@Suppress("StaticFieldLeak", "MemberVisibilityCanBePrivate")
+@Suppress("StaticFieldLeak", "MemberVisibilityCanBePrivate", "Unused")
 internal class GetMultiViewModel(lifecycleOwner: LifecycleOwner) : GetViewModel(lifecycleOwner) {
-
-    /** 所有控件 **/
-    private val views = MutableList<View?>(5) { null }
-
-    /** 位置信息，TabLayout是否在顶部 **/
-    private val location = arrayOf(false)
-
-    /** 多界面管理实例 **/
-    private val delegate: GetMultiDelegate?
-
-    /** Tab数据 **/
-    private val tabData = ArrayList<CustomTabEntity>()
 
     // 初始化
     init {
-        // 初始化控件
-        views[0] = ContextUtils.inflate(R.layout.get_layout_multi_tab)
-        views[0]?.let {
-            views[1] = it.findViewById(R.id.get_top_nav)
-            views[2] = it.findViewById(R.id.get_bottom_nav)
-            views[3] = it.findViewById(R.id.get_nav_content)
-            views[4] = it.findViewById(R.id.get_nav_tab)
-        }
-        // 获取多Fragment委托
-        delegate = (lifecycleOwner as? GetMultiProvider)?.multiDelegate
         // 初始化ViewPager2
         initViewPager()
         // 初始化TabLayout
@@ -54,22 +31,32 @@ internal class GetMultiViewModel(lifecycleOwner: LifecycleOwner) : GetViewModel(
         initGetMultiView()
     }
 
-    /** TabLayout是否在顶部 **/
-    val tabAtTop: Boolean get() = location[0]
+    /** 根控件 **/
+    val rootView by lazy { ContextUtils.inflate(R.layout.get_layout_multi_tab) }
 
-    /** 根布局 **/
-    val rootView: View get() = views[0]!!
+    /** 顶部[NavigationView] **/
+    val topNavView: NavigationView by lazy { rootView.findViewById(R.id.get_top_nav) }
+
+    /** 底部[NavigationView] **/
+    val bottomNavView: NavigationView by lazy { rootView.findViewById(R.id.get_bottom_nav) }
 
     /** [ViewPager2]组件 **/
-    val viewPager: ViewPager2 get() = views[3] as ViewPager2
+    val viewPager: ViewPager2 by lazy { rootView.findViewById(R.id.get_nav_content) }
 
     /** TabLayout控件 **/
-    val tabLayout: CommonTabLayout get() = views[4] as CommonTabLayout
+    val tabLayout: CommonTabLayout by lazy { rootView.findViewById(R.id.get_nav_tab) }
 
-    override fun onCleared() {
-        super.onCleared()
-        views.clear()
-    }
+    /** 位置信息，TabLayout是否在顶部 **/
+    private val location = arrayOf(false)
+
+    /** 多界面管理实例 **/
+    private val delegate: GetMultiDelegate? by lazy { (lifecycleOwner as? GetMultiProvider)?.multiDelegate }
+
+    /** Tab数据 **/
+    private val tabData = ArrayList<CustomTabEntity>()
+
+    /** TabLayout是否在顶部 **/
+    val tabAtTop: Boolean get() = location[0]
 
     /**
      * 初始化ViewPager2
@@ -118,13 +105,13 @@ internal class GetMultiViewModel(lifecycleOwner: LifecycleOwner) : GetViewModel(
      */
     private fun changeTabLocation() {
         // 底部
-        (views[2] as? ViewGroup)?.let {
+        bottomNavView.let {
             it.removeAllViews()
             if (!tabAtTop) it.addView(tabLayout)
         }
         // 顶部
-        (views[1] as? ViewGroup)?.let {
-            it.removeAllViews() 
+        topNavView.let {
+            it.removeAllViews()
             if (tabAtTop) it.addView(tabLayout)
         }
     }
@@ -160,8 +147,8 @@ internal class GetMultiViewModel(lifecycleOwner: LifecycleOwner) : GetViewModel(
     fun setTabElevation(elevation: Float?) {
         elevation?.let {
             val size = Sizes.dp2px(elevation)
-            (views[1] as? NavigationView)?.elevation = size.toFloat()
-            (views[2] as? NavigationView)?.elevation = size.toFloat()
+            topNavView.elevation = size.toFloat()
+            bottomNavView.elevation = size.toFloat()
         }
     }
 
@@ -205,10 +192,10 @@ internal class GetMultiViewModel(lifecycleOwner: LifecycleOwner) : GetViewModel(
         // 设置ViewPager2最大缓存数
         viewPager.offscreenPageLimit = if (items.isEmpty()) 5 else items.size
         // 加载Fragment
-        delegate?.loadMultiFragments(viewPager, Array(items.size) {
-            val item = items[it]
-            delegate.instantiateFragment(item.targetClass, item.arguments)
-        })
+//        delegate?.loadMultiFragments(viewPager, Array(items.size) {
+//            val item = items[it]
+//            delegate?.instantiateFragment(item.targetClass, item.arguments)
+//        })
     }
 
     /**
@@ -248,9 +235,11 @@ internal class GetMultiViewModel(lifecycleOwner: LifecycleOwner) : GetViewModel(
         delegate?.let {
             // 生成新的Fragment
             val newIndex = (index ?: it.fragments.size).let { index ->
-                if (index < 0) 0
-                else if (index > it.fragments.size - 1) it.fragments.size
-                else index
+                when {
+                    index < 0 -> 0
+                    index > it.fragments.size - 1 -> it.fragments.size
+                    else -> index
+                }
             }
             // 更新Tab的数据
             val entry = object : CustomTabEntity {
