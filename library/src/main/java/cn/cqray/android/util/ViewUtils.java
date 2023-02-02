@@ -20,36 +20,35 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SimpleItemAnimator;
 import androidx.viewpager2.widget.ViewPager2;
 
-import com.blankj.utilcode.util.SizeUtils;
 import com.google.android.material.shape.MaterialShapeDrawable;
 import com.google.android.material.shape.MaterialShapeUtils;
 
 public class ViewUtils {
 
-    /** 设置Margin，默认单位DP **/
-    public static void setMargin(View view, float margin) {
-        setMargin(view, margin, TypedValue.COMPLEX_UNIT_DIP);
-    }
+//    /** 设置Margin，默认单位DP **/
+//    public static void setMargin(View view, float margin) {
+//        setMargin(view, margin, TypedValue.COMPLEX_UNIT_DIP);
+//    }
+//
+//    public static void setMargin(View view, float margin, int unit) {
+//        setMargin(view, margin, margin, margin, margin, unit);
+//    }
 
-    public static void setMargin(View view, float margin, int unit) {
-        setMargin(view, margin, margin, margin, margin, unit);
-    }
+//    /** 设置Margin，默认单位DP **/
+//    public static void setMargin(View view, float left, float top, float right, float bottom) {
+//        setMargin(view, left, top, right, bottom, TypedValue.COMPLEX_UNIT_DIP);
+//    }
 
-    /** 设置Margin，默认单位DP **/
-    public static void setMargin(View view, float left, float top, float right, float bottom) {
-        setMargin(view, left, top, right, bottom, TypedValue.COMPLEX_UNIT_DIP);
-    }
-
-    public static void setMargin(View view, float left, float top, float right, float bottom, int unit) {
-        if (view != null) {
-            ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) view.getLayoutParams();
-            params.leftMargin = (int) SizeUtils.applyDimension(left, unit);
-            params.topMargin = (int) SizeUtils.applyDimension(top, unit);
-            params.rightMargin = (int) SizeUtils.applyDimension(right, unit);
-            params.bottomMargin = (int) SizeUtils.applyDimension(bottom, unit);
-            view.requestLayout();
-        }
-    }
+//    public static void setMargin(View view, float left, float top, float right, float bottom, int unit) {
+//        if (view != null) {
+//            ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) view.getLayoutParams();
+//            params.leftMargin = (int) Sizes.applyDimension(left, unit);
+//            params.topMargin = (int) Sizes.applyDimension(top, unit);
+//            params.rightMargin = (int) Sizes.applyDimension(right, unit);
+//            params.bottomMargin = (int) Sizes.applyDimension(bottom, unit);
+//            view.requestLayout();
+//        }
+//    }
 
     public static void setRippleBackground(@NonNull View view, @Nullable Boolean rippleEnable) {
         Context context = view.getContext();

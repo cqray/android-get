@@ -1,8 +1,9 @@
-package cn.cqray.android.util
+package cn.cqray.android.third
 
 import android.view.View
 import butterknife.ButterKnife
 import butterknife.Unbinder
+import java.util.concurrent.atomic.AtomicBoolean
 
 /**
  * ButterKnife工具类
@@ -11,7 +12,7 @@ import butterknife.Unbinder
 object ButterKnifeUtils {
 
     /** ButterKnife是否可用  */
-    private var sSupported = true
+    private val supported = AtomicBoolean(true)
 
     /**
      * ButterKnife绑定控件
@@ -21,13 +22,13 @@ object ButterKnifeUtils {
      */
     @JvmStatic
     fun bind(target: Any?, source: View): Any? {
-        if (target == null || !sSupported) return null
+        if (target == null || !supported.get()) return null
         val unBinder: Unbinder?
         try {
             unBinder = ButterKnife.bind(target, source)
-            sSupported = true
+            supported.set(true)
         } catch (t: NoClassDefFoundError) {
-            sSupported = false
+            supported.set(false)
             return null
         }
         return unBinder
@@ -39,13 +40,15 @@ object ButterKnifeUtils {
      */
     @JvmStatic
     fun unbind(unBinder: Any?) {
-        if (unBinder == null || !sSupported) return
+        if (unBinder == null || !supported.get()) return
         if (unBinder is Unbinder) unBinder.unbind()
-        sSupported = try {
-            if (unBinder is Unbinder) unBinder.unbind()
-            true
-        } catch (e: NoClassDefFoundError) {
-            false
-        }
+        supported.set(
+            try {
+                if (unBinder is Unbinder) unBinder.unbind()
+                true
+            } catch (e: NoClassDefFoundError) {
+                false
+            }
+        )
     }
 }

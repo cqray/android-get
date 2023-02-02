@@ -3,13 +3,9 @@
 import android.app.Activity
 import android.app.Application
 import android.content.Context
-import butterknife.Unbinder
 
 import cn.cqray.android.app.GetInit
 import cn.cqray.android.app.GetManager
-import cn.cqray.android.log.GetLog
-import cn.cqray.android.util.ThirdCheckUtils
-import com.blankj.utilcode.util.Utils
 
  /**
  * [Get]框架

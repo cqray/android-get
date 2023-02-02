@@ -22,7 +22,7 @@ import cn.cqray.android.R
 import cn.cqray.android.state.StateDelegate
 import cn.cqray.android.state.StateProvider
 import cn.cqray.android.util.ActivityUtils
-import cn.cqray.android.util.ButterKnifeUtils
+import cn.cqray.android.third.ButterKnifeUtils
 import cn.cqray.android.util.ContextUtils.inflate
 import cn.cqray.android.util.ReflectUtil
 import cn.cqray.android.util.Sizes
