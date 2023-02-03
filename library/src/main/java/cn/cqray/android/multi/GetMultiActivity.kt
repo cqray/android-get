@@ -11,7 +11,7 @@ import com.flyco.tablayout.CommonTabLayout
  * 底部多Fragment界面
  * @author Cqray
  */
-@Suppress("unused", "MemberVisibilityCanBePrivate")
+@Suppress("MemberVisibilityCanBePrivate", "Unused")
 open class GetMultiActivity : GetActivity(), GetMultiProvider {
 
     /** [GetMultiViewModel]实例 **/
