@@ -11,6 +11,7 @@ import android.view.ViewGroup
 import androidx.annotation.DrawableRes
 import androidx.annotation.IdRes
 import androidx.annotation.LayoutRes
+import androidx.annotation.NonNull
 import androidx.annotation.StringRes
 import androidx.core.content.ContextCompat
 import cn.cqray.android.Get
@@ -52,5 +53,15 @@ object ContextUtils {
     }
 
     @JvmStatic
-    fun getIdName(@IdRes id: Int?) = if (id == null) null else resources.getResourceName(id)
+    fun getIdName(@IdRes id: Int?): String {
+        return if (id in arrayOf(View.NO_ID, null)) ""
+        else resources.getResourceName(id!!)
+    }
+
+    @JvmStatic
+    fun main(args: Array<String>?) {
+        val index = null in arrayOf(0, null)
+        println(index)
+    }
+
 }
