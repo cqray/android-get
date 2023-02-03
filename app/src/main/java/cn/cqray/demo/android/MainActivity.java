@@ -1,8 +1,12 @@
 package cn.cqray.demo.android;
 
 import android.os.Bundle;
+import android.util.Log;
 
 
+import androidx.viewpager2.widget.ViewPager2;
+
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 
@@ -17,17 +21,18 @@ public class MainActivity extends GetMultiActivity {
     @Override
     public void onCreating(@Nullable Bundle savedInstanceState) {
         super.onCreating(savedInstanceState);
+
 //        loadRootFragment(MainFragment.class);
 //        setBackgroundColor(Color.YELLOW);
 //
 //        findViewById(R.id.get_nav_content).setOnClickListener(v -> {});
 
-        setTabAtTop(true);
-
-        Double a = null;
-        GetIntent intent = new GetIntent();
-        intent.put("44", a);
-        intent.setTo(MainActivity.class);
+//        setTabAtTop(true);
+//
+//        Double a = null;
+//        GetIntent intent = new GetIntent();
+//        intent.put("44", a);
+//        intent.setTo(MainActivity.class);
 //        intent.putBoolean("44", a);
 
 //        new GetFragment();
@@ -40,15 +45,15 @@ public class MainActivity extends GetMultiActivity {
 //                new GetMultiItem(MainFragment.class, "你的"),
 //                new GetMultiItem(MainFragment.class, "她的")
         );
-        addFragment(new GetMultiItem(MainFragment.class,"我的"), 0);
-        addFragment(new GetMultiItem(MainFragment.class,"ta"), 0);
-        addFragment(new GetMultiItem(MainFragment.class,"tata"), 1);
+        addFragment(new GetMultiItem(MainFragment.class,"我的").put("index", 0), 0);
+        addFragment(new GetMultiItem(MainFragment.class,"ta").put("index", 1), 0);
+        addFragment(new GetMultiItem(MainFragment.class,"tata").put("index", 2), 1);
 
+        showFragment(2);
+        removeFragment(2);
 
-        removeFragment(1);
+        Log.e("数据", "当前索引：" + getViewPager().getCurrentItem());
 
-
-        viewPager.setCurrentItem(1);
 //        showFragment(-1);
 //
 //        getMultiDelegate().removeFragment(R.id.get_nav_view, -1);
@@ -79,8 +84,14 @@ public class MainActivity extends GetMultiActivity {
 //        ft.add("")
     }
 
+//    @Override
+//    public boolean onBackPressedGet() {
+//        return true;
+//    }
+
+
     @Override
-    public boolean onBackPressedGet() {
-        return true;
+    public void onFragmentPageSelected(@NotNull ViewPager2 vp, int position) {
+
     }
 }

@@ -37,38 +37,37 @@ class GetMultiItem(
 
     fun unselectIcon(@DrawableRes icon: Int?) = also { unselectIcon = icon }
 
-    fun put(key: String?, value: Boolean?) = also { value?.let { arguments.putBoolean(key, it) } }
+    fun put(key: String?, value: Boolean?) = put(key, value as Any?)
 
     fun put(key: String?, value: BooleanArray?) = also { arguments.putBooleanArray(key, value) }
 
-    fun put(key: String?, value: Byte?) = also { value?.let { arguments.putByte(key, it) } }
+    fun put(key: String?, value: Byte?) = put(key, value as Any?)
 
     fun put(key: String?, value: ByteArray?) = also { arguments.putByteArray(key, value) }
 
-    fun put(key: String?, value: Char?) = also { value?.let { arguments.putChar(key, it) } }
+    fun put(key: String?, value: Char?) = put(key, value as Any?)
 
     fun put(key: String?, value: CharArray?) = also { arguments.putCharArray(key, value) }
 
-    fun put(key: String?, value: Short?) = also { value?.let { arguments.putShort(key, it) } }
+    fun put(key: String?, value: Short?) = put(key, value as Any?)
 
     fun put(key: String?, value: ShortArray?) = also { arguments.putShortArray(key, value) }
 
-    fun put(key: String?, value: Int?) = also { value?.let { arguments.putInt(key, it) } }
+    fun put(key: String?, value: Int?) = put(key, value as Any?)
 
     fun put(key: String?, value: IntArray?) = also { arguments.putIntArray(key, value) }
 
-    fun put(key: String?, value: Float?) = also { value?.let { arguments.putFloat(key, it) } }
+    fun put(key: String?, value: Float?) = put(key, value as Any?)
 
     fun put(key: String?, value: FloatArray?) = also { arguments.putFloatArray(key, value) }
 
-    fun put(key: String?, value: Double?) = also { value?.let { arguments.putDouble(key, it) } }
+    fun put(key: String?, value: Double?) = put(key, value as Any?)
 
     fun put(key: String?, value: DoubleArray?) = also { arguments.putDoubleArray(key, value) }
 
     fun put(key: String?, value: CharSequence?) = also { arguments.putCharSequence(key, value) }
 
-    fun put(key: String?, value: Array<CharSequence>?) =
-        also { arguments.putCharSequenceArray(key, value) }
+    fun put(key: String?, value: Array<CharSequence>?) = also { arguments.putCharSequenceArray(key, value) }
 
     fun put(key: String?, value: String?) = also { arguments.putString(key, value) }
 
@@ -78,10 +77,27 @@ class GetMultiItem(
 
     fun put(key: String?, value: Parcelable?) = also { arguments.putParcelable(key, value) }
 
-    fun put(key: String?, value: Array<Parcelable>?) =
-        also { arguments.putParcelableArray(key, value) }
+    fun put(key: String?, value: Array<Parcelable>?) = also { arguments.putParcelableArray(key, value) }
 
     fun put(key: String?, value: ArrayList<*>?) = also { arguments.putSerializable(key, value) }
 
     fun put(bundle: Bundle) = also { arguments.putAll(bundle) }
+
+    /**
+     * 处理存放基础类型数据为null的情况
+     * @param key 键
+     * @param value 值
+     */
+    private fun put(key: String?, value: Any?) = also {
+        when (value) {
+            null -> arguments.remove(key)
+            is Boolean -> arguments.putBoolean(key, value)
+            is Byte -> arguments.putByte(key, value)
+            is Char -> arguments.putChar(key, value)
+            is Short -> arguments.putShort(key, value)
+            is Int -> arguments.putInt(key, value)
+            is Float -> arguments.putFloat(key, value)
+            is Double -> arguments.putDouble(key, value)
+        }
+    }
 }

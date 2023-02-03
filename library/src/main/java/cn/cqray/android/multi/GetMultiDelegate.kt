@@ -1,41 +1,26 @@
 package cn.cqray.android.multi
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.util.SparseArray
-import android.util.SparseIntArray
 import android.view.View
-
-import androidx.annotation.IdRes
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentManager
-import androidx.lifecycle.Lifecycle.State
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
-import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
 import cn.cqray.android.Get
 import cn.cqray.android.app.GetDelegate
 import cn.cqray.android.log.LogLevel
 import cn.cqray.android.util.ContextUtils
-import java.util.*
-import kotlin.collections.ArrayList
 
-/**
- * 多[Fragment]管理委托
- * @author Cqray
- */
-@Suppress("unused", "MemberVisibilityCanBePrivate")
-class GetMultiDelegate constructor(provider: GetMultiProvider) :
-    GetDelegate<GetMultiProvider>(provider) {
+@Suppress("MemberVisibilityCanBePrivate")
+class GetMultiDelegate(
+    provider: GetMultiProvider
+) : GetDelegate<GetMultiProvider>(provider) {
 
-    /** 容器是[ViewPager2] **/
-    private var viewPager: ViewPager2? = null
-
-    /** 不同容器下，索引缓存 **/
-    private val indexCache = SparseIntArray()
-
-    /** 不同容器下Fragment缓存  **/
-    private val fragmentCache = SparseArray<MutableList<Fragment>>()
+    /** 监听回调集合 **/
+    private val callbackArrays = SparseArray<ViewPager2.OnPageChangeCallback>()
 
     /** [FragmentManager]实例 **/
     private val fragmentManager: FragmentManager
@@ -43,44 +28,13 @@ class GetMultiDelegate constructor(provider: GetMultiProvider) :
             provider.supportFragmentManager
         } else (provider as Fragment).childFragmentManager
 
-    /** [ViewPager2]下的[Fragment]列表 **/
-    val fragments: MutableList<Fragment> get() = getFragments(View.NO_ID)
-
-    /** [ViewPager2]下的当前索引 **/
-    val currentIndex: Int get() = getCurrentIndex(View.NO_ID)
-
     /**
-     * 获取指定容器的[Fragment]列表
-     * @param containerId 指定容器ID
+     * 获取对应[ViewPager2]容器下的Fragment列表
+     * @param vp 容器
      */
-    fun getFragments(@IdRes containerId: Int?): MutableList<Fragment> {
-        val newId = containerId ?: View.NO_ID
-        // 获取并初始化对应容器的Fragment列表
-        return fragmentCache.get(newId) ?: newId.let {
-            val list = ArrayList<Fragment>()
-            fragmentCache.put(newId, list)
-            list
-        }
-    }
-
-    /**
-     * 获取指定容器的索引位置
-     * @param containerId 指定容器ID
-     */
-    fun getCurrentIndex(@IdRes containerId: Int?): Int {
-        val newId = containerId ?: View.NO_ID
-        return indexCache.get(newId)
-    }
-
-    /**
-     * 生成Fragment适配器[GetMultiFragmentAdapter]
-     */
-    fun getFragmentAdapter(fragmentList: List<Fragment>): GetMultiFragmentAdapter {
-        return if (provider is FragmentActivity) {
-            GetMultiFragmentAdapter(provider, fragmentList)
-        } else {
-            GetMultiFragmentAdapter((provider as Fragment), fragmentList)
-        }
+    fun getFragments(vp: ViewPager2) = vp.let {
+        initViewPager(it)
+        (vp.adapter as GetMultiFragmentAdapter).fragments
     }
 
     /**
@@ -98,47 +52,78 @@ class GetMultiDelegate constructor(provider: GetMultiProvider) :
     }
 
     /**
-     * 在指定容器中，加载多个Fragment
-     * @param containerId 容器Id
-     * @param fragments Fragment列表
+     * 获取[ViewPager2]容器名称
+     * @param vp [ViewPager2]
      */
-    fun loadMultiFragments(@IdRes containerId: Int?, fragments: Array<Fragment>) {
-        // 列表为空，则不继续处理
-        if (containerId == null) {
-            throw RuntimeException("The container id can't be null.")
+    private fun getContainerName(vp: ViewPager2) = vp.let {
+        val name = ContextUtils.getIdName(vp.id)
+        if (name.isEmpty()) "ViewPager2"
+        else "ViewPager2[$name]"
+    }
+
+    /**
+     * 给[ViewPager2]注册适配器
+     * @param vp 容器
+     */
+    @SuppressLint("NotifyDataSetChanged")
+    private fun registerFragmentAdapter(vp: ViewPager2) {
+        // 获取适配器
+        val oldAdapter = vp.adapter as? GetMultiFragmentAdapter
+        // 适配器为空则说明未注册
+        if (oldAdapter == null) {
+            val adapter = if (provider is FragmentActivity) {
+                GetMultiFragmentAdapter(provider, mutableListOf())
+            } else {
+                GetMultiFragmentAdapter((provider as Fragment), mutableListOf())
+            }
+            vp.adapter = adapter
+            adapter.notifyDataSetChanged()
         }
-        // 获取并初始化对应容器的Fragment列表
-        val list = getFragments(containerId)
-        // 根据新的Fragment列表生成新的有效的索引
-        val index = changeIndex(containerId, fragments)
-        // 开启事务
-        val ft = fragmentManager.beginTransaction()
-        // 遍历移除旧的Fragment
-        list.forEach { ft.remove(it) }
-        // 重置列表
-        list.clear().also { list.addAll(fragments) }
-        // 缓存新的列表
-        fragmentCache.put(containerId, list)
-        // 遍历添加新的Fragment
-        fragments.forEachIndexed { i, fragment ->
-            // 获取Fragment的标识（对应不同的容器）
-            val tag = containerId.toString() + "-" + fragment.javaClass.name + "-" + i
-            // 移除已存在标识的相同Fragment
-            fragmentManager.findFragmentByTag(tag)?.let { ft.remove(it) }
-            // 添加新的Fragment
-            ft.add(containerId, fragment, tag)
-            // 获取最大初始化所在生命周期状态
-            val maxLifecycle = if (i == index) State.RESUMED else State.CREATED
-            ft.setMaxLifecycle(fragment, maxLifecycle)
+    }
+
+    /**
+     * 给[ViewPager2]注册监听事件
+     * @param vp 容器
+     */
+    private fun registerOnPageChangeCallback(vp: ViewPager2) {
+        // 从缓存中获取回调
+        val cacheCallback = callbackArrays.get(vp.hashCode())
+        // 不存在回调说明未注册
+        if (cacheCallback == null) {
+            // 初始化回调函数
+            val callback = object : ViewPager2.OnPageChangeCallback() {
+
+                override fun onPageSelected(position: Int) {
+                    super.onPageSelected(position)
+                    provider.onFragmentPageSelected(vp, position)
+                    // 打印日志
+                    printLog(
+                        LogLevel.D,
+                        "onPageSelected",
+                        "Index has changed to [$position - ${
+                            getFragments(vp)[position].javaClass.simpleName
+                        }] in ${getContainerName(vp)}."
+                    )
+                }
+            }
+            // 注册监听
+            vp.registerOnPageChangeCallback(callback)
+            // 存入缓存
+            callbackArrays.put(vp.hashCode(), callback)
         }
-        // 提交事务
-        ft.commitAllowingStateLoss()
-        // 打印日志
-        printLog(
-            LogLevel.D,
-            "loadMultiFragments",
-            "[${fragments.size}] fragments has been loaded in container[${ContextUtils.getIdName(containerId)}]."
-        )
+    }
+
+    /**
+     * 初始化[ViewPager2]容器
+     * @param vp 容器
+     */
+    private fun initViewPager(vp: ViewPager2) {
+        // 注册适配器
+        registerFragmentAdapter(vp)
+        // 注册回调监听
+        registerOnPageChangeCallback(vp)
+        // 关闭水波纹
+        (vp.getChildAt(0) as? RecyclerView)?.overScrollMode = View.OVER_SCROLL_NEVER
     }
 
     /**
@@ -148,77 +133,42 @@ class GetMultiDelegate constructor(provider: GetMultiProvider) :
      */
     @Suppress("NotifyDataSetChanged")
     fun loadMultiFragments(vp: ViewPager2, fragments: Array<Fragment>) {
-        // 获取并初始化对应容器的Fragment列表
-        val list = getFragments(View.NO_ID)
-        // 根据新的Fragment列表生成新的有效的索引
-        val index = changeIndex(View.NO_ID, fragments)
-        // 重置列表
-        list.clear().also { list.addAll(fragments) }
-        // 缓存Fragment
-        fragmentCache.put(View.NO_ID, list)
-        // 匿名打印日志函数
-        val printLog = {
-            printLog(
-                LogLevel.D,
-                "loadMultiFragments",
-                "[${fragments.size}] fragments has been loaded in ViewPager2."
-            )
+        // 初始化Fragment列表
+        val list = getFragments(vp).also {
+            it.clear()
+            it.addAll(fragments.toList())
         }
-        // 设置ViewPager2
-        viewPager = vp
-        // 已初始化过，则不需要再注册
-        vp.adapter?.let {
-            // 更新数据
-            it.notifyDataSetChanged()
+        // 更新数据
+        vp.adapter?.notifyDataSetChanged()
+        // 因为列表可能为空，所以要runCatching
+        runCatching {
+            // 根据新的Fragment列表生成新的有效的索引
+            val index = vp.currentItem.let {
+                if (it !in 0 until list.size) 0
+                else it
+            }
             // 设置当前项
             vp.setCurrentItem(index, vp.isUserInputEnabled)
-            // 打印日志
-            printLog()
-            return
-        }
-        // 未初始化过，注册相关监听
-        with(vp) {
-            // 初始化Fragment适配器
-            adapter = getFragmentAdapter(list)
-            // 监听位置变化
-            registerOnPageChangeCallback(object : OnPageChangeCallback() {
-                override fun onPageSelected(position: Int) {
-                    super.onPageSelected(position)
-                    // 缓存索引
-                    indexCache.put(View.NO_ID, position)
-                    // 获取ViewPager2缓存的Fragment
-                    val temp = this@GetMultiDelegate.fragments
-                    // 打印日志
-                    printLog(
-                        LogLevel.D,
-                        "onPageSelected",
-                        "Index has changed to [$position - ${temp[position]::class.java.simpleName}] in ViewPager2."
-                    )
-                }
-            })
-            // 设置当前项
-            setCurrentItem(index, vp.isUserInputEnabled)
-            // 取消水波纹
-            val recyclerView = getChildAt(0) as? RecyclerView
-            recyclerView?.overScrollMode = View.OVER_SCROLL_NEVER
         }
         // 打印日志
-        printLog()
+        printLog(
+            LogLevel.D,
+            "loadMultiFragments",
+            "[${list.size}] fragments has been loaded in ${getContainerName(vp)}."
+        )
     }
 
     /**
      * 显示指定容器指定位置的[Fragment]
-     * @param containerId   指定容器ID
-     * @param index         指定位置
+     * @param vp [ViewPager2]容器
+     * @param index 指定位置
      */
-    fun showFragment(@IdRes containerId: Int?, index: Int?) {
-        // 获取新的ID
-        val newId = containerId ?: View.NO_ID
-        // 获取Fragment列表
-        val fragments = getFragments(newId)
+    fun showFragment(vp: ViewPager2, index: Int) {
+        // 对应Fragment列表
+        val list = getFragments(vp)
         // 索引判断
-        (index ?: -1).let {
-            if (!(0 until fragments.size).contains(it)) {
+        index.let {
+            if (!(0 until list.size).contains(it)) {
                 printLog(
                     LogLevel.W,
                     "showFragment",
@@ -227,287 +177,118 @@ class GetMultiDelegate constructor(provider: GetMultiProvider) :
                 return
             }
         }
-        // 匿名打印日志函数
-        val printLog = { i: Int ->
-            printLog(
-                LogLevel.D,
-                "showFragment",
-                "Index has changed to [$index - ${fragments[i]::class.java.simpleName}] in ${
-                    if ((containerId ?: View.NO_ID) == View.NO_ID) "ViewPager2."
-                    else "container[${ContextUtils.getIdName(containerId)}]."
-                }"
-            )
-        }
-        // 新索引
-        val newIndex = index!!
-        // 使用[ViewPager2]时，其为空，则不继续处理
-        if (newId == View.NO_ID) {
-            viewPager?.let {
-                it.setCurrentItem(newIndex, it.isUserInputEnabled)
-                indexCache.put(View.NO_ID, newIndex)
-                printLog(newIndex)
-            }
-            return
-        }
-        // 处理是普通容器的情况
-        // 当前Fragment
-        val current = fragments[getCurrentIndex(newId)]
-        // 目标Fragment
-        val target = fragments[newIndex]
-        // 开启事务
-        val ft = fragmentManager.beginTransaction()
-        // 切换不同的Fragment时，隐藏当前Fragment，并切换生命周期
-        if (current != target) {
-            ft.hide(current)
-            ft.setMaxLifecycle(current, State.STARTED)
-        }
-        // 目标Fragment的生命周期状态不是RESUMED时
-        // 提交切换Fragment的事务，并切换生命周期
-        val state = target.lifecycle.currentState
-        if (!state.isAtLeast(State.RESUMED)) {
-            ft.show(target)
-            ft.setMaxLifecycle(target, State.RESUMED)
-            ft.commitAllowingStateLoss()
-            indexCache.put(newId, newIndex)
-            printLog(newIndex)
-        }
+        // 设置当前项
+        vp.setCurrentItem(index, vp.isUserInputEnabled)
+        // 打印日志
+        printLog(
+            LogLevel.D,
+            "showFragment",
+            "Index has changed to [$index - ${list[index].javaClass.simpleName}] in ${getContainerName(vp)}."
+        )
     }
 
     /**
      * 显示指定容器指定的Fragment
-     * @param containerId 指定容器ID
+     * @param vp [ViewPager2]容器
      * @param fragment 指定[Fragment]
      */
-    fun showFragment(@IdRes containerId: Int?, fragment: Fragment) {
-        val fragments = getFragments(containerId)
-        val index = fragments.indexOf(fragment)
-        if (index >= 0) showFragment(containerId, index)
+    fun showFragment(vp: ViewPager2, fragment: Fragment) {
+        val list = getFragments(vp)
+        val index = list.indexOf(fragment)
+        if (index >= 0) showFragment(vp, index)
         else printLog(
             LogLevel.W,
             "showFragment",
-            "[${fragment::class.java.simpleName}] can't be find in ${
-                if ((containerId ?: View.NO_ID) == View.NO_ID) "ViewPager2."
-                else "container[${ContextUtils.getIdName(containerId)}]."
-            }"
+            "[${fragment.javaClass.simpleName}] can't be find in ${getContainerName(vp)}."
         )
     }
 
-    /**
-     * 添加Fragment界面
-     * @param containerId 容器ID
-     * @param fragment Fragment
-     */
-    @Suppress("NotifyDataSetChanged")
-    fun addFragment(@IdRes containerId: Int?, fragment: Fragment, index: Int?) {
-        val newId = containerId ?: View.NO_ID
-        // 获取Fragment列表
-        val fragments = getFragments(newId)
-        // 新的位置
-        val newIndex = (index ?: fragments.size).let {
-            if (it < 0) 0
-            else if (it > fragments.size - 1) fragments.size
-            else it
-        }
-        // 匿名打印日志函数
-        val printLog = { i: Int ->
-            printLog(
-                LogLevel.D,
-                "addFragment",
-                "[${fragment::class.java.simpleName}] has added at [$i] in ${
-                    if (newId == View.NO_ID) "ViewPager2."
-                    else "container[${ContextUtils.getIdName(containerId)}]."
-                }"
-            )
-        }
-        // 存入缓存
-        fragments.add(newIndex, fragment)
-        fragmentCache.put(newId, fragments)
-        // 处理容器是ViewPager2的情况
-        if (newId == View.NO_ID) {
-            viewPager?.let {
-                val adapter = it.adapter as? GetMultiFragmentAdapter
-                    ?: getFragmentAdapter(fragments).also { o -> it.adapter = o }
-                adapter.fragments.clear()
-                adapter.fragments.addAll(fragments)
-                adapter.notifyDataSetChanged()
-                // 打印日志
-                printLog(newIndex)
-                // 显示新位置
-                showFragment(View.NO_ID, newIndex)
-            }
-            return
-        }
-        // 提交添加Fragment事务
-        val ft = fragmentManager.beginTransaction()
-        ft.add(newId, fragment)
-        ft.setMaxLifecycle(fragment, State.CREATED)
-        ft.commitAllowingStateLoss()
-        // 打印日志
-        printLog(newIndex)
-        // 显示新位置
-        showFragment(containerId, newIndex)
-    }
-
-    /**
-     * 移除指定的Fragment
-     * @param index 位置
-     */
-    fun removeFragment(@IdRes containerId: Int?, index: Int?) {
-        // 获取新的ID
-        val newId = containerId ?: View.NO_ID
-        // 获取Fragment列表
-        val fragments = getFragments(newId)
+    fun addFragment(vp: ViewPager2, fragment: Fragment, index: Int?) {
+        // 对应Fragment列表
+        val list = getFragments(vp)
+        // 新索引
+        val newIndex = (index ?: list.size)
         // 索引判断
-        (index ?: -1).let {
-            if (!(0 until fragments.size).contains(it)) {
+        newIndex.let {
+            if (it !in (0..list.size)) {
                 printLog(
                     LogLevel.W,
-                    "removeFragment",
-                    "Index [$index] is invalid, there were do thing."
+                    "addFragment",
+                    "Index [$index] is invalid, there will do thing."
                 )
                 return
             }
         }
-        // 匿名打印日志函数
-        val printLog = { i: Int ->
-            printLog(
-                LogLevel.D,
-                "removeFragment",
-                "[$i - ${fragments[i]::class.java.simpleName}] has removed in ${
-                    if (newId == View.NO_ID) "ViewPager2."
-                    else "container[${ContextUtils.getIdName(containerId)}]."
-                }"
-            )
-        }
-        // 非null
-        val newIndex = index!!
-        // 获取改变后的位置
-        val changedIndex = if (newIndex == 0) 0 else newIndex - 1
-        // 要移除的Fragment
-        val fragment = fragments[newIndex]
-        // 处理容器是ViewPager2的情况
-        viewPager?.let {
-            // 从ViewPager2中移除Fragment
-            val adapter = viewPager!!.adapter as? GetMultiFragmentAdapter
-            adapter?.let {
-                // 移除Fragment
-                it.fragments.remove(fragment)
-                it.notifyItemRemoved(newIndex)
-                // 打印日志
-                printLog(newIndex)
-                // 显示新位置的Fragment
-                showFragment(containerId, changedIndex)
-            }
-            return
-        }
-        // 处理是普通容器的情况
-        // 从列表中移除Fragment
-        fragments.remove(fragment)
-        // 从栈中移除Fragment
-        val ft = fragmentManager.beginTransaction()
-        ft.remove(fragment)
-        ft.commitAllowingStateLoss()
-        // 打印日志
-        printLog(newIndex)
-        // 显示新位置的Fragment
-        showFragment(containerId, changedIndex)
-    }
-
-    /**
-     * 移除指定的Fragment
-     * @param fragment Fragment界面
-     */
-    fun removeFragment(@IdRes containerId: Int?, fragment: Fragment) {
-        val fragments = getFragments(containerId)
-        val index = fragments.indexOf(fragment)
-        if (index >= 0) removeFragment(containerId, index)
-        else printLog(
-            LogLevel.W,
-            "removeFragment",
-            "[${fragment::class.java.simpleName}] can't be find in ${
-                if ((containerId ?: View.NO_ID) == View.NO_ID) "ViewPager2."
-                else "container[${ContextUtils.getIdName(containerId)}]"
-            }"
-        )
-    }
-
-    /**
-     * 移除指定容器下所有的Fragment
-     * @param containerId 指定容器ID，null时代表ViewPager
-     */
-    fun removeFragments(@IdRes containerId: Int? = null) {
-        val newId = containerId ?: View.NO_ID
-        // 处理容器是ViewPager2的情况
-        if (newId == View.NO_ID) {
-            // 清除ViewPager2中的Fragment
-            removeViewPagerFragments()
-            return
-        }
-        // 处理是普通容器的情况
-        // 移除所有Fragment
-        val ft = fragmentManager.beginTransaction()
-        val fragments = getFragments(newId)
-        fragments.forEach { ft.remove(it) }
-        fragments.clear()
-        fragmentCache.remove(newId)
-        ft.commitAllowingStateLoss()
+        // 添加Fragment
+        (vp.adapter as GetMultiFragmentAdapter).addFragment(fragment, newIndex)
         // 打印日志
         printLog(
             LogLevel.D,
-            "removeFragments",
-            "All fragments has been removed in container[${ContextUtils.getIdName(containerId)}]."
+            "addFragment",
+            "[${fragment.javaClass.simpleName}] has added at [$newIndex] in ${getContainerName(vp)}"
         )
     }
 
     /**
-     * 移除所有[Fragment]
+     * 移除[ViewPager2]容器中指定Fragment
+     * @param vp 容器
+     * @param fragment 指定Fragment
      */
-    fun removeAllFragments() {
-        // 清除ViewPager2中的Fragment
-        removeViewPagerFragments()
-        // 清理其他容器的Fragment
-        for (i in 0 until fragmentCache.size()) {
-            val id = fragmentCache.keyAt(i)
-            removeFragments(id)
-        }
-        // 打印日志
-        printLog(LogLevel.D, "removeFragments", "All fragments has been removed.")
+    fun removeFragment(vp: ViewPager2, fragment: Fragment) {
+        val list = getFragments(vp)
+        val index = list.indexOf(fragment)
+        if (index >= 0) removeFragment(vp, index)
+        else printLog(
+            LogLevel.W,
+            "removeFragment",
+            "[${fragment.javaClass.simpleName}] can't be find in ${getContainerName(vp)}."
+        )
     }
 
     /**
-     * 移除[ViewPager2]容器下所有的Fragment
+     * 移除[ViewPager2]容器中指定位置的Fragment
+     * @param vp 容器
+     * @param index 指定位置
      */
-    @Suppress("NotifyDataSetChanged")
-    private fun removeViewPagerFragments() {
-        viewPager?.let {
-            // 从缓存中移除
-            fragments.clear()
-            fragmentCache.remove(View.NO_ID)
-            // 更新Adapter
-            (it.adapter as? GetMultiFragmentAdapter)?.let { adapter ->
-                adapter.fragments.clear()
-                adapter.notifyDataSetChanged()
+    fun removeFragment(vp: ViewPager2, index: Int) {
+        // 对应Fragment列表
+        val list = getFragments(vp)
+        // 索引判断
+        index.let {
+            if (it !in list.indices) {
+                printLog(
+                    LogLevel.W,
+                    "removeFragment",
+                    "Index [$index] is invalid, there will do thing."
+                )
+                return
             }
-            // 打印日志
-            printLog(LogLevel.D, "removeFragments", "All fragments has been removed in ViewPager2.")
         }
+        // 指定Fragment
+        val fragment = list[index]
+        // 获取改变后的位置
+        val changedIndex = if (index == 0) 0 else index - 1
+        // 移除Fragment
+        (vp.adapter as GetMultiFragmentAdapter).removeFragment(index)
+        // 打印日志
+        printLog(
+            LogLevel.D,
+            "removeFragment",
+            "[${fragment.javaClass.simpleName}] has removed at [$index] in ${getContainerName(vp)}"
+        )
+        // 显示新的Fragment
+        showFragment(vp, changedIndex)
     }
 
     /**
-     * 切换指定容器的Index
-     * @param containerId 指定容器
-     * @param fragments Fragment列表
+     * 移除容器所有Fragment
+     * @param vp 容器
      */
-    private fun changeIndex(@IdRes containerId: Int?, fragments: Array<Fragment>): Int {
-        val newId = containerId ?: View.NO_ID
-        val index = newId.let {
-            // 获取指定容器的Index
-            val index = getCurrentIndex(it)
-            // 获取有效的Index
-            val array = fragments.indices
-            if (array.contains(index)) index else 0
-        }
-        indexCache.put(newId, index)
-        return index
+    fun removeFragments(vp: ViewPager2) {
+        // 清空Fragment列表
+        getFragments(vp).clear()
+        // 更新数据
+        vp.adapter?.notifyDataSetChanged()
     }
+
 }

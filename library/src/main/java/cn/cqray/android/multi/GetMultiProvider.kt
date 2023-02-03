@@ -1,9 +1,10 @@
 package cn.cqray.android.multi
 
 import android.os.Bundle
-import androidx.annotation.IdRes
+import androidx.annotation.Px
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.widget.ViewPager2
+import androidx.viewpager2.widget.ViewPager2.ScrollState
 import cn.cqray.android.app.GetDelegate
 import cn.cqray.android.app.GetProvider
 
@@ -18,29 +19,17 @@ interface GetMultiProvider : GetProvider {
     val multiDelegate: GetMultiDelegate
         get() = GetDelegate.get(this, GetMultiProvider::class.java)
 
-
-    val multiDelegate2: GetMultiDelegate2
-        get() = GetDelegate.get(this, GetMultiProvider::class.java)
-
-    /** [ViewPager2]下的当前索引 **/
-    val currentIndex: Int
-        get() = multiDelegate.currentIndex
-
-    /** [ViewPager2]下的[Fragment]列表 **/
-    val fragments: MutableList<Fragment>
-        get() = multiDelegate.fragments
-
     /**
      * 获取指定容器的[Fragment]列表
-     * @param containerId 指定容器ID
+     * @param vp 指定容器
      */
-    fun getFragments(@IdRes containerId: Int?) = multiDelegate.getFragments(containerId)
+    fun getFragments(vp: ViewPager2) = multiDelegate.getFragments(vp)
 
     /**
-     * 获取指定容器的索引位置
-     * @param containerId 指定容器ID
+     * 获取指定容器的[Fragment]位置索引
+     * @param vp 指定容器
      */
-    fun getCurrentIndex(@IdRes containerId: Int?) = multiDelegate.getCurrentIndex(containerId)
+    fun getCurrentIndex(vp: ViewPager2) = vp.currentItem
 
     /**
      * 生成Fragment列表
@@ -51,14 +40,6 @@ interface GetMultiProvider : GetProvider {
         multiDelegate.instantiateFragment(target, arguments)
 
     /**
-     * 在指定容器中，加载多个Fragment
-     * @param containerId 容器Id
-     * @param fragments Fragment列表
-     */
-    fun loadMultiFragments(@IdRes containerId: Int?, fragments: Array<Fragment>) =
-        multiDelegate.loadMultiFragments(containerId, fragments)
-
-    /**
      * 加载多个Fragment
      * @param vp [ViewPager2]容器
      * @param fragments Fragment列表
@@ -67,48 +48,56 @@ interface GetMultiProvider : GetProvider {
 
     /**
      * 显示指定容器指定位置的[Fragment]
-     * @param containerId   指定容器ID
-     * @param index         指定位置
+     * @param vp 指定容器
+     * @param index 指定位置
      */
-    fun showFragment(@IdRes containerId: Int?, index: Int?) = multiDelegate.showFragment(containerId, index)
+    fun showFragment(vp: ViewPager2, index: Int) = multiDelegate.showFragment(vp, index)
 
     /**
      * 添加Fragment界面
-     * @param containerId 容器ID
+     * @param vp 指定容器
      * @param fragment Fragment
      */
-    fun showFragment(@IdRes containerId: Int?, fragment: Fragment) = multiDelegate.showFragment(containerId, fragment)
+    fun showFragment(vp: ViewPager2, fragment: Fragment) = multiDelegate.showFragment(vp, fragment)
 
     /**
      * 添加Fragment界面
-     * @param containerId 容器ID
+     * @param vp 指定容器
      * @param fragment Fragment
      */
-    fun addFragment(
-        @IdRes containerId: Int?, fragment: Fragment, index: Int?
-    ) = multiDelegate.addFragment(containerId, fragment, index)
+    fun addFragment(vp: ViewPager2, fragment: Fragment) = multiDelegate.addFragment(vp, fragment, null)
 
     /**
-     * 移除指定的Fragment
+     * 添加Fragment界面
+     * @param vp 指定容器
+     * @param fragment Fragment
      * @param index 位置
      */
-    fun removeFragment(@IdRes containerId: Int?, index: Int?) = multiDelegate.removeFragment(containerId, index)
+    fun addFragment(vp: ViewPager2, fragment: Fragment, index: Int?) = multiDelegate.addFragment(vp, fragment, index)
+
+    /**
+     * 移除指定容器的Fragment
+     * @param vp 指定容器
+     * @param index 位置
+     */
+    fun removeFragment(vp: ViewPager2, index: Int) = multiDelegate.removeFragment(vp, index)
 
     /**
      * 移除指定的Fragment
      * @param fragment Fragment界面
      */
-    fun removeFragment(@IdRes containerId: Int?, fragment: Fragment) =
-        multiDelegate.removeFragment(containerId, fragment)
+    fun removeFragment(vp: ViewPager2, fragment: Fragment) = multiDelegate.removeFragment(vp, fragment)
 
     /**
      * 移除指定容器下所有的Fragment
-     * @param containerId 指定容器ID
+     * @param vp 指定容器
      */
-    fun removeFragments(@IdRes containerId: Int? = null) = multiDelegate.removeFragments(containerId)
+    fun removeFragments(vp: ViewPager2) = multiDelegate.removeFragments(vp)
 
     /**
-     * 移除所有[Fragment]
+     * Fragment界面发生变化
+     * @param vp 所处容器
+     * @param position 改变后的位置
      */
-    fun removeAllFragments() = multiDelegate.removeAllFragments()
+    fun onFragmentPageSelected(vp: ViewPager2, position: Int) {}
 }

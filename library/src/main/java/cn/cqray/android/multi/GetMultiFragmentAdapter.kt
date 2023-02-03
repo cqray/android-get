@@ -27,4 +27,18 @@ class GetMultiFragmentAdapter : FragmentStateAdapter {
     override fun getItemCount(): Int {
         return fragments.size
     }
+
+    fun addFragment(fragment: Fragment, index: Int) {
+        if (index in 0..fragments.size) {
+            fragments.add(index, fragment)
+            notifyItemInserted(index)
+        }
+    }
+
+    fun removeFragment(index: Int) {
+        if (index in fragments.indices) {
+            fragments.removeAt(index)
+            notifyItemRemoved(index)
+        }
+    }
 }
