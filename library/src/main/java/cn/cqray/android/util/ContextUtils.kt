@@ -8,10 +8,10 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
 import androidx.annotation.IdRes
 import androidx.annotation.LayoutRes
-import androidx.annotation.NonNull
 import androidx.annotation.StringRes
 import androidx.core.content.ContextCompat
 import cn.cqray.android.Get
@@ -38,6 +38,9 @@ object ContextUtils {
     fun getDrawable(@DrawableRes resId: Int): Drawable? {
         return ContextCompat.getDrawable(get(), resId)
     }
+
+    @JvmStatic
+    fun getColor(@ColorRes id: Int): Int = ContextCompat.getColor(get(), id)
 
     fun getString(@StringRes resId: Int): String {
         return resources.getString(resId)

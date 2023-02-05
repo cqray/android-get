@@ -8,13 +8,19 @@
     <com.google.android.material.navigation.NavigationView
         android:id="@id/get_top_nav"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content" />
 
-    <androidx.viewpager2.widget.ViewPager2
+    <FrameLayout
         android:id="@id/get_nav_content"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1" />
+        android:layout_weight="1">
+
+        <androidx.viewpager2.widget.ViewPager2
+            android:id="@id/get_nav_pager"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </FrameLayout>
 
     <com.google.android.material.navigation.NavigationView
         android:id="@id/get_bottom_nav"

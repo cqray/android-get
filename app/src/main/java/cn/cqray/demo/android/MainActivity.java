@@ -14,6 +14,8 @@ import cn.cqray.android.Get;
 import cn.cqray.android.app.GetIntent;
 import cn.cqray.android.multi.GetMultiItem;
 import cn.cqray.android.multi.GetMultiActivity;
+import cn.cqray.android.object.VarString;
+import cn.hutool.core.util.HexUtil;
 
 public class MainActivity extends GetMultiActivity {
 
@@ -21,6 +23,9 @@ public class MainActivity extends GetMultiActivity {
     @Override
     public void onCreating(@Nullable Bundle savedInstanceState) {
         super.onCreating(savedInstanceState);
+
+
+//        VarString string = new VarString("123");
 
 //        loadRootFragment(MainFragment.class);
 //        setBackgroundColor(Color.YELLOW);
@@ -52,42 +57,10 @@ public class MainActivity extends GetMultiActivity {
         showFragment(2);
         removeFragment(2);
 
-        Log.e("数据", "当前索引：" + getViewPager().getCurrentItem());
-
-//        showFragment(-1);
-//
-//        getMultiDelegate().removeFragment(R.id.get_nav_view, -1);
-
-//        removeFragments();
-
-//        removeFragments();
-//        getMultiDelegate().removeAllFragments();
-
-//        new Handler().postDelayed(new Runnable() {
-//            @Override
-//            public void run() {
-//                setTabAtTop(false);
-//            }
-//        }, 3000);
-//
-//        FragmentManager fm = getSupportFragmentManager();
-//        FragmentTransaction ft = fm.beginTransaction();
-//
-//        setFragmentDragEnable(false);
 
 
-//        GetLayoutMultiTabBinding binding = GetLayoutMultiTabBinding.inflate(getLayoutInflater());
-//
-//        setContentView(binding.getRoot());
 
-        
-//        ft.add("")
     }
-
-//    @Override
-//    public boolean onBackPressedGet() {
-//        return true;
-//    }
 
 
     @Override

@@ -36,6 +36,11 @@ interface GetNavProvider : GetProvider {
     fun onEnterAnimEnd() {}
 
     /**
+     * 懒加载
+     */
+    fun onLazyLoad() {}
+
+    /**
      * 设置返回数据
      * @param data [Bundle]返回数据
      */

@@ -6,6 +6,7 @@ import androidx.activity.OnBackPressedCallback
 import androidx.annotation.IdRes
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
+import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import cn.cqray.android.anim.AnimUtils
@@ -13,6 +14,7 @@ import cn.cqray.android.helper.GetResultHelper
 import cn.cqray.android.lifecycle.GetViewModelProvider
 import cn.cqray.android.lifecycle.GetViewModel
 import java.lang.IllegalStateException
+import java.util.concurrent.atomic.AtomicBoolean
 
 /**
  * Get框架导航委托
@@ -25,11 +27,14 @@ class GetNavDelegate(provider: GetNavProvider) : GetDelegate<GetNavProvider>(pro
     private val viewModel: GetNavViewModel by lazy {
         // 确保ViewModel是在CREATED之后调用
         val currentState = lifecycleOwner.lifecycle.currentState
-        if (!currentState.isAtLeast(Lifecycle.State.CREATED))
-            throw IllegalStateException("Please make sure ${provider.javaClass.simpleName}'s state is created.")
+//        if (!currentState.isAtLeast(Lifecycle.State.CREATED))
+//            throw IllegalStateException("Please make sure ${provider.javaClass.simpleName}'s state is created.")
         // 获取ViewModel实例
         GetViewModelProvider(activity).get(GetNavViewModel::class.java)
     }
+
+    /** 是否已懒加载 **/
+    private val lazyLoaded = AtomicBoolean()
 
     /** [LifecycleOwner]生命周期管理持有 **/
     val lifecycleOwner: LifecycleOwner = provider as LifecycleOwner
@@ -63,6 +68,17 @@ class GetNavDelegate(provider: GetNavProvider) : GetDelegate<GetNavProvider>(pro
                     }
                 })
         }
+        // 懒加载实现
+        lifecycleOwner.lifecycle.addObserver(object : DefaultLifecycleObserver {
+            override fun onResume(owner: LifecycleOwner) {
+                super.onResume(owner)
+                // 懒加载实现
+                if (!lazyLoaded.get()) {
+                    provider.onLazyLoad()
+                    lazyLoaded.set(true)
+                }
+            }
+        })
     }
 
     /**

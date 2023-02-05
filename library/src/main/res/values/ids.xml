@@ -11,41 +11,36 @@
     <item name="refresh_layout" type="id" />
     <item name="nav_layout" type="id" />
 
-    <item name="starter_toolbar" type="id" />
-    <item name="starter_header_layout" type="id" />
-    <item name="starter_refresh_layout" type="id" />
-    <item name="starter_footer_layout" type="id" />
-<!--    <item name="get_nav_content" type="id" />-->
-    <item name="starter_nav_view" type="id" />
-    <item name="starter_tab_layout" type="id" />
+    <!--    <item name="starter_toolbar" type="id" />-->
+    <!--    <item name="starter_header_layout" type="id" />-->
+    <!--    <item name="starter_refresh_layout" type="id" />-->
+    <!--    <item name="starter_footer_layout" type="id" />-->
+    <!--&lt;!&ndash;    <item name="get_nav_content" type="id" />&ndash;&gt;-->
+    <!--    <item name="starter_nav_view" type="id" />-->
+    <!--    <item name="starter_tab_layout" type="id" />-->
 
-    <item name="starter_toolbar_title" type="id" />
-    <item name="starter_toolbar_back_view" type="id" />
-    <item name="starter_toolbar_action_layout" type="id" />
+    <!--    <item name="starter_toolbar_title" type="id" />-->
+    <!--    <item name="starter_toolbar_back_view" type="id" />-->
+    <!--    <item name="starter_toolbar_action_layout" type="id" />-->
 
     <item name="get_toolbar_title" type="id" />
     <item name="get_toolbar_back_view" type="id" />
     <item name="get_toolbar_action_layout" type="id" />
 
 
-
-    <item name="get_toolbar" type="id"/>
+    <!-- 默认布局相关ID -->
+    <item name="get_toolbar" type="id" />
     <item name="get_content" type="id" />
     <item name="get_refresh_layout" type="id" />
     <item name="get_header" type="id" />
     <item name="get_footer" type="id" />
 
+    <!-- 导航相关ID -->
     <item name="get_nav_content" type="id" />
-    <item name="get_nav_view" type="id" />
+    <item name="get_nav_pager" type="id" />
     <item name="get_nav_tab" type="id" />
-
-    <item name="get_top_nav" type="id"/>
-    <item name="get_top_tab" type="id"/>
-    <item name="get_bottom_nav" type="id"/>
-    <item name="get_bottom_tab" type="id"/>
-
-
-<!--    <item name="get_nav_tab_view" type="id" />-->
+    <item name="get_top_nav" type="id" />
+    <item name="get_bottom_nav" type="id" />
 
     <!-- ViewState相关ID -->
     <item name="get_state_img" type="id" />

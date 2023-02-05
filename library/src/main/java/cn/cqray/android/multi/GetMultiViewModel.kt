@@ -1,5 +1,6 @@
 package cn.cqray.android.multi
 
+import android.widget.FrameLayout
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.LifecycleOwner
 import androidx.viewpager2.widget.ViewPager2
@@ -37,34 +38,37 @@ internal class GetMultiViewModel(
     }
 
     /** 根控件 **/
-    val rootView by lazy { ContextUtils.inflate(R.layout.get_layout_multi_tab) }
+    val multiView by lazy { ContextUtils.inflate(R.layout.get_ui_layout_multi) }
+
+    /** 内容布局 **/
+    val multiContent : FrameLayout by lazy { multiView.findViewById(R.id.get_nav_content) }
 
     /** 顶部[NavigationView] **/
-    val topNavView: NavigationView by lazy { rootView.findViewById(R.id.get_top_nav) }
+    val multiTopNav: NavigationView by lazy { multiView.findViewById(R.id.get_top_nav) }
 
     /** 底部[NavigationView] **/
-    val bottomNavView: NavigationView by lazy { rootView.findViewById(R.id.get_bottom_nav) }
+    val multiBottomNav  : NavigationView by lazy { multiView.findViewById(R.id.get_bottom_nav) }
 
     /** [ViewPager2]组件 **/
-    val viewPager: ViewPager2 by lazy {
-        val view = rootView.findViewById<ViewPager2>(R.id.get_nav_content)
+    val multiPager: ViewPager2 by lazy {
+        val view = multiView.findViewById<ViewPager2>(R.id.get_nav_pager)
         // 注册回调
         view.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
                 super.onPageSelected(position)
-                runCatching { tabLayout.currentTab = position }
+                runCatching { multiTab.currentTab = position }
             }
         })
         view
     }
 
     /** TabLayout控件 **/
-    val tabLayout: CommonTabLayout by lazy {
-        val view = rootView.findViewById<CommonTabLayout>(R.id.get_nav_tab)
+    val multiTab: CommonTabLayout by lazy {
+        val view = multiView.findViewById<CommonTabLayout>(R.id.get_nav_tab)
         // 注册回调
         view.setOnTabSelectListener(object : OnTabSelectListener {
             override fun onTabSelect(position: Int) {
-                delegate.showFragment(viewPager, position)
+                delegate.showFragment(multiPager, position)
             }
 
             override fun onTabReselect(position: Int) {}
@@ -84,21 +88,21 @@ internal class GetMultiViewModel(
     private val tabData = ArrayList<CustomTabEntity>()
 
     /** Fragment列表 **/
-    val fragments get() = delegate.getFragments(viewPager)
+    val fragments get() = delegate.getFragments(multiPager)
 
     /**
      * 改变TabLayout位置
      */
     private fun changeTabLocation(tabLayout: CommonTabLayout? = null) {
         // 底部
-        bottomNavView.let {
+        multiBottomNav  .let {
             it.removeAllViews()
-            if (!tabAtTop.get()) it.addView(tabLayout ?: this.tabLayout)
+            if (!tabAtTop.get()) it.addView(tabLayout ?: this.multiTab)
         }
         // 顶部
-        topNavView.let {
+        multiTopNav.let {
             it.removeAllViews()
-            if (tabAtTop.get()) it.addView(tabLayout ?: this.tabLayout)
+            if (tabAtTop.get()) it.addView(tabLayout ?: this.multiTab)
         }
     }
 
@@ -107,13 +111,13 @@ internal class GetMultiViewModel(
         if (tabData.isEmpty()) {
             val field = CommonTabLayout::class.java.getDeclaredField("mTabEntitys")
             field.isAccessible = true
-            val data = field.get(tabLayout) as ArrayList<CustomTabEntity>
+            val data = field.get(multiTab) as ArrayList<CustomTabEntity>
             data.clear()
-            tabLayout.notifyDataSetChanged()
+            multiTab.notifyDataSetChanged()
         } else {
-            tabLayout.setTabData(tabData)
+            multiTab.setTabData(tabData)
             // 改变缓存数量
-            viewPager.offscreenPageLimit = tabData.size
+            multiPager.offscreenPageLimit = tabData.size
         }
     }
 
@@ -136,8 +140,8 @@ internal class GetMultiViewModel(
      */
     fun setTabElevation(elevation: Float, unit: SizeUnit) {
         val size = Sizes.applyDimension(elevation, unit)
-        topNavView.elevation = size
-        bottomNavView.elevation = size
+        multiTopNav.elevation = size
+        multiBottomNav  .elevation = size
     }
 
     /**
@@ -153,14 +157,14 @@ internal class GetMultiViewModel(
      */
     fun setTabHeight(height: Float, unit: SizeUnit) {
         val size = Sizes.applyDimension(height, unit)
-        tabLayout.layoutParams.height = size.toInt()
+        multiTab.layoutParams.height = size.toInt()
     }
 
     /**
      * 是否允许用户拖拽
      * @param enable 启用
      */
-    fun setFragmentDragEnable(enable: Boolean) = enable.let { viewPager.isUserInputEnabled = it }
+    fun setFragmentDragEnable(enable: Boolean) = enable.let { multiPager.isUserInputEnabled = it }
 
     /**
      * 加载多个Fragment
@@ -183,10 +187,10 @@ internal class GetMultiViewModel(
             addAll(entries)
             changeTabData()
         }
-        // 设置ViewPager2最大缓存数
-        viewPager.offscreenPageLimit = if (items.isEmpty()) 5 else items.size
+        // 设置multiPager2最大缓存数
+        multiPager.offscreenPageLimit = if (items.isEmpty()) 5 else items.size
         // 加载Fragment
-        delegate.loadMultiFragments(viewPager, Array(items.size) {
+        delegate.loadMultiFragments(multiPager, Array(items.size) {
             val item = items[it]
             delegate.instantiateFragment(item.targetClass, item.arguments)
         })
@@ -197,9 +201,9 @@ internal class GetMultiViewModel(
      * @param index 指定位置
      */
     fun showFragment(index: Int) {
-        delegate.showFragment(viewPager, index)
+        delegate.showFragment(multiPager, index)
         if (fragments.indices.contains(index)) {
-            tabLayout.currentTab = index
+            multiTab.currentTab = index
         }
     }
 
@@ -209,9 +213,9 @@ internal class GetMultiViewModel(
      */
     fun showFragment(fragment: Fragment) {
         val index = fragments.indexOf(fragment)
-        delegate.showFragment(viewPager, fragment)
+        delegate.showFragment(multiPager, fragment)
         if (fragments.indices.contains(index)) {
-            tabLayout.currentTab = index
+            multiTab.currentTab = index
         }
     }
 
@@ -241,9 +245,9 @@ internal class GetMultiViewModel(
         changeTabData()
         // 添加新的Fragment
         val fragment = delegate.instantiateFragment(item.targetClass, item.arguments)
-        delegate.addFragment(viewPager, fragment, newIndex)
-        // 设置ViewPager2最大缓存数
-        viewPager.offscreenPageLimit = fragments.size
+        delegate.addFragment(multiPager, fragment, newIndex)
+        // 设置multiPager2最大缓存数
+        multiPager.offscreenPageLimit = fragments.size
     }
 
     /**
@@ -258,11 +262,11 @@ internal class GetMultiViewModel(
      */
     fun removeFragment(index: Int) {
         // 移除Fragment
-        delegate.removeFragment(viewPager, index)
+        delegate.removeFragment(multiPager, index)
         // 有效index，则操作TabLayout
         if (index in tabData.indices) {
             runCatching {
-                tabLayout.currentTab = viewPager.currentItem
+                multiTab.currentTab = multiPager.currentItem
                 tabData.removeAt(index)
                 changeTabData()
             }
@@ -275,6 +279,6 @@ internal class GetMultiViewModel(
     fun removeFragments() {
         tabData.clear()
         changeTabData()
-        delegate.removeFragments(viewPager)
+        delegate.removeFragments(multiPager)
     }
 }

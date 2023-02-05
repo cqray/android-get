@@ -151,6 +151,6 @@ class GetIntent : Serializable {
         val isFragment = Fragment::class.java.isAssignableFrom(clazz)
         val isProvider = GetNavProvider::class.java.isAssignableFrom(clazz)
         if (!isProvider) throw RuntimeException("[${clazz.simpleName}] must implements GetNavProvider.")
-        if (!isActivity || !isFragment) throw RuntimeException("[${clazz.simpleName}] must be Activity or Fragment.")
+        if (!isActivity && !isFragment) throw RuntimeException("[${clazz.simpleName}] must be Activity or Fragment.")
     }
 }

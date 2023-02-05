@@ -3,6 +3,7 @@ package cn.cqray.android.app
 import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.IdRes
 import androidx.annotation.Keep
 import androidx.annotation.LayoutRes
 import androidx.annotation.NonNull
@@ -52,8 +53,13 @@ open class GetActivity : AppCompatActivity(),
     final override fun setContentView(view: View, params: ViewGroup.LayoutParams?) =
         viewDelegate.setGetContentView(view)
 
-    final override fun onBackPressed() {
-        // 避免重写，影响内部逻辑
-        super.onBackPressed()
-    }
+    /**
+     * 避免重写，影响内部逻辑
+     */
+    final override fun onBackPressed() = super.onBackPressed()
+
+    /**
+     * 查找View
+     */
+    final override fun <T : View> findViewById(@IdRes id: Int): T = viewDelegate.findViewById(id)
 }

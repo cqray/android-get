@@ -325,6 +325,6 @@ class GetViewDelegate(provider: GetViewProvider) :
     /** 初始化ButterKnife **/
     private fun initUnBinder() {
         ButterKnifeUtils.unbind(knifeUnBinder.get())
-        knifeUnBinder.set(ButterKnifeUtils.bind(this, rootView))
+        knifeUnBinder.set(ButterKnifeUtils.bind(provider, rootView))
     }
 }

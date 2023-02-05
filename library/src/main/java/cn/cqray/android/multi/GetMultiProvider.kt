@@ -1,10 +1,8 @@
 package cn.cqray.android.multi
 
 import android.os.Bundle
-import androidx.annotation.Px
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.widget.ViewPager2
-import androidx.viewpager2.widget.ViewPager2.ScrollState
 import cn.cqray.android.app.GetDelegate
 import cn.cqray.android.app.GetProvider
 

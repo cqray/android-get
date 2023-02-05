@@ -3,6 +3,7 @@ package cn.cqray.android.app
 import android.graphics.drawable.Drawable
 import android.view.View
 import androidx.annotation.DrawableRes
+import androidx.annotation.IdRes
 import androidx.annotation.LayoutRes
 
 /**
@@ -63,4 +64,5 @@ interface GetViewProvider : GetProvider {
 
     fun setBackground(drawable: Drawable?) = viewDelegate.setBackground(drawable)
 
+    fun <T : View> findViewById(@IdRes id: Int): T = viewDelegate.findViewById(id)
 }

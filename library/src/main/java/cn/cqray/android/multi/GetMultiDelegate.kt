@@ -284,6 +284,7 @@ class GetMultiDelegate(
      * 移除容器所有Fragment
      * @param vp 容器
      */
+    @SuppressLint("NotifyDataSetChanged")
     fun removeFragments(vp: ViewPager2) {
         // 清空Fragment列表
         getFragments(vp).clear()

@@ -43,10 +43,6 @@ android {
         // 忽略ID non-final 警告
         disable 'NonConstantResourceId'
         disable 'ContentDescription'
-//        ignore 'Unused'
-//        ignore 'TypographyQuotes'
-//        disable 'Unused'
-//        disable 'unused'
     }
 
     // 强制限定版本依赖版本

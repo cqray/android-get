@@ -12,7 +12,7 @@ import cn.cqray.android.app.GetManager
  * 尺寸工具类
  * @author Cqray
  */
-@Suppress("unused", "MemberVisibilityCanBePrivate")
+@Suppress("MemberVisibilityCanBePrivate", "Unused")
 object Sizes {
 
     private val context: Context

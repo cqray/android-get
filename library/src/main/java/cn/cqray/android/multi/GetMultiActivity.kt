@@ -17,18 +17,30 @@ open class GetMultiActivity : GetActivity(), GetMultiProvider {
     /** [GetMultiViewModel]实例 **/
     private val viewModel: GetMultiViewModel by lazy { getViewModel(GetMultiViewModel::class.java) }
 
+    /** 根布局 **/
+    val multiView get() = viewModel.multiView
+
     /** [ViewPager2]实例 **/
-    val viewPager get() = viewModel.viewPager
+    val multiPager get() = viewModel.multiPager
 
     /** [CommonTabLayout]实例 **/
-    val tabLayout get() = viewModel.tabLayout
+    val multiTab get() = viewModel.multiTab
+
+    /** 内容布局，[ViewPager2]的父容器 **/
+    val multiContent get() = viewModel.multiContent
+
+    /** 顶部Nav容器 **/
+    val multiTopNav get() = viewModel.multiTopNav
+
+    /** 底部Nav容器 **/
+    val multiBottomNav get() = viewModel.multiBottomNav
 
     /** 当前位置索引 **/
-    val currentIndex get() = viewPager.currentItem
+    val currentIndex get() = multiPager.currentItem
 
     override fun onCreating(savedInstanceState: Bundle?) {
         super.onCreating(savedInstanceState)
-        setNativeContentView(viewModel.rootView)
+        setNativeContentView(viewModel.multiView)
     }
 
     fun setTabAtTop(tabAtTop: Boolean) = viewModel.setTabAtTop(tabAtTop)
