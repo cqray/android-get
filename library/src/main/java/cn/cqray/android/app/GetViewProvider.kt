@@ -64,5 +64,5 @@ interface GetViewProvider : GetProvider {
 
     fun setBackground(drawable: Drawable?) = viewDelegate.setBackground(drawable)
 
-    fun <T : View> findViewById(@IdRes id: Int): T = viewDelegate.findViewById(id)
+//    fun <T : View> findViewById(@IdRes id: Int): T = viewDelegate.findViewById(id)
 }

@@ -58,8 +58,8 @@ open class GetActivity : AppCompatActivity(),
      */
     final override fun onBackPressed() = super.onBackPressed()
 
-    /**
-     * 查找View
-     */
-    final override fun <T : View> findViewById(@IdRes id: Int): T = viewDelegate.findViewById(id)
+//    /**
+//     * 查找View
+//     */
+//    final override fun <T : View> findViewById(@IdRes id: Int): T = viewDelegate.findViewById(id)
 }

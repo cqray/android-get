@@ -6,6 +6,7 @@ import android.widget.TextView;
 
 import cn.cqray.android.app.GetFragment;
 import cn.cqray.android.log.GetLog;
+import cn.cqray.android.util.ScreenUtils;
 
 public class MainFragment extends GetFragment {
 
@@ -15,8 +16,12 @@ public class MainFragment extends GetFragment {
         setGetContentView(R.layout.activity_main);
 
         TextView view = getViewDelegate().findViewById(R.id.tv);
-        view.setText(requireArguments().getInt("index") + "");
+        view.setText(requireArguments().getInt("index") + "12313213");
+        view.setOnClickListener(v -> {
 
+            ScreenUtils.INSTANCE.toggleFullScreen(requireActivity());
+            //ScreenUtils.INSTANCE.setFullScreen(requireActivity());
+        });
     }
 
     @Override

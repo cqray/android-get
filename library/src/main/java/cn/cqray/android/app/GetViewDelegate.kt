@@ -220,7 +220,7 @@ class GetViewDelegate(provider: GetViewProvider) :
      * @param resId 控件Id
      * @param <T> 控件类型
      **/
-    fun <T : View> findViewById(@IdRes resId: Int): T = contentView?.findViewById(resId)!!
+    fun <T : View> findViewById(@IdRes resId: Int): T = rootView.findViewById(resId)!!
 
     /**
      * 设置背景

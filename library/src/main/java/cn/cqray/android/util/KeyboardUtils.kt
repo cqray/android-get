@@ -1,353 +1,316 @@
-package cn.cqray.android.util;
+package cn.cqray.android.util
 
-import android.app.Activity;
-import android.content.Context;
-import android.content.res.Resources;
-import android.graphics.Rect;
-import android.os.Build;
-import android.os.Bundle;
-import android.os.Handler;
-import android.os.ResultReceiver;
-import android.util.Log;
-import android.view.View;
-import android.view.ViewGroup;
-import android.view.ViewTreeObserver.OnGlobalLayoutListener;
-import android.view.Window;
-import android.view.WindowManager;
-import android.view.inputmethod.InputMethodManager;
-import android.widget.EditText;
-import android.widget.FrameLayout;
+import android.app.Activity
+import android.content.Context
+import android.graphics.Rect
+import android.os.Build
+import android.os.Bundle
+import android.os.Handler
+import android.os.ResultReceiver
+import android.util.Log
+import android.view.View
+import android.view.ViewGroup
+import android.view.ViewTreeObserver.OnGlobalLayoutListener
+import android.view.Window
+import android.view.WindowManager
+import android.view.inputmethod.InputMethodManager
+import android.widget.EditText
+import android.widget.FrameLayout
+import androidx.activity.ComponentActivity
+import androidx.lifecycle.DefaultLifecycleObserver
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.Observer
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
+import cn.cqray.android.Get.context
+import kotlin.math.abs
 
-import java.lang.reflect.Field;
 
-import cn.cqray.android.Get;
+object KeyboardUtils {
 
-/**
- * <pre>
- *     author: Blankj
- *     blog  : http://blankj.com
- *     time  : 2016/08/02
- *     desc  : utils about keyboard
- * </pre>
- */
-public final class KeyboardUtils {
+    /** 全局监听 TAG **/
+    private const val TAG_ON_LAYOUT_LISTENERS = -8
 
-    private static final int TAG_ON_GLOBAL_LAYOUT_LISTENER = -8;
+    /** 未显示高度 TAG **/
+    private const val TAG_ON_INVISIBLE_HEIGHT = -9
 
-    private KeyboardUtils() {
-        throw new UnsupportedOperationException("u can't instantiate me...");
+//    /** StatusBar高度 **/
+//    val statusBarHeight: Int
+//        get() {
+//            val resources = context.resources
+//            val resourceId = resources.getIdentifier("status_bar_height", "dimen", "android")
+//            return resources.getDimensionPixelSize(resourceId)
+//        }
+//
+//    /** NavigationBar高度 **/
+//    val navBarHeight: Int
+//        get() {
+//            val res = context.resources
+//            val resourceId = res.getIdentifier("navigation_bar_height", "dimen", "android")
+//            return if (resourceId != 0) res.getDimensionPixelSize(resourceId) else 0
+//        }
+
+    /**
+     * 显示软键盘
+     */
+    @JvmStatic
+    fun showSoftInput() {
+        val imm = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY)
     }
 
     /**
      * 显示软键盘
      */
-    public static void showSoftInput() {
-        InputMethodManager imm = (InputMethodManager) Get.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-        if (imm == null) {
-            return;
-        }
-        imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
-    }
-
-    /**
-     * 显示软键盘
-     */
-    public static void showSoftInput(@Nullable Activity activity) {
+    fun showSoftInput(activity: Activity?) {
         if (activity == null) {
-            return;
+            return
         }
         if (!isSoftInputVisible(activity)) {
-            toggleSoftInput();
+            toggleSoftInput()
         }
     }
-
-    /**
-     * 显示软键盘
-     * @param view The view.
-     */
-    public static void showSoftInput(@NonNull final View view) {
-        showSoftInput(view, 0);
-    }
-
     /**
      * 显示软键盘
      * @param view The view
      * @param flags Provides additional operating flags.  Currently may be
-     * 0 or have the {@link InputMethodManager#SHOW_IMPLICIT} bit set.
+     * 0 or have the [InputMethodManager.SHOW_IMPLICIT] bit set.
      */
-    public static void showSoftInput(@NonNull final View view, final int flags) {
-        InputMethodManager imm = (InputMethodManager) Get.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-        if (imm == null) {
-            return;
-        }
-        view.setFocusable(true);
-        view.setFocusableInTouchMode(true);
-        view.requestFocus();
-        imm.showSoftInput(view, flags, new ResultReceiver(new Handler()) {
-            @Override
-            protected void onReceiveResult(int resultCode, Bundle resultData) {
+    /**
+     * 显示软键盘
+     * @param view The view.
+     */
+    @JvmOverloads
+    fun showSoftInput(view: View, flags: Int = 0) {
+        val imm = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            ?: return
+        view.isFocusable = true
+        view.isFocusableInTouchMode = true
+        view.requestFocus()
+        imm.showSoftInput(view, flags, object : ResultReceiver(Handler()) {
+            override fun onReceiveResult(resultCode: Int, resultData: Bundle) {
                 if (resultCode == InputMethodManager.RESULT_UNCHANGED_HIDDEN
-                        || resultCode == InputMethodManager.RESULT_HIDDEN) {
-                    toggleSoftInput();
+                    || resultCode == InputMethodManager.RESULT_HIDDEN
+                ) {
+                    toggleSoftInput()
                 }
             }
-        });
-        imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
+        })
+        imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY)
     }
 
     /**
      * 隐藏软键盘
      * @param activity The activity.
      */
-    public static void hideSoftInput(final Activity activity) {
+    fun hideSoftInput(activity: Activity?) {
         if (activity == null) {
-            return;
+            return
         }
-        hideSoftInput(activity.getWindow());
+        hideSoftInput(activity.window)
     }
 
     /**
      * 隐藏软键盘
      * @param window The window.
      */
-    public static void hideSoftInput(final Window window) {
+    fun hideSoftInput(window: Window?) {
         if (window == null) {
-            return;
+            return
         }
-        View view = window.getCurrentFocus();
+        var view = window.currentFocus
         if (view == null) {
-            View decorView = window.getDecorView();
-            View focusView = decorView.findViewWithTag("keyboardTagView");
+            val decorView = window.decorView
+            val focusView = decorView.findViewWithTag<View>("keyboardTagView")
             if (focusView == null) {
-                view = new EditText(window.getContext());
-                view.setTag("keyboardTagView");
-                ((ViewGroup) decorView).addView(view, 0, 0);
+                view = EditText(window.context)
+                view.setTag("keyboardTagView")
+                (decorView as ViewGroup).addView(view, 0, 0)
             } else {
-                view = focusView;
+                view = focusView
             }
-            view.requestFocus();
+            view.requestFocus()
         }
-        hideSoftInput(view);
+        hideSoftInput(view)
     }
 
     /**
      * 隐藏软键盘
      * @param view The view.
      */
-    public static void hideSoftInput(final View view) {
-        InputMethodManager imm = (InputMethodManager) Get.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+    fun hideSoftInput(view: View?) {
+        val imm = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         if (imm == null || view == null) {
-            return;
+            return
         }
-        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+        imm.hideSoftInputFromWindow(view.windowToken, 0)
     }
 
     /**
      * 切换软键盘状态
      */
-    public static void toggleSoftInput() {
-        InputMethodManager imm = (InputMethodManager) Get.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-        if (imm == null) {
-            return;
-        }
-        imm.toggleSoftInput(0, 0);
+    fun toggleSoftInput() {
+        val imm = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            ?: return
+        imm.toggleSoftInput(0, 0)
     }
 
-    private static int sDecorViewDelta = 0;
+    private var sDecorViewDelta = 0
 
     /**
      * Return whether soft input is visible.
      *
      * @param activity The activity.
-     * @return {@code true}: yes<br>{@code false}: no
+     * @return `true`: yes<br></br>`false`: no
      */
-    public static boolean isSoftInputVisible(@NonNull final Activity activity) {
-        return getDecorViewInvisibleHeight(activity.getWindow()) > 0;
+    fun isSoftInputVisible(activity: Activity): Boolean {
+        return getDecorViewInvisibleHeight(activity.window) > 0
     }
 
     /**
      * 获取DecorView未显示的高度
      */
-    private static int getDecorViewInvisibleHeight(@NonNull final Window window) {
-        final View decorView = window.getDecorView();
-        final Rect outRect = new Rect();
-        decorView.getWindowVisibleDisplayFrame(outRect);
-        Log.d("KeyboardUtils", "getDecorViewInvisibleHeight: " + (decorView.getBottom() - outRect.bottom));
-        int delta = Math.abs(decorView.getBottom() - outRect.bottom);
-        if (delta <= getNavBarHeight() + getStatusBarHeight()) {
-            sDecorViewDelta = delta;
-            return 0;
+    private fun getDecorViewInvisibleHeight(window: Window?): Int {
+        window?.let {
+            val outRect = Rect().also { rect -> window.decorView.getWindowVisibleDisplayFrame(rect) }
+//            it.decorView.getWindowVisibleDisplayFrame(outRect)
+//            Log.d("KeyboardUtils", "getDecorViewInvisibleHeight: " + (decorView.bottom - outRect.bottom))
+            val delta = abs(it.decorView.bottom - outRect.bottom)
+            if (delta <= ScreenUtils.navBarHeight + ScreenUtils.statusBarHeight) {
+                sDecorViewDelta = delta
+                return 0
+            }
+            delta - sDecorViewDelta
         }
-        return delta - sDecorViewDelta;
+        return 0
     }
 
-//    /**
-//     * Register soft input changed listener.
-//     *
-//     * @param activity The activity.
-//     * @param listener The soft input changed listener.
-//     */
-//    public static void registerSoftInputChangedListener(@NonNull Activity activity,
-//                                                        @NonNull OnSoftInputChangedListener listener) {
-//        registerSoftInputChangedListener(activity.getWindow(), listener);
-//    }
-//
-//    /**
-//     * Register soft input changed listener.
-//     *
-//     * @param window The window.
-//     * @param listener The soft input changed listener.
-//     */
-//    public static void registerSoftInputChangedListener(@NonNull final Window window,
-//                                                        @NonNull final OnSoftInputChangedListener listener) {
-//        final int flags = window.getAttributes().flags;
-//        if ((flags & WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS) != 0) {
-//            window.clearFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
-//        }
-//        final FrameLayout contentView = window.findViewById(android.R.id.content);
-//        final int[] decorViewInvisibleHeightPre = { getDecorViewInvisibleHeight(window) };
-//        OnGlobalLayoutListener onGlobalLayoutListener = () -> {
-//            int height = getDecorViewInvisibleHeight(window);
-//            if (decorViewInvisibleHeightPre[0] != height) {
-//                listener.onSoftInputChanged(height);
-//                decorViewInvisibleHeightPre[0] = height;
-//            }
-//        };
-//        contentView.getViewTreeObserver().addOnGlobalLayoutListener(onGlobalLayoutListener);
-//        contentView.setTag(TAG_ON_GLOBAL_LAYOUT_LISTENER, onGlobalLayoutListener);
-//    }
-
     /**
-     * Unregister soft input changed listener.
-     *
-     * @param window The window.
+     * 订阅软键盘高度变化
+     * @param activity [Activity]
+     * @param observer 观察者
      */
-    public static void unregisterSoftInputChangedListener(@NonNull final Window window) {
-        final View contentView = window.findViewById(android.R.id.content);
-        if (contentView == null) {
-            return;
-        }
-        Object tag = contentView.getTag(TAG_ON_GLOBAL_LAYOUT_LISTENER);
-        if (tag instanceof OnGlobalLayoutListener) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-                contentView.getViewTreeObserver().removeOnGlobalLayoutListener((OnGlobalLayoutListener) tag);
-                //这里会发生内存泄漏 如果不设置为null
-                contentView.setTag(TAG_ON_GLOBAL_LAYOUT_LISTENER, null);
+    @Suppress("Unchecked_cast")
+    fun observeSoftInputChanged(activity: ComponentActivity?, observer: Observer<Int>?) {
+        activity?.window?.let {
+            val flags = it.attributes.flags
+            if ((flags and WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS) != 0) {
+                it.clearFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
             }
+            val contentView = activity.findViewById<View>(android.R.id.content) ?: return
+            // 初始化监听列表
+            val listeners = (contentView.getTag(TAG_ON_LAYOUT_LISTENERS) as? MutableList<OnGlobalLayoutListener>)
+                ?: mutableListOf()
+            // 回调函数
+            val glListener = OnGlobalLayoutListener {
+                val oldHeight = contentView.getTag(TAG_ON_INVISIBLE_HEIGHT) as Int? ?: 0
+                val newHeight = getContentViewInvisibleHeight(it)
+                // 通知键盘变化
+                if (oldHeight != newHeight) {
+                    observer?.onChanged(newHeight)
+                    contentView.setTag(TAG_ON_INVISIBLE_HEIGHT, newHeight)
+                }
+            }
+            // 监听信息
+            contentView.viewTreeObserver.addOnGlobalLayoutListener(glListener)
+            // 缓存相关信息
+            contentView.setTag(TAG_ON_INVISIBLE_HEIGHT, getContentViewInvisibleHeight(it))
+            contentView.setTag(TAG_ON_LAYOUT_LISTENERS, listeners.also { listeners.add(glListener) })
+            // 自动销毁，防止内容泄漏
+            activity.lifecycle.addObserver(object : DefaultLifecycleObserver {
+                override fun onDestroy(owner: LifecycleOwner) {
+                    // 获取监听列表
+                    val list = contentView.getTag(TAG_ON_LAYOUT_LISTENERS) as? MutableList<OnGlobalLayoutListener>
+                    list?.let { it ->
+                        // 移除监听事件
+                        it.forEach { listener -> contentView.viewTreeObserver.removeOnGlobalLayoutListener(listener) }
+                        it.clear()
+                        //这里会发生内存泄漏 如果不设置为null
+                        contentView.setTag(TAG_ON_LAYOUT_LISTENERS, null)
+                    }
+                }
+            })
         }
     }
 
     /**
      * Fix the bug of 5497 in Android.
-     * <p>Don't set adjustResize</p>
+     *
+     * Don't set adjustResize
      *
      * @param activity The activity.
      */
-    public static void fixAndroidBug5497(@NonNull final Activity activity) {
-        fixAndroidBug5497(activity.getWindow());
+    fun fixAndroidBug5497(activity: Activity) {
+        fixAndroidBug5497(activity.window)
     }
 
     /**
      * Fix the bug of 5497 in Android.
-     * <p>It will clean the adjustResize</p>
+     *
+     * It will clean the adjustResize
      *
      * @param window The window.
      */
-    public static void fixAndroidBug5497(@NonNull final Window window) {
-        int softInputMode = window.getAttributes().softInputMode;
-        window.setSoftInputMode(softInputMode & ~WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
-        final FrameLayout contentView = window.findViewById(android.R.id.content);
-        final View contentViewChild = contentView.getChildAt(0);
-        final int paddingBottom = contentViewChild.getPaddingBottom();
-        final int[] contentViewInvisibleHeightPre5497 = { getContentViewInvisibleHeight(window) };
-        contentView.getViewTreeObserver().addOnGlobalLayoutListener(() -> {
-            int height = getContentViewInvisibleHeight(window);
+    @Suppress("Deprecation")
+    fun fixAndroidBug5497(window: Window) {
+        // 清除 ADJUST_RESIZE 属性
+        val softInputMode = window.attributes.softInputMode
+        window.setSoftInputMode(softInputMode and WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE.inv())
+
+        val contentView = window.findViewById<FrameLayout>(android.R.id.content)
+        val contentViewChild = contentView.getChildAt(0)
+        val paddingBottom = contentViewChild.paddingBottom
+        val contentViewInvisibleHeightPre5497 = intArrayOf(getContentViewInvisibleHeight(window))
+        contentView.viewTreeObserver.addOnGlobalLayoutListener {
+            val height = getContentViewInvisibleHeight(window)
             if (contentViewInvisibleHeightPre5497[0] != height) {
                 contentViewChild.setPadding(
-                        contentViewChild.getPaddingLeft(),
-                        contentViewChild.getPaddingTop(),
-                        contentViewChild.getPaddingRight(),
-                        paddingBottom + getDecorViewInvisibleHeight(window));
-                contentViewInvisibleHeightPre5497[0] = height;
+                    contentViewChild.paddingLeft,
+                    contentViewChild.paddingTop,
+                    contentViewChild.paddingRight,
+                    paddingBottom + getDecorViewInvisibleHeight(window)
+                )
+                contentViewInvisibleHeightPre5497[0] = height
             }
-        });
+        }
     }
 
-    private static int getContentViewInvisibleHeight(@NonNull final Window window) {
-        final View contentView = window.findViewById(android.R.id.content);
-        if (contentView == null) {
-            return 0;
-        }
-        final Rect outRect = new Rect();
-        contentView.getWindowVisibleDisplayFrame(outRect);
-        Log.d("KeyboardUtils", "getContentViewInvisibleHeight: " + (contentView.getBottom() - outRect.bottom));
-        int delta = Math.abs(contentView.getBottom() - outRect.bottom);
-        if (delta <= getStatusBarHeight() + getNavBarHeight()) {
-            return 0;
-        }
-        return delta;
+    private fun getContentViewInvisibleHeight(window: Window): Int {
+        val contentView = window.findViewById<View>(android.R.id.content) ?: return 0
+        val outRect = Rect().also { window.decorView.getWindowVisibleDisplayFrame(it) }
+        val delta = abs(contentView.bottom - outRect.bottom)
+        return if (delta <= ScreenUtils.statusBarHeight + ScreenUtils.navBarHeight) 0 else delta
     }
 
     /**
      * 修复软键盘输入泄漏问题
      * @param activity The activity.
      */
-    public static void fixSoftInputLeaks(@NonNull final Activity activity) {
-        fixSoftInputLeaks(activity.getWindow());
+    fun fixSoftInputLeaks(activity: Activity) {
+        fixSoftInputLeaks(activity.window)
     }
 
     /**
      * 修复软键盘输入泄漏问题
      * @param window The window.
      */
-    public static void fixSoftInputLeaks(@NonNull final Window window) {
-        InputMethodManager imm = (InputMethodManager) Get.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-        if (imm == null) {
-            return;
-        }
-        String[] leakViews = new String[] { "mLastSrvView", "mCurRootView", "mServedView", "mNextServedView" };
-        for (String leakView : leakViews) {
+    fun fixSoftInputLeaks(window: Window) {
+        val imm = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            ?: return
+        val leakViews = arrayOf("mLastSrvView", "mCurRootView", "mServedView", "mNextServedView")
+        for (leakView in leakViews) {
             try {
-                Field leakViewField = InputMethodManager.class.getDeclaredField(leakView);
-                if (!leakViewField.isAccessible()) {
-                    leakViewField.setAccessible(true);
+                val leakViewField = InputMethodManager::class.java.getDeclaredField(leakView)
+                if (!leakViewField.isAccessible) {
+                    leakViewField.isAccessible = true
                 }
-                Object obj = leakViewField.get(imm);
-                if (!(obj instanceof View)) {
-                    continue;
+                val obj = leakViewField[imm] as? View ?: continue
+                if (obj.rootView === window.decorView.rootView) {
+                    leakViewField[imm] = null
                 }
-                View view = (View) obj;
-                if (view.getRootView() == window.getDecorView().getRootView()) {
-                    leakViewField.set(imm, null);
-                }
-            } catch (Throwable ignore) {/**/}
+            } catch (ignore: Throwable) { /**/
+            }
         }
     }
 
-    private static int getStatusBarHeight() {
-        Resources resources = Get.getContext().getResources();
-        int resourceId = resources.getIdentifier("status_bar_height", "dimen", "android");
-        return resources.getDimensionPixelSize(resourceId);
-    }
 
-    private static int getNavBarHeight() {
-        Resources res = Get.getContext().getResources();
-        int resourceId = res.getIdentifier("navigation_bar_height", "dimen", "android");
-        if (resourceId != 0) {
-            return res.getDimensionPixelSize(resourceId);
-        } else {
-            return 0;
-        }
-    }
-
-//    ///////////////////////////////////////////////////////////////////////////
-//    // interface
-//    ///////////////////////////////////////////////////////////////////////////
-//    public interface OnSoftInputChangedListener {
-//        void onSoftInputChanged(int height);
-//    }
 }
-
