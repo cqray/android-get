@@ -3,13 +3,8 @@ package cn.cqray.android.util
 import android.app.Activity
 import android.content.Context
 import android.graphics.Rect
-import android.os.Build
-import android.os.Bundle
-import android.os.Handler
-import android.os.ResultReceiver
 import android.util.Log
 import android.view.View
-import android.view.ViewGroup
 import android.view.ViewTreeObserver.OnGlobalLayoutListener
 import android.view.Window
 import android.view.WindowManager
@@ -22,167 +17,125 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
 
 import cn.cqray.android.Get.context
+import cn.cqray.android.app.GetManager
 import kotlin.math.abs
 
-
+@Suppress("MemberVisibilityCanBePrivate", "Unused")
 object KeyboardUtils {
 
     /** 全局监听 TAG **/
-    private const val TAG_ON_LAYOUT_LISTENERS = -8
+    private const val TAG_ON_LAYOUT_LISTENERS = -7
 
     /** 未显示高度 TAG **/
-    private const val TAG_ON_INVISIBLE_HEIGHT = -9
+    private const val TAG_ON_INVISIBLE_HEIGHT = -8
 
-//    /** StatusBar高度 **/
-//    val statusBarHeight: Int
-//        get() {
-//            val resources = context.resources
-//            val resourceId = resources.getIdentifier("status_bar_height", "dimen", "android")
-//            return resources.getDimensionPixelSize(resourceId)
-//        }
-//
-//    /** NavigationBar高度 **/
-//    val navBarHeight: Int
-//        get() {
-//            val res = context.resources
-//            val resourceId = res.getIdentifier("navigation_bar_height", "dimen", "android")
-//            return if (resourceId != 0) res.getDimensionPixelSize(resourceId) else 0
-//        }
+    /** 软键盘管理器 **/
+    private val imm get() = context.getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
 
     /**
      * 显示软键盘
      */
     @JvmStatic
-    fun showSoftInput() {
-        val imm = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-        imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY)
-    }
+    fun showSoftInput() = showSoftInput(GetManager.topActivity)
 
     /**
      * 显示软键盘
      */
-    fun showSoftInput(activity: Activity?) {
-        if (activity == null) {
-            return
-        }
+    @JvmStatic
+    fun showSoftInput(activity: Activity?) = showSoftInput(activity?.window)
+
+    /**
+     * 显示软键盘
+     */
+    @JvmStatic
+    fun showSoftInput(window: Window?) = showSoftInput(window?.decorView)
+
+    /**
+     * 显示软键盘
+     * @param view 视图
+     */
+    @JvmStatic
+    fun showSoftInput(view: View?) = view?.let {
+        val activity = ViewUtils.getActivity(view)
         if (!isSoftInputVisible(activity)) {
-            toggleSoftInput()
-        }
-    }
-    /**
-     * 显示软键盘
-     * @param view The view
-     * @param flags Provides additional operating flags.  Currently may be
-     * 0 or have the [InputMethodManager.SHOW_IMPLICIT] bit set.
-     */
-    /**
-     * 显示软键盘
-     * @param view The view.
-     */
-    @JvmOverloads
-    fun showSoftInput(view: View, flags: Int = 0) {
-        val imm = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-            ?: return
-        view.isFocusable = true
-        view.isFocusableInTouchMode = true
-        view.requestFocus()
-        imm.showSoftInput(view, flags, object : ResultReceiver(Handler()) {
-            override fun onReceiveResult(resultCode: Int, resultData: Bundle) {
-                if (resultCode == InputMethodManager.RESULT_UNCHANGED_HIDDEN
-                    || resultCode == InputMethodManager.RESULT_HIDDEN
-                ) {
-                    toggleSoftInput()
-                }
+            if (view is EditText) {
+                it.isFocusable = true
+                it.isFocusableInTouchMode = true
+                it.requestFocus()
             }
-        })
-        imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY)
+            imm?.toggleSoftInput(InputMethodManager.SHOW_IMPLICIT, InputMethodManager.HIDE_IMPLICIT_ONLY)
+        }
     }
 
     /**
      * 隐藏软键盘
-     * @param activity The activity.
      */
-    fun hideSoftInput(activity: Activity?) {
-        if (activity == null) {
-            return
-        }
-        hideSoftInput(activity.window)
-    }
+    @JvmStatic
+    fun hideSoftInput() = hideSoftInput(GetManager.topActivity)
 
     /**
      * 隐藏软键盘
-     * @param window The window.
+     * @param activity [Activity]
      */
-    fun hideSoftInput(window: Window?) {
-        if (window == null) {
-            return
-        }
-        var view = window.currentFocus
-        if (view == null) {
-            val decorView = window.decorView
-            val focusView = decorView.findViewWithTag<View>("keyboardTagView")
-            if (focusView == null) {
-                view = EditText(window.context)
-                view.setTag("keyboardTagView")
-                (decorView as ViewGroup).addView(view, 0, 0)
-            } else {
-                view = focusView
-            }
-            view.requestFocus()
-        }
-        hideSoftInput(view)
-    }
+    @JvmStatic
+    fun hideSoftInput(activity: Activity?) = hideSoftInput(activity?.window)
 
     /**
      * 隐藏软键盘
-     * @param view The view.
+     * @param window 窗体
      */
-    fun hideSoftInput(view: View?) {
-        val imm = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-        if (imm == null || view == null) {
-            return
+    @JvmStatic
+    fun hideSoftInput(window: Window?) = window?.let { hideSoftInput(it.currentFocus) }
+
+    /**
+     * 隐藏软键盘
+     * @param view 视图
+     */
+    @JvmStatic
+    fun hideSoftInput(view: View?) = view?.windowToken?.let {
+        val activity = ViewUtils.getActivity(view)
+        if (isSoftInputVisible(activity)) {
+            imm?.hideSoftInputFromWindow(it, 0)
         }
-        imm.hideSoftInputFromWindow(view.windowToken, 0)
     }
 
     /**
      * 切换软键盘状态
      */
-    fun toggleSoftInput() {
-        val imm = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-            ?: return
-        imm.toggleSoftInput(0, 0)
-    }
+    @JvmStatic
+    fun toggleSoftInput() = imm?.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0)
 
     private var sDecorViewDelta = 0
 
-    /**
-     * Return whether soft input is visible.
-     *
-     * @param activity The activity.
-     * @return `true`: yes<br></br>`false`: no
-     */
-    fun isSoftInputVisible(activity: Activity): Boolean {
-        return getDecorViewInvisibleHeight(activity.window) > 0
-    }
+//    /**
+//     * Return whether soft input is visible.
+//     *
+//     * @param activity The activity.
+//     * @return `true`: yes<br></br>`false`: no
+//     */
+//    fun isSoftInputVisible(activity: Activity): Boolean {
+//        return getDecorViewInvisibleHeight(activity.window) > 0
+//    }
 
-    /**
-     * 获取DecorView未显示的高度
-     */
-    private fun getDecorViewInvisibleHeight(window: Window?): Int {
-        window?.let {
-            val outRect = Rect().also { rect -> window.decorView.getWindowVisibleDisplayFrame(rect) }
-//            it.decorView.getWindowVisibleDisplayFrame(outRect)
-//            Log.d("KeyboardUtils", "getDecorViewInvisibleHeight: " + (decorView.bottom - outRect.bottom))
-            val delta = abs(it.decorView.bottom - outRect.bottom)
-            if (delta <= ScreenUtils.navBarHeight + ScreenUtils.statusBarHeight) {
-                sDecorViewDelta = delta
-                return 0
-            }
-            delta - sDecorViewDelta
-        }
-        return 0
-    }
+    fun isSoftInputVisible(activity: Activity?) = getDecorViewInvisibleHeight(activity?.window) > 0
+
+//    /**
+//     * 获取DecorView未显示的高度
+//     */
+//    private fun getDecorViewInvisibleHeight(window: Window?): Int {
+//        window?.let {
+//            val outRect = Rect().also { rect -> window.decorView.getWindowVisibleDisplayFrame(rect) }
+////            it.decorView.getWindowVisibleDisplayFrame(outRect)
+////            Log.d("KeyboardUtils", "getDecorViewInvisibleHeight: " + (decorView.bottom - outRect.bottom))
+//            val delta = abs(it.decorView.bottom - outRect.bottom)
+//            if (delta <= ScreenUtils.navBarHeight + ScreenUtils.statusBarHeight) {
+//                sDecorViewDelta = delta
+//                return 0
+//            }
+//            delta - sDecorViewDelta
+//        }
+//        return 0
+//    }
 
     /**
      * 订阅软键盘高度变化
@@ -274,11 +227,25 @@ object KeyboardUtils {
         }
     }
 
-    private fun getContentViewInvisibleHeight(window: Window): Int {
-        val contentView = window.findViewById<View>(android.R.id.content) ?: return 0
-        val outRect = Rect().also { window.decorView.getWindowVisibleDisplayFrame(it) }
-        val delta = abs(contentView.bottom - outRect.bottom)
-        return if (delta <= ScreenUtils.statusBarHeight + ScreenUtils.navBarHeight) 0 else delta
+    private fun getDecorViewInvisibleHeight(window: Window?): Int {
+        return window?.let {
+            val contentView = it.findViewById<View>(android.R.id.content) ?: return 0
+            val outRect = Rect().also { rect -> it.decorView.getWindowVisibleDisplayFrame(rect) }
+            val delta = abs(it.decorView.height - outRect.height())
+            Log.e("数据", "${contentView.bottom}|${it.decorView.height}|${outRect.height()}|${outRect.bottom}|${delta}|${ScreenUtils.appScreenHeight}|${outRect.top}")
+            if (delta <= ScreenUtils.statusBarHeight + ScreenUtils.navBarHeight) 0 else delta
+        } ?: 0
+    }
+
+    private fun getContentViewInvisibleHeight(window: Window?): Int {
+//        com.blankj.utilcode.util.KeyboardUtils;
+        return window?.let {
+            val contentView = it.findViewById<View>(android.R.id.content) ?: return 0
+            val outRect = Rect().also { rect -> it.decorView.getWindowVisibleDisplayFrame(rect) }
+            val delta = abs(contentView.bottom - outRect.bottom)
+//            Log.e("数据", "${contentView.bottom}|${outRect.bottom}|${delta}")
+            if (delta <= ScreenUtils.statusBarHeight + ScreenUtils.navBarHeight) 0 else delta
+        } ?: 0
     }
 
     /**

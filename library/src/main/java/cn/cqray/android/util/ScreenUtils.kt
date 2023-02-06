@@ -12,8 +12,10 @@ import android.graphics.Rect
 import android.os.Build
 import android.view.*
 import androidx.annotation.RequiresApi
+import androidx.core.view.ViewCompat
 import cn.cqray.android.Get
 import cn.cqray.android.Get.context
+import cn.cqray.android.app.GetManager
 import com.blankj.utilcode.util.ScreenUtils
 
 @Suppress("MemberVisibilityCanBePrivate", "Unused")
@@ -26,7 +28,7 @@ object ScreenUtils {
     val display: Display?
         get() {
             return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                context.display
+                GetManager.topActivity?.display
             } else {
                 val vm = context.getSystemService(Context.WINDOW_SERVICE) as? WindowManager
                 @Suppress("Deprecation")
@@ -178,15 +180,20 @@ object ScreenUtils {
      */
     fun isFullScreen(window: Window?): Boolean {
         return window?.let {
+
+            val controller = ViewCompat.getWindowInsetsController(window.decorView)
+//            controller.show()
+//            WindowInsets.Type.ime()
 //            return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
 //                val softInputMode = it.attributes.softInputMode
-//                isVisibleInsetsType(WindowInsets.Type.statusBars(), softInputMode)
+//                !isVisibleInsetsType(WindowInsets.Type.statusBars(), softInputMode)
 //            } else {
 //                @Suppress("Deprecation")
 //                val fullFlag = WindowManager.LayoutParams.FLAG_FULLSCREEN
 //                it.attributes.flags and fullFlag == fullFlag
 //            }
-            it.insetsController?.hide()
+//            it.insetsController?.hide()
+
 
             @Suppress("Deprecation")
             val fullFlag = WindowManager.LayoutParams.FLAG_FULLSCREEN
