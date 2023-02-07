@@ -7,7 +7,6 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.os.Message
-import android.view.WindowManager
 
 import androidx.fragment.app.FragmentActivity
 import cn.cqray.android.Get
@@ -17,30 +16,29 @@ import cn.cqray.android.lifecycle.GetFragmentLifecycleCallbacks
 import cn.cqray.android.log.GetLog
 import cn.cqray.android.util.ActivityUtils
 import cn.cqray.android.util.KeyboardUtils
-import cn.cqray.android.util.ThreadUtils
 import java.util.*
+import java.util.concurrent.atomic.AtomicBoolean
+import java.util.concurrent.atomic.AtomicInteger
+import java.util.concurrent.atomic.AtomicReference
 
 /**
  * [Get]生命周期管理器
  * @author Cqray
  */
-@Suppress("unused", "MemberVisibilityCanBePrivate")
+@Suppress("MemberVisibilityCanBePrivate", "Unused")
 object GetManager {
 
-    /** 通用[Handler]what值 **/
-    private const val normalHandlerWhat = 0
-
     /** 处于前台的Activity数量  */
-    private var foregroundCount = 0
+    private val foregroundCount = AtomicInteger(0)
 
     /** 配置Configuration的Activity数量  */
-    private var configurationCount = 0
+    private val configurationCount = AtomicInteger(0)
 
     /** 是否处于后台  */
-    private var isBackground = false
+    private val isBackground = AtomicBoolean(false)
 
     /** Application实例  */
-    private var application: Application? = null
+    private val application = AtomicReference<Application?>()
 
     /** Activity列表 **/
     private val activityList = LinkedList<Activity>()
@@ -57,18 +55,18 @@ object GetManager {
 
     @JvmStatic
     fun init(application: Application?) {
-        if (application == null) return
-        this.application = if (this.application == null) application else return
-        registerActivityLifecycleCallbacks()
+        application?.let {
+            if (this.application.get() == null) {
+                this.application.set(it)
+                registerActivityLifecycleCallbacks()
+            }
+        }
     }
 
+    /**
+     * 顶部[Activity]
+     */
     @JvmStatic
-    @Suppress("unused")
-    val isAppForeground: Boolean
-        get() = foregroundCount <= 0
-
-    @JvmStatic
-    @Suppress("unused")
     val topActivity: Activity?
         get() {
             for (activity in activityList) {
@@ -76,11 +74,9 @@ object GetManager {
                 return activity
             }
             return null
-            //throw IllegalStateException("Please make sure use top activity after app is created.")
         }
 
     @JvmStatic
-    @Suppress("unused")
     fun requireActivity(): Activity {
         val activity = topActivity
         if (activity != null) return activity
@@ -88,12 +84,14 @@ object GetManager {
         throw IllegalStateException("Please make sure use top activity after app is created.")
     }
 
+    /** 应用是否位于前台 **/
+    fun isForeground(): Boolean = foregroundCount.get() > 0
+
     /**
      * 添加App生命周期回调
      * @param callbacks 回调[GetAppLifecycleCallbacks]
      */
     @JvmStatic
-    @Suppress("unused")
     fun addAppLifecycleCallbacks(callbacks: GetAppLifecycleCallbacks) =
         appLifecycleCallbacks.add(callbacks)
 
@@ -102,14 +100,13 @@ object GetManager {
      * @param callbacks 回调[GetActivityLifecycleCallbacks]
      */
     @JvmStatic
-    @Suppress("unused")
     fun addActivityLifecycleCallbacks(callbacks: GetActivityLifecycleCallbacks) =
-        application?.registerActivityLifecycleCallbacks(callbacks)
+        application.get()?.registerActivityLifecycleCallbacks(callbacks)
 
     /** 注册Activity生命周期回调 **/
     private fun registerActivityLifecycleCallbacks() {
         // 注册生命周期回调
-        application!!.registerActivityLifecycleCallbacks(object : GetActivityLifecycleCallbacks {
+        application.get()?.registerActivityLifecycleCallbacks(object : GetActivityLifecycleCallbacks {
 
             override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
                 if (activityList.isEmpty()) {
@@ -120,6 +117,7 @@ object GetManager {
 //                LanguageUtils.applyLanguage(activity)
 //                UtilsActivityLifecycleImpl.setAnimatorsEnabled()
 
+                // 设置为栈顶Activity
                 setTopActivity(activity)
                 // 修复Android 8.0 固定竖屏的问题
                 ActivityUtils.hookOrientation(activity)
@@ -144,13 +142,13 @@ object GetManager {
             }
 
             override fun onActivityStarted(activity: Activity) {
-                if (!isBackground) {
+                if (!isBackground.get()) {
                     setTopActivity(activity)
                 }
-                if (configurationCount < 0) {
-                    ++configurationCount
+                if (configurationCount.get() < 0) {
+                    configurationCount.incrementAndGet()
                 } else {
-                    ++foregroundCount
+                    foregroundCount.incrementAndGet()
                 }
                 // 打印日志
                 printActivityStateLog(activity, "onActivityStarted")
@@ -158,11 +156,11 @@ object GetManager {
 
             override fun onActivityResumed(activity: Activity) {
                 setTopActivity(activity)
-                if (isBackground) {
-                    isBackground = false
+                if (isBackground.get()) {
+                    isBackground.set(false)
                     onForeground(activity)
                 }
-                processHideSoftInputOnActivityDestroy(activity, false)
+//                processHideSoftInputOnActivityDestroy(activity, false)
                 // 打印日志
                 printActivityStateLog(activity, "onActivityResumed")
             }
@@ -174,15 +172,15 @@ object GetManager {
 
             override fun onActivityStopped(activity: Activity) {
                 if (activity.isChangingConfigurations) {
-                    --configurationCount
+                    configurationCount.decrementAndGet()
                 } else {
-                    --foregroundCount
-                    if (foregroundCount <= 0) {
-                        isBackground = true
+                    foregroundCount.decrementAndGet()
+                    if (foregroundCount.get() <= 0) {
+                        isBackground.set(true)
                         onBackground(activity)
                     }
                 }
-                processHideSoftInputOnActivityDestroy(activity, true)
+                // processHideSoftInputOnActivityDestroy(activity, true)
                 // 打印日志
                 printActivityStateLog(activity, "onActivityStopped")
             }
@@ -190,12 +188,12 @@ object GetManager {
             override fun onActivityDestroyed(activity: Activity) {
                 // 打印日志
                 printActivityStateLog(activity, "onActivityDestroyed")
+                // 修复软键盘输入泄漏问题
+                KeyboardUtils.fixSoftInputLeaks(activity)
                 // 延时处理，主要是适配程序关闭的生命周期
                 runOnUiThreadDelayed({
                     // 移除Activity
                     activityList.remove(activity)
-                    // 修复软键盘输入泄漏问题
-                    KeyboardUtils.fixSoftInputLeaks(activity)
                     // 没有任何Activity，说明APP关闭
                     if (activityList.isEmpty()) onTerminated()
                 }, 0)
@@ -240,32 +238,25 @@ object GetManager {
         }
     }
 
-    /**
-     * To solve close keyboard when activity onDestroy.
-     * The preActivity set windowSoftInputMode will prevent
-     * the keyboard from closing when curActivity onDestroy.
-     */
-    private fun processHideSoftInputOnActivityDestroy(activity: Activity, isSave: Boolean) {
-        try {
-            if (isSave) {
-                val window = activity.window
-                val attrs = window.attributes
-                val softInputMode = attrs.softInputMode
-                window.decorView.setTag(-123, softInputMode)
-                window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN)
-            } else {
-                val tag = activity.window.decorView.getTag(-123) as? Int ?: return
-
-                ThreadUtils.runOnUiThreadDelayed({
-                    try {
-                        activity.window?.setSoftInputMode(tag)
-                    } catch (ignore: Exception) {
-                    }
-                }, 100)
-            }
-        } catch (ignore: Exception) {
-        }
-    }
+//    /**
+//     * To solve close keyboard when activity onDestroy.
+//     * The preActivity set windowSoftInputMode will prevent
+//     * the keyboard from closing when curActivity onDestroy.
+//     */
+//    private fun processHideSoftInputOnActivityDestroy(activity: Activity, isSave: Boolean) {
+//        runCatching {
+//            if (isSave) {
+//                val window = activity.window
+//                val attrs = window.attributes
+//                val softInputMode = attrs.softInputMode
+//                window.decorView.setTag(-123, softInputMode)
+//                window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN)
+//            } else {
+//                val tag = activity.window.decorView.getTag(-123) as? Int ?: return
+//                runOnUiThreadDelayed({ runCatching { activity.window?.setSoftInputMode(tag) } }, 100)
+//            }
+//        }
+//    }
 
     /**
      * 程序进入前台回调
@@ -298,7 +289,7 @@ object GetManager {
      */
     private fun onTerminated() {
         appLifecycleCallbacks.forEach { it.onTerminated() }
-        handler.removeMessages(normalHandlerWhat)
+        handler.removeMessages(0)
         GetLog.d(this, "Application is terminated.")
     }
 
@@ -310,7 +301,7 @@ object GetManager {
     @JvmStatic
     fun runOnUiThreadDelayed(runnable: Runnable, delayed: Int? = null) {
         val message = Message.obtain()
-        message.what = normalHandlerWhat
+        message.what = 0
         message.obj = runnable
         handler.sendMessageDelayed(message, (delayed ?: 0).toLong())
     }

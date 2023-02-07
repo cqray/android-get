@@ -2,6 +2,7 @@ package cn.cqray.android.util
 
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.app.Application
 import android.content.ComponentName
 import android.content.Context
 import android.content.ContextWrapper
@@ -13,23 +14,64 @@ import android.content.res.TypedArray
 import android.graphics.drawable.Drawable
 import android.os.Build
 import android.os.Bundle
-import android.view.View
-import androidx.core.app.ActivityOptionsCompat
-import androidx.core.util.Pair
-import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentActivity
 import cn.cqray.android.Get
 import cn.cqray.android.Get.context
 import cn.cqray.android.app.GetManager
+import cn.cqray.android.app.GetNavProvider
+import cn.cqray.android.lifecycle.GetActivityLifecycleCallbacks
+import cn.cqray.android.lifecycle.GetAppLifecycleCallbacks
+import cn.cqray.android.lifecycle.GetFragmentLifecycleCallbacks
+import java.util.*
+import java.util.concurrent.atomic.AtomicReference
 
+/**
+ * [Activity]工具类
+ * @author Cqray
+ */
 @Suppress("unused", "MemberVisibilityCanBePrivate")
 object ActivityUtils {
 
+    /** Activity列表 **/
+    private val activityList = LinkedList<Activity>()
 
-//    fun start(intent: Intent) {
-//
-//        ActivityUtils.startActivity()
-//
-//    }
+    /** 顶部Activity **/
+    private val topActivity = AtomicReference<Activity?>()
+
+    /** 应用实例 **/
+    private val application = AtomicReference<Application?>()
+
+    /** App生命周期回调 **/
+    private val appLifecycleCallbacks = ArrayList<GetAppLifecycleCallbacks>()
+
+
+    /**
+     * 设置栈顶Activity
+     * @param activity [Activity]
+     */
+    private fun setTopActivity(activity: Activity) {
+        if (activityList.contains(activity)) {
+            if (activityList.first != activity) {
+                activityList.remove(activity)
+                activityList.addFirst(activity)
+            }
+        } else {
+            activityList.addFirst(activity)
+        }
+    }
+
+
+
+    /**
+     * 获取顶部[Activity]
+     */
+    fun getTopActivity(): Activity? {
+        for (activity in activityList) {
+            if (!isActivityAlive(activity)) continue
+            return activity
+        }
+        return null
+    }
 
 
     fun toActivity(intent: Intent) = toActivity(intent, null as Bundle?)
@@ -247,7 +289,6 @@ object ActivityUtils {
     //    public static void onDestroyed(FragmentActivity activity, Function0<FragmentActivity> function) {
     //        activity.getLifecycle().addObserver();
     //    }
-
 
 
 //    private val topActivityOrApp: Context

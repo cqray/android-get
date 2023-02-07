@@ -1,138 +1,138 @@
-package cn.cqray.android.util;
+package cn.cqray.android.util
 
-import android.app.Activity;
-import android.content.Context;
-import android.content.ContextWrapper;
-import android.content.res.ColorStateList;
-import android.content.res.TypedArray;
-import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.Drawable;
-import android.os.Build;
-import android.util.TypedValue;
-import android.view.View;
-import android.view.ViewGroup;
+import android.R
+import android.app.Activity
+import android.content.Context
+import android.content.ContextWrapper
+import android.content.res.ColorStateList
+import android.graphics.drawable.ColorDrawable
+import android.graphics.drawable.Drawable
+import android.os.Build
+import android.view.View
+import androidx.annotation.LayoutRes
+import androidx.core.view.ViewCompat
+import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.SimpleItemAnimator
+import androidx.viewpager2.widget.ViewPager2
+import com.google.android.material.shape.MaterialShapeDrawable
+import com.google.android.material.shape.MaterialShapeUtils
+import java.util.concurrent.atomic.AtomicReference
 
-import androidx.annotation.LayoutRes;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.core.view.ViewCompat;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.recyclerview.widget.SimpleItemAnimator;
-import androidx.viewpager2.widget.ViewPager2;
+object ViewUtils {
+    //    /** 设置Margin，默认单位DP **/
+    //    public static void setMargin(View view, float margin) {
+    //        setMargin(view, margin, TypedValue.COMPLEX_UNIT_DIP);
+    //    }
+    //
+    //    public static void setMargin(View view, float margin, int unit) {
+    //        setMargin(view, margin, margin, margin, margin, unit);
+    //    }
+    //    /** 设置Margin，默认单位DP **/
+    //    public static void setMargin(View view, float left, float top, float right, float bottom) {
+    //        setMargin(view, left, top, right, bottom, TypedValue.COMPLEX_UNIT_DIP);
+    //    }
+    //    public static void setMargin(View view, float left, float top, float right, float bottom, int unit) {
+    //        if (view != null) {
+    //            ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) view.getLayoutParams();
+    //            params.leftMargin = (int) Sizes.applyDimension(left, unit);
+    //            params.topMargin = (int) Sizes.applyDimension(top, unit);
+    //            params.rightMargin = (int) Sizes.applyDimension(right, unit);
+    //            params.bottomMargin = (int) Sizes.applyDimension(bottom, unit);
+    //            view.requestLayout();
+    //        }
+    //    }
 
-import com.google.android.material.shape.MaterialShapeDrawable;
-import com.google.android.material.shape.MaterialShapeUtils;
 
-public class ViewUtils {
-
-//    /** 设置Margin，默认单位DP **/
-//    public static void setMargin(View view, float margin) {
-//        setMargin(view, margin, TypedValue.COMPLEX_UNIT_DIP);
-//    }
-//
-//    public static void setMargin(View view, float margin, int unit) {
-//        setMargin(view, margin, margin, margin, margin, unit);
-//    }
-
-//    /** 设置Margin，默认单位DP **/
-//    public static void setMargin(View view, float left, float top, float right, float bottom) {
-//        setMargin(view, left, top, right, bottom, TypedValue.COMPLEX_UNIT_DIP);
-//    }
-
-//    public static void setMargin(View view, float left, float top, float right, float bottom, int unit) {
-//        if (view != null) {
-//            ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) view.getLayoutParams();
-//            params.leftMargin = (int) Sizes.applyDimension(left, unit);
-//            params.topMargin = (int) Sizes.applyDimension(top, unit);
-//            params.rightMargin = (int) Sizes.applyDimension(right, unit);
-//            params.bottomMargin = (int) Sizes.applyDimension(bottom, unit);
-//            view.requestLayout();
-//        }
-//    }
-
-    public static void setRippleBackground(@NonNull View view, @Nullable Boolean rippleEnable) {
-        Context context = view.getContext();
-        boolean ripple = rippleEnable == null || rippleEnable;
+    fun setRippleBackground(view: View, rippleEnable: Boolean?) {
+        val context = view.context
+        val ripple = rippleEnable == null || rippleEnable
         if (ripple) {
-            Drawable drawable = null;
+            var drawable: Drawable? = null
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                TypedArray ta = context.obtainStyledAttributes(new int[]{
-                        android.R.attr.actionBarItemBackground});
-                drawable = ta.getDrawable(0);
-                ta.recycle();
+                val ta = context.obtainStyledAttributes(
+                    intArrayOf(
+                        R.attr.actionBarItemBackground
+                    )
+                )
+                drawable = ta.getDrawable(0)
+                ta.recycle()
             }
-            ViewCompat.setBackground(view, drawable);
+            ViewCompat.setBackground(view, drawable)
         }
-//        else {
+        //        else {
 //            ViewCompat.setBackground(view, null);
 //        }
     }
 
-    public static void setElevation(@NonNull View view, float elevation) {
+    fun setElevation(view: View, elevation: Float) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            view.setElevation(elevation);
+            view.elevation = elevation
         }
-        Drawable background = view.getBackground();
-        if (background instanceof ColorDrawable) {
-            ViewCompat.setBackground(view, createMaterialShapeDrawableBackground(view.getContext(), background));
+        val background = view.background
+        if (background is ColorDrawable) {
+            ViewCompat.setBackground(view, createMaterialShapeDrawableBackground(view.context, background))
         }
-
-        MaterialShapeUtils.setParentAbsoluteElevation(view);
-        MaterialShapeUtils.setElevation(view, elevation);
+        MaterialShapeUtils.setParentAbsoluteElevation(view)
+        MaterialShapeUtils.setElevation(view, elevation)
     }
 
-    public static void setOverScrollMode(View view, int overScrollMode) {
-        if (view instanceof ViewPager2) {
-            View child = ((ViewPager2) view).getChildAt(0);
-            if (child instanceof RecyclerView) {
-                child.setOverScrollMode(overScrollMode);
-            }
-        } else if (view != null) {
-            view.setOverScrollMode(overScrollMode);
+    fun setOverScrollMode(view: View?, overScrollMode: Int) {
+        runCatching {
+            if (view !is ViewPager2) view?.overScrollMode = overScrollMode
+            else view.getChildAt(0)?.overScrollMode = overScrollMode
         }
     }
 
-    @NonNull
-    private static MaterialShapeDrawable createMaterialShapeDrawableBackground(Context context, Drawable background) {
-        MaterialShapeDrawable materialShapeDrawable = new MaterialShapeDrawable();
-        if (background instanceof ColorDrawable) {
-            materialShapeDrawable.setFillColor(
-                    ColorStateList.valueOf(((ColorDrawable) background).getColor()));
+    private fun createMaterialShapeDrawableBackground(context: Context, background: Drawable): MaterialShapeDrawable {
+        val materialShapeDrawable = MaterialShapeDrawable()
+        if (background is ColorDrawable) {
+            materialShapeDrawable.fillColor = ColorStateList.valueOf(background.color)
         }
-        materialShapeDrawable.initializeElevationOverlay(context);
-        return materialShapeDrawable;
+        materialShapeDrawable.initializeElevationOverlay(context)
+        return materialShapeDrawable
     }
 
-    public static void closeRvAnimator(RecyclerView rv) {
+    fun closeRvAnimator(rv: RecyclerView?) {
         if (rv != null) {
-            RecyclerView.ItemAnimator animator = rv.getItemAnimator();
+            val animator = rv.itemAnimator
             if (animator != null) {
-                animator.setAddDuration(0);
-                animator.setChangeDuration(0);
-                animator.setMoveDuration(0);
-                animator.setRemoveDuration(0);
+                animator.addDuration = 0
+                animator.changeDuration = 0
+                animator.moveDuration = 0
+                animator.removeDuration = 0
             }
-            if (animator instanceof SimpleItemAnimator) {
-                ((SimpleItemAnimator) animator).setSupportsChangeAnimations(false);
+            if (animator is SimpleItemAnimator) {
+                animator.supportsChangeAnimations = false
             }
         }
     }
 
-    /** 通过View获取Activity **/
-    @Nullable
-    public static Activity getActivity(@NonNull View view) {
-        Context context = view.getContext();
-        while (context instanceof ContextWrapper) {
-            if (context instanceof Activity) {
-                return (Activity) context;
+    /**
+     * View转化为Activity
+     * @param view 视图
+     */
+    @JvmStatic
+    fun view2Activity(view: View?): Activity? {
+        return view?.let {
+            val context = AtomicReference(view.context)
+            while (context.get() is ContextWrapper) {
+                val tmp = context.get() as ContextWrapper
+                if (tmp is Activity) return tmp
+                else context.set(tmp.baseContext)
             }
-            context = ((ContextWrapper) context).getBaseContext();
+            null
         }
-        return null;
     }
 
-    /** 渲染界面 **/
-    public static View inflate(@LayoutRes int resId) {
-        return ContextUtils.inflate(resId);
+    /**
+     * View转Bitmap
+     * @param view 视图
+     */
+    @JvmStatic
+    fun view2Bitmap(view: View?) = ImageUtils.view2Bitmap(view)
+
+    /** 渲染界面  */
+    fun inflate(@LayoutRes resId: Int): View {
+        return ContextUtils.inflate(resId)
     }
 }

@@ -10,7 +10,7 @@ android {
         applicationId "cn.cqray.demo.android"
         minSdkVersion 17
         //noinspection ExpiredTargetSdkVersion
-        targetSdkVersion 31
+        targetSdkVersion 33
         versionCode 1
         versionName "1.0"
 

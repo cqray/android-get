@@ -4,7 +4,7 @@ import androidx.annotation.ColorRes
 import cn.cqray.android.R
 import cn.cqray.android.util.ContextUtils.getColor
 
-object Colors {
+object ColorUtils {
 
     @JvmStatic()
     fun get(@ColorRes id: Int) = getColor(id)

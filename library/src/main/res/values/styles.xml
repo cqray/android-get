@@ -1,6 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- 默认横向动画 -->
+    <!-- 从名为A的activity跳转到B，B也可以跳转到C，其中转场动画设置在B上。 -->
+    <style name="DefaultHorizontalAnim">
+        <!-- A跳转B时，B的动画 -->
+        <item name="android:activityOpenEnterAnimation">@anim/_starter_horizontal_from_right</item>
+        <!-- A跳转B时，A的动画 -->
+        <item name="android:activityOpenExitAnimation">@anim/_starter_horizontal_to_left</item>
+        <!-- A跳转到B后，后退到A时，A的进入动画 -->
+        <item name="android:activityCloseEnterAnimation">@anim/_starter_horizontal_from_left</item>
+        <!-- A跳转到B后，后退到A时，B的退出动画 -->
+        <item name="android:activityCloseExitAnimation">@anim/_starter_horizontal_to_right</item>
+    </style>
 
+    <!-- 默认纵向动画 -->
+    <!-- 从名为A的activity跳转到B，B也可以跳转到C，其中转场动画设置在B上。 -->
+    <style name="DefaultVerticalAnim">
+        <!-- A跳转B时，B的动画 -->
+        <item name="android:activityOpenEnterAnimation">@anim/_starter_vertical_to_top</item>
+        <!-- A跳转B时，A的动画 -->
+        <item name="android:activityOpenExitAnimation">@anim/_starter_no_anim</item>
+        <!-- A跳转到B后，后退到A时，A的进入动画 -->
+        <item name="android:activityCloseEnterAnimation">@anim/_starter_no_anim</item>
+        <!-- A跳转到B后，后退到A时，B的退出动画 -->
+        <item name="android:activityCloseExitAnimation">@anim/_starter_vertical_from_top</item>
+    </style>
+
+    <!-- 主题 -->
+    <style name="GetTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:windowAnimationStyle">@style/DefaultVerticalAnim</item>
+        <item name="android:windowIsTranslucent">false</item>
+        <item name="android:windowBackground">@color/background</item>
+        <item name="android:windowDisablePreview">true</item>
+    </style>
 
     <style name="TextAppearance.Active" parent="TextAppearance.AppCompat">
         <item name="android:textSize">@dimen/caption</item>

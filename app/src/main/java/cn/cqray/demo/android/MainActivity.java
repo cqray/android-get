@@ -15,6 +15,7 @@ import cn.cqray.android.app.GetIntent;
 import cn.cqray.android.multi.GetMultiItem;
 import cn.cqray.android.multi.GetMultiActivity;
 import cn.cqray.android.object.VarString;
+import cn.cqray.android.util.ScreenUtils;
 import cn.hutool.core.util.HexUtil;
 
 public class MainActivity extends GetMultiActivity {
@@ -23,6 +24,7 @@ public class MainActivity extends GetMultiActivity {
     @Override
     public void onCreating(@Nullable Bundle savedInstanceState) {
         super.onCreating(savedInstanceState);
+
 
 
 //        VarString string = new VarString("123");
