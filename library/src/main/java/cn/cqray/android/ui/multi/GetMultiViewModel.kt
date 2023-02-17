@@ -1,5 +1,6 @@
 package cn.cqray.android.ui.multi
 
+import android.view.ViewGroup
 import android.widget.FrameLayout
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.LifecycleOwner
@@ -95,6 +96,8 @@ internal class GetMultiViewModel(
      * 改变TabLayout位置
      */
     private fun changeTabLocation(tabLayout: CommonTabLayout? = null) {
+        // 从容器中移除
+        (multiTab.parent as ViewGroup).removeView(multiTab)
         // 底部
         binding.multiBottomNav.let {
             it.removeAllViews()

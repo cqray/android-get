@@ -35,7 +35,10 @@ import kotlin.math.max
  * 标题栏
  * @author Cqray
  */
-@Suppress("unused", "MemberVisibilityCanBePrivate")
+@Suppress(
+    "MemberVisibilityCanBePrivate",
+    "Unused",
+)
 class Toolbar @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,

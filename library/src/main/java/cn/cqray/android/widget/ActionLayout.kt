@@ -28,7 +28,11 @@ import cn.cqray.android.util.ViewUtils
  * Action布局控件
  * @author Cqray
  */
-@Suppress("unchecked_cast", "unused", "MemberVisibilityCanBePrivate")
+@Suppress(
+    "MemberVisibilityCanBePrivate",
+    "Unchecked_cast",
+    "Unused",
+)
 class ActionLayout @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,

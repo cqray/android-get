@@ -18,7 +18,7 @@ import cn.cqray.android.util.ContextUtils
 class ToolbarInit {
 
     /** 背景 **/
-    val background: Drawable? = null
+    var background: Drawable? = null
 
     /** 是否启用水波纹 **/
     var ripple: Boolean? = null
