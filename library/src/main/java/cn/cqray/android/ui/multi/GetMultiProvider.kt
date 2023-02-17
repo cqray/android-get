@@ -17,6 +17,7 @@ import cn.cqray.android.app.GetProvider
 @JvmDefaultWithoutCompatibility
 interface GetMultiProvider : GetProvider {
 
+    /** 委托实例 **/
     val multiDelegate: GetMultiDelegate
         get() = GetDelegate.get(this, GetMultiProvider::class.java)
 

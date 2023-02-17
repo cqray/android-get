@@ -614,9 +614,7 @@ class GetToolbar @JvmOverloads constructor(
             materialShapeDrawable.fillColor = ColorStateList.valueOf(background.color)
             materialShapeDrawable.initializeElevationOverlay(context)
             materialShapeDrawable
-        } else {
-            background
-        }
+        } else background
     }
 
     private companion object {

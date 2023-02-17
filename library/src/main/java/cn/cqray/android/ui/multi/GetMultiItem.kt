@@ -11,7 +11,7 @@ import java.util.ArrayList
  * Tab项
  * @author Cqray
  */
-@Suppress("unused")
+@Suppress("Unused")
 class GetMultiItem(
     /** 目标Fragment的[Class] **/
     @Suppress val targetClass: Class<out Fragment>,

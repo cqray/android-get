@@ -2,31 +2,81 @@ package cn.cqray.android.ui.multi
 
 import android.annotation.SuppressLint
 import android.os.Bundle
-import android.util.SparseArray
+import android.util.Log
 import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentManager
+import androidx.lifecycle.DefaultLifecycleObserver
+import androidx.lifecycle.LifecycleOwner
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
-import cn.cqray.android.Get
 import cn.cqray.android.app.GetDelegate
 import cn.cqray.android.log.GetLogLevel
 import cn.cqray.android.util.ContextUtils
+import cn.cqray.android.util.ViewUtils
+import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.ConcurrentMap
 
+/**
+ * 多Fragment委托
+ * @author LeiJue
+ */
 @Suppress("MemberVisibilityCanBePrivate")
 class GetMultiDelegate(
     provider: GetMultiProvider
 ) : GetDelegate<GetMultiProvider>(provider) {
 
-    /** 监听回调集合 **/
-    private val callbackArrays = SparseArray<ViewPager2.OnPageChangeCallback>()
+//    /** 监听回调集合 **/
+//    private val callbackArrays = SparseArray<ViewPager2.OnPageChangeCallback>()
 
+    init {
+        val owner = provider.getLifecycleOwner()
+        owner.lifecycle.addObserver(object: DefaultLifecycleObserver {
+
+            override fun onResume(owner: LifecycleOwner) {
+                super.onResume(owner)
+                vpAdapters.entries.forEach { entry ->
+                    entry.value?.let { entry.key.adapter = it }
+                }
+            }
+
+            override fun onPause(owner: LifecycleOwner) {
+                super.onPause(owner)
+                vpCallbacks.keys.forEach {
+                    vpAdapters[it] = it.adapter as? GetMultiFragmentAdapter
+                    it.adapter = null
+                }
+            }
+        })
+
+    }
+
+    private val vpCallbacks = HashMap<ViewPager2, ViewPager2.OnPageChangeCallback>()
+
+    private val vpAdapters = ConcurrentHashMap<ViewPager2, GetMultiFragmentAdapter?>()
+
+//    private val vpAdapter = HashMap<ViewPager2>
+//
     /** [FragmentManager]实例 **/
     private val fragmentManager: FragmentManager
         get() = if (provider is FragmentActivity) {
             provider.supportFragmentManager
         } else (provider as Fragment).childFragmentManager
+
+    override fun onCleared() {
+        super.onCleared()
+        vpCallbacks.keys.forEach {
+//            runCatching {
+//                val method = it.javaClass.getDeclaredMethod("gcFragments")
+//                method.invoke(it)
+//            }
+            it.adapter = null
+
+        }
+        vpCallbacks.clear()
+        Log.e("数据", "我来饿了")
+    }
 
     /**
      * 获取对应[ViewPager2]容器下的Fragment列表
@@ -44,9 +94,10 @@ class GetMultiDelegate(
      */
     fun instantiateFragment(target: Class<out Fragment>, arguments: Bundle? = null): Fragment {
         val name = target.name
-        val classLoader = Get.context.classLoader
-        val fragmentFactory = fragmentManager.fragmentFactory
-        val fragment = fragmentFactory.instantiate(classLoader, name)
+//        val classLoader = Get.context.classLoader
+//        val fragmentFactory = fragmentManager.fragmentFactory
+//        val fragment = fragmentFactory.instantiate(classLoader, name)
+        val fragment = target.newInstance()
         fragment.arguments = arguments ?: Bundle()
         return fragment
     }
@@ -87,7 +138,7 @@ class GetMultiDelegate(
      */
     private fun registerOnPageChangeCallback(vp: ViewPager2) {
         // 从缓存中获取回调
-        val cacheCallback = callbackArrays.get(vp.hashCode())
+        val cacheCallback = vpCallbacks[vp]
         // 不存在回调说明未注册
         if (cacheCallback == null) {
             // 初始化回调函数
@@ -109,7 +160,7 @@ class GetMultiDelegate(
             // 注册监听
             vp.registerOnPageChangeCallback(callback)
             // 存入缓存
-            callbackArrays.put(vp.hashCode(), callback)
+            vpCallbacks[vp] = callback
         }
     }
 
@@ -122,8 +173,12 @@ class GetMultiDelegate(
         registerFragmentAdapter(vp)
         // 注册回调监听
         registerOnPageChangeCallback(vp)
+        // 获取内置RecyclerView
+        val recyclerView = (vp.getChildAt(0) as? RecyclerView)
         // 关闭水波纹
-        (vp.getChildAt(0) as? RecyclerView)?.overScrollMode = View.OVER_SCROLL_NEVER
+        recyclerView?.overScrollMode = View.OVER_SCROLL_NEVER
+        // 关闭动画
+        ViewUtils.closeRvAnimator(recyclerView)
     }
 
     /**

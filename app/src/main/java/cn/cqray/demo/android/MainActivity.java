@@ -38,7 +38,7 @@ public class MainActivity extends GetMultiActivity {
 
 //        new GetFragment();
 
-
+        setTabAtTop(false);
         loadMultiFragments(
 //                new GetMultiItem(MainFragment.class, "我的"),
 //                new GetMultiItem(MainFragment.class, "你的"),
@@ -56,8 +56,12 @@ public class MainActivity extends GetMultiActivity {
 
 
 
-    }
 
+
+
+
+
+    }
 
     @Override
     public void onFragmentPageSelected(@NotNull ViewPager2 vp, int position) {

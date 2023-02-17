@@ -1,8 +1,9 @@
 package cn.cqray.android.ui.multi
 
-import android.view.ViewGroup
+import android.view.View
 import android.widget.FrameLayout
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.viewpager2.widget.ViewPager2
 import cn.cqray.android.databinding.GetMultiLayoutBinding
@@ -20,7 +21,10 @@ import java.util.concurrent.atomic.AtomicBoolean
  * 多Fragment控制ViewModel
  * @author Cqray
  */
-@Suppress("MemberVisibilityCanBePrivate")
+@Suppress(
+    "MemberVisibilityCanBePrivate",
+    "Unchecked_cast"
+)
 internal class GetMultiViewModel(
     lifecycleOwner: LifecycleOwner
 ) : GetViewModel(lifecycleOwner) {
@@ -36,6 +40,12 @@ internal class GetMultiViewModel(
                 )
             )
         }
+        lifecycleOwner.lifecycle.addObserver(object : DefaultLifecycleObserver {
+            override fun onCreate(owner: LifecycleOwner) {
+                super.onCreate(owner)
+                changeTabLocation()
+            }
+        })
     }
 
     /** ViewBinding **/
@@ -45,13 +55,13 @@ internal class GetMultiViewModel(
     val multiView by lazy { binding.root }
 
     /** 内容布局 **/
-    val multiContent : FrameLayout by lazy { binding.multiContent }
+    val multiContent: FrameLayout by lazy { binding.multiContent }
 
     /** 顶部[NavigationView] **/
     val multiTopNav: NavigationView by lazy { binding.multiTopNav }
 
     /** 底部[NavigationView] **/
-    val multiBottomNav  : NavigationView by lazy { binding.multiBottomNav }
+    val multiBottomNav: NavigationView by lazy { binding.multiBottomNav }
 
     /** [ViewPager2]组件 **/
     val multiPager by lazy {
@@ -75,13 +85,11 @@ internal class GetMultiViewModel(
 
                 override fun onTabReselect(position: Int) {}
             })
-            // 赋值
-            changeTabLocation(it)
         }
     }
 
     /** TabLayout是否在顶部 **/
-    private val tabAtTop = AtomicBoolean(false)
+    private var tabAtTop = AtomicBoolean(false)
 
     /** 多界面管理实例 **/
     private val delegate: GetMultiDelegate by lazy { (lifecycleOwner as GetMultiProvider).multiDelegate }
@@ -95,22 +103,34 @@ internal class GetMultiViewModel(
     /**
      * 改变TabLayout位置
      */
-    private fun changeTabLocation(tabLayout: CommonTabLayout? = null) {
-        // 从容器中移除
-        (binding.multiTab.parent as ViewGroup).removeView(binding.multiTab)
-        // 底部
-        multiBottomNav.let {
-            it.removeAllViews()
-            if (!tabAtTop.get()) it.addView(tabLayout ?: this.multiTab)
+    private fun changeTabLocation() {
+        // 顶部容器
+        with(multiTopNav) {
+            removeView(multiTab)
+            visibility = when(tabAtTop.get()) {
+                true -> {
+                    addView(multiTab)
+                    View.VISIBLE
+                }
+                else -> View.GONE
+            }
         }
-        // 顶部
-        multiTopNav.let {
-            it.removeAllViews()
-            if (tabAtTop.get()) it.addView(tabLayout ?: this.multiTab)
+        // 底部容器
+        with(multiBottomNav) {
+            removeView(multiTab)
+            visibility = when(tabAtTop.get()) {
+                false -> {
+                    addView(multiTab)
+                    View.VISIBLE
+                }
+                else -> View.GONE
+            }
         }
     }
 
-    @Suppress("unchecked_cast")
+    /**
+     * 改变Tab栏数据
+     */
     private fun changeTabData() {
         if (tabData.isEmpty()) {
             val field = CommonTabLayout::class.java.getDeclaredField("mTabEntitys")

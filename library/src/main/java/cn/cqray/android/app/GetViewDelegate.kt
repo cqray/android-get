@@ -148,6 +148,7 @@ class GetViewDelegate(provider: GetViewProvider) :
      * @param view 布局
      */
     fun setGetContentView(view: View) {
+        (view.parent as? ViewGroup)?.removeView(view)
         if (!setGetContentView.get()) {
             setNativeContentView(view)
             return
@@ -171,6 +172,7 @@ class GetViewDelegate(provider: GetViewProvider) :
      * @param view 布局
      */
     fun setNativeContentView(view: View) {
+        (view.parent as? ViewGroup)?.removeView(view)
         setGetContentView.set(false)
         attachedContentView.set(view)
         contentLayout.removeAllViews()

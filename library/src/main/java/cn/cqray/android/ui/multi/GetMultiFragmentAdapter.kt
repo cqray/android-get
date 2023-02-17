@@ -10,6 +10,7 @@ import androidx.viewpager2.adapter.FragmentStateAdapter
  */
 class GetMultiFragmentAdapter : FragmentStateAdapter {
 
+    /** [Fragment]列表 **/
     val fragments: MutableList<Fragment> = ArrayList()
 
     constructor(fragment: Fragment, fragments: List<Fragment>) : super(fragment) {
