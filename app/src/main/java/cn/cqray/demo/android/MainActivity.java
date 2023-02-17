@@ -1,7 +1,6 @@
 package cn.cqray.demo.android;
 
 import android.os.Bundle;
-import android.util.Log;
 
 
 import androidx.viewpager2.widget.ViewPager2;
@@ -10,13 +9,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 
-import cn.cqray.android.Get;
-import cn.cqray.android.app.GetIntent;
-import cn.cqray.android.multi.GetMultiItem;
-import cn.cqray.android.multi.GetMultiActivity;
-import cn.cqray.android.object.VarString;
-import cn.cqray.android.util.ScreenUtils;
-import cn.hutool.core.util.HexUtil;
+import cn.cqray.android.ui.multi.GetMultiItem;
+import cn.cqray.android.ui.multi.GetMultiActivity;
 
 public class MainActivity extends GetMultiActivity {
 

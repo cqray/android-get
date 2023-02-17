@@ -6,6 +6,7 @@ import cn.cqray.android.anim.FragmentAnimator
 import cn.cqray.android.log.LogInit
 import cn.cqray.android.state.StateInit
 import cn.cqray.android.tip.GetTipInit
+import cn.cqray.android.ui.page.PaginationInit
 import cn.cqray.android.widget.ToolbarInit
 import java.io.Serializable
 
@@ -31,6 +32,11 @@ class GetInit : Serializable {
         }
 
     var toolbarInit: ToolbarInit? = ToolbarInit()
+        set(init) {
+            field = init ?: field
+        }
+
+    var paginationInit: PaginationInit? = PaginationInit()
         set(init) {
             field = init ?: field
         }

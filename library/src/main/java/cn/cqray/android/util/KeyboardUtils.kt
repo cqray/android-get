@@ -19,7 +19,10 @@ import kotlin.math.abs
  * 键盘工具类
  * @author Cqray
  */
-@Suppress("MemberVisibilityCanBePrivate", "Unused")
+@Suppress(
+    "MemberVisibilityCanBePrivate",
+    "Unused"
+)
 object KeyboardUtils {
 
     /** 全局监听 TAG **/
@@ -188,7 +191,7 @@ object KeyboardUtils {
             // 显示的矩形
             val visibleRect = Rect().also { rect -> it.decorView.getWindowVisibleDisplayFrame(rect) }
             // 底部导航栏占用高度
-            val navBarHeight = if (ScreenUtils.isNavBarShown()) ScreenUtils.navBarHeight else 0
+            val navBarHeight = if (ScreenUtils.isNavBarShown()) ScreenUtils.getNavBarHeight() else 0
             // 容器高度 - 显示的底部位置 - 减去底部导航栏的高度
             abs(it.decorView.height - visibleRect.bottom) - navBarHeight
         } ?: 0

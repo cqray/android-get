@@ -5,8 +5,8 @@ import androidx.lifecycle.LifecycleOwner
 import cn.cqray.android.Get
 import cn.cqray.android.log.GetLog
 import cn.cqray.android.log.LogLevel
-import cn.cqray.android.multi.GetMultiDelegate
-import cn.cqray.android.multi.GetMultiProvider
+import cn.cqray.android.ui.multi.GetMultiDelegate
+import cn.cqray.android.ui.multi.GetMultiProvider
 import cn.cqray.android.tip.GetTipDelegate
 import cn.cqray.android.tip.GetTipProvider
 import java.util.HashMap

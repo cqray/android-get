@@ -33,9 +33,9 @@ android {
     kotlinOptions {
         jvmTarget = "1.8"
         freeCompilerArgs += [
+                '-module-name',
+                "cn.cqray.android.anim",
                 "-Xjvm-default=all",
-//                "-Xjvm-default=all-compatibility",
-//                "-Xjvm-default=compatibility|all-compatibility"
         ]
     }
 
@@ -70,16 +70,18 @@ dependencies {
     api "com.google.android.material:material:1.2.1"
     //JetPack Lifecycle、LiveData、ViewModel扩展
     api "androidx.lifecycle:lifecycle-common-java8:2.4.0"
-    // 常用工具类
-    api "com.blankj:utilcodex:1.31.0"
+//    // 常用工具类
+//    api "com.blankj:utilcodex:1.31.0"
     // 加载动画
     api "com.github.ybq:Android-SpinKit:1.4.0"
     // 刷新框架
     api "com.scwang.smart:refresh-layout-kernel:2.0.3"
 
-//    // 3.0.4之后版本需要Kotlin，暂不适配Kotlin。
-//    // noinspection GradleDependency
-//    api "com.github.CymChad:BaseRecyclerViewAdapterHelper:3.0.4"
+    // 3.0.4之后版本需要Kotlin，暂不适配Kotlin。
+    // noinspection GradleDependency
+    api "com.github.CymChad:BaseRecyclerViewAdapterHelper:3.0.11"
+
+//    api "io.github.cymchad:BaseRecyclerViewAdapterHelper:4.0.0-beta04"
 
     compileOnly 'io.reactivex.rxjava2:rxjava:2.2.21'
     // RxJava
@@ -94,9 +96,9 @@ dependencies {
     compileOnly "org.projectlombok:lombok:1.18.20"
     annotationProcessor "org.projectlombok:lombok:1.18.20"
 //    kapt 'org.projectlombok:lombok:1.18.20'
-
-    implementation "androidx.core:core-ktx:1.6.0"
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+//
+//    api "androidx.core:core-ktx:1.6.0"
+    api "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 
     compileOnly 'com.orhanobut:logger:2.2.0'
 
