@@ -3,7 +3,7 @@ package cn.cqray.android.app
 import android.app.Activity
 import android.os.Bundle
 import androidx.fragment.app.Fragment
-import cn.cqray.android.anim.FragmentAnimator
+import cn.cqray.android.anim.GetFragmentAnimator
 import cn.cqray.android.Get
 
 /**
@@ -22,7 +22,7 @@ interface GetNavProvider : GetProvider {
      * 创建Fragment动画
      * @return FragmentAnimator实例
      */
-    fun onCreateFragmentAnimator(): FragmentAnimator? = null
+    fun onCreateFragmentAnimator(): GetFragmentAnimator? = null
 
     /**
      * 回退事件拦截

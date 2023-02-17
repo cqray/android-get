@@ -30,14 +30,9 @@ object Get {
         // 初始化配置
         this.application = application
         this.init = getInit ?: this.init
-//        // 初始化工具类
-//        Utils.init(application)
 
         // 初始化Get管理器
         GetManager.init(application)
-
-
-//        GetDelegate.get()
     }
 
     @JvmStatic

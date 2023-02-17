@@ -28,7 +28,7 @@ import cn.cqray.android.util.ContextUtils.inflate
 import cn.cqray.android.util.ReflectUtil
 import cn.cqray.android.util.ScreenUtils
 import cn.cqray.android.util.Sizes
-import cn.cqray.android.widget.Toolbar
+import cn.cqray.android.widget.GetToolbar
 import com.scwang.smart.refresh.layout.SmartRefreshLayout
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicReference
@@ -54,7 +54,7 @@ class GetViewDelegate(provider: GetViewProvider) :
     val rootView: View by lazy { inflate(R.layout.get_layout_view_default) }
 
     /** 标题 */
-    val toolbar: Toolbar by lazy { rootView.findViewById(R.id.get_toolbar) }
+    val toolbar: GetToolbar by lazy { rootView.findViewById(R.id.get_toolbar) }
 
     /** 内容容器 */
     val contentLayout: FrameLayout by lazy { rootView.findViewById(R.id.get_content) }

@@ -7,19 +7,19 @@ import com.orhanobut.logger.Logger
  * [GetLog]日志打印适配器默认实现
  * @author Cqray
  */
-internal class LogAdapterImpl : LogAdapter {
+internal class GetLogAdapterImpl : GetLogAdapter {
 
     /** 是否支持[Logger] **/
     private var supportLogger = true
 
     /**
      * 打印日志
-     * @param level 日志等级[LogLevel]
+     * @param level 日志等级[GetLogLevel]
      * @param tag 日志标识
      * @param message 日志内容
      * @param exc 异常信息
      */
-    override fun print(level: LogLevel, tag: String, message: String, exc: Throwable?) {
+    override fun print(level: GetLogLevel, tag: String, message: String, exc: Throwable?) {
         // 使用Logger
         if (supportLogger) printByLogger(level, tag, message, exc)
         // 使用内置
@@ -28,21 +28,21 @@ internal class LogAdapterImpl : LogAdapter {
 
     /**
      * [Logger]框架打印
-     * @param level 日志等级[LogLevel]
+     * @param level 日志等级[GetLogLevel]
      * @param tag 日志标识
      * @param message 日志内容
      * @param tr 异常信息
      */
     @Synchronized
-    private fun printByLogger(level: LogLevel, tag: String, message: String, tr: Throwable?) {
+    private fun printByLogger(level: GetLogLevel, tag: String, message: String, tr: Throwable?) {
         try {
             val printer = Logger.t(tag)
             when (level) {
-                LogLevel.V -> printer.v(message)
-                LogLevel.D -> printer.d(message)
-                LogLevel.I -> printer.i(message)
-                LogLevel.W -> printer.w(message)
-                LogLevel.E -> printer.e(tr, message)
+                GetLogLevel.V -> printer.v(message)
+                GetLogLevel.D -> printer.d(message)
+                GetLogLevel.I -> printer.i(message)
+                GetLogLevel.W -> printer.w(message)
+                GetLogLevel.E -> printer.e(tr, message)
                 else -> printer.wtf(message)
             }
         } catch (e: NoClassDefFoundError) {
@@ -53,20 +53,20 @@ internal class LogAdapterImpl : LogAdapter {
 
     /**
      * 内置打印
-     * @param level 日志等级[LogLevel]
+     * @param level 日志等级[GetLogLevel]
      * @param tag 日志标识
      * @param message 日志内容
      * @param tr 异常信息
      */
     @Synchronized
-    private fun printByInner(level: LogLevel, tag: String, message: String, tr: Throwable?) {
+    private fun printByInner(level: GetLogLevel, tag: String, message: String, tr: Throwable?) {
         // 打印日志
         when (level) {
-            LogLevel.V -> Log.v(tag, message)
-            LogLevel.D -> Log.d(tag, message)
-            LogLevel.I -> Log.i(tag, message)
-            LogLevel.W -> Log.w(tag, message)
-            LogLevel.E -> Log.e(tag, message, tr)
+            GetLogLevel.V -> Log.v(tag, message)
+            GetLogLevel.D -> Log.d(tag, message)
+            GetLogLevel.I -> Log.i(tag, message)
+            GetLogLevel.W -> Log.w(tag, message)
+            GetLogLevel.E -> Log.e(tag, message, tr)
             else -> Log.wtf(tag, message, tr)
         }
     }

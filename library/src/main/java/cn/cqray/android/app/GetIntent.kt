@@ -4,7 +4,7 @@ import android.app.Activity
 import android.os.Bundle
 import android.os.Parcelable
 import androidx.fragment.app.Fragment
-import cn.cqray.android.anim.FragmentAnimator
+import cn.cqray.android.anim.GetFragmentAnimator
 import java.io.Serializable
 import java.util.*
 
@@ -44,7 +44,7 @@ class GetIntent : Serializable {
     val backInclusive get() = (intentCache[2] as Boolean?) ?: false
 
     /** Fragment动画  */
-    val fragmentAnimator get() = intentCache[3] as FragmentAnimator?
+    val fragmentAnimator get() = intentCache[3] as GetFragmentAnimator?
 
     /**
      * 跳转指定目标界面
@@ -72,7 +72,7 @@ class GetIntent : Serializable {
         intentCache[2] = inclusive
     }
 
-    fun setFragmentAnimator(animator: FragmentAnimator?) = also { intentCache[3] = animator }
+    fun setFragmentAnimator(animator: GetFragmentAnimator?) = also { intentCache[3] = animator }
 
     fun put(key: String?, value: Boolean?) = put(key, value as Any?)
 

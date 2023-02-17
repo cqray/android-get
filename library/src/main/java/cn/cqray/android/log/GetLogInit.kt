@@ -8,7 +8,7 @@ import java.io.Serializable
  * [GetLog]配置
  * @author Cqray
  */
-class LogInit : Serializable {
+class GetLogInit : Serializable {
 
     /** 日志全局标识 **/
     var tag: String? = "Get"
@@ -29,15 +29,15 @@ class LogInit : Serializable {
         }
 
     /** 日志等级 **/
-    var logLevel: LogLevel? = LogLevel.V
+    var logLevel: GetLogLevel? = GetLogLevel.V
         set(level) {
-            field = level ?: LogLevel.V
+            field = level ?: GetLogLevel.V
         }
 
     /** 日志适配器 **/
-    var logAdapter: LogAdapter? = LogAdapterImpl()
+    var logAdapter: GetLogAdapter? = GetLogAdapterImpl()
         set(adapter) {
-            field = adapter ?: LogAdapterImpl()
+            field = adapter ?: GetLogAdapterImpl()
         }
 
     

@@ -11,7 +11,7 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import cn.cqray.android.Get
 import cn.cqray.android.app.GetDelegate
-import cn.cqray.android.log.LogLevel
+import cn.cqray.android.log.GetLogLevel
 import cn.cqray.android.util.ContextUtils
 
 @Suppress("MemberVisibilityCanBePrivate")
@@ -98,7 +98,7 @@ class GetMultiDelegate(
                     provider.onFragmentPageSelected(vp, position)
                     // 打印日志
                     printLog(
-                        LogLevel.D,
+                        GetLogLevel.D,
                         "onPageSelected",
                         "Index has changed to [$position - ${
                             getFragments(vp)[position].javaClass.simpleName
@@ -152,7 +152,7 @@ class GetMultiDelegate(
         }
         // 打印日志
         printLog(
-            LogLevel.D,
+            GetLogLevel.D,
             "loadMultiFragments",
             "[${list.size}] fragments has been loaded in ${getContainerName(vp)}."
         )
@@ -170,7 +170,7 @@ class GetMultiDelegate(
         index.let {
             if (!(0 until list.size).contains(it)) {
                 printLog(
-                    LogLevel.W,
+                    GetLogLevel.W,
                     "showFragment",
                     "Index [$index] is invalid, there will do thing."
                 )
@@ -181,7 +181,7 @@ class GetMultiDelegate(
         vp.setCurrentItem(index, vp.isUserInputEnabled)
         // 打印日志
         printLog(
-            LogLevel.D,
+            GetLogLevel.D,
             "showFragment",
             "Index has changed to [$index - ${list[index].javaClass.simpleName}] in ${getContainerName(vp)}."
         )
@@ -197,7 +197,7 @@ class GetMultiDelegate(
         val index = list.indexOf(fragment)
         if (index >= 0) showFragment(vp, index)
         else printLog(
-            LogLevel.W,
+            GetLogLevel.W,
             "showFragment",
             "[${fragment.javaClass.simpleName}] can't be find in ${getContainerName(vp)}."
         )
@@ -212,7 +212,7 @@ class GetMultiDelegate(
         newIndex.let {
             if (it !in (0..list.size)) {
                 printLog(
-                    LogLevel.W,
+                    GetLogLevel.W,
                     "addFragment",
                     "Index [$index] is invalid, there will do thing."
                 )
@@ -223,7 +223,7 @@ class GetMultiDelegate(
         (vp.adapter as GetMultiFragmentAdapter).addFragment(fragment, newIndex)
         // 打印日志
         printLog(
-            LogLevel.D,
+            GetLogLevel.D,
             "addFragment",
             "[${fragment.javaClass.simpleName}] has added at [$newIndex] in ${getContainerName(vp)}"
         )
@@ -239,7 +239,7 @@ class GetMultiDelegate(
         val index = list.indexOf(fragment)
         if (index >= 0) removeFragment(vp, index)
         else printLog(
-            LogLevel.W,
+            GetLogLevel.W,
             "removeFragment",
             "[${fragment.javaClass.simpleName}] can't be find in ${getContainerName(vp)}."
         )
@@ -257,7 +257,7 @@ class GetMultiDelegate(
         index.let {
             if (it !in list.indices) {
                 printLog(
-                    LogLevel.W,
+                    GetLogLevel.W,
                     "removeFragment",
                     "Index [$index] is invalid, there will do thing."
                 )
@@ -272,7 +272,7 @@ class GetMultiDelegate(
         (vp.adapter as GetMultiFragmentAdapter).removeFragment(index)
         // 打印日志
         printLog(
-            LogLevel.D,
+            GetLogLevel.D,
             "removeFragment",
             "[${fragment.javaClass.simpleName}] has removed at [$index] in ${getContainerName(vp)}"
         )

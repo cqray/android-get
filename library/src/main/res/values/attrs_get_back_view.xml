@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- 回退控件 -->
-    <declare-styleable name="BackView">
+    <declare-styleable name="GetBackView">
         <attr name="ripple" />
         <attr name="iconSrc" format="reference|color" />
         <attr name="iconSpace" format="dimension" />

@@ -4,14 +4,12 @@ import cn.cqray.android.util.StrUtils
 import com.google.gson.annotations.SerializedName
 
 import java.io.Serializable
-import java.lang.Exception
 import java.util.ArrayList
 
 /**
  * 网络请求响应体
  * @author Cqray
  */
-//@Getter
 class ResponseData<T> : Serializable {
 
     @SerializedName(value = "code", alternate = ["ret", "error_code"])
@@ -46,7 +44,7 @@ class ResponseData<T> : Serializable {
             val responseData = ResponseData<T>()
             responseData.data = data
             responseData.message = message
-            responseData.code = if (codes.size > 0) codes[0] else "200"
+            responseData.code = if (codes.isNotEmpty()) codes[0] else "200"
             return responseData
         }
 

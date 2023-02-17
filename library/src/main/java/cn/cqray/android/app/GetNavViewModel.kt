@@ -12,8 +12,8 @@ import androidx.lifecycle.LifecycleOwner
 import cn.cqray.android.Get
 import cn.cqray.android.anim.AnimUtils
 
-import cn.cqray.android.anim.DefaultVerticalAnimator
-import cn.cqray.android.anim.FragmentAnimator
+import cn.cqray.android.anim.GetVerticalAnimator
+import cn.cqray.android.anim.GetFragmentAnimator
 import cn.cqray.android.exc.ExceptionDispatcher
 import cn.cqray.android.helper.GetClickHelper
 import cn.cqray.android.lifecycle.GetViewModel
@@ -320,13 +320,13 @@ internal class GetNavViewModel(owner: LifecycleOwner) : GetViewModel(owner) {
      * @param fragment 动画作用的Fragment
      * @param intent 启动传参
      */
-    private fun getFragmentAnimator(fragment: Fragment, intent: GetIntent): FragmentAnimator {
+    private fun getFragmentAnimator(fragment: Fragment, intent: GetIntent): GetFragmentAnimator {
         // 从下至上，一级级获取优先级高的动画设置
         return intent.fragmentAnimator
             ?: (fragment as? GetNavProvider)?.onCreateFragmentAnimator()
             ?: (lifecycleOwner as? GetNavProvider)?.onCreateFragmentAnimator()
             ?: Get.init.fragmentAnimator
-            ?: DefaultVerticalAnimator()
+            ?: GetVerticalAnimator()
     }
 
     /**

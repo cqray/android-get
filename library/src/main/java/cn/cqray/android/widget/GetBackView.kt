@@ -19,9 +19,9 @@ import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.content.ContextCompat
 import androidx.core.widget.ImageViewCompat
 import cn.cqray.android.R
-import cn.cqray.android.util.SizeUnit
 import cn.cqray.android.util.Sizes
 import cn.cqray.android.util.ViewUtils
+import cn.cqray.java.tool.SizeUnit
 
 /**
  * 图标文本控件
@@ -31,7 +31,7 @@ import cn.cqray.android.util.ViewUtils
     "MemberVisibilityCanBePrivate",
     "Unused",
 )
-class BackView @JvmOverloads constructor(
+class GetBackView @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
 ) : LinearLayout(context, attrs, defStyleAttr) {
 
@@ -68,16 +68,16 @@ class BackView @JvmOverloads constructor(
     }
 
     init {
-        val ta = context.obtainStyledAttributes(attrs, R.styleable.BackView)
-        val text = ta.getString(R.styleable.BackView_text) ?: ""
-        val drawable = ta.getDrawable(R.styleable.BackView_iconSrc)
-        val tintColor = ta.getColor(R.styleable.BackView_iconTint, -1)
+        val ta = context.obtainStyledAttributes(attrs, R.styleable.GetBackView)
+        val text = ta.getString(R.styleable.GetBackView_text) ?: ""
+        val drawable = ta.getDrawable(R.styleable.GetBackView_iconSrc)
+        val tintColor = ta.getColor(R.styleable.GetBackView_iconTint, -1)
         // 初始化默认属性
-        defaults[RIPPLE] = ta.getBoolean(R.styleable.BackView_ripple, defaultRipple)
-        defaults[ICON_SPACE] = ta.getDimension(R.styleable.BackView_iconSpace, defaultIconSpace)
-        defaults[TEXT_COLOR] = ta.getColor(R.styleable.BackView_textColor, defaultTextColor)
-        defaults[TEXT_SIZE] = ta.getDimension(R.styleable.BackView_textSize, defaultTextSize)
-        defaults[TEXT_STYLE] = ta.getInt(R.styleable.BackView_textStyle, defaultTextStyle)
+        defaults[RIPPLE] = ta.getBoolean(R.styleable.GetBackView_ripple, defaultRipple)
+        defaults[ICON_SPACE] = ta.getDimension(R.styleable.GetBackView_iconSpace, defaultIconSpace)
+        defaults[TEXT_COLOR] = ta.getColor(R.styleable.GetBackView_textColor, defaultTextColor)
+        defaults[TEXT_SIZE] = ta.getDimension(R.styleable.GetBackView_textSize, defaultTextSize)
+        defaults[TEXT_STYLE] = ta.getInt(R.styleable.GetBackView_textStyle, defaultTextStyle)
         // 释放资源
         ta.recycle()
         // 设置图标属性

@@ -22,7 +22,10 @@ import java.util.*
  * [Get]全局提示
  * @author Cqray
  */
-@Suppress("unused", "MemberVisibilityCanBePrivate")
+@Suppress(
+    "MemberVisibilityCanBePrivate",
+    "Unused"
+)
 object GetTip {
 
     /** 提示[Toast] **/
@@ -212,18 +215,19 @@ object GetTip {
         tipTask.callback = callback
         addTipTask(tipTask)
     }
+
+    private class TipTask {
+        /** Tip等级  */
+        var level: GetTipLevel? = null
+
+        /** 文本  */
+        var text: CharSequence? = null
+
+        /** 结束回调  */
+        var callback: GetTipCallback? = null
+
+        /** Tip属性  */
+        lateinit var init: GetTipInit
+    }
 }
 
-private class TipTask {
-    /** Tip等级  */
-    var level: GetTipLevel? = null
-
-    /** 文本  */
-    var text: CharSequence? = null
-
-    /** 结束回调  */
-    var callback: GetTipCallback? = null
-
-    /** Tip属性  */
-    lateinit var init: GetTipInit
-}

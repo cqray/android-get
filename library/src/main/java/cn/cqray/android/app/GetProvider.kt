@@ -6,9 +6,14 @@ import androidx.lifecycle.ViewModelStoreOwner
 import cn.cqray.android.lifecycle.GetViewModelProvider
 import java.lang.UnsupportedOperationException
 
+@Suppress(
+    "Deprecation",
+    "Unchecked_cast"
+)
 @JvmDefaultWithoutCompatibility
 interface GetProvider {
 
+    @JvmDefault
     fun getLifecycleOwner(): LifecycleOwner {
         if (this is LifecycleOwner) {
             return this
@@ -16,7 +21,7 @@ interface GetProvider {
         throw RuntimeException("[GetProvider] must be implemented on LifecycleOwner.")
     }
 
-    @Suppress("Unchecked_cast")
+    @JvmDefault
     fun <T : ViewModel> getViewModel(clazz: Class<out ViewModel>): T {
         val owner = getLifecycleOwner()
         if (owner is ViewModelStoreOwner) {

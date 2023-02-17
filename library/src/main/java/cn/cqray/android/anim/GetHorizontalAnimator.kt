@@ -7,7 +7,7 @@ import cn.cqray.android.R
  * @author Cqray
  */
 @Suppress("unused")
-class DefaultHorizontalAnimator : FragmentAnimator(
+class GetHorizontalAnimator : GetFragmentAnimator(
     R.anim._starter_horizontal_from_right,
     R.anim._starter_horizontal_to_left,
     R.anim._starter_horizontal_from_left,

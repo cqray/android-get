@@ -7,6 +7,7 @@ import androidx.annotation.DimenRes
 import cn.cqray.android.Get
 import cn.cqray.android.R
 import cn.cqray.android.app.GetManager
+import cn.cqray.java.tool.SizeUnit
 
 /**
  * 尺寸工具类

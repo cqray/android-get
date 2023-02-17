@@ -4,7 +4,7 @@ import android.os.Bundle
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.widget.ViewPager2
 import cn.cqray.android.app.GetActivity
-import cn.cqray.android.util.SizeUnit
+import cn.cqray.java.tool.SizeUnit
 import com.flyco.tablayout.CommonTabLayout
 
 /**

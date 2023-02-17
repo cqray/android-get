@@ -37,10 +37,10 @@
 
     <!-- 导航相关ID -->
     <item name="get_nav_content" type="id" />
-    <item name="get_nav_pager" type="id" />
-    <item name="get_nav_tab" type="id" />
-    <item name="get_top_nav" type="id" />
-    <item name="get_bottom_nav" type="id" />
+<!--    <item name="get_nav_pager" type="id" />-->
+<!--    <item name="get_nav_tab" type="id" />-->
+<!--    <item name="get_top_nav" type="id" />-->
+<!--    <item name="get_bottom_nav" type="id" />-->
 
     <!-- ViewState相关ID -->
     <item name="get_state_img" type="id" />

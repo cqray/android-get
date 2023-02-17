@@ -19,7 +19,7 @@ open class GetNavActivity : GetActivity() {
     /** [Fragment]内容容器 **/
     private val contentLayout: FrameLayout by lazy {
         FrameLayout(this).also {
-            it.id = containerId
+            it.id = R.id.get_nav_content
             it.layoutParams = ViewGroup.LayoutParams(-1, -1)
         }
     }

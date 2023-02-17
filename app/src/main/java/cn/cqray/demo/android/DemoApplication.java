@@ -4,15 +4,14 @@ import androidx.multidex.MultiDexApplication;
 
 import cn.cqray.android.Get;
 import cn.cqray.android.app.GetInit;
-import cn.cqray.android.tip.GetTip;
-import cn.cqray.android.widget.ToolbarInit;
+import cn.cqray.android.widget.GetToolbarInit;
 
 public class DemoApplication extends MultiDexApplication {
 
     @Override
     public void onCreate() {
         super.onCreate();
-        ToolbarInit toolbarInit = new ToolbarInit();
+        GetToolbarInit toolbarInit = new GetToolbarInit();
         toolbarInit.setElevation(100F);
         toolbarInit.setBackIcon(R.drawable.def_back_common_dark);
         toolbarInit.setBackText("返回");

@@ -1,7 +1,6 @@
 package cn.cqray.android.state
 
 import android.app.Activity
-import android.util.TypedValue
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
@@ -14,9 +13,9 @@ import cn.cqray.android.app.GetViewProvider
 import cn.cqray.android.log.GetLog
 
 import cn.cqray.android.util.ContextUtils
-import cn.cqray.android.util.SizeUnit
 import cn.cqray.android.util.Sizes
-import cn.cqray.android.widget.Toolbar
+import cn.cqray.android.widget.GetToolbar
+import cn.cqray.java.tool.SizeUnit
 import com.scwang.smart.refresh.layout.SmartRefreshLayout
 import com.scwang.smart.refresh.layout.api.RefreshFooter
 import com.scwang.smart.refresh.layout.api.RefreshHeader
@@ -192,7 +191,7 @@ class StateDelegate(val provider: StateProvider) {
      */
     private fun refreshOffsets() {
         // 获取标题栏
-        val toolbar: Toolbar? = when (provider) {
+        val toolbar: GetToolbar? = when (provider) {
             is Activity -> provider.findViewById(R.id.get_toolbar)
             is Fragment -> provider.view?.findViewById(R.id.get_toolbar)
             else -> null

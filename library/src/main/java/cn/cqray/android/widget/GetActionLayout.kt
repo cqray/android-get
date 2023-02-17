@@ -20,9 +20,9 @@ import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.content.ContextCompat
 import androidx.core.widget.ImageViewCompat
 import cn.cqray.android.R
-import cn.cqray.android.util.SizeUnit
 import cn.cqray.android.util.Sizes
 import cn.cqray.android.util.ViewUtils
+import cn.cqray.java.tool.SizeUnit
 
 /**
  * Action布局控件
@@ -33,7 +33,7 @@ import cn.cqray.android.util.ViewUtils
     "Unchecked_cast",
     "Unused",
 )
-class ActionLayout @JvmOverloads constructor(
+class GetActionLayout @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
@@ -69,19 +69,19 @@ class ActionLayout @JvmOverloads constructor(
 
     init {
         // 初始化属性
-        val ta = context.obtainStyledAttributes(attrs, R.styleable.ActionLayout)
+        val ta = context.obtainStyledAttributes(attrs, R.styleable.GetActionLayout)
         // 默认是否启用水波纹
-        defaults[ACTION_RIPPLE] = ta.getBoolean(R.styleable.ActionLayout_defaultRipple, defaultRipple)
+        defaults[ACTION_RIPPLE] = ta.getBoolean(R.styleable.GetActionLayout_defaultRipple, defaultRipple)
         // 默认是否显示Action组件
-        defaults[ACTION_VISIBLE] = ta.getBoolean(R.styleable.ActionLayout_defaultVisible, defaultVisible)
+        defaults[ACTION_VISIBLE] = ta.getBoolean(R.styleable.GetActionLayout_defaultVisible, defaultVisible)
         // 默认组件间隔
-        defaults[ACTION_SPACE] = ta.getDimension(R.styleable.ActionLayout_defaultSpace, defaultSpace)
+        defaults[ACTION_SPACE] = ta.getDimension(R.styleable.GetActionLayout_defaultSpace, defaultSpace)
         // 默认文本颜色
-        defaults[ACTION_TEXT_COLOR] = ta.getColor(R.styleable.ActionLayout_defaultTextColor, defaultTextColor)
+        defaults[ACTION_TEXT_COLOR] = ta.getColor(R.styleable.GetActionLayout_defaultTextColor, defaultTextColor)
         // 默认文本大小
-        defaults[ACTION_TEXT_SIZE] = ta.getDimension(R.styleable.ActionLayout_defaultTextSize, defaultTextSize)
+        defaults[ACTION_TEXT_SIZE] = ta.getDimension(R.styleable.GetActionLayout_defaultTextSize, defaultTextSize)
         // 默认文本样式
-        defaults[ACTION_TEXT_STYLE] = ta.getInt(R.styleable.ActionLayout_defaultTextStyle, defaultTextStyle)
+        defaults[ACTION_TEXT_STYLE] = ta.getInt(R.styleable.GetActionLayout_defaultTextStyle, defaultTextStyle)
         // 释放资源
         ta.recycle()
         // 天剑间隔容器

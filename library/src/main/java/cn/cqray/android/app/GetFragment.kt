@@ -10,7 +10,7 @@ import androidx.fragment.app.Fragment
 import cn.cqray.android.Get
 import cn.cqray.android.state.StateProvider
 import cn.cqray.android.tip.GetTipProvider
-import cn.cqray.android.widget.Toolbar
+import cn.cqray.android.widget.GetToolbar
 import com.scwang.smart.refresh.layout.SmartRefreshLayout
 
 /**
@@ -29,7 +29,7 @@ open class GetFragment : Fragment(),
     @NonNull
     @JvmField
     @Suppress("KotlinNullnessAnnotation")
-    val toolbar: Toolbar? = null
+    val toolbar: GetToolbar? = null
 
     /** 刷新容器 **/
     @Keep

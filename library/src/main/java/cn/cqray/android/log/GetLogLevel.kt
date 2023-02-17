@@ -4,7 +4,7 @@ package cn.cqray.android.log
  * [GetLog]日志等级
  * @author Cqray
  */
-enum class LogLevel {
+enum class GetLogLevel {
     /** Verbose **/
     V,
 

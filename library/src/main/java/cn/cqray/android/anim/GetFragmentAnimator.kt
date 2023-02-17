@@ -7,7 +7,7 @@ import androidx.annotation.AnimatorRes
  * Fragment动画
  * @author Cqray
  */
-open class FragmentAnimator
+open class GetFragmentAnimator
 /**
  * @param enter A跳转B时，B的动画
  * @param exit A跳转B时，A的动画

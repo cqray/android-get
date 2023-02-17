@@ -15,7 +15,7 @@ import cn.cqray.android.util.ContextUtils
  * @author Cqray
  */
 @Keep
-class ToolbarInit {
+class GetToolbarInit {
 
     /** 背景 **/
     var background: Drawable? = null

@@ -8,8 +8,8 @@ import androidx.viewpager2.widget.ViewPager2
 import cn.cqray.android.databinding.GetMultiLayoutBinding
 import cn.cqray.android.lifecycle.GetViewModel
 import cn.cqray.android.util.ContextUtils
-import cn.cqray.android.util.SizeUnit
 import cn.cqray.android.util.Sizes
+import cn.cqray.java.tool.SizeUnit
 import com.flyco.tablayout.CommonTabLayout
 import com.flyco.tablayout.listener.CustomTabEntity
 import com.flyco.tablayout.listener.OnTabSelectListener
@@ -97,14 +97,14 @@ internal class GetMultiViewModel(
      */
     private fun changeTabLocation(tabLayout: CommonTabLayout? = null) {
         // 从容器中移除
-        (multiTab.parent as ViewGroup).removeView(multiTab)
+        (binding.multiTab.parent as ViewGroup).removeView(binding.multiTab)
         // 底部
-        binding.multiBottomNav.let {
+        multiBottomNav.let {
             it.removeAllViews()
             if (!tabAtTop.get()) it.addView(tabLayout ?: this.multiTab)
         }
         // 顶部
-        binding.multiTopNav.let {
+        multiTopNav.let {
             it.removeAllViews()
             if (tabAtTop.get()) it.addView(tabLayout ?: this.multiTab)
         }
