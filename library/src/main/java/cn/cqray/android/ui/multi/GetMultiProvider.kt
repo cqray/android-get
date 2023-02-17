@@ -10,7 +10,10 @@ import cn.cqray.android.app.GetProvider
  * 多[Fragment]显示提供器
  * @author Cqray
  */
-@Suppress("unused")
+@Suppress(
+    "Deprecation",
+    "Unused"
+)
 @JvmDefaultWithoutCompatibility
 interface GetMultiProvider : GetProvider {
 
@@ -21,12 +24,14 @@ interface GetMultiProvider : GetProvider {
      * 获取指定容器的[Fragment]列表
      * @param vp 指定容器
      */
+    @JvmDefault
     fun getFragments(vp: ViewPager2) = multiDelegate.getFragments(vp)
 
     /**
      * 获取指定容器的[Fragment]位置索引
      * @param vp 指定容器
      */
+    @JvmDefault
     fun getCurrentIndex(vp: ViewPager2) = vp.currentItem
 
     /**
@@ -34,6 +39,7 @@ interface GetMultiProvider : GetProvider {
      * @param target 目标Fragment
      * @param arguments 参数
      */
+    @JvmDefault
     fun instantiateFragment(target: Class<out Fragment>, arguments: Bundle? = null) =
         multiDelegate.instantiateFragment(target, arguments)
 
@@ -42,6 +48,7 @@ interface GetMultiProvider : GetProvider {
      * @param vp [ViewPager2]容器
      * @param fragments Fragment列表
      */
+    @JvmDefault
     fun loadMultiFragments(vp: ViewPager2, fragments: Array<Fragment>) = multiDelegate.loadMultiFragments(vp, fragments)
 
     /**
@@ -49,6 +56,7 @@ interface GetMultiProvider : GetProvider {
      * @param vp 指定容器
      * @param index 指定位置
      */
+    @JvmDefault
     fun showFragment(vp: ViewPager2, index: Int) = multiDelegate.showFragment(vp, index)
 
     /**
@@ -56,6 +64,7 @@ interface GetMultiProvider : GetProvider {
      * @param vp 指定容器
      * @param fragment Fragment
      */
+    @JvmDefault
     fun showFragment(vp: ViewPager2, fragment: Fragment) = multiDelegate.showFragment(vp, fragment)
 
     /**
@@ -63,6 +72,7 @@ interface GetMultiProvider : GetProvider {
      * @param vp 指定容器
      * @param fragment Fragment
      */
+    @JvmDefault
     fun addFragment(vp: ViewPager2, fragment: Fragment) = multiDelegate.addFragment(vp, fragment, null)
 
     /**
@@ -71,6 +81,7 @@ interface GetMultiProvider : GetProvider {
      * @param fragment Fragment
      * @param index 位置
      */
+    @JvmDefault
     fun addFragment(vp: ViewPager2, fragment: Fragment, index: Int?) = multiDelegate.addFragment(vp, fragment, index)
 
     /**
@@ -78,18 +89,21 @@ interface GetMultiProvider : GetProvider {
      * @param vp 指定容器
      * @param index 位置
      */
+    @JvmDefault
     fun removeFragment(vp: ViewPager2, index: Int) = multiDelegate.removeFragment(vp, index)
 
     /**
      * 移除指定的Fragment
      * @param fragment Fragment界面
      */
+    @JvmDefault
     fun removeFragment(vp: ViewPager2, fragment: Fragment) = multiDelegate.removeFragment(vp, fragment)
 
     /**
      * 移除指定容器下所有的Fragment
      * @param vp 指定容器
      */
+    @JvmDefault
     fun removeFragments(vp: ViewPager2) = multiDelegate.removeFragments(vp)
 
     /**
@@ -97,5 +111,6 @@ interface GetMultiProvider : GetProvider {
      * @param vp 所处容器
      * @param position 改变后的位置
      */
+    @JvmDefault
     fun onFragmentPageSelected(vp: ViewPager2, position: Int) {}
 }

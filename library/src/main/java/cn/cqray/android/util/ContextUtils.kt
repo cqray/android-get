@@ -35,6 +35,8 @@ object ContextUtils {
     val assets: AssetManager
         get() = get().assets
 
+    val layoutInflater get() = LayoutInflater.from(get())
+
     fun getDrawable(@DrawableRes resId: Int): Drawable? {
         return ContextCompat.getDrawable(get(), resId)
     }

@@ -4,7 +4,7 @@ import android.widget.FrameLayout
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.LifecycleOwner
 import androidx.viewpager2.widget.ViewPager2
-import cn.cqray.android.R
+import cn.cqray.android.databinding.GetMultiLayoutBinding
 import cn.cqray.android.lifecycle.GetViewModel
 import cn.cqray.android.util.ContextUtils
 import cn.cqray.android.util.SizeUnit
@@ -37,45 +37,46 @@ internal class GetMultiViewModel(
         }
     }
 
+    /** ViewBinding **/
+    val binding by lazy { GetMultiLayoutBinding.inflate(ContextUtils.layoutInflater) }
+
     /** 根控件 **/
-    val multiView by lazy { ContextUtils.inflate(R.layout.get_ui_layout_multi) }
+    val multiView by lazy { binding.root }
 
     /** 内容布局 **/
-    val multiContent : FrameLayout by lazy { multiView.findViewById(R.id.get_nav_content) }
+    val multiContent : FrameLayout by lazy { binding.multiContent }
 
     /** 顶部[NavigationView] **/
-    val multiTopNav: NavigationView by lazy { multiView.findViewById(R.id.get_top_nav) }
+    val multiTopNav: NavigationView by lazy { binding.multiTopNav }
 
     /** 底部[NavigationView] **/
-    val multiBottomNav  : NavigationView by lazy { multiView.findViewById(R.id.get_bottom_nav) }
+    val multiBottomNav  : NavigationView by lazy { binding.multiBottomNav }
 
     /** [ViewPager2]组件 **/
-    val multiPager: ViewPager2 by lazy {
-        val view = multiView.findViewById<ViewPager2>(R.id.get_nav_pager)
-        // 注册回调
-        view.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
-            override fun onPageSelected(position: Int) {
-                super.onPageSelected(position)
-                runCatching { multiTab.currentTab = position }
-            }
-        })
-        view
+    val multiPager by lazy {
+        binding.multiPager.also {
+            it.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+                override fun onPageSelected(position: Int) {
+                    super.onPageSelected(position)
+                    runCatching { multiTab.currentTab = position }
+                }
+            })
+        }
     }
 
     /** TabLayout控件 **/
     val multiTab: CommonTabLayout by lazy {
-        val view = multiView.findViewById<CommonTabLayout>(R.id.get_nav_tab)
-        // 注册回调
-        view.setOnTabSelectListener(object : OnTabSelectListener {
-            override fun onTabSelect(position: Int) {
-                delegate.showFragment(multiPager, position)
-            }
+        binding.multiTab.also {
+            it.setOnTabSelectListener(object : OnTabSelectListener {
+                override fun onTabSelect(position: Int) {
+                    delegate.showFragment(multiPager, position)
+                }
 
-            override fun onTabReselect(position: Int) {}
-        })
-        // 赋值
-        changeTabLocation(view)
-        view
+                override fun onTabReselect(position: Int) {}
+            })
+            // 赋值
+            changeTabLocation(it)
+        }
     }
 
     /** TabLayout是否在顶部 **/
@@ -95,12 +96,12 @@ internal class GetMultiViewModel(
      */
     private fun changeTabLocation(tabLayout: CommonTabLayout? = null) {
         // 底部
-        multiBottomNav  .let {
+        binding.multiBottomNav.let {
             it.removeAllViews()
             if (!tabAtTop.get()) it.addView(tabLayout ?: this.multiTab)
         }
         // 顶部
-        multiTopNav.let {
+        binding.multiTopNav.let {
             it.removeAllViews()
             if (tabAtTop.get()) it.addView(tabLayout ?: this.multiTab)
         }
@@ -140,8 +141,8 @@ internal class GetMultiViewModel(
      */
     fun setTabElevation(elevation: Float, unit: SizeUnit) {
         val size = Sizes.applyDimension(elevation, unit)
-        multiTopNav.elevation = size
-        multiBottomNav  .elevation = size
+        binding.multiTopNav.elevation = size
+        binding.multiBottomNav.elevation = size
     }
 
     /**
@@ -182,18 +183,20 @@ internal class GetMultiViewModel(
             }
             entries.add(entry)
         }
+        // 设置数据
         with(tabData) {
             clear()
             addAll(entries)
             changeTabData()
         }
-        // 设置multiPager2最大缓存数
+        // 设置页面缓存量为Fragment数量，避免切换的时候被回收
         multiPager.offscreenPageLimit = if (items.isEmpty()) 5 else items.size
         // 加载Fragment
         delegate.loadMultiFragments(multiPager, Array(items.size) {
             val item = items[it]
             delegate.instantiateFragment(item.targetClass, item.arguments)
         })
+
     }
 
     /**
