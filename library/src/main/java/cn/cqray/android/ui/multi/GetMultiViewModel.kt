@@ -25,11 +25,8 @@ import java.util.concurrent.atomic.AtomicBoolean
     "MemberVisibilityCanBePrivate",
     "Unchecked_cast"
 )
-class GetMultiViewModel(
-    lifecycleOwner: LifecycleOwner
-) : GetViewModel(lifecycleOwner) {
+class GetMultiViewModel(lifecycleOwner: LifecycleOwner) : GetViewModel(lifecycleOwner) {
 
-    // 初始化
     init {
         if (lifecycleOwner !is GetMultiProvider) {
             throw IllegalArgumentException(
@@ -40,12 +37,7 @@ class GetMultiViewModel(
                 )
             )
         }
-        lifecycleOwner.lifecycle.addObserver(object : DefaultLifecycleObserver {
-            override fun onCreate(owner: LifecycleOwner) {
-                super.onCreate(owner)
-                changeTabLocation()
-            }
-        })
+
     }
 
     /** ViewBinding **/
@@ -104,9 +96,11 @@ class GetMultiViewModel(
      * 改变TabLayout位置
      */
     private fun changeTabLocation() {
+        // 先从容器中移除TabLayout
+        multiTopNav.removeView(multiTab)
+        multiBottomNav.removeView(multiTab)
         // 顶部容器
         with(multiTopNav) {
-            removeView(multiTab)
             visibility = when(tabAtTop.get()) {
                 true -> {
                     addView(multiTab)
@@ -117,7 +111,6 @@ class GetMultiViewModel(
         }
         // 底部容器
         with(multiBottomNav) {
-            removeView(multiTab)
             visibility = when(tabAtTop.get()) {
                 false -> {
                     addView(multiTab)

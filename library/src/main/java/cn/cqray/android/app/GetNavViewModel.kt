@@ -27,7 +27,10 @@ import kotlin.Exception
  * [GetNavDelegate]逻辑实现，由[FragmentActivity]持有
  * @author Cqray
  */
-@Suppress("unused", "MemberVisibilityCanBePrivate")
+@Suppress(
+    "MemberVisibilityCanBePrivate",
+    "Unused"
+)
 internal class GetNavViewModel(owner: LifecycleOwner) : GetViewModel(owner) {
 
     init {

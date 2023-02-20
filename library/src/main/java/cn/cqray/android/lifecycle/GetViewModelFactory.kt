@@ -2,9 +2,6 @@ package cn.cqray.android.lifecycle
 
 import android.app.Application
 import android.util.Log
-import androidx.activity.ComponentActivity
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ViewModel
@@ -17,14 +14,20 @@ import java.lang.reflect.InvocationTargetException
  * [GetViewModel]工厂
  * @author Cqray
  */
-class GetViewModelFactory(owner: ViewModelStoreOwner?) : NewInstanceFactory() {
-    private var lifecycleOwner: LifecycleOwner? = null
+class GetViewModelFactory(owner: ViewModelStoreOwner) : NewInstanceFactory() {
+    private val lifecycleOwner: LifecycleOwner
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         return try {
             when {
                 GetViewModel::class.java.isAssignableFrom(modelClass) -> {
-                    Log.e("数据", "66666666|${modelClass}|${modelClass.getConstructor(LifecycleOwner::class.java)}|${lifecycleOwner}")
+                    Log.e("数据", "66666666|${lifecycleOwner.lifecycle.currentState.name}")
                     val constructor = modelClass.getConstructor(LifecycleOwner::class.java)
+
+
+                    val cs = modelClass.constructors
+                    for (c in cs) {
+                        Log.e("数据", "66666667${c.toString()}")
+                    }
                     Log.e("数据", "66666667")
                     val ree = constructor.newInstance(lifecycleOwner)
                     Log.e("数据", "66666668")

@@ -59,9 +59,7 @@ class StateDelegate(val provider: StateProvider) {
             it.isClickable = true
             it.isFocusable = true
             it.layoutParams = ViewGroup.MarginLayoutParams(-1, -1)
-            GetLog.e("吾问无为谓无无无无无无无无无")
             field = it
-
         }
 
     internal fun attachActivity(activity: Activity) {

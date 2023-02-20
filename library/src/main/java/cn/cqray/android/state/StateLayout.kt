@@ -52,7 +52,7 @@ class StateLayout : FrameLayout {
         val list = ArrayList<View>()
         for (i in (0..childCount).reversed()) {
             val view = getChildAt(i)
-            val tag = view.getTag(stateTag.hashCode())
+            val tag = view?.getTag(stateTag.hashCode())
             if (tag == stateTag) {
                 removeView(view)
                 list.add(view)
