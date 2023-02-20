@@ -1,6 +1,10 @@
 package cn.cqray.android.lifecycle
 
 import android.app.Application
+import android.util.Log
+import androidx.activity.ComponentActivity
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ViewModel
@@ -19,12 +23,19 @@ class GetViewModelFactory(owner: ViewModelStoreOwner?) : NewInstanceFactory() {
         return try {
             when {
                 GetViewModel::class.java.isAssignableFrom(modelClass) -> {
-                    modelClass.getConstructor(LifecycleOwner::class.java).newInstance(lifecycleOwner)
+                    Log.e("数据", "66666666|${modelClass}|${modelClass.getConstructor(LifecycleOwner::class.java)}|${lifecycleOwner}")
+                    val constructor = modelClass.getConstructor(LifecycleOwner::class.java)
+                    Log.e("数据", "66666667")
+                    val ree = constructor.newInstance(lifecycleOwner)
+                    Log.e("数据", "66666668")
+                    ree
+                    //modelClass.getConstructor(LifecycleOwner::class.java).newInstance(lifecycleOwner)
                 }
                 AndroidViewModel::class.java.isAssignableFrom(modelClass) -> {
+                    Log.e("数据", "777777")
                     modelClass.getConstructor(Application::class.java).newInstance(Get.application)
                 }
-                else -> super.create(modelClass)
+                else -> modelClass.getConstructor().newInstance()
             }
         } catch (e: NoSuchMethodException) {
             throw RuntimeException("Cannot create an instance of \$modelClass", e)
@@ -33,6 +44,7 @@ class GetViewModelFactory(owner: ViewModelStoreOwner?) : NewInstanceFactory() {
         } catch (e: InstantiationException) {
             throw RuntimeException("Cannot create an instance of \$modelClass", e)
         } catch (e: InvocationTargetException) {
+            e.printStackTrace()
             throw RuntimeException("Cannot create an instance of \$modelClass", e)
         }
     }

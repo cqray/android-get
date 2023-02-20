@@ -25,7 +25,7 @@ import java.util.concurrent.atomic.AtomicBoolean
     "MemberVisibilityCanBePrivate",
     "Unchecked_cast"
 )
-internal class GetMultiViewModel(
+class GetMultiViewModel(
     lifecycleOwner: LifecycleOwner
 ) : GetViewModel(lifecycleOwner) {
 
