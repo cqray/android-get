@@ -8,11 +8,8 @@ import android.view.ViewGroup
 import android.widget.FrameLayout
 import androidx.annotation.DrawableRes
 import androidx.annotation.LayoutRes
-import androidx.core.content.ContextCompat
-import cn.cqray.android.Get
 import cn.cqray.android.R
 import cn.cqray.android.util.ContextUtils
-import cn.cqray.android.util.JsonUtils
 
 import java.io.Serializable
 
@@ -20,7 +17,10 @@ import java.io.Serializable
  * 状态适配器
  * @author Cqray
  */
-@Suppress("UNCHECKED_CAST")
+@Suppress(
+    "MemberVisibilityCanBePrivate",
+    "UNCHECKED_CAST"
+)
 open class StateAdapter<T : StateAdapter<T>>(
     @param:LayoutRes private val layoutResId: Int
 ) : Serializable {
@@ -32,24 +32,20 @@ open class StateAdapter<T : StateAdapter<T>>(
     private var defaultText: String? = null
 
     /** 背景 **/
-    @Transient
     private var background: Any? = R.color.background
 
-    /** 关联的控件 **/
-    @Transient
-    private var attachedView: ViewGroup? = null
+    private val views = arrayOfNulls<View>(2)
 
-    /** 内容控件 **/
-    @Transient
-    var contentView: View? = null
-        private set
+    /** 视图 **/
+    val view get() = views[1]
+
+    /** 是否未连接 **/
+    val isNotAttached = views[0] == null
 
     internal fun onAttach(layout: FrameLayout) {
-        attachedView = layout
-        // 初始化界面
-        contentView = ContextUtils.inflate(layoutResId)
-        // 控件被创建
-        contentView?.let {
+        views[0] = layout
+        views[1] = ContextUtils.inflate(layoutResId)
+        views[1]?.let {
             it.isClickable = true
             it.isFocusable = true
             onViewCreated(it)
@@ -73,7 +69,7 @@ open class StateAdapter<T : StateAdapter<T>>(
      * @param background 背景
      */
     protected open fun onBackgroundChanged(background: Drawable?) {
-        contentView?.background = background
+        view?.background = background
     }
 
     /**
@@ -101,24 +97,17 @@ open class StateAdapter<T : StateAdapter<T>>(
      * 显示、隐藏实现
      */
     private fun show(show: Boolean) {
-        // 没有关联界面，则不继续操作
-        if (attachedView == null) return
-        // 没有初始化界面，则不继续操作
-        if (contentView == null) return
-        // 关联了界面才进行显示或隐藏操作
-        val parent = attachedView!!
-        val content = contentView!!
-        if (show) {
-            // 控件变化
-            onViewChanged()
-            // 显示组件
-            (content.parent as ViewGroup?)?.removeView(content)
-            parent.addView(content)
-            parent.visibility = View.VISIBLE
-            content.bringToFront()
-        } else {
-            parent.removeView(content)
-            parent.visibility = View.GONE
+        view?.let {
+            val parent = views[0]!! as ViewGroup
+            if (show) {
+                onViewChanged()
+                parent.addView(it)
+                parent.visibility = View.VISIBLE
+                it.bringToFront()
+            } else {
+                parent.removeView(it)
+                parent.visibility = View.GONE
+            }
         }
     }
 
@@ -126,6 +115,8 @@ open class StateAdapter<T : StateAdapter<T>>(
      * 控件变化
      */
     private fun onViewChanged() {
+        // 视图未设置，不继续处理
+        if (view == null) return
         // 文本变化
         onTextChanged(text ?: defaultText)
         // 背景变化
@@ -134,7 +125,7 @@ open class StateAdapter<T : StateAdapter<T>>(
             is Drawable -> onBackgroundChanged(background as Drawable)
             else -> onBackgroundChanged(null)
         }
-        if (contentView != null) onPostViewChanged(contentView!!)
+        onPostViewChanged(view!!)
     }
 
     /**
@@ -143,7 +134,7 @@ open class StateAdapter<T : StateAdapter<T>>(
      */
     fun setText(text: String?) = also {
         this.text = text
-        contentView?.let { onTextChanged(text) }
+        view?.let { onTextChanged(text) }
     } as T
 
     /**
@@ -158,41 +149,18 @@ open class StateAdapter<T : StateAdapter<T>>(
      */
     fun setBackground(background: Drawable?) = also {
         this.background = background
-        contentView?.let { onBackgroundChanged(background) }
+        view?.let { onBackgroundChanged(background) }
     } as T
 
     /**
      * 设置背景资源
-     * @param resId 资源ID[DrawableRes]
+     * @param id 资源ID[DrawableRes]
      */
-    fun setBackgroundResource(@DrawableRes resId: Int?) = also {
-        this.background = resId
-        contentView?.let {
-            val background = when (resId) {
-                null -> null
-                else -> ContextCompat.getDrawable(Get.context, resId)
-            }
-            setBackground(background)
-        }
-    } as T
+    fun setBackgroundResource(@DrawableRes id: Int) = also { setBackground(ContextUtils.getDrawable(id)) }
 
     /**
      * 设置背景颜色
      * @param color 颜色
      */
-    fun setBackgroundColor(color: Int?) = also {
-        val drawable = color?.let { ColorDrawable(color) }
-        setBackground(drawable)
-    } as T
-
-    /**
-     * 深度拷贝状态适配器
-     * @param <S> 泛型
-     * @return 实例</S>
-     */
-    fun <T : StateAdapter<T>> deepClone() = let {
-        val adapter = JsonUtils.deepClone(this as T, javaClass)
-        adapter?.background = background
-        adapter
-    }
+    fun setBackgroundColor(color: Int) = also { setBackground(ColorDrawable(color)) }
 }

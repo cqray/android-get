@@ -22,7 +22,7 @@ import com.scwang.smart.refresh.layout.listener.OnRefreshLoadMoreListener
     "MemberVisibilityCanBePrivate",
     "Unused"
 )
-class PaginationDelegate<T>(owner: LifecycleOwner) {
+class PaginationDelegate<T>(val owner: LifecycleOwner) : StateProvider {
 
     /** 起始页码，默认为1 **/
     var defaultPageNum = 1
@@ -55,8 +55,8 @@ class PaginationDelegate<T>(owner: LifecycleOwner) {
     /** 刷新视图 **/
     private var refreshLayout: SmartRefreshLayout? = null
 
-    /** 状态委托 **/
-    private val stateDelegate: StateDelegate? = if (owner is StateProvider) StateDelegate(owner) else null
+//    /** 状态委托 **/
+//    private val stateDelegate: StateDelegate by lazy {  }
 
     /** 主要是为了不让数据在界面不可见时加载，造成APP卡顿  */
     private val data = GetLiveData<List<T>?>()
@@ -80,6 +80,8 @@ class PaginationDelegate<T>(owner: LifecycleOwner) {
         initPageInfo(owner)
         initDataObserver(owner)
     }
+
+    override fun getLifecycleOwner() = owner
 
     /**
      * 初始化分页数据

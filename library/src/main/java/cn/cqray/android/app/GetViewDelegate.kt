@@ -21,14 +21,11 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.MutableLiveData
 import cn.cqray.android.Get
 import cn.cqray.android.R
+import cn.cqray.android.databinding.GetViewDefaultLayoutBinding
 import cn.cqray.android.state.StateDelegate
-import cn.cqray.android.state.StateProvider
-import cn.cqray.android.util.ActivityUtils
 import cn.cqray.android.third.ButterKnifeUtils
+import cn.cqray.android.util.*
 import cn.cqray.android.util.ContextUtils.inflate
-import cn.cqray.android.util.ReflectUtil
-import cn.cqray.android.util.ScreenUtils
-import cn.cqray.android.util.Sizes
 import cn.cqray.android.widget.GetToolbar
 import com.scwang.smart.refresh.layout.SmartRefreshLayout
 import java.util.concurrent.atomic.AtomicBoolean
@@ -51,20 +48,22 @@ class GetViewDelegate(provider: GetViewProvider) :
     /** 关联的内容控件（原子对象，无特殊作用，为了让变量变为 final） */
     private val attachedContentView = AtomicReference<View?>()
 
+    val binding by lazy { GetViewDefaultLayoutBinding.inflate(ContextUtils.layoutInflater) }
+
     /** 根控件 */
-    val rootView: View by lazy { inflate(R.layout.get_layout_view_default) }
+    val rootView: View by lazy { binding.root }//{ inflate(R.layout.get_view_default_layout) }
 
     /** 标题 */
-    val toolbar: GetToolbar by lazy { rootView.findViewById(R.id.get_toolbar) }
+    val toolbar: GetToolbar by lazy { binding.getToolbar }//{ rootView.findViewById(R.id.get_toolbar) }
 
     /** 内容容器 */
-    val contentLayout: FrameLayout by lazy { rootView.findViewById(R.id.get_content) }
+    val contentLayout: FrameLayout by lazy { binding.getContent }//{ rootView.findViewById(R.id.get_content) }
 
     /** 头部容器 */
-    val headerLayout: FrameLayout by lazy { rootView.findViewById(R.id.get_header) }
+    val headerLayout: FrameLayout by lazy { binding.getHeader }//{ rootView.findViewById(R.id.get_header) }
 
     /** 底部容器 */
-    val footerLayout: FrameLayout by lazy { rootView.findViewById(R.id.get_footer) }
+    val footerLayout: FrameLayout by lazy { binding.getFooter }//{ rootView.findViewById(R.id.get_footer) }
 
     /** 刷新控件 */
     val refreshLayout: SmartRefreshLayout by lazy {
@@ -106,8 +105,9 @@ class GetViewDelegate(provider: GetViewProvider) :
 
     /** 状态管理器 */
     private val stateDelegate: StateDelegate? by lazy {
-        if (provider !is StateProvider) null
-        else StateDelegate(provider)
+//        if (provider !is StateProvider) null
+//        else StateDelegate(provider)
+        null
     }
 
     /** 内容控件 */
@@ -319,7 +319,8 @@ class GetViewDelegate(provider: GetViewProvider) :
     private fun initGetView() {
         //Log.e("数据", "===||${provider.javaClass}")
         if (provider is GetActivity
-            || provider is GetFragment) {
+            || provider is GetFragment
+        ) {
             // Toolbar赋值
             ReflectUtil.setField(provider, "toolbar", toolbar)
             // 使用了SmartRefreshLayout才赋值
@@ -330,11 +331,11 @@ class GetViewDelegate(provider: GetViewProvider) :
                 Log.e("数据", "===${provider.javaClass}|${provider.toolbar}")
             }
         }
-        // 状态委托连接界面
-        stateDelegate?.let {
-            if (provider is Activity) it.attachActivity(provider)
-            else if (provider is Fragment) it.attachFragment(provider)
-        }
+//        // 状态委托连接界面
+//        stateDelegate?.let {
+//            if (provider is Activity) it.attachActivity(provider)
+//            else if (provider is Fragment) it.attachFragment(provider)
+//        }
         // 初始化标题
         initToolbar()
         // 初始化ButterKnife

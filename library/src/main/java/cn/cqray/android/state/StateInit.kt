@@ -23,4 +23,10 @@ class StateInit {
         set(adapter) {
             field = adapter ?: ErrorAdapter()
         }
+
+    var busyAdapterGet: Function0<StateAdapter<*>> = { BusyAdapter() }
+
+    var emptyAdapterGet: Function0<StateAdapter<*>> = { EmptyAdapter() }
+
+    var errorAdapterGet: Function0<StateAdapter<*>> = { ErrorAdapter() }
 }

@@ -70,7 +70,7 @@ class ErrorAdapter : StateAdapter<ErrorAdapter>(R.layout.get_layout_state_error)
     }
 
     fun setButtonVisible(visible: Boolean): ErrorAdapter {
-        val parent = contentView as ViewGroup
+        val parent = view as ViewGroup
         val btn = parent.getChildAt(2) as TextView
         btn.visibility = if (visible) View.VISIBLE else View.GONE
         return this

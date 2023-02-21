@@ -2,6 +2,7 @@ package cn.cqray.android.app
 
 import android.app.Activity
 import android.content.Intent
+import android.util.Log
 import android.view.View
 import androidx.annotation.IdRes
 import androidx.fragment.app.Fragment
@@ -86,7 +87,8 @@ internal class GetNavViewModel(owner: LifecycleOwner) : GetViewModel(owner) {
     fun onBackPressed() {
         val fragment = topFragment
         if (fragment is GetNavProvider) {
-            if (fragment.onBackPressedGet()) {
+            Log.e("数据", "回退拉  ")
+            if (!fragment.onBackPressedGet()) {
                 // 有多个Fragment，则直接回退
                 if (backStack.size > 1) back()
                 // 只有0-1个Fragment，则检查Activity的拦截

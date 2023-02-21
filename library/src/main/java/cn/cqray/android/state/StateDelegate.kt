@@ -8,9 +8,9 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import cn.cqray.android.R
+import cn.cqray.android.app.GetDelegate
 import cn.cqray.android.app.GetUtils
 import cn.cqray.android.app.GetViewProvider
-import cn.cqray.android.log.GetLog
 
 import cn.cqray.android.util.ContextUtils
 import cn.cqray.android.util.Sizes
@@ -26,23 +26,23 @@ import java.lang.reflect.Field
  * @author Cqray
  */
 @Suppress("unused")
-class StateDelegate(val provider: StateProvider) {
+class StateDelegate(provider: StateProvider) : GetDelegate<StateProvider>(provider) {
 
-    init {
-        // 检查Provider是否合法
-        GetUtils.checkProvider(provider)
-        // 加入缓存
-        cacheDelegates[provider] = this
-        // 资源回收事件订阅
-        (provider as LifecycleOwner).lifecycle.addObserver(object : DefaultLifecycleObserver {
-
-            override fun onDestroy(owner: LifecycleOwner) {
-                super.onDestroy(owner)
-                // 从缓存中移除
-                cacheDelegates.remove(provider)
-            }
-        })
-    }
+//    init {
+//        // 检查Provider是否合法
+//        GetUtils.checkProvider(provider)
+//        // 加入缓存
+//        cacheDelegates[provider] = this
+//        // 资源回收事件订阅
+//        (provider as LifecycleOwner).lifecycle.addObserver(object : DefaultLifecycleObserver {
+//
+//            override fun onDestroy(owner: LifecycleOwner) {
+//                super.onDestroy(owner)
+//                // 从缓存中移除
+//                cacheDelegates.remove(provider)
+//            }
+//        })
+//    }
 
     /** 偏移量 **/
     private val offsets: Array<Int?> = arrayOfNulls(4)
@@ -65,7 +65,7 @@ class StateDelegate(val provider: StateProvider) {
     internal fun attachActivity(activity: Activity) {
         if (activity is GetViewProvider) {
             val delegate = activity.viewDelegate
-            val refresh: SmartRefreshLayout? = delegate.refreshLayout ?: activity.findViewById(R.id.get_refresh_layout)
+            val refresh: SmartRefreshLayout? = delegate.refreshLayout ?: activity.findViewById(R.id.get_refresh)
             refresh?.let { attachLayout(refresh) }
         } else {
             // 获取Activity的根布局，进行连接
@@ -281,8 +281,8 @@ class StateDelegate(val provider: StateProvider) {
         /** SmartLayout一些Enable属性  */
         private val refreshFields = arrayOfNulls<Field>(4)
 
-        /** 委托缓存 [StateDelegate] **/
-        private val cacheDelegates = HashMap<StateProvider, StateDelegate>()
+//        /** 委托缓存 [StateDelegate] **/
+//        private val cacheDelegates = HashMap<StateProvider, StateDelegate>()
 
         init {
             // 静态反射初始化一些属性
@@ -298,12 +298,12 @@ class StateDelegate(val provider: StateProvider) {
             }
         }
 
-        /**
-         * 获取并初始化[StateDelegate]
-         * @param provider [StateProvider]实现对象
-         */
-        @JvmStatic
-        @Synchronized
-        fun get(provider: StateProvider): StateDelegate = cacheDelegates[provider] ?: StateDelegate(provider)
+//        /**
+//         * 获取并初始化[StateDelegate]
+//         * @param provider [StateProvider]实现对象
+//         */
+//        @JvmStatic
+//        @Synchronized
+//        fun get(provider: StateProvider): StateDelegate = cacheDelegates[provider] ?: StateDelegate(provider)
     }
 }

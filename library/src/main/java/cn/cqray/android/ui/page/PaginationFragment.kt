@@ -21,18 +21,18 @@ import com.chad.library.adapter.base.viewholder.BaseViewHolder
 )
 abstract class PaginationFragment<T> : GetFragment(), PaginationProvider<T> {
 
-//    /** [RecyclerView]视图 **/
-//    val recyclerView by lazy {
-//        RecyclerView(requireContext()).also {
-////            it.layoutParams = ViewGroup.LayoutParams(-1, -1)
-//            it.overScrollMode = View.OVER_SCROLL_NEVER
-//            it.setBackgroundColor(Color.CYAN)
-//        }
-//    }
+    /** [RecyclerView]视图 **/
+    val recyclerView by lazy {
+        RecyclerView(requireContext()).also {
+            it.layoutParams = ViewGroup.LayoutParams(-1, -1)
+            it.overScrollMode = View.OVER_SCROLL_NEVER
+            it.setBackgroundColor(Color.CYAN)
+        }
+    }
 
-    private val binding by lazy { GetPaginationLayoutBinding.inflate(layoutInflater) }
+//    private val binding by lazy { GetPaginationLayoutBinding.inflate(layoutInflater) }
 
-    val recyclerView by lazy {binding.root as RecyclerView}
+//    val recyclerView by lazy {binding.root as RecyclerView}
 
     /** 数据适配器 **/
     val adapter by lazy { onCreateAdapter() }
@@ -47,7 +47,7 @@ abstract class PaginationFragment<T> : GetFragment(), PaginationProvider<T> {
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
         recyclerView.adapter = adapter
 //        recyclerView.layoutParams = ViewGroup.LayoutParams(-1, -1)
-//        recyclerView.requestLayout()
+        recyclerView.requestLayout()
         // 初始化分页委托
         paginationDelegate.setRefreshLayout(refreshLayout)
         paginationDelegate.adapter = adapter

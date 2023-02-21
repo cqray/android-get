@@ -1,6 +1,8 @@
 package cn.cqray.android.state
 
+import cn.cqray.android.app.GetDelegate
 import cn.cqray.android.app.GetProvider
+import cn.cqray.android.tip.GetTipProvider
 
 @JvmDefaultWithoutCompatibility
 interface StateProvider : GetProvider {
@@ -9,7 +11,8 @@ interface StateProvider : GetProvider {
      * 获取并初始化[StateDelegate]
      */
     val stateDelegate: StateDelegate
-        get() = StateDelegate.get(this)
+        get() = GetDelegate.get(this, StateProvider::class.java)
+//        get() = StateDelegate.get(this)
 
     fun setBusy() = stateDelegate.setBusy(null)
 

@@ -48,4 +48,8 @@ dependencies {
     implementation 'cn.hutool:hutool-core:5.7.11'
 
     implementation project(":library")
+
+
+    implementation  'com.scwang.smart:refresh-header-classics:2.0.3'
+
 }

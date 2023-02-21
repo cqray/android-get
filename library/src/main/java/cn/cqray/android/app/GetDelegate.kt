@@ -5,6 +5,9 @@ import androidx.lifecycle.LifecycleOwner
 import cn.cqray.android.Get
 import cn.cqray.android.log.GetLog
 import cn.cqray.android.log.GetLogLevel
+import cn.cqray.android.state.StateAdapter
+import cn.cqray.android.state.StateDelegate
+import cn.cqray.android.state.StateProvider
 import cn.cqray.android.ui.multi.GetMultiDelegate
 import cn.cqray.android.ui.multi.GetMultiProvider
 import cn.cqray.android.tip.GetTipDelegate
@@ -72,6 +75,7 @@ open class GetDelegate<P : GetProvider>(val provider: P) {
                 GetNavProvider::class.java -> GetNavDelegate(provider as GetNavProvider)
                 GetTipProvider::class.java -> GetTipDelegate(provider as GetTipProvider)
                 GetViewProvider::class.java -> GetViewDelegate(provider as GetViewProvider)
+                StateProvider::class.java -> StateDelegate(provider as StateProvider)
                 else -> throw RuntimeException()
             }
             delegate.providerName.set(clazz.name)
