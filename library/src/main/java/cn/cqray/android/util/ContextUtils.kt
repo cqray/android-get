@@ -53,7 +53,6 @@ object ContextUtils {
         val act = GetManager.topActivity
         var parent: ViewGroup? = null
         if (act != null) parent = act.findViewById(android.R.id.content)
-        Log.e("数据", "我是太难：" + (act == null))
         return LayoutInflater.from(get()).inflate(resId, parent, false)
     }
 

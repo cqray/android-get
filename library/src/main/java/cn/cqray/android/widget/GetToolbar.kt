@@ -128,6 +128,7 @@ class GetToolbar @JvmOverloads constructor(
         initTitleCenterLiveData()
         initTitleEditableLiveData()
         initContentPaddingLiveData()
+        setTitleCenter(false)
     }
 
     /** 默认是否显示水波纹 **/

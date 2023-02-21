@@ -308,7 +308,8 @@ class GetActionLayout @JvmOverloads constructor(
             // 设置图片
             it.setImageDrawable(drawable)
             // 设置TintColor
-            ImageViewCompat.setImageTintList(it, ColorStateList.valueOf(tintColor ?: defaultTintColor))
+            if (tintColor == null) ImageViewCompat.setImageTintList(it, null)
+            else ImageViewCompat.setImageTintList(it, ColorStateList.valueOf(tintColor))
         }
         // 设置ActionView组件
         setView(key, iv)
@@ -319,7 +320,10 @@ class GetActionLayout @JvmOverloads constructor(
             // 更新组件属性
             actionViews.forEach { entry ->
                 val view = entry.value
-                if (view is ImageView) ImageViewCompat.setImageTintList(view, ColorStateList.valueOf(it))
+                if (view is ImageView) {
+                    if (color == null) ImageViewCompat.setImageTintList(view, null)
+                    else ImageViewCompat.setImageTintList(view, ColorStateList.valueOf(color))
+                }
             }
             // 设置默认属性
             defaults[ACTION_ICON_TINT_COLOR] = it
@@ -332,7 +336,8 @@ class GetActionLayout @JvmOverloads constructor(
                 // 获取属性
                 val newColor = color ?: defaultTintColor
                 // 更新组件属性
-                ImageViewCompat.setImageTintList(it, ColorStateList.valueOf(newColor))
+                if (color == null) ImageViewCompat.setImageTintList(it, null)
+                else ImageViewCompat.setImageTintList(it, ColorStateList.valueOf(color))
             }
         }
     }

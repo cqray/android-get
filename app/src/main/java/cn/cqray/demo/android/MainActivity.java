@@ -23,6 +23,7 @@ public class MainActivity extends GetNavActivity {
 
         loadRootFragment(MainFragment2.class);
 
+
     }
 
 }

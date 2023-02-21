@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Context
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
@@ -177,9 +178,9 @@ class GetViewDelegate(provider: GetViewProvider) :
         attachedContentView.set(view)
         contentLayout.removeAllViews()
         contentLayout.addView(view)
-        toolbar.visibility = View.GONE
         initContentView()
         initGetView()
+        hideToolbar()
     }
 
     /**
@@ -256,15 +257,16 @@ class GetViewDelegate(provider: GetViewProvider) :
     }
 
     /** 隐藏标题栏 */
-    fun showToolbar() = run { toolbar.visibility == View.VISIBLE }
+    fun showToolbar() = run { toolbar.visibility = View.VISIBLE }
 
     /** 显示标题栏 */
-    fun hideToolbar() = run { toolbar.visibility == View.GONE }
+    fun hideToolbar() = run { toolbar.visibility = View.GONE }
 
     /** 侵入标题栏 */
     fun immersionToolbar() {
         val params = toolbar.layoutParams as ViewGroup.MarginLayoutParams
         params.topMargin = ScreenUtils.getStatusBarHeight(toolbar.context)
+        toolbar.requestLayout()
     }
 
     /**
@@ -315,11 +317,18 @@ class GetViewDelegate(provider: GetViewProvider) :
      * 初始化界面相关控件
      */
     private fun initGetView() {
-        if (provider is GetActivity || provider is GetFragment) {
+        //Log.e("数据", "===||${provider.javaClass}")
+        if (provider is GetActivity
+            || provider is GetFragment) {
             // Toolbar赋值
             ReflectUtil.setField(provider, "toolbar", toolbar)
             // 使用了SmartRefreshLayout才赋值
             if (setGetContentView.get()) ReflectUtil.setField(provider, "refreshLayout", refreshLayout)
+
+//            Log.e("数据", "===${provider.javaClass}|")
+            if (provider is GetFragment) {
+                Log.e("数据", "===${provider.javaClass}|${provider.toolbar}")
+            }
         }
         // 状态委托连接界面
         stateDelegate?.let {
@@ -343,12 +352,13 @@ class GetViewDelegate(provider: GetViewProvider) :
                 delegate.back()
             }
         }
+        // 显示标题
+        showToolbar()
         // 设置全局属性
         with(toolbar) {
             val init = Get.init.toolbarInit!!
             elevation = init.elevation ?: Sizes.dp(R.dimen.elevation)
-            background = init.background ?: background
-
+            background = init.background?.invoke() ?: background
             setContentPadding(init.contentPadding)
             // 回退按钮部分
             setBackRipple(init.backRipple)
