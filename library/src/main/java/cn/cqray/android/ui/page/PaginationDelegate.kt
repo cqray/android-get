@@ -1,5 +1,6 @@
 package cn.cqray.android.ui.page
 
+import android.util.Log
 import androidx.lifecycle.LifecycleOwner
 import cn.cqray.android.Get
 import cn.cqray.android.`object`.ResponseData
@@ -98,6 +99,7 @@ class PaginationDelegate<T>(owner: LifecycleOwner) {
      */
     private fun initDataObserver(owner: LifecycleOwner) {
         data.observe(owner) {
+            Log.e("数据", "列表更新饿了")
             // 结束数据加载状态
             refreshLayout?.let { layout ->
                 // 结束控件刷新
@@ -131,8 +133,14 @@ class PaginationDelegate<T>(owner: LifecycleOwner) {
             // 是否有更多数据
             refreshLayout?.setNoMoreData(empty || (paginationFull && it!!.size < defaultPageSize))
             // 如果是第一页
-            if (currentPageNum == defaultPageNum) adapter?.setList(it)
-            else if (!empty) adapter?.addData(it!!)
+            if (currentPageNum == defaultPageNum) {
+                Log.e("数据", "色值数据")
+                adapter?.setList(it)
+            }
+            else if (!empty) {
+                adapter?.addData(it!!)
+                Log.e("数据", "更改数据")
+            }
             // 记录页码
             lastPageNum = currentPageNum
         }

@@ -156,7 +156,7 @@ class GetViewDelegate(provider: GetViewProvider) :
         }
         attachedContentView.set(view)
         contentLayout.removeAllViews()
-        contentLayout.addView(refreshLayout.also { it.addView(view) })
+        contentLayout.addView(refreshLayout.also { it.setRefreshContent(view) })
         toolbar.visibility = View.VISIBLE
         initContentView()
         initGetView()
