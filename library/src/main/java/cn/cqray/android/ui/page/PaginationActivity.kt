@@ -6,8 +6,11 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import cn.cqray.android.app.GetActivity
+import cn.cqray.android.`object`.ResponseData
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.viewholder.BaseViewHolder
+import io.reactivex.rxjava3.core.Observable
+import io.reactivex.rxjava3.core.Single
 
 /**
  * 分页Activity
@@ -63,4 +66,8 @@ abstract class PaginationActivity<T> : GetActivity(), PaginationProvider<T> {
      * @param pageSize 分页大小
      */
     protected abstract fun onRefresh(pageNum: Int, pageSize: Int)
+
+    protected fun onRefresh(): Observable<ResponseData<List<T>>>? {
+        return null
+    }
 }

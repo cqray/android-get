@@ -44,7 +44,6 @@ abstract class PaginationFragment<T> : GetFragment(), PaginationProvider<T> {
         paginationDelegate.setRefreshLayout(refreshLayout)
         paginationDelegate.adapter = adapter
         paginationDelegate.addCallback { pageNum, pageSize -> onRefresh(pageNum, pageSize) }
-
     }
 
     override fun onLazyLoad() {
