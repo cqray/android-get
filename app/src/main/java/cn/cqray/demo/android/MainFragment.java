@@ -12,9 +12,11 @@ public class MainFragment extends GetFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setGetContentView(R.layout.activity_main);
-        ImageView iv = getViewDelegate().findViewById(R.id.iv);
-        TextView view = getViewDelegate().findViewById(R.id.tv);
+        setBusy();
+//        ImageView iv = getViewDelegate().findViewById(R.id.iv);
+//        TextView view = getViewDelegate().findViewById(R.id.tv);
 
     }
 

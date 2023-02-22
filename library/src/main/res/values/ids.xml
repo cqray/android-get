@@ -31,7 +31,7 @@
     <!-- 默认布局相关ID -->
     <item name="get_toolbar" type="id" />
     <item name="get_content" type="id" />
-    <item name="get_refresh_layout" type="id" />
+    <item name="get_refresh" type="id" />
     <item name="get_header" type="id" />
     <item name="get_footer" type="id" />
 

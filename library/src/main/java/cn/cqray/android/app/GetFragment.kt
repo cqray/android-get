@@ -21,7 +21,6 @@ import com.scwang.smart.refresh.layout.SmartRefreshLayout
 open class GetFragment : Fragment(),
     GetViewProvider,
     GetNavProvider,
-    StateProvider,
     GetTipProvider {
 
     /** 标题栏 **/
@@ -44,7 +43,7 @@ open class GetFragment : Fragment(),
         savedInstanceState: Bundle?
     ): View {
         onCreating(savedInstanceState)
-        return viewDelegate.rootView
+        return viewDelegate.root
     }
 
     open fun onCreating(savedInstanceState: Bundle?) {}

@@ -24,9 +24,9 @@ class StateInit {
             field = adapter ?: ErrorAdapter()
         }
 
-    var busyAdapterGet: Function0<StateAdapter<*>> = { BusyAdapter() }
+    var busyAdapterCreator: Function0<StateAdapter<*>> = { BusyAdapter() }
 
-    var emptyAdapterGet: Function0<StateAdapter<*>> = { EmptyAdapter() }
+    var emptyAdapterCreator: Function0<StateAdapter<*>> = { EmptyAdapter() }
 
-    var errorAdapterGet: Function0<StateAdapter<*>> = { ErrorAdapter() }
+    var errorAdapterCreator: Function0<StateAdapter<*>> = { ErrorAdapter() }
 }

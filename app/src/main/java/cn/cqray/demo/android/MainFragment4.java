@@ -19,6 +19,7 @@ public class MainFragment4 extends PaginationFragment<Integer> {
     @Override
     public void onCreating(@Nullable Bundle savedInstanceState) {
         super.onCreating(savedInstanceState);
+        setPaginationEnable(false);
     }
 
     @NonNull

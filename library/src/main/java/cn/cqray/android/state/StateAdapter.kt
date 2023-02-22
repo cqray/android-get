@@ -5,13 +5,10 @@ import android.graphics.drawable.Drawable
 
 import android.view.View
 import android.view.ViewGroup
-import android.widget.FrameLayout
 import androidx.annotation.DrawableRes
 import androidx.annotation.LayoutRes
 import cn.cqray.android.R
 import cn.cqray.android.util.ContextUtils
-
-import java.io.Serializable
 
 /**
  * 状态适配器
@@ -19,11 +16,11 @@ import java.io.Serializable
  */
 @Suppress(
     "MemberVisibilityCanBePrivate",
-    "UNCHECKED_CAST"
+    "Unchecked_cast"
 )
 open class StateAdapter<T : StateAdapter<T>>(
     @param:LayoutRes private val layoutResId: Int
-) : Serializable {
+) {
 
     /** 文本内容 **/
     private var text: String? = null
@@ -34,6 +31,7 @@ open class StateAdapter<T : StateAdapter<T>>(
     /** 背景 **/
     private var background: Any? = R.color.background
 
+    /** 关联的容器和布局的内容 **/
     private val views = arrayOfNulls<View>(2)
 
     /** 视图 **/
@@ -42,12 +40,13 @@ open class StateAdapter<T : StateAdapter<T>>(
     /** 是否未连接 **/
     val isNotAttached = views[0] == null
 
-    internal fun onAttach(layout: FrameLayout) {
+    internal fun onAttach(layout: StateLayout) {
         views[0] = layout
         views[1] = ContextUtils.inflate(layoutResId)
         views[1]?.let {
             it.isClickable = true
             it.isFocusable = true
+            it.layoutParams = ViewGroup.LayoutParams(-1, -1)
             onViewCreated(it)
         }
     }
@@ -68,9 +67,7 @@ open class StateAdapter<T : StateAdapter<T>>(
      * 背景发生了变化
      * @param background 背景
      */
-    protected open fun onBackgroundChanged(background: Drawable?) {
-        view?.background = background
-    }
+    protected open fun onBackgroundChanged(background: Drawable?) = run {  view?.background = background }
 
     /**
      * 控件变化后的回调，在[onTextChanged]、[onBackgroundChanged]之后调用,
@@ -102,12 +99,8 @@ open class StateAdapter<T : StateAdapter<T>>(
             if (show) {
                 onViewChanged()
                 parent.addView(it)
-                parent.visibility = View.VISIBLE
                 it.bringToFront()
-            } else {
-                parent.removeView(it)
-                parent.visibility = View.GONE
-            }
+            } else parent.removeView(it)
         }
     }
 

@@ -28,13 +28,17 @@ interface PaginationProvider<T> {
     @JvmDefault
     fun setPaginationFull(full: Boolean) = run { paginationDelegate.paginationFull = full }
 
+    /** 设置是否可以分页 **/
+    @JvmDefault
+    fun setPaginationEnable(enable: Boolean) = run { paginationDelegate.isPaginationEnable = enable }
+
     /** 设置空布局文本 **/
     @JvmDefault
     fun setEmptyText(text: String) = run { paginationDelegate.emptyText = text }
 
-    /** 设置刷新视图是否能够拖拽 **/
+    /** 设置纯滚动模式 **/
     @JvmDefault
-    fun setEnableDrag(enable: Boolean) = paginationDelegate.setEnableDrag(enable)
+    fun setEnablePureScrollMode(enable: Boolean) = paginationDelegate.setEnablePureScrollMode(enable)
 
     /**
      * 结束更新，并传入数据

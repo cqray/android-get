@@ -11,7 +11,7 @@ interface StateProvider : GetProvider {
      * 获取并初始化[StateDelegate]
      */
     val stateDelegate: StateDelegate
-        get() = GetDelegate.get(this, StateProvider::class.java)
+//        get() = GetDelegate.get(this, StateProvider::class.java)
 //        get() = StateDelegate.get(this)
 
     fun setBusy() = stateDelegate.setBusy(null)

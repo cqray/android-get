@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.LifecycleOwner
 import cn.cqray.android.Get
 import cn.cqray.android.`object`.ResponseData
+import cn.cqray.android.app.GetViewProvider
 import cn.cqray.android.lifecycle.GetLiveData
 import cn.cqray.android.state.StateDelegate
 import cn.cqray.android.state.StateProvider
@@ -55,8 +56,11 @@ class PaginationDelegate<T>(val owner: LifecycleOwner) : StateProvider {
     /** 刷新视图 **/
     private var refreshLayout: SmartRefreshLayout? = null
 
-//    /** 状态委托 **/
-//    private val stateDelegate: StateDelegate by lazy {  }
+    /** 状态委托 **/
+    override val stateDelegate: StateDelegate by lazy {
+        if (owner is GetViewProvider) owner.stateDelegate
+        else StateDelegate()
+    }
 
     /** 主要是为了不让数据在界面不可见时加载，造成APP卡顿  */
     private val data = GetLiveData<List<T>?>()
@@ -101,7 +105,6 @@ class PaginationDelegate<T>(val owner: LifecycleOwner) : StateProvider {
      */
     private fun initDataObserver(owner: LifecycleOwner) {
         data.observe(owner) {
-            Log.e("数据", "列表更新饿了")
             // 结束数据加载状态
             refreshLayout?.let { layout ->
                 // 结束控件刷新
@@ -111,16 +114,16 @@ class PaginationDelegate<T>(val owner: LifecycleOwner) : StateProvider {
             }
             // 职位空闲状态
             if (firstRefresh) {
-                stateDelegate?.setIdle()
+                stateDelegate.setIdle()
                 firstRefresh = false
             }
             // 数据是否为空
             val empty = it?.isEmpty() ?: true
             if (currentPageNum == defaultPageNum) {
                 // 如果是起始页，数据为空则显示空界面
-                if (empty) stateDelegate?.setEmpty(emptyText)
+                if (empty) stateDelegate.setEmpty(emptyText)
                 // 显示界面
-                else stateDelegate?.setIdle()
+                else stateDelegate.setIdle()
             }
             // 不需要分页
             if (!isPaginationEnable) {
@@ -136,12 +139,10 @@ class PaginationDelegate<T>(val owner: LifecycleOwner) : StateProvider {
             refreshLayout?.setNoMoreData(empty || (paginationFull && it!!.size < defaultPageSize))
             // 如果是第一页
             if (currentPageNum == defaultPageNum) {
-                Log.e("数据", "色值数据")
                 adapter?.setList(it)
-            }
-            else if (!empty) {
+                Log.e("数据", "设置并更新了数据")
+            } else if (!empty) {
                 adapter?.addData(it!!)
-                Log.e("数据", "更改数据")
             }
             // 记录页码
             lastPageNum = currentPageNum
@@ -185,18 +186,13 @@ class PaginationDelegate<T>(val owner: LifecycleOwner) : StateProvider {
                 }
             })
         }
-        stateDelegate?.attachLayout(refreshLayout)
+        stateDelegate.attachLayout(refreshLayout)
     }
 
     /**
-     * 设置刷新视图是否能够拖拽
-     * @param enable 是否能拖拽
+     * 设置纯滚动模式
      */
-    fun setEnableDrag(enable: Boolean) {
-        refreshLayout?.setEnableLoadMore(enable)
-        refreshLayout?.setEnableRefresh(enable)
-        refreshLayout?.setEnableOverScrollDrag(enable)
-    }
+    fun setEnablePureScrollMode(enable: Boolean) = refreshLayout?.setEnablePureScrollMode(enable)
 
     /**
      * 结束更新，并传入数据
@@ -222,13 +218,13 @@ class PaginationDelegate<T>(val owner: LifecycleOwner) : StateProvider {
      */
     fun finishWithException(throwable: Throwable?) {
         data.setValue(null)
-        stateDelegate?.setError(throwable?.message)
+        stateDelegate.setError(throwable?.message)
     }
 
     /** 自动刷新数据 **/
     fun refreshAutomatic() {
         if (firstRefresh) {
-            stateDelegate?.setBusy(null)
+            stateDelegate.setBusy(null)
             if (refreshLayout == null) refreshSilent()
             else refreshLayout?.post { refreshSilent() }
         } else {

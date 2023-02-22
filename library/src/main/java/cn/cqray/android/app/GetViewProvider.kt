@@ -4,6 +4,7 @@ import android.graphics.drawable.Drawable
 import android.view.View
 import androidx.annotation.DrawableRes
 import androidx.annotation.LayoutRes
+import cn.cqray.android.state.StateProvider
 
 /**
  * [GetViewDelegate]功能提供者
@@ -11,12 +12,17 @@ import androidx.annotation.LayoutRes
  */
 @Suppress("Deprecation")
 @JvmDefaultWithoutCompatibility
-interface GetViewProvider : GetProvider {
+interface GetViewProvider : StateProvider, GetProvider {
 
     /**
      * 获取并初始化[GetViewDelegate]
      */
     val viewDelegate: GetViewDelegate get() = GetDelegate.get(this, GetViewProvider::class.java)
+
+    /**
+     * 获取状态委托
+     */
+    override val stateDelegate get() = viewDelegate.stateDelegate
 
     /**
      * 确认[setGetContentView]不被[setNativeContentView]替代

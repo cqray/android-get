@@ -75,7 +75,7 @@ open class GetDelegate<P : GetProvider>(val provider: P) {
                 GetNavProvider::class.java -> GetNavDelegate(provider as GetNavProvider)
                 GetTipProvider::class.java -> GetTipDelegate(provider as GetTipProvider)
                 GetViewProvider::class.java -> GetViewDelegate(provider as GetViewProvider)
-                StateProvider::class.java -> StateDelegate(provider as StateProvider)
+//                StateProvider::class.java -> StateDelegate(provider as StateProvider)
                 else -> throw RuntimeException()
             }
             delegate.providerName.set(clazz.name)

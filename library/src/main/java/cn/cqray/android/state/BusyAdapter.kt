@@ -1,5 +1,6 @@
 package cn.cqray.android.state
 
+import android.graphics.drawable.Drawable
 import android.view.View
 import android.widget.TextView
 import androidx.core.content.ContextCompat
@@ -15,7 +16,7 @@ import com.github.ybq.android.spinkit.Style
  */
 class BusyAdapter : StateAdapter<BusyAdapter>(R.layout.get_layout_state_busy) {
     /** 控件颜色  */
-    private var color: Int? = null
+    private var spinColor: Int? = null
 
     /** 忙碌样式  */
     private var spinStyle: Style? = null
@@ -34,20 +35,22 @@ class BusyAdapter : StateAdapter<BusyAdapter>(R.layout.get_layout_state_busy) {
         spinKitView = view.findViewById(R.id.get_state_spin_kit)
         textView = view.findViewById(R.id.get_state_text)
         // 设置SpinKitView样式
-        val color = this.color ?: ContextCompat.getColor(Get.context, R.color.colorPrimary)
+        val color = spinColor ?: ContextCompat.getColor(Get.context, R.color.colorPrimary)
         val style = spinStyle ?: Style.CIRCLE
         spinKitView?.setColor(color)
         spinKitView?.setIndeterminateDrawable(SpriteFactory.create(style))
     }
 
-    override fun onTextChanged(text: String?) : Unit = text.let { textView?.text = it }
+    override fun onTextChanged(text: String?): Unit = text.let { textView?.text = it }
+
+    override fun onBackgroundChanged(background: Drawable?) = run { view?.background = null }
 
     /**
      * 设置加载框颜色
      * @param color 颜色
      */
     fun setSpinColor(color: Int) = also {
-        this.color = color
+        spinColor = color
         spinKitView?.setColor(color)
     }
 
@@ -56,7 +59,7 @@ class BusyAdapter : StateAdapter<BusyAdapter>(R.layout.get_layout_state_busy) {
      * @param style 样式[Style]
      */
     fun setSpinStyle(style: Style) = also {
-        this.spinStyle = style
+        spinStyle = style
         spinKitView?.setIndeterminateDrawable(SpriteFactory.create(style))
     }
 }

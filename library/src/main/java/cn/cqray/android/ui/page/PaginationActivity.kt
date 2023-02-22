@@ -39,10 +39,15 @@ abstract class PaginationActivity<T> : GetActivity(), PaginationProvider<T> {
         // 初始化列表
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.adapter = adapter
+        recyclerView.requestLayout()
         // 初始化分页委托
         paginationDelegate.setRefreshLayout(refreshLayout)
         paginationDelegate.adapter = adapter
         paginationDelegate.addCallback { pageNum, pageSize -> onRefresh(pageNum, pageSize) }
+    }
+
+    override fun onLazyLoad() {
+        super.onLazyLoad()
         refreshAutomatic()
     }
 

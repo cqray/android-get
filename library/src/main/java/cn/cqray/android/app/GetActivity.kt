@@ -21,7 +21,6 @@ import com.scwang.smart.refresh.layout.SmartRefreshLayout
 open class GetActivity : AppCompatActivity(),
     GetViewProvider,
     GetNavProvider,
-    StateProvider,
     GetTipProvider {
 
     /** 标题栏 **/
