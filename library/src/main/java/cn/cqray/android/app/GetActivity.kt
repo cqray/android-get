@@ -3,12 +3,12 @@ package cn.cqray.android.app
 import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.IdRes
 import androidx.annotation.Keep
 import androidx.annotation.LayoutRes
 import androidx.annotation.NonNull
 import androidx.appcompat.app.AppCompatActivity
 import cn.cqray.android.Get
-import cn.cqray.android.state.StateProvider
 import cn.cqray.android.tip.GetTipProvider
 import cn.cqray.android.widget.GetToolbar
 import com.scwang.smart.refresh.layout.SmartRefreshLayout
@@ -56,8 +56,8 @@ open class GetActivity : AppCompatActivity(),
      */
     final override fun onBackPressed() = super.onBackPressed()
 
-//    /**
-//     * 查找View
-//     */
-//    final override fun <T : View> findViewById(@IdRes id: Int): T = viewDelegate.findViewById(id)
+    /**
+     * 查找View
+     */
+    final override fun <T : View> findViewById(@IdRes id: Int): T = viewDelegate.findViewById(id)
 }

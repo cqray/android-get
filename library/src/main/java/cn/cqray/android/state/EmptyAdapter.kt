@@ -12,33 +12,26 @@ import cn.cqray.android.R
  * 空布局适配器实现
  * @author Cqray
  */
+@Suppress("Unused")
 class EmptyAdapter : StateAdapter<EmptyAdapter>(R.layout.get_layout_state_empty) {
 
     /** 图片控件  */
-    @Transient
     private var imageView: ImageView? = null
 
     /** 文本控件  */
-    @Transient
     private var textView: TextView? = null
-
-    /** 重试控件  */
-    @Transient
-    private var retryView: TextView? = null
 
     /** 图片资源  */
     private var imageResource: Any? = null
+
+    init {
+        setDefaultText("暂无数据")
+    }
 
     override fun onViewCreated(view: View) {
         super.onViewCreated(view)
         imageView = view.findViewById(R.id.get_state_img)
         textView = view.findViewById(R.id.get_state_text)
-        retryView = view.findViewById(R.id.get_state_retry)
-//        mRetryView.setVisibility(View.GONE)
-//        if (mImageResource != null) {
-//            mImageView.setImageDrawable(mImageResource)
-//        }
-        setDefaultText("暂无数据")
     }
 
     override fun onTextChanged(text: String?) {

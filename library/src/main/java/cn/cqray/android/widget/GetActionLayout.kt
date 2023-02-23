@@ -45,6 +45,15 @@ class GetActionLayout @JvmOverloads constructor(
     /** 右间隔  */
     private val endSpaceView: Space by lazy { Space(context) }
 
+    /** 控件缓存 **/
+    private val actionViews = HashMap<Int?, View>()
+
+    /** 控件是否显示水波纹缓存 **/
+    private val actionRipple = HashMap<Int?, Boolean>()
+
+    /** 控件是否显示缓存 **/
+    private val actionVisible = HashMap<Int?, Boolean>()
+
     /** 默认参数，主要是对应值为空时，赋值 **/
     private val defaults: HashMap<Int, Any?> by lazy {
         val map = HashMap<Int, Any?>()
@@ -57,15 +66,6 @@ class GetActionLayout @JvmOverloads constructor(
         map[ACTION_ICON_TINT_COLOR] = Color.TRANSPARENT
         map
     }
-
-    /** 控件缓存 **/
-    private val actionViews = HashMap<Int?, View>()
-
-    /** 控件是否显示水波纹缓存 **/
-    private val actionRipple = HashMap<Int?, Boolean>()
-
-    /** 控件是否显示缓存 **/
-    private val actionVisible = HashMap<Int?, Boolean>()
 
     init {
         // 初始化属性

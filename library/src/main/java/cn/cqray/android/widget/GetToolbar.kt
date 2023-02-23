@@ -95,7 +95,6 @@ class GetToolbar @JvmOverloads constructor(
     /** 生命周期持有对象 **/
     val lifecycleOwner: LifecycleOwner by lazy { LifecycleOwner { lifecycleRegistry } }
 
-
     /** 默认参数，主要是对应值为空时，赋值 **/
     private val defaults: HashMap<Int, Any?> by lazy {
         val map = HashMap<Int, Any?>()
@@ -380,7 +379,7 @@ class GetToolbar @JvmOverloads constructor(
             // 设置BackLayout内部间隔
             val backVisible = backView.visibility == VISIBLE
             if (backVisible) {
-                backView.setPadding(it / 2, 0, it / 2, 0);
+                backView.setPadding(it / 2, 0, it / 2, 0)
                 val bParams = backView.layoutParams as LayoutParams
                 bParams.marginEnd = -it / 2
                 bParams.marginStart = it / 2

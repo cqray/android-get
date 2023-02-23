@@ -1,3 +1,4 @@
 rootProject.name = "android-get"
 include ':app'
 include ':library'
+include ':library-ui'

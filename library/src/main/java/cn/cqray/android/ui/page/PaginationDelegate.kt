@@ -85,8 +85,6 @@ class PaginationDelegate<T>(val owner: LifecycleOwner) : StateProvider {
         initDataObserver(owner)
     }
 
-    override fun getLifecycleOwner() = owner
-
     /**
      * 初始化分页数据
      */

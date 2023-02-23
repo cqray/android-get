@@ -3,7 +3,6 @@ package cn.cqray.android.ui.multi
 import android.view.View
 import android.widget.FrameLayout
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.viewpager2.widget.ViewPager2
 import cn.cqray.android.databinding.GetMultiLayoutBinding

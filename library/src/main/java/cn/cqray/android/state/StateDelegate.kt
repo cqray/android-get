@@ -6,7 +6,6 @@ import android.widget.FrameLayout
 import androidx.fragment.app.Fragment
 
 import cn.cqray.android.R
-import cn.cqray.android.app.GetDelegate
 import cn.cqray.android.app.GetViewProvider
 
 import cn.cqray.android.util.ContextUtils

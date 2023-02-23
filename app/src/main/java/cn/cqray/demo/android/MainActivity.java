@@ -16,6 +16,9 @@ public class MainActivity extends GetNavActivity {
 
         loadRootFragment(MainFragment4.class);
 
+        showToolbar();
+        toolbar.setContentPadding(30F);
+
     }
 
     @Override
