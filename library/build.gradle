@@ -124,6 +124,10 @@ dependencies {
 }
 
 afterEvaluate {
+    
+    generateReleaseBuildConfig.enabled = false
+    generateDebugBuildConfig.enabled =false
+
     publishing {
         publications {
             // Creates a Maven publication called "release".
