@@ -6,6 +6,7 @@ import android.widget.TextView;
 
 import cn.cqray.android.app.GetFragment;
 import cn.cqray.android.log.GetLog;
+import cn.cqray.android.widget.GetTitleBar;
 
 public class MainFragment extends GetFragment {
 
@@ -18,6 +19,8 @@ public class MainFragment extends GetFragment {
 //        ImageView iv = getViewDelegate().findViewById(R.id.iv);
 //        TextView view = getViewDelegate().findViewById(R.id.tv);
 
+        GetTitleBar bar = getViewDelegate().findViewById(R.id.bar);
+        bar.getActionLayout().setText(0, "6666");
     }
 
     @Override

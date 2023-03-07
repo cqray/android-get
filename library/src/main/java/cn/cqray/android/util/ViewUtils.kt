@@ -9,6 +9,7 @@ import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import android.os.Build
 import android.view.View
+import android.widget.EditText
 import androidx.annotation.LayoutRes
 import androidx.core.view.ViewCompat
 import androidx.recyclerview.widget.RecyclerView
@@ -42,6 +43,13 @@ object ViewUtils {
     //        }
     //    }
 
+    @JvmStatic
+    fun setEditTextEnable(editText: EditText, enable: Boolean) {
+        editText.isFocusableInTouchMode = enable
+        editText.isFocusable = enable
+        editText.isClickable = enable
+        editText.isEnabled = enable
+    }
 
     fun setRippleBackground(view: View, rippleEnable: Boolean?) {
         val context = view.context
