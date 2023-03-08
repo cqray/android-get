@@ -4,15 +4,15 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/hint"
     android:gravity="center"
     android:orientation="vertical"
-    tools:context=".MainActivity"
-    android:background="@color/hint">
+    tools:context=".MainActivity">
 
     <TextView
+        android:id="@+id/tv"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/tv"/>
+        android:layout_height="wrap_content" />
 
     <EditText
         android:layout_width="match_parent"
@@ -20,15 +20,17 @@
 
     </EditText>
 
-    <cn.cqray.android.widget.GetTitleBar
-        android:id="@+id/bar"
-        android:layout_width="match_parent"
-        android:layout_height="60dp"/>
+    <cn.cqray.android.widget.SpinView
+        android:id="@+id/sv"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        xmlns:app="http://schemas.android.com/apk/res-auto" />
 
     <ImageView
         android:id="@+id/iv"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:contentDescription="@string/app_name"/>
+        android:contentDescription="@string/app_name" />
+
 
 </LinearLayout>

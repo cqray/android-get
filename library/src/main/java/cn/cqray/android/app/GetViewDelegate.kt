@@ -357,38 +357,38 @@ class GetViewDelegate internal constructor(
         }
         // 设置全局属性
         with(toolbar) {
-            val init = Get.init.toolbarInit!!
-            elevation = init.elevation ?: Sizes.dp(R.dimen.elevation)
-            background = init.background?.invoke() ?: background
+//            val init = Get.init.toolbarInit!!
+//            elevation = init.elevation ?: Sizes.dp(R.dimen.elevation)
+//            background = init.background?.invoke() ?: background
             visibility = if (setGetContentView) View.VISIBLE else View.GONE
-
-            setContentPadding(init.contentPadding)
-            // 回退按钮部分
-            setBackRipple(init.backRipple)
-            setBackIcon(init.backIcon)
-            setBackIconSpace(init.backIconSpace)
-            setBackIconTintColor(init.backIconTintColor)
-            setBackText(init.backText)
-            setBackTextColor(init.backTextColor)
-            setBackTextSize(init.backTextSize)
-            setBackTextTypeface(init.backTextTypeface)
-            // 标题部分
-            setTitleCenter(init.titleCenter)
-            setTitleSpace(init.titleSpace)
-            setTitleTextColor(init.titleTextColor)
-            setTitleTextSize(init.titleTextSize)
-            setTitleTextTypeface(init.titleTextTypeFace)
-            // Action部分
-            setActionRipple(init.actionRipple)
-            setActionSpace(init.actionSpace)
-            setActionTextColor(init.actionTextColor)
-            setActionTextSize(init.actionTextSize)
-            setActionTextTypeface(init.actionTextTypeface)
-            // 分割线部分
-            setDividerDrawable(init.dividerDrawable)
-            setDividerHeight(init.dividerHeight)
-            setDividerMargin(init.dividerMargin)
-            setDividerVisible(init.dividerVisible)
+            setToolbarInit(Get.init.toolbarInit!!)
+//            setPaddingSE(init.contentPadding)
+//            // 回退按钮部分
+//            setBackRipple(init.backRipple)
+//            setBackIcon(init.backIcon)
+//            setBackIconSpace(init.backIconSpace)
+//            setBackIconTintColor(init.backIconTintColor)
+//            setBackText(init.backText)
+//            setBackTextColor(init.backTextColor)
+//            setBackTextSize(init.backTextSize)
+//            setBackTextTypeface(init.backTextTypeface)
+//            // 标题部分
+//            setTitleCenter(init.titleCenter)
+//            setTitleSpace(init.titleSpace)
+//            setTitleTextColor(init.titleTextColor)
+//            setTitleTextSize(init.titleTextSize)
+//            setTitleTextTypeface(init.titleTextTypeFace)
+//            // Action部分
+//            setActionRipple(init.actionRipple)
+//            setActionSpace(init.actionSpace)
+//            setActionTextColor(init.actionTextColor)
+//            setActionTextSize(init.actionTextSize)
+//            setActionTextTypeface(init.actionTextTypeface)
+//            // 分割线部分
+//            setDividerDrawable(init.dividerDrawable)
+//            setDividerHeight(init.dividerHeight)
+//            setDividerMargin(init.dividerMargin)
+//            setDividerVisible(init.dividerVisible)
         }
     }
 

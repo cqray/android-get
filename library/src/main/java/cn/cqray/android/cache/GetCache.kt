@@ -67,12 +67,18 @@ open class GetCache {
     fun getString(key: String, def: String?) = getObject(key, String::class.java) ?: def
 
     fun <T> getObject(key: String, clazz: Class<T>): T? {
-        val value = sp.getString(key, null)
-        return gson.fromJson(value, clazz)
+        runCatching {
+            val value = sp.getString(key, null)
+            return gson.fromJson(value, clazz)
+        }
+        return null
     }
 
     fun <T> getObject(key: String, type: Type): T? {
-        val value = sp.getString(key, null)
-        return gson.fromJson(value, type)
+        runCatching {
+            val value = sp.getString(key, null)
+            return gson.fromJson(value, type)
+        }
+        return null
     }
 }

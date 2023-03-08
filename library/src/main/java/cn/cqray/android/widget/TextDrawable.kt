@@ -12,7 +12,11 @@ import kotlin.math.min
  * 带文字的Drawable
  * @author Cqray
  */
-class TextDrawable private constructor() : ShapeDrawable() {
+@Suppress(
+    "MemberVisibilityCanBePrivate",
+    "Unused"
+)
+class TextDrawable : ShapeDrawable() {
     /** 文本画笔  */
     private val textPaint = Paint()
 
@@ -23,40 +27,41 @@ class TextDrawable private constructor() : ShapeDrawable() {
     private val paintInit = AtomicBoolean()
 
     /** 高度  */
-    private val height = 0f
+    var height = 0f
 
     /** 宽度  */
-    private val width = 0f
+    var width = 0f
 
     /** 文本  */
-    private val text: String? = null
+    var text: String? = null
 
     /** 字体颜色  */
-    private val textColor = 0
+    var textColor = 0
 
     /** 字体大小  */
-    private val textSize = 0f
+    var textSize = 0f
 
     /** 字体加粗  */
-    private val textBold = false
+    var textBold = false
 
     /** 字体边框厚度  */
-    private val textBorderThickness = 0f
+    var textBorderThickness = 0f
 
     /** 背景颜色  */
-    private var color = 0
+    var color = 0
 
     /** 背景圆角  */
-    private val radius = 0f
+    var radius = 0f
 
     /** 背景圆角  */
-    private val radii: FloatArray? = null
+    var radii: FloatArray? = null
 
     /** 边框颜色  */
-    private val borderColor = 0
+    var borderColor = 0
 
     /** 背景图形边框厚度  */
-    private val borderThickness = 0f
+    var borderThickness = 0f
+
     private fun getDarkerShade(color: Int): Int {
         return Color.rgb(
             (0.9 * Color.red(color)).toInt(),
@@ -145,6 +150,6 @@ class TextDrawable private constructor() : ShapeDrawable() {
     }
 
     fun setColor(color: Int?) = also {
-        this.color = color?: this.color
+        this.color = color ?: this.color
     }
 }

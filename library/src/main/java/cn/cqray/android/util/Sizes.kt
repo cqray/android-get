@@ -143,4 +143,17 @@ object Sizes {
         }
         return 0F
     }
+
+    @JvmStatic
+    fun applyDimension(value: Float, unit: Int): Float {
+        when (unit) {
+            TypedValue.COMPLEX_UNIT_PX -> return value
+            TypedValue.COMPLEX_UNIT_DIP -> return value * dpScale
+            TypedValue.COMPLEX_UNIT_SP -> return value * spScale
+            TypedValue.COMPLEX_UNIT_PT -> return value * ptScale
+            TypedValue.COMPLEX_UNIT_IN -> return value * inScale
+            TypedValue.COMPLEX_UNIT_MM -> return value * mmScale
+        }
+        return 0F
+    }
 }

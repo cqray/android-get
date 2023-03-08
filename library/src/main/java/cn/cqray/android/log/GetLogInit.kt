@@ -11,34 +11,17 @@ import java.io.Serializable
 class GetLogInit : Serializable {
 
     /** 日志全局标识 **/
-    var tag: String? = "Get"
-        set(tag) {
-            field = tag ?: "Get"
-        }
+    var tag: String = "Get"
 
     /** 启用[Activity]生命周期日志 **/
-    var activityLifecycleLogEnable: Boolean? = true
-        set(enable) {
-            field = enable ?: true
-        }
+    var activityLifecycleLogEnable: Boolean = true
 
     /** 启用[Fragment]生命周期日志 **/
-    var fragmentLifecycleLogEnable: Boolean? = true
-        set(enable) {
-            field = enable ?: true
-        }
+    var fragmentLifecycleLogEnable: Boolean = true
 
     /** 日志等级 **/
-    var logLevel: GetLogLevel? = GetLogLevel.V
-        set(level) {
-            field = level ?: GetLogLevel.V
-        }
+    var logLevel: GetLogLevel = GetLogLevel.V
 
     /** 日志适配器 **/
-    var logAdapter: GetLogAdapter? = GetLogAdapterImpl()
-        set(adapter) {
-            field = adapter ?: GetLogAdapterImpl()
-        }
-
-    
+    var logAdapter: GetLogAdapter = GetLogAdapterImpl()
 }

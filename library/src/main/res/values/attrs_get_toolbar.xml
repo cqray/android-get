@@ -5,7 +5,7 @@
         <!-- 一般属性 -->
         <attr name="ripple" />
         <attr name="elevation" />
-        <attr name="contentPadding" format="dimension"/>
+        <attr name="paddingSE" format="dimension"/>
         <!-- 标题属性 -->
         <attr name="titleText" format="string" localization="suggested" />
         <attr name="titleTextColor" format="color" />

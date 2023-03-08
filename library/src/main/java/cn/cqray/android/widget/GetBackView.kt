@@ -3,25 +3,23 @@ package cn.cqray.android.widget
 import android.content.Context
 import android.content.res.ColorStateList
 import android.graphics.Bitmap
+import android.graphics.Color
 import android.graphics.Typeface
 import android.graphics.drawable.Drawable
 import android.text.TextUtils
 import android.util.AttributeSet
+import android.util.TypedValue
 import android.view.Gravity
 import android.view.View
 import android.widget.LinearLayout
 import android.widget.Space
-import androidx.annotation.ColorInt
-import androidx.annotation.DrawableRes
-import androidx.annotation.StringRes
+import androidx.annotation.*
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.AppCompatTextView
-import androidx.core.content.ContextCompat
 import androidx.core.widget.ImageViewCompat
 import cn.cqray.android.R
 import cn.cqray.android.util.Sizes
 import cn.cqray.android.util.ViewUtils
-import cn.cqray.java.tool.SizeUnit
 
 /**
  * 图标文本控件
@@ -29,10 +27,12 @@ import cn.cqray.java.tool.SizeUnit
  */
 @Suppress(
     "MemberVisibilityCanBePrivate",
-    "Unused",
+    "UNUSED",
 )
 class GetBackView @JvmOverloads constructor(
-    context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
+    context: Context,
+    attrs: AttributeSet? = null,
+    defStyleAttr: Int = 0
 ) : LinearLayout(context, attrs, defStyleAttr) {
 
     /** 图标控件 **/
@@ -56,28 +56,17 @@ class GetBackView @JvmOverloads constructor(
     /** 间隔控件  */
     private val spaceView: Space by lazy { Space(context).also { it.layoutParams = LayoutParams(-2, -2) } }
 
-    /** 默认参数，主要是对应值为空时，赋值 **/
-    private val defaults: HashMap<Int, Any?> by lazy {
-        val map = HashMap<Int, Any?>()
-        map[RIPPLE] = true
-        map[ICON_SPACE] = Sizes.small()
-        map[TEXT_COLOR] = ContextCompat.getColor(context, R.color.text)
-        map[TEXT_SIZE] = Sizes.body()
-        map[TEXT_STYLE] = 0
-        map
-    }
-
     init {
         val ta = context.obtainStyledAttributes(attrs, R.styleable.GetBackView)
         val text = ta.getString(R.styleable.GetBackView_text) ?: ""
         val drawable = ta.getDrawable(R.styleable.GetBackView_iconSrc)
         val tintColor = ta.getColor(R.styleable.GetBackView_iconTint, -1)
         // 初始化默认属性
-        defaults[RIPPLE] = ta.getBoolean(R.styleable.GetBackView_ripple, defaultRipple)
-        defaults[ICON_SPACE] = ta.getDimension(R.styleable.GetBackView_iconSpace, defaultIconSpace)
-        defaults[TEXT_COLOR] = ta.getColor(R.styleable.GetBackView_textColor, defaultTextColor)
-        defaults[TEXT_SIZE] = ta.getDimension(R.styleable.GetBackView_textSize, defaultTextSize)
-        defaults[TEXT_STYLE] = ta.getInt(R.styleable.GetBackView_textStyle, defaultTextStyle)
+        val ripple = ta.getBoolean(R.styleable.GetBackView_ripple, true)
+        val iconSpace = ta.getDimension(R.styleable.GetBackView_iconSpace, Sizes.px(R.dimen.small))
+        val textColor = ta.getColor(R.styleable.GetBackView_textColor, Color.WHITE)
+        val textSize = ta.getDimension(R.styleable.GetBackView_textSize, Sizes.px(R.dimen.body))
+        val textStyle = ta.getInt(R.styleable.GetBackView_textStyle, 0)
         // 释放资源
         ta.recycle()
         // 设置图标属性
@@ -91,13 +80,13 @@ class GetBackView @JvmOverloads constructor(
         // 设置文本属性
         textView.let {
             it.text = text
-            it.setTextColor(defaultTextColor)
-            it.setTextSize(SizeUnit.PX.type, defaultTextSize)
-            it.typeface = Typeface.defaultFromStyle(defaultTextStyle)
+            it.setTextColor(textColor)
+            it.setTextSize(TypedValue.COMPLEX_UNIT_PX, textSize)
+            it.typeface = Typeface.defaultFromStyle(textStyle)
         }
         // 设置间隔属性
         spaceView.let {
-            it.layoutParams.width = defaultIconSpace.toInt()
+            it.layoutParams.width = iconSpace.toInt()
             it.layoutParams.height = -1
             it.visibility = if (text.isEmpty()) GONE else VISIBLE
         }
@@ -109,31 +98,15 @@ class GetBackView @JvmOverloads constructor(
         addView(spaceView)
         addView(if (ltr) textView else iconView)
         // 设置背景
-        ViewUtils.setRippleBackground(iconView, defaultRipple)
-        ViewUtils.setRippleBackground(textView, defaultRipple)
+        ViewUtils.setRippleBackground(iconView, ripple)
+        ViewUtils.setRippleBackground(textView, ripple)
         // 设置点击事件
         setOnClickListener(null)
     }
 
-    /** 默认是否显示水波纹 **/
-    private val defaultRipple get() = defaults[RIPPLE] as Boolean
-
-    /** 默认间隔 **/
-    private val defaultIconSpace get() = defaults[ICON_SPACE] as Float
-
-    /** 默认组件文本颜色 **/
-    private val defaultTextColor get() = defaults[TEXT_COLOR] as Int
-
-    /** 默认组件文本大小 **/
-    private val defaultTextSize get() = defaults[TEXT_SIZE] as Float
-
-    /** 默认组件文本样式 **/
-    private val defaultTextStyle get() = defaults[TEXT_STYLE] as Int
-
-    fun setRipple(ripple: Boolean?) = also {
-        val newRipple = ripple ?: defaultRipple
-        ViewUtils.setRippleBackground(iconView, newRipple)
-        ViewUtils.setRippleBackground(textView, newRipple)
+    fun setRipple(ripple: Boolean) = also {
+        ViewUtils.setRippleBackground(iconView, ripple)
+        ViewUtils.setRippleBackground(textView, ripple)
     }
 
     fun setIconDrawable(drawable: Drawable?) = also {
@@ -150,11 +123,8 @@ class GetBackView @JvmOverloads constructor(
         changeSpaceVisibility()
     }
 
-    fun setIconResource(@DrawableRes resId: Int?) = also {
-        // 无ID资源
-        if (resId == null) iconView.setImageDrawable(null)
-        // 有ID资源
-        else iconView.setImageResource(resId)
+    fun setIconResource(@DrawableRes id: Int) = also {
+        iconView.setImageResource(id)
         // 更新间隔控件状态
         changeSpaceVisibility()
     }
@@ -166,22 +136,14 @@ class GetBackView @JvmOverloads constructor(
         else ImageViewCompat.setImageTintList(iconView, ColorStateList.valueOf(color))
     }
 
-    fun setIconSpace(space: Float?) = also { setIconSpace(space, SizeUnit.DIP) }
+    fun setIconSpace(space: Float) = also { setIconSpace(space, TypedValue.COMPLEX_UNIT_DIP) }
 
-    fun setIconSpace(space: Float?, unit: SizeUnit) = also {
-        val newSpace =
-            if (space == null) defaultIconSpace
-            else Sizes.applyDimension(space, unit)
-        spaceView.layoutParams.width = newSpace.toInt()
+    fun setIconSpace(space: Float, unit: Int) = also {
+        spaceView.layoutParams.width = Sizes.applyDimension(space, unit).toInt()
         spaceView.requestLayout()
     }
 
-    fun setText(@StringRes resId: Int?) = also {
-        setText(
-            if (resId == null) null
-            else context.getString(resId)
-        )
-    }
+    fun setText(@StringRes id: Int) = setText(context.getString(id))
 
     fun setText(text: CharSequence?) = also {
         // 更新文本
@@ -190,23 +152,13 @@ class GetBackView @JvmOverloads constructor(
         changeSpaceVisibility()
     }
 
-    fun setTextColor(color: Int?) = also {
-        val newColor = color ?: defaultTextColor
-        textView.setTextColor(newColor)
-    }
+    fun setTextColor(color: Int) = also { textView.setTextColor(color) }
 
-    fun setTextSize(size: Float?) = also { setTextSize(size, SizeUnit.SP) }
+    fun setTextSize(size: Float) = also { setTextSize(size, TypedValue.COMPLEX_UNIT_SP) }
 
-    fun setTextSize(size: Float?, unit: SizeUnit) = also {
-        val newSize = if (size == null) defaultTextSize
-        else Sizes.applyDimension(size, unit)
-        textView.setTextSize(SizeUnit.PX.type, newSize)
-    }
+    fun setTextSize(size: Float, unit: Int) = also { textView.setTextSize(unit, size) }
 
-    fun setTypeface(typeface: Typeface?) = also {
-        val newTypeface = typeface ?: Typeface.defaultFromStyle(defaultTextStyle)
-        textView.typeface = newTypeface
-    }
+    fun setTextStyle(textStyle: Int) = also { textView.typeface = Typeface.defaultFromStyle(textStyle) }
 
     override fun setOnClickListener(l: OnClickListener?) {
         iconView.setOnClickListener(l)
@@ -228,13 +180,5 @@ class GetBackView @JvmOverloads constructor(
             // 有文字则显示间隔，无则不显示
             spaceView.visibility = if (textView.text.isEmpty()) GONE else VISIBLE
         }
-    }
-
-    private companion object {
-        const val RIPPLE = 0
-        const val ICON_SPACE = 1
-        const val TEXT_COLOR = 2
-        const val TEXT_SIZE = 3
-        const val TEXT_STYLE = 4
     }
 }

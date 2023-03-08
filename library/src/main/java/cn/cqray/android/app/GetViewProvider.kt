@@ -3,6 +3,7 @@ package cn.cqray.android.app
 import android.graphics.drawable.Drawable
 import android.view.View
 import androidx.annotation.DrawableRes
+import androidx.annotation.IdRes
 import androidx.annotation.LayoutRes
 import cn.cqray.android.state.StateProvider
 
@@ -179,4 +180,8 @@ interface GetViewProvider : StateProvider, GetProvider {
     @JvmDefault
     fun immersionToolbar() = viewDelegate.immersionToolbar()
 
+    /**
+     * 查找View
+     */
+    fun <T : View> findViewById(@IdRes id: Int): T = viewDelegate.findViewById(id)
 }

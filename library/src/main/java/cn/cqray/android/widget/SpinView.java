@@ -27,7 +27,7 @@ public class SpinView extends View {
     /** 刷新间隔 **/
     private static final int INVALIDATE_DELAY = 15;
 
-    private Paint mPaint;
+    private Paint paint;
     private RectF mArcRectF;
     private int mViewWidth;
     private int mViewHeight;
@@ -72,8 +72,8 @@ public class SpinView extends View {
     }
 
     private void init(Context context) {
-        mPaint = new Paint();
-        mPaint.setAntiAlias(true);
+        paint = new Paint();
+        paint.setAntiAlias(true);
         mArcRectF = new RectF();
         mArcCount = 1;
         mArcColors = new int[] {ContextCompat.getColor(context, R.color.colorAccent)};
@@ -135,14 +135,14 @@ public class SpinView extends View {
                 (Math.abs(size - mViewWidth) >> 1) + size - strokeWidth,
                 (Math.abs(size - mViewHeight) >> 1) + size - strokeWidth);
         for (int i = 0; i < mArcCount; i++) {
-            mPaint.setColor(mArcColors[i % mArcColors.length]);
-            mPaint.setStyle(Paint.Style.STROKE);
-            mPaint.setStrokeWidth(strokeWidth);
+            paint.setColor(mArcColors[i % mArcColors.length]);
+            paint.setStyle(Paint.Style.STROKE);
+            paint.setStrokeWidth(strokeWidth);
             float startAngle = mStartAngle + i * (360f / mArcCount);
             // 画圆弧
-            canvas.drawArc(mArcRectF, startAngle, mSweepAngle, false, mPaint);
+            canvas.drawArc(mArcRectF, startAngle, mSweepAngle, false, paint);
             // 画两个圆圈,是弧线变得圆润
-            mPaint.setStyle(Paint.Style.FILL);
+            paint.setStyle(Paint.Style.FILL);
 
             float radius = mArcRectF.width() / 2;
             float endAngle = startAngle + mSweepAngle;
@@ -153,8 +153,8 @@ public class SpinView extends View {
             float x2 = (float) (mArcRectF.left + radius + radius * Math.cos(endAngle * Math.PI / 180));
             float y2 = (float) (mArcRectF.top + radius + radius * Math.sin(endAngle * Math.PI / 180));
 
-            canvas.drawCircle(x, y, strokeWidth / 2, mPaint);
-            canvas.drawCircle(x2, y2, strokeWidth / 2, mPaint);
+            canvas.drawCircle(x, y, strokeWidth / 2, paint);
+            canvas.drawCircle(x2, y2, strokeWidth / 2, paint);
         }
     }
 

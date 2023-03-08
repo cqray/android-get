@@ -10,7 +10,7 @@ import com.orhanobut.logger.Logger
 internal class GetLogAdapterImpl : GetLogAdapter {
 
     /** 是否支持[Logger] **/
-    private var supportLogger = true
+    private var loggerSupported = true
 
     /**
      * 打印日志
@@ -21,7 +21,7 @@ internal class GetLogAdapterImpl : GetLogAdapter {
      */
     override fun print(level: GetLogLevel, tag: String, message: String, exc: Throwable?) {
         // 使用Logger
-        if (supportLogger) printByLogger(level, tag, message, exc)
+        if (loggerSupported) printByLogger(level, tag, message, exc)
         // 使用内置
         else printByInner(level, tag, message, exc)
     }
@@ -46,7 +46,7 @@ internal class GetLogAdapterImpl : GetLogAdapter {
                 else -> printer.wtf(message)
             }
         } catch (e: NoClassDefFoundError) {
-            supportLogger = false
+            loggerSupported = false
             printByInner(level, tag, message, tr)
         }
     }

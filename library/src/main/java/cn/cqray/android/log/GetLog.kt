@@ -52,9 +52,9 @@ object GetLog {
     fun print(level: GetLogLevel?, tag: Any?, message: String?, tr: Throwable?) {
         // 获取配置
         val logInit = Get.init.logInit!!
-        val logTag = logInit.tag!!
-        val logLevel = logInit.logLevel!!
-        val logAdapter = logInit.logAdapter!!
+        val logTag = logInit.tag
+        val logLevel = logInit.logLevel
+        val logAdapter = logInit.logAdapter
         // 判断日志是否需要打印
         if (logLevel == GetLogLevel.NONE) return
         if ((level?.ordinal ?: 0) < logLevel.ordinal) return

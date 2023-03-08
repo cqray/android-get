@@ -1,14 +1,10 @@
 package cn.cqray.android.widget
 
-import android.graphics.Typeface
 import android.graphics.drawable.Drawable
 import androidx.annotation.ColorInt
 import androidx.annotation.DrawableRes
-import androidx.annotation.IdRes
 import androidx.annotation.Keep
-import cn.cqray.android.Get
 import cn.cqray.android.R
-import cn.cqray.android.util.ContextUtils
 
 /**
  * 标题初始化配置
@@ -26,8 +22,11 @@ class GetToolbarInit {
     /** 阴影高度 **/
     var elevation: Float? = null
 
+    /** 标题栏高度 **/
+    val height: Float? = null
+
     /** 左右内容间隔 **/
-    var contentPadding: Float? = null
+    var paddingSE: Float? = null
 
     /** 回退是否使用水波纹 **/
     var backRipple: Boolean? = null
@@ -54,7 +53,7 @@ class GetToolbarInit {
     var backTextSize: Float? = null
 
     /** 回退文本样式 **/
-    var backTextTypeface: Typeface? = null
+    var backTextStyle: Int? = null
 
     /** 标题是否居中 **/
     var titleCenter: Boolean? = null
@@ -70,7 +69,7 @@ class GetToolbarInit {
     var titleTextSize: Float? = null
 
     /** 标题文本样式 **/
-    var titleTextTypeFace: Typeface? = null
+    var titleTextStyle: Int? = null
 
     /** 行为控件是否使用水波纹 **/
     var actionRipple: Boolean? = null
@@ -86,7 +85,7 @@ class GetToolbarInit {
     var actionTextSize: Float? = null
 
     /** 行为控件间文本样式 **/
-    var actionTextTypeface: Typeface? = null
+    var actionTextStyle: Int? = null
 
     /** 分割线图片 **/
     var dividerDrawable: Drawable? = null

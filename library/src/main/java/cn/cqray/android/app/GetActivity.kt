@@ -59,5 +59,5 @@ open class GetActivity : AppCompatActivity(),
     /**
      * 查找View
      */
-    final override fun <T : View> findViewById(@IdRes id: Int): T = super.findViewById(id)
+    final override fun <T : View> findViewById(@IdRes id: Int): T = super<AppCompatActivity>.findViewById(id)
 }
