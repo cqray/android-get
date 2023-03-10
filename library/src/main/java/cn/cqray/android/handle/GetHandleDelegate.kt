@@ -18,7 +18,7 @@ import kotlin.collections.HashMap
  * [Get]一些定时任务处理委托实现
  * @author Cqray
  */
-class GetHandleDelegate constructor(private val provider: GetHandleProvider?) {
+class GetHandleDelegate constructor(private val provider: GetHandleProvider? = null) {
 
     /** 当前What **/
     private var currentWhat = Int.MIN_VALUE
@@ -29,7 +29,11 @@ class GetHandleDelegate constructor(private val provider: GetHandleProvider?) {
     /** [Handler]处理器 **/
     private val handler = Handler(Looper.getMainLooper(), ::onHandleTask)
 
-    private val disposableMap = HashMap<Any?, ArrayList<Any?>>()
+    private val disposableMap = HashMap<Any?, MutableList<Any>>()
+
+
+
+//    private val disposableMap = HashMap<Any?, ArrayList<Any?>>()
 
     init {
         if (provider is LifecycleOwner) {
@@ -48,6 +52,11 @@ class GetHandleDelegate constructor(private val provider: GetHandleProvider?) {
                         "because you have not bound the LifecycleOwner."
             )
         }
+    }
+
+    private fun obtain(tag: Any?): MutableList<Any> {
+        // 获取Disposable列表，没有则创建新的
+        return disposableMap[tag] ?: mutableListOf<Any>().also { disposableMap[tag] = it }
     }
 
     /**
@@ -309,28 +318,27 @@ class GetHandleDelegate constructor(private val provider: GetHandleProvider?) {
 
     /**
      * 添加Disposable
-     * @param tag           标识
-     * @param disposable    Disposable实例
+     * @param tag 标识
+     * @param disposable Disposable实例
      */
     @Synchronized
-    fun addDisposable(tag: Any?, disposable: Any?) {
-        val list = disposableMap[tag] ?: ArrayList()
-        list.add(disposable)
-        disposableMap[tag] = list
-    }
+    fun addDisposable(tag: Any?, disposable: Any) = obtain(tag).add(disposable)
 
     /**
      * 添加Disposable
-     * @param tag           标识
-     * @param disposables   Disposable数组
+     * @param tag 标识
+     * @param disposables Disposable数组
      */
     @Synchronized
-    fun addDisposables(tag: Any?, disposables: Array<Any?>?) {
-        if (disposables == null) return
-        val list = disposableMap[tag] ?: ArrayList()
-        list.addAll(disposables.toList())
-        disposableMap[tag] = list
-    }
+    fun addDisposables(tag: Any?, vararg disposables: Any) = obtain(tag).addAll(disposables.toMutableList())
+
+    /**
+     * 添加Disposable
+     * @param tag 标识
+     * @param disposables Disposable列表
+     */
+    @Synchronized
+    fun addDisposables(tag: Any?, disposables: MutableList<Any>) = obtain(tag).addAll(disposables)
 
     /**
      * 清除指定Tag下所有Disposable
@@ -343,8 +351,7 @@ class GetHandleDelegate constructor(private val provider: GetHandleProvider?) {
             // 匹配Tag成功
             if (tag === entry.key) {
                 // 处理所有Disposable
-                val list = entry.value
-                list.forEach(::onDispose)
+                entry.value.forEach(::onDispose)
                 // 从缓存中清除
                 disposableMap.remove(entry.key)
                 return
@@ -398,7 +405,7 @@ class GetHandleDelegate constructor(private val provider: GetHandleProvider?) {
             rx3Supported = false
         }
     }
-
+    
     companion object {
 
         /** 是否支持RxJava2 **/

@@ -10,8 +10,7 @@ interface GetHandleProvider {
     /**
      *  获取并初始化[GetHandleProvider]
      */
-    val handleDelegate: GetHandleDelegate
-        get() = GetHandleDelegate.get(this)
+    val handleDelegate: GetHandleDelegate get() = GetHandleDelegate.get(this)
 
     /**
      * 执行一次定时任务
@@ -127,30 +126,4 @@ interface GetHandleProvider {
      * 清除所有的[timer]、[periodic]任务
      */
     fun clearTasks() = handleDelegate.clearTasks()
-
-    /**
-     * 添加Disposable
-     * @param tag           标识
-     * @param disposable    Disposable实例
-     */
-    fun addDisposable(tag: Any?, disposable: Any?) = handleDelegate.addDisposable(tag, disposable)
-
-    /**
-     * 添加Disposable
-     * @param tag           标识
-     * @param disposables   Disposable数组
-     */
-    fun addDisposables(tag: Any?, disposables: Array<Any?>?) =
-        handleDelegate.addDisposables(tag, disposables)
-
-    /**
-     * 清除指定Tag下所有Disposable
-     * @param tag 指定Tag
-     */
-    fun clearDisposables(tag: Any?) = handleDelegate.clearDisposables(tag)
-
-    /**
-     * 清除所有Disposable
-     */
-    fun clearDisposables() = handleDelegate.clearDisposables()
 }

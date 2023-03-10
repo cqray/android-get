@@ -8,7 +8,8 @@ import androidx.annotation.Keep
 import androidx.annotation.NonNull
 import androidx.fragment.app.Fragment
 import cn.cqray.android.Get
-import cn.cqray.android.state.StateProvider
+import cn.cqray.android.handle.GetRxDelegate
+import cn.cqray.android.handle.GetRxProvider
 import cn.cqray.android.tip.GetTipProvider
 import cn.cqray.android.widget.GetToolbar
 import com.scwang.smart.refresh.layout.SmartRefreshLayout
@@ -21,7 +22,8 @@ import com.scwang.smart.refresh.layout.SmartRefreshLayout
 open class GetFragment : Fragment(),
     GetViewProvider,
     GetNavProvider,
-    GetTipProvider {
+    GetTipProvider,
+    GetRxProvider {
 
     /** 标题栏 **/
     @Keep
@@ -36,6 +38,8 @@ open class GetFragment : Fragment(),
     @JvmField
     @Suppress("KotlinNullnessAnnotation")
     val refreshLayout: SmartRefreshLayout? = null
+
+    override val rxDelegate by lazy { GetRxDelegate(this) }
 
     final override fun onCreateView(
         inflater: LayoutInflater,
