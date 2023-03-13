@@ -400,7 +400,7 @@ class GetToolbar @JvmOverloads constructor(
     //============================================================//
 
     fun setBackVisible(visible: Boolean) = also {
-        if (visible != (backView.iconView.visibility == VISIBLE)) {
+        if (visible != (backView.visibility == VISIBLE)) {
             backView.visibility = if (visible) VISIBLE else GONE
             paddingSeLD.value = paddingSeLD.value!!
         }
