@@ -16,15 +16,15 @@ import cn.cqray.android.app.GetActivity;
  * 列型UI界面
  * @author Cqray
  */
-public class LineActivity extends GetActivity {
+public class GetLineActivity extends GetActivity {
 
     protected RecyclerView mRecyclerView;
-    protected LineAdapter mLineAdapter;
+    protected GetLineAdapter mLineAdapter;
 
     @Override
     public void onCreating(@Nullable Bundle savedInstanceState) {
         super.onCreating(savedInstanceState);
-        mLineAdapter = new LineAdapter();
+        mLineAdapter = new GetLineAdapter();
         mRecyclerView = new RecyclerView(this);
         mRecyclerView.setLayoutParams(new ViewGroup.LayoutParams(-1, -1));
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -33,19 +33,19 @@ public class LineActivity extends GetActivity {
         setContentView(mRecyclerView);
     }
 
-    public void addLineItem(LineItem<?> item) {
+    public void addLineItem(GetLineItem<?> item) {
         mLineAdapter.addData(item);
     }
 
-    public void setLineItems(Collection<? extends LineItem<?>> items) {
+    public void setLineItems(Collection<? extends GetLineItem<?>> items) {
         mLineAdapter.setList(items);
     }
 
-    public LineItem<?> getLineItem(int index) {
+    public GetLineItem<?> getLineItem(int index) {
         return mLineAdapter.getItem(index);
     }
 
-    public LineItem<?> getLineItemByTag(int index) {
+    public GetLineItem<?> getLineItemByTag(int index) {
         return mLineAdapter.getItemByTag(index);
     }
 

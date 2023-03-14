@@ -19,16 +19,16 @@ import com.chad.library.adapter.base.viewholder.BaseViewHolder
     "Unchecked_cast",
     "Unused"
 )
-open class LineAdapter : BaseMultiItemQuickAdapter<LineItem<*>, BaseViewHolder>() {
+open class GetLineAdapter : BaseMultiItemQuickAdapter<GetLineItem<*>, BaseViewHolder>() {
 
     init {
-        addItemType(LineItem.BUTTON, R.layout.get_line_item_button)
-        addItemType(LineItem.ICON, R.layout.get_line_item_text)
-        addItemType(LineItem.TEXT, R.layout.get_line_item_text)
+        addItemType(GetLineItem.BUTTON, R.layout.get_line_item_button)
+        addItemType(GetLineItem.ICON, R.layout.get_line_item_text)
+        addItemType(GetLineItem.TEXT, R.layout.get_line_item_text)
     }
 
-    fun getItemByTag(tag: Any): LineItem<*>? {
-        val data: List<LineItem<*>> = data
+    fun getItemByTag(tag: Any): GetLineItem<*>? {
+        val data: List<GetLineItem<*>> = data
         for (item in data) {
             if (tag is String && tag == item.tag) {
                 return item
@@ -39,15 +39,15 @@ open class LineAdapter : BaseMultiItemQuickAdapter<LineItem<*>, BaseViewHolder>(
         return null
     }
 
-    protected override fun convert(holder: BaseViewHolder, item: LineItem<*>) {
+    protected override fun convert(holder: BaseViewHolder, item: GetLineItem<*>) {
         // 设置ItemView
         convertItemView(holder, item)
         when (item.itemType) {
-            LineItem.BUTTON ->                 // 按钮布局
-                convertButton(holder, item as ButtonLineItem<*>)
-            LineItem.TEXT ->                 // 文本布局
-                convertText(holder, item as TextLineItem)
-            LineItem.ICON -> {}
+            GetLineItem.BUTTON ->                 // 按钮布局
+                convertButton(holder, item as GetButtonLineItem<*>)
+            GetLineItem.TEXT ->                 // 文本布局
+                convertText(holder, item as GetTextLineItem)
+            GetLineItem.ICON -> {}
             else -> {}
         }
     }
@@ -57,7 +57,7 @@ open class LineAdapter : BaseMultiItemQuickAdapter<LineItem<*>, BaseViewHolder>(
      * @param holder ViewHolder
      * @param item 按钮行
      */
-    protected fun convertButton(holder: BaseViewHolder, item: ButtonLineItem<*>) {
+    protected fun convertButton(holder: BaseViewHolder, item: GetButtonLineItem<*>) {
         val btn = holder.getView<TextView>(R.id._ui_item_btn)
         btn.text = item.text
         btn.setTextColor(item.textColor)
@@ -69,7 +69,7 @@ open class LineAdapter : BaseMultiItemQuickAdapter<LineItem<*>, BaseViewHolder>(
      * @param holder ViewHolder
      * @param item 按钮行
      */
-    protected fun convertText(holder: BaseViewHolder, item: TextLineItem) {
+    protected fun convertText(holder: BaseViewHolder, item: GetTextLineItem) {
         val icon = holder.getView<ImageView>(R.id._ui_item_icon)
         val next = holder.getView<ImageView>(R.id._ui_item_next)
         val left = holder.getView<TextView>(R.id._ui_item_left)
@@ -123,7 +123,7 @@ open class LineAdapter : BaseMultiItemQuickAdapter<LineItem<*>, BaseViewHolder>(
      * @param holder ViewHolder
      * @param item 通用行
      */
-    protected fun convertItemView(holder: BaseViewHolder, item: LineItem<*>) {
+    protected fun convertItemView(holder: BaseViewHolder, item: GetLineItem<*>) {
         //        // 设置背景
 //        holder.itemView.setBackgroundResource(item.getBackgroundRes())
         // 设置外间隔

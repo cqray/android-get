@@ -16,15 +16,15 @@ import cn.cqray.android.app.GetFragment;
  * 列型UI界面
  * @author Cqray
  */
-public class LineFragment extends GetFragment {
+public class GetLineFragment extends GetFragment {
 
     protected RecyclerView mRecyclerView;
-    protected LineAdapter mLineAdapter;
+    protected GetLineAdapter mLineAdapter;
 
     @Override
     public void onCreating(@Nullable Bundle savedInstanceState) {
         super.onCreating(savedInstanceState);
-        mLineAdapter = new LineAdapter();
+        mLineAdapter = new GetLineAdapter();
         mRecyclerView = new RecyclerView(requireContext());
         mRecyclerView.setLayoutParams(new ViewGroup.LayoutParams(-1, -1));
         mRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
@@ -33,11 +33,11 @@ public class LineFragment extends GetFragment {
         setContentView(mRecyclerView);
     }
 
-    public void addLineItem(LineItem<?> item) {
+    public void addLineItem(GetLineItem<?> item) {
         mLineAdapter.addData(item);
     }
 
-    public void setLineItems(Collection<? extends LineItem<?>> items) {
+    public void setLineItems(Collection<? extends GetLineItem<?>> items) {
         mLineAdapter.setList(items);
     }
 }

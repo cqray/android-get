@@ -15,8 +15,7 @@
             android:id="@+id/_ui_item_icon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:contentDescription="@string/app_name" />
+            android:layout_gravity="center_vertical" />
 
         <TextView
             android:id="@+id/_ui_item_left"
@@ -36,7 +35,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:contentDescription="@string/app_name"
             android:src="@drawable/def_line_next" />
     </LinearLayout>
 

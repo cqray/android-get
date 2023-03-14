@@ -1,12 +1,7 @@
 package cn.cqray.android.ui.line
 
-import android.util.TypedValue
 import androidx.annotation.DrawableRes
-import androidx.annotation.StringRes
 import cn.cqray.android.R
-import cn.cqray.android.util.Colors
-import cn.cqray.android.util.ContextUtils
-import cn.cqray.android.util.Sizes
 
 /**
  * 带图标行
@@ -17,9 +12,9 @@ import cn.cqray.android.util.Sizes
     "Unchecked_cast",
     "Unused"
 )
-abstract class IconLineItem<T : IconLineItem<T>> internal constructor(
+open class GetIconLineItem<T : GetIconLineItem<T>> internal constructor(
     text: CharSequence? = null
-) : ButtonLineItem<T>(text) {
+) : GetButtonLineItem<T>(text) {
 
     var icon: Int? = null
 

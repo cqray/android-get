@@ -15,9 +15,9 @@ import cn.cqray.android.util.Sizes
     "Unchecked_cast",
     "Unused"
 )
-open class ButtonLineItem<T : ButtonLineItem<T>> internal constructor(
+open class GetButtonLineItem<T : GetButtonLineItem<T>> internal constructor(
     var text: CharSequence? = null
-) : LineItem<ButtonLineItem<T>>(BUTTON) {
+) : GetLineItem<GetButtonLineItem<T>>(BUTTON) {
 
     /** 文本颜色 **/
     internal var textColor = Colors.text()

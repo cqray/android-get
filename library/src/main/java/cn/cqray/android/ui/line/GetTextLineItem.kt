@@ -15,7 +15,7 @@ import cn.cqray.android.util.Sizes
     "Unchecked_cast",
     "Unused"
 )
-class TextLineItem internal constructor(text: CharSequence?) : IconLineItem<TextLineItem>(text) {
+class GetTextLineItem internal constructor(text: CharSequence?) : GetIconLineItem<GetTextLineItem>(text) {
 
     /** 右端文本 **/
     internal var endText: CharSequence? = null

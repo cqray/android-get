@@ -21,7 +21,7 @@ import java.io.*
     "Unchecked_cast",
     "Unused"
 )
-open class LineItem<T : LineItem<T>>(
+open class GetLineItem<T : GetLineItem<T>>(
     override val itemType: Int
 ) : MultiItemEntity, Serializable {
 
@@ -43,8 +43,8 @@ open class LineItem<T : LineItem<T>>(
     /** 分割线间隔，左上右下 **/
     val dividerMargins = FloatArray(4)
 
-//    /** 背景 **/
-//    var background: Drawable? = ContextUtils.getDrawable(R.drawable.bg_line)
+    /** 背景 **/
+    var background: Drawable? = ContextUtils.getDrawable(R.drawable.bg_line)
 
     /** 标识 **/
     var tag: Any? = null
@@ -127,11 +127,11 @@ open class LineItem<T : LineItem<T>>(
         dividerMargins[3] = Sizes.applyDimension(bottom, unit)
     } as T
 
-//    fun background(drawable: Drawable?) = also { background = drawable } as T
-//
-//    fun backgroundColor(@ColorInt color: Int) = also { background = ColorDrawable(color) } as T
-//
-//    fun backgroundResource(@DrawableRes id: Int) = also { background = ContextUtils.getDrawable(id) } as T
+    fun background(drawable: Drawable?) = also { background = drawable } as T
+
+    fun backgroundColor(@ColorInt color: Int) = also { background = ColorDrawable(color) } as T
+
+    fun backgroundResource(@DrawableRes id: Int) = also { background = ContextUtils.getDrawable(id) } as T
 
     fun copy(): T {
         return try {
@@ -155,6 +155,7 @@ open class LineItem<T : LineItem<T>>(
         }
     }
 
+    @Suppress("UPPER_BOUND_VIOLATED_WARNING")
     companion object {
         /** 按钮行 **/
         const val BUTTON = -200
@@ -164,5 +165,11 @@ open class LineItem<T : LineItem<T>>(
 
         /** 文本行 **/
         const val TEXT = -198
+
+        fun button(text: CharSequence? = null) = GetButtonLineItem<GetButtonLineItem<*>>(text)
+
+        fun icon(text: CharSequence? = null) = GetIconLineItem<GetIconLineItem<*>>(text)
+
+        fun text(text: CharSequence? = null) = GetTextLineItem(text)
     }
 }
