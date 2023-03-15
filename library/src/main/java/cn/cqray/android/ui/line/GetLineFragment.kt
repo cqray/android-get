@@ -1,43 +1,45 @@
-package cn.cqray.android.ui.line;
+package cn.cqray.android.ui.line
 
-import android.os.Bundle;
-import android.view.View;
-import android.view.ViewGroup;
-
-import androidx.annotation.Nullable;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
-import java.util.Collection;
-
-import cn.cqray.android.app.GetFragment;
+import android.os.Bundle
+import android.view.View
+import android.view.ViewGroup
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import cn.cqray.android.app.GetFragment
 
 /**
  * 列型UI界面
  * @author Cqray
  */
-public class GetLineFragment extends GetFragment {
+@Suppress(
+    "MemberVisibilityCanBePrivate",
+    "Unused",
+)
+open class GetLineFragment : GetFragment() {
 
-    protected RecyclerView mRecyclerView;
-    protected GetLineAdapter mLineAdapter;
+    /** 行适配器 **/
+    val lineAdapter by lazy { GetLineAdapter() }
 
-    @Override
-    public void onCreating(@Nullable Bundle savedInstanceState) {
-        super.onCreating(savedInstanceState);
-        mLineAdapter = new GetLineAdapter();
-        mRecyclerView = new RecyclerView(requireContext());
-        mRecyclerView.setLayoutParams(new ViewGroup.LayoutParams(-1, -1));
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
-        mRecyclerView.setAdapter(mLineAdapter);
-        mRecyclerView.setOverScrollMode(View.OVER_SCROLL_NEVER);
-        setContentView(mRecyclerView);
+    /** 列表容器 **/
+    val recyclerView by lazy { RecyclerView(requireContext()) }
+
+    override fun onCreating(savedInstanceState: Bundle?) {
+        super.onCreating(savedInstanceState)
+        setContentView(recyclerView.also {
+            it.layoutParams = ViewGroup.LayoutParams(-1, -1)
+            it.layoutManager = LinearLayoutManager(requireContext())
+            it.adapter = lineAdapter
+            it.overScrollMode = View.OVER_SCROLL_NEVER
+        })
     }
 
-    public void addLineItem(GetLineItem<?> item) {
-        mLineAdapter.addData(item);
-    }
+    fun addLineItem(item: GetLineItem<*>) = lineAdapter.addData(item)
 
-    public void setLineItems(Collection<? extends GetLineItem<?>> items) {
-        mLineAdapter.setList(items);
-    }
+    fun setLineItems(items: Collection<GetLineItem<*>>) = lineAdapter.setList(items)
+
+    fun getLineItem(index: Int): GetLineItem<*>? = lineAdapter.getItemOrNull(index)
+
+    fun getLineItemByTag(tag: Any?): GetLineItem<*>? = lineAdapter.getItemByTag(tag)
+
+    fun notifyDataSetChanged() = lineAdapter.notifyDataSetChanged()
 }

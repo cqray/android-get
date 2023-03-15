@@ -1,7 +1,10 @@
 package cn.cqray.demo.android;
 
+import android.annotation.SuppressLint;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
+import android.util.TypedValue;
 
 import org.jetbrains.annotations.Nullable;
 
@@ -25,6 +28,7 @@ public class MainActivity extends GetNavActivity {
         cache.put("123", 10);
 
         Log.e("数据", "" + cache.getInt("123"));
+
 
     }
 

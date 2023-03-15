@@ -20,13 +20,13 @@ open class GetButtonLineItem<T : GetButtonLineItem<T>> internal constructor(
 ) : GetLineItem<GetButtonLineItem<T>>(BUTTON) {
 
     /** 文本颜色 **/
-    internal var textColor = Colors.text()
+    var textColor = Colors.text()
 
     /** 文本大小 **/
-    internal var textSize = Sizes.h3()
+    var textSize = Sizes.h3()
 
     /** 文本样式 **/
-    internal var textStyle = 0
+    var textStyle = 0
 
     fun text(@StringRes id: Int) = also { this.text = ContextUtils.getString(id) } as T
 

@@ -11,10 +11,10 @@ import cn.cqray.android.`object`.ResponseData
     "Unused"
 )
 @JvmDefaultWithoutCompatibility
-interface PaginationProvider<T> {
+interface GetPaginationProvider<T> {
 
     /** 分页委托 **/
-    val paginationDelegate: PaginationDelegate<T>
+    val paginationDelegate: GetPaginationDelegate<T>
 
     /** 设置默认分页起始页码 **/
     @JvmDefault

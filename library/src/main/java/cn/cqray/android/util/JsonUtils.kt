@@ -18,7 +18,6 @@ object JsonUtils {
         if (clazz == null) return null
         var element :String?= null
         try {
-
              element = gson.toJson(src)
         } catch (e : Exception) {
             e.printStackTrace()

@@ -18,22 +18,22 @@ import cn.cqray.android.util.Sizes
 class GetTextLineItem internal constructor(text: CharSequence?) : GetIconLineItem<GetTextLineItem>(text) {
 
     /** 右端文本 **/
-    internal var endText: CharSequence? = null
+    var endText: CharSequence? = null
 
     /** 右端文本颜色 **/
-    internal var endTextColor = Colors.text()
+    var endTextColor = Colors.text()
 
     /** 右端文本大小 **/
-    internal var endTextSize = Sizes.h3()
+    var endTextSize = Sizes.h3()
 
     /** 右端文本样式 **/
-    internal var endTextStyle = 0
+    var endTextStyle = 0
 
     /** 右端提示文本 **/
-    internal var endHint: CharSequence? = null
+    var endHint: CharSequence? = null
 
     /** 右端文本颜色 **/
-    internal var endHintColor = Colors.hint()
+    var endHintColor = Colors.hint()
 
     override val itemType: Int get() = TEXT
 

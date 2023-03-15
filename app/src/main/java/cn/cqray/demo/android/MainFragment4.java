@@ -11,10 +11,9 @@ import com.chad.library.adapter.base.viewholder.BaseViewHolder;
 
 import java.util.Arrays;
 
-import cn.cqray.android.app.GetFragment;
-import cn.cqray.android.ui.page.PaginationFragment;
+import cn.cqray.android.ui.page.GetPaginationFragment;
 
-public class MainFragment4 extends PaginationFragment<Integer> {
+public class MainFragment4 extends GetPaginationFragment<Integer> {
 
     @Override
     public void onCreating(@Nullable Bundle savedInstanceState) {

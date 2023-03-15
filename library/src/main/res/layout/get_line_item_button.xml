@@ -7,13 +7,13 @@
     android:focusable="true">
 
     <TextView
-        android:id="@+id/_ui_item_btn"
+        android:id="@+id/get_item_button"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center" />
 
     <View
-        android:id="@+id/_ui_item_divider"
+        android:id="@+id/get_item_divider"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom" />

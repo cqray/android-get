@@ -5,9 +5,10 @@ import android.graphics.drawable.Drawable
 import android.util.TypedValue.*
 import androidx.annotation.ColorInt
 import androidx.annotation.DrawableRes
-import cn.cqray.android.R
 import cn.cqray.android.util.Colors
 import cn.cqray.android.util.ContextUtils
+import cn.cqray.android.util.JsonUtils
+
 import cn.cqray.android.util.Sizes
 import com.chad.library.adapter.base.entity.MultiItemEntity
 import java.io.*
@@ -24,6 +25,9 @@ import java.io.*
 open class GetLineItem<T : GetLineItem<T>>(
     override val itemType: Int
 ) : MultiItemEntity, Serializable {
+
+    /** 标识 **/
+    var tag: Any? = null
 
     /** 行高  */
     var height = Sizes.line()
@@ -44,12 +48,10 @@ open class GetLineItem<T : GetLineItem<T>>(
     val dividerMargins = FloatArray(4)
 
     /** 背景 **/
-    var background: Drawable? = ContextUtils.getDrawable(R.drawable.bg_line)
-
-    /** 标识 **/
-    var tag: Any? = null
+    var background: Drawable? = null
 
     init {
+        // 初始化间隔信息
         val content = Sizes.content()
         paddings[0] = content
         paddings[2] = content
@@ -131,29 +133,9 @@ open class GetLineItem<T : GetLineItem<T>>(
 
     fun backgroundColor(@ColorInt color: Int) = also { background = ColorDrawable(color) } as T
 
-    fun backgroundResource(@DrawableRes id: Int) = also { background = ContextUtils.getDrawable(id) } as T
+    fun backgroundRes(@DrawableRes id: Int) = also { background = ContextUtils.getDrawable(id) } as T
 
-    fun copy(): T {
-        return try {
-            // 写入字节流
-            val baOutStream = ByteArrayOutputStream()
-            val oOutStream = ObjectOutputStream(baOutStream)
-            oOutStream.writeObject(this)
-            // 读取字节流
-            val baInStream = ByteArrayInputStream(baOutStream.toByteArray())
-            val oInStream = ObjectInputStream(baInStream)
-            val obj = oInStream.readObject() as T
-            oOutStream.close()
-            baOutStream.close()
-            oInStream.close()
-            baInStream.close()
-            obj
-        } catch (ignored: IOException) {
-            throw RuntimeException("Copy " + this.javaClass.simpleName + " failed.")
-        } catch (ignored: ClassNotFoundException) {
-            throw RuntimeException("Copy " + this.javaClass.simpleName + " failed.")
-        }
-    }
+    fun copy() = JsonUtils.deepClone(this, this.javaClass) as T
 
     @Suppress("UPPER_BOUND_VIOLATED_WARNING")
     companion object {

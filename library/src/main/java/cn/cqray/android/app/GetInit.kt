@@ -6,7 +6,7 @@ import cn.cqray.android.anim.GetFragmentAnimator
 import cn.cqray.android.log.GetLogInit
 import cn.cqray.android.state.StateInit
 import cn.cqray.android.tip.GetTipInit
-import cn.cqray.android.ui.page.PaginationInit
+import cn.cqray.android.ui.page.GetPaginationInit
 import cn.cqray.android.widget.GetToolbarInit
 import java.io.Serializable
 
@@ -36,7 +36,7 @@ class GetInit : Serializable {
             field = init ?: field
         }
 
-    var paginationInit: PaginationInit? = PaginationInit()
+    var paginationInit: GetPaginationInit? = GetPaginationInit()
         set(init) {
             field = init ?: field
         }

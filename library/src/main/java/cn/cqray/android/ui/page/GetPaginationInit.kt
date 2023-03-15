@@ -1,6 +1,6 @@
 package cn.cqray.android.ui.page
 
-class PaginationInit {
+class GetPaginationInit {
 
     var pageNum = 1
 

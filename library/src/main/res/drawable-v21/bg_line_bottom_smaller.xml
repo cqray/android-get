@@ -1,13 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ripple xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:color="@color/ripple"
-    tools:ignore="NewApi">
+    android:color="@color/ripple">
     <item>
         <shape>
             <corners
-                android:bottomLeftRadius="@dimen/content"
-                android:bottomRightRadius="@dimen/content" />
+                android:bottomLeftRadius="@dimen/smaller"
+                android:bottomRightRadius="@dimen/smaller" />
             <solid android:color="@color/foreground" />
         </shape>
     </item>

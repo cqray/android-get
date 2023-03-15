@@ -23,7 +23,7 @@ import com.scwang.smart.refresh.layout.listener.OnRefreshLoadMoreListener
     "MemberVisibilityCanBePrivate",
     "Unused"
 )
-class PaginationDelegate<T>(val owner: LifecycleOwner) : StateProvider {
+class GetPaginationDelegate<T>(val owner: LifecycleOwner) : StateProvider {
 
     /** 起始页码，默认为1 **/
     var defaultPageNum = 1

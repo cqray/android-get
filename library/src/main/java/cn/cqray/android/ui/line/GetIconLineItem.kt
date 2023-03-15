@@ -16,8 +16,10 @@ open class GetIconLineItem<T : GetIconLineItem<T>> internal constructor(
     text: CharSequence? = null
 ) : GetButtonLineItem<T>(text) {
 
+    /** 左图标 **/
     var icon: Int? = null
 
+    /** 右图标 **/
     var next: Int? = R.drawable.def_line_next
 
     override val itemType: Int get() = ICON
@@ -25,6 +27,4 @@ open class GetIconLineItem<T : GetIconLineItem<T>> internal constructor(
     fun icon(@DrawableRes id: Int?) = also { icon = id }
 
     fun next(@DrawableRes id: Int?) = also { next = id }
-
-
 }

@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup.MarginLayoutParams
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.view.ViewCompat
 import cn.cqray.android.R
 import com.chad.library.adapter.base.BaseMultiItemQuickAdapter
 import com.chad.library.adapter.base.viewholder.BaseViewHolder
@@ -27,28 +28,23 @@ open class GetLineAdapter : BaseMultiItemQuickAdapter<GetLineItem<*>, BaseViewHo
         addItemType(GetLineItem.TEXT, R.layout.get_line_item_text)
     }
 
-    fun getItemByTag(tag: Any): GetLineItem<*>? {
-        val data: List<GetLineItem<*>> = data
+    fun getItemByTag(tag: Any?): GetLineItem<*>? {
         for (item in data) {
-            if (tag is String && tag == item.tag) {
-                return item
-            } else if (tag === item.tag) {
-                return item
-            }
+            val equal = item.tag?.equals(tag)
+            if (equal == true) return item
         }
         return null
     }
 
-    protected override fun convert(holder: BaseViewHolder, item: GetLineItem<*>) {
+    override fun convert(holder: BaseViewHolder, item: GetLineItem<*>) {
         // 设置ItemView
         convertItemView(holder, item)
         when (item.itemType) {
-            GetLineItem.BUTTON ->                 // 按钮布局
-                convertButton(holder, item as GetButtonLineItem<*>)
-            GetLineItem.TEXT ->                 // 文本布局
-                convertText(holder, item as GetTextLineItem)
-            GetLineItem.ICON -> {}
-            else -> {}
+            // 按钮布局
+            GetLineItem.BUTTON -> convertButton(holder, item as GetButtonLineItem<*>)
+            // 文本布局
+            GetLineItem.TEXT -> convertText(holder, item as GetTextLineItem)
+            GetLineItem.ICON -> convertText(holder, item as GetTextLineItem)
         }
     }
 
@@ -58,7 +54,7 @@ open class GetLineAdapter : BaseMultiItemQuickAdapter<GetLineItem<*>, BaseViewHo
      * @param item 按钮行
      */
     protected fun convertButton(holder: BaseViewHolder, item: GetButtonLineItem<*>) {
-        val btn = holder.getView<TextView>(R.id._ui_item_btn)
+        val btn = holder.getView<TextView>(R.id.get_item_button)
         btn.text = item.text
         btn.setTextColor(item.textColor)
         btn.setTextSize(TypedValue.COMPLEX_UNIT_PX, item.textSize)
@@ -70,27 +66,25 @@ open class GetLineAdapter : BaseMultiItemQuickAdapter<GetLineItem<*>, BaseViewHo
      * @param item 按钮行
      */
     protected fun convertText(holder: BaseViewHolder, item: GetTextLineItem) {
-        val icon = holder.getView<ImageView>(R.id._ui_item_icon)
-        val next = holder.getView<ImageView>(R.id._ui_item_next)
-        val left = holder.getView<TextView>(R.id._ui_item_left)
-        val right = holder.getView<TextView>(R.id._ui_item_right)
-
+        val icon = holder.getView<ImageView>(R.id.get_item_icon)
+        val next = holder.getView<ImageView>(R.id.get_item_next)
+        val start = holder.getView<TextView>(R.id.get_item_start_text)
+        val end = holder.getView<TextView>(R.id.get_item_end_text)
         // 左端文本信息
-        left.text = item.text
-        left.setTextColor(item.textColor)
-        left.setTextSize(TypedValue.COMPLEX_UNIT_PX, item.textSize)
-        left.typeface = Typeface.defaultFromStyle(item.textStyle)
+        start.text = item.text
+        start.setTextColor(item.textColor)
+        start.setTextSize(TypedValue.COMPLEX_UNIT_PX, item.textSize)
+        start.typeface = Typeface.defaultFromStyle(item.textStyle)
         // 右端文本信息
-        right.text = item.endText
-        right.setTextColor(item.endTextColor)
-        right.setTextSize(TypedValue.COMPLEX_UNIT_PX, item.endTextSize)
-        right.typeface = Typeface.defaultFromStyle(item.endTextStyle)
-        right.hint = item.endHint
-        right.setHintTextColor(item.endHintColor)
-
+        end.text = item.endText
+        end.setTextColor(item.endTextColor)
+        end.setTextSize(TypedValue.COMPLEX_UNIT_PX, item.endTextSize)
+        end.typeface = Typeface.defaultFromStyle(item.endTextStyle)
+        end.hint = item.endHint
+        end.setHintTextColor(item.endHintColor)
         // 左边部分
         var ivParams: MarginLayoutParams = icon.layoutParams as MarginLayoutParams
-        var tvParams: MarginLayoutParams = left.layoutParams as MarginLayoutParams
+        var tvParams: MarginLayoutParams = start.layoutParams as MarginLayoutParams
         if (item.icon == null) {
             icon.setImageDrawable(null)
             ivParams.leftMargin = 0
@@ -101,10 +95,10 @@ open class GetLineAdapter : BaseMultiItemQuickAdapter<GetLineItem<*>, BaseViewHo
             tvParams.leftMargin = item.paddings[0].toInt() / 2
         }
         icon.requestLayout()
-        left.requestLayout()
+        start.requestLayout()
         // 右边部分
         ivParams = next.layoutParams as MarginLayoutParams
-        tvParams = right.layoutParams as MarginLayoutParams
+        tvParams = end.layoutParams as MarginLayoutParams
         if (item.next == null) {
             next.setImageDrawable(null)
             ivParams.rightMargin = 0
@@ -115,7 +109,7 @@ open class GetLineAdapter : BaseMultiItemQuickAdapter<GetLineItem<*>, BaseViewHo
             tvParams.rightMargin = item.paddings[2].toInt() / 2
         }
         next.requestLayout()
-        right.requestLayout()
+        end.requestLayout()
     }
 
     /**
@@ -124,8 +118,8 @@ open class GetLineAdapter : BaseMultiItemQuickAdapter<GetLineItem<*>, BaseViewHo
      * @param item 通用行
      */
     protected fun convertItemView(holder: BaseViewHolder, item: GetLineItem<*>) {
-        //        // 设置背景
-//        holder.itemView.setBackgroundResource(item.getBackgroundRes())
+        // 自定义背景
+        ViewCompat.setBackground(holder.itemView, item.background)
         // 设置外间隔
         var params: MarginLayoutParams = holder.itemView.layoutParams as MarginLayoutParams
         // 设置行高
@@ -135,10 +129,8 @@ open class GetLineAdapter : BaseMultiItemQuickAdapter<GetLineItem<*>, BaseViewHo
         params.marginEnd = item.margins[2].toInt()
         params.topMargin = item.margins[1].toInt()
         params.bottomMargin = item.margins[3].toInt()
-
         // 设置分割线
-//        val dividerMargin: IntArray = item.getDividerMargin()
-        val divider = holder.getView<View>(R.id._ui_item_divider)
+        val divider = holder.getView<View>(R.id.get_item_divider)
         // 设置分割线颜色
         divider.setBackgroundColor(item.dividerColor)
         params = divider.layoutParams as MarginLayoutParams
@@ -149,6 +141,5 @@ open class GetLineAdapter : BaseMultiItemQuickAdapter<GetLineItem<*>, BaseViewHo
         params.marginEnd = item.dividerMargins[2].toInt()
         params.topMargin = item.dividerMargins[1].toInt()
         params.bottomMargin = item.dividerMargins[3].toInt()
-
     }
 }

@@ -8,11 +8,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.annotation.ColorRes
-import androidx.annotation.DrawableRes
-import androidx.annotation.IdRes
-import androidx.annotation.LayoutRes
-import androidx.annotation.StringRes
+import androidx.annotation.*
 import androidx.core.content.ContextCompat
 import cn.cqray.android.Get
 import cn.cqray.android.app.GetManager
@@ -38,8 +34,16 @@ object ContextUtils {
     val layoutInflater get() = LayoutInflater.from(get())
 
     fun getDrawable(@DrawableRes resId: Int): Drawable? {
+        //Resources.getSystem().getValueForDensity()
         return ContextCompat.getDrawable(get(), resId)
     }
+
+
+
+//    fun getDrawable(@ColorInt @DrawableRes any: Int, forceColor: Boolean = false): Drawable? {
+//
+//
+//    }
 
     @JvmStatic
     fun getColor(@ColorRes id: Int): Int = ContextCompat.getColor(get(), id)
