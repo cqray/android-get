@@ -4,7 +4,6 @@ import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
 import android.view.View
 import android.widget.ImageView
-import android.widget.TextView
 import androidx.annotation.DrawableRes
 import cn.cqray.android.R
 
@@ -18,11 +17,8 @@ class EmptyAdapter : StateAdapter<EmptyAdapter>(R.layout.get_layout_state_empty)
     /** 图片控件  */
     private var imageView: ImageView? = null
 
-    /** 文本控件  */
-    private var textView: TextView? = null
-
     /** 图片资源  */
-    private var imageResource: Any? = null
+    private var image: Any? = R.drawable.empty2
 
     init {
         setDefaultText("暂无数据")
@@ -34,17 +30,13 @@ class EmptyAdapter : StateAdapter<EmptyAdapter>(R.layout.get_layout_state_empty)
         textView = view.findViewById(R.id.get_state_text)
     }
 
-    override fun onTextChanged(text: String?) {
-        textView?.text = text
-    }
-
-    override fun onPostViewChanged(view: View) {
-        super.onPostViewChanged(view)
+    override fun onViewChanged(view: View) {
+        super.onViewChanged(view)
         // 设置图片
-        when (imageResource) {
-            is Int -> imageView?.setImageResource(imageResource as Int)
-            is Drawable -> imageView?.setImageDrawable(imageResource as Drawable)
-            is Bitmap -> imageView?.setImageBitmap(imageResource as Bitmap)
+        when (image) {
+            is Int -> imageView?.setImageResource(image as Int)
+            is Drawable -> imageView?.setImageDrawable(image as Drawable)
+            is Bitmap -> imageView?.setImageBitmap(image as Bitmap)
             else -> imageView?.setImageBitmap(null)
         }
     }
@@ -53,26 +45,17 @@ class EmptyAdapter : StateAdapter<EmptyAdapter>(R.layout.get_layout_state_empty)
      * 设置图片
      * @param image [Drawable]
      */
-    fun setImage(image: Drawable?): EmptyAdapter {
-        this.imageResource = image
-        return this
-    }
+    fun setImage(image: Drawable?) = also { this.image = image }
 
     /**
      * 设置背景资源
-     * @param resId 资源ID[DrawableRes]
+     * @param id 资源ID[DrawableRes]
      */
-    fun setImageResource(@DrawableRes resId: Int?): EmptyAdapter {
-        this.imageResource = resId
-        return this
-    }
+    fun setImage(@DrawableRes id: Int?) = also { this.image = id }
 
     /**
      * 设置背景资源
      * @param bitmap 图片[Bitmap]
      */
-    fun setImageBitmap(bitmap: Bitmap?): EmptyAdapter {
-        this.imageResource = bitmap
-        return this
-    }
+    fun setImage(bitmap: Bitmap?) = also { this.image = bitmap }
 }

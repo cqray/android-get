@@ -4,11 +4,13 @@ import android.annotation.SuppressLint
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import androidx.annotation.ColorInt
+import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
 import androidx.core.content.ContextCompat
 import cn.cqray.android.Get
 import cn.cqray.android.app.GetManager
 
+@Suppress("ResourceType")
 object GetCompat {
 
 //    const val INT_ANY = 0
@@ -36,5 +38,16 @@ object GetCompat {
         if (forceColor) return ColorDrawable(any)
         else runCatching { return ContextCompat.getDrawable(context, any) }
         return ColorDrawable(any)
+    }
+
+    /**
+     * 获取颜色值
+     * @param any [ColorRes]资源ID或[ColorInt]颜色
+     * @param forceColor 是否强制以颜色资源获取
+     */
+    fun getColor(any: Int, forceColor: Boolean = false): Int {
+        if (forceColor) return any
+        else runCatching { return ContextCompat.getColor(context, any) }
+        return any
     }
 }

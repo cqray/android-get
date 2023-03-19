@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/hint"
     android:gravity="center"
     android:orientation="vertical"
     tools:context=".MainActivity">
@@ -20,17 +19,17 @@
 
     </EditText>
 
-    <cn.cqray.android.widget.SpinView
-        android:id="@+id/sv"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
-        xmlns:app="http://schemas.android.com/apk/res-auto" />
+<!--    <cn.cqray.android.widget.SpinView-->
+<!--        android:id="@+id/sv"-->
+<!--        android:layout_width="60dp"-->
+<!--        android:layout_height="60dp"-->
+<!--        xmlns:app="http://schemas.android.com/apk/res-auto" />-->
 
-    <ImageView
-        android:id="@+id/iv"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:contentDescription="@string/app_name" />
+<!--    <ImageView-->
+<!--        android:id="@+id/iv"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="match_parent"-->
+<!--        android:contentDescription="@string/app_name" />-->
 
 
 </LinearLayout>

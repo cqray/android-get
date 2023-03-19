@@ -8,18 +8,53 @@ import android.content.res.ColorStateList
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import android.os.Build
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.widget.EditText
 import androidx.annotation.LayoutRes
 import androidx.core.view.ViewCompat
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.SimpleItemAnimator
+import androidx.viewbinding.ViewBinding
 import androidx.viewpager2.widget.ViewPager2
+import cn.cqray.android.Get
+import cn.cqray.android.app.GetManager
 import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.shape.MaterialShapeUtils
 import java.util.concurrent.atomic.AtomicReference
 
+@Suppress(
+    "Unchecked_cast"
+)
 object ViewUtils {
+
+    @JvmStatic
+    fun <VB : ViewBinding> binding(bindingClass: Class<VB>): VB {
+        val activity = GetManager.topActivity
+        val context = activity?: Get.context
+        val content = activity?.findViewById<ViewGroup>(android.R.id.content)
+        val method = bindingClass.getMethod(
+            "inflate",
+            LayoutInflater::class.java,
+            ViewGroup::class.java,
+            Boolean::class.java
+        )
+        return method.invoke(null, LayoutInflater.from(context), content, false) as VB
+    }
+
+    /**
+     * 渲染界面
+     * @param id 布局ID
+     */
+    @JvmStatic
+    fun inflate(@LayoutRes id: Int): View {
+        val activity = GetManager.topActivity
+        val context = activity?: Get.context
+        val content = activity?.findViewById<ViewGroup>(android.R.id.content)
+        return LayoutInflater.from(context).inflate(id, content, false)
+    }
+
     //    /** 设置Margin，默认单位DP **/
     //    public static void setMargin(View view, float margin) {
     //        setMargin(view, margin, TypedValue.COMPLEX_UNIT_DIP);
@@ -139,8 +174,8 @@ object ViewUtils {
     @JvmStatic
     fun view2Bitmap(view: View?) = ImageUtils.view2Bitmap(view)
 
-    /** 渲染界面  */
-    fun inflate(@LayoutRes resId: Int): View {
-        return ContextUtils.inflate(resId)
-    }
+//    /** 渲染界面  */
+//    fun inflate(@LayoutRes resId: Int): View {
+//        return ContextUtils.inflate(resId)
+//    }
 }

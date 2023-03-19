@@ -1,14 +1,20 @@
 package cn.cqray.android.state
 
-import android.graphics.drawable.ColorDrawable
+import android.annotation.SuppressLint
 import android.graphics.drawable.Drawable
+import android.util.TypedValue
 
 import android.view.View
 import android.view.ViewGroup
-import androidx.annotation.DrawableRes
+import android.widget.TextView
+import androidx.annotation.ColorInt
+import androidx.annotation.ColorRes
+import androidx.annotation.DimenRes
 import androidx.annotation.LayoutRes
 import cn.cqray.android.R
-import cn.cqray.android.util.ContextUtils
+import cn.cqray.android.util.GetCompat
+import cn.cqray.android.util.Sizes
+import cn.cqray.android.util.ViewUtils
 
 /**
  * 状态适配器
@@ -18,35 +24,38 @@ import cn.cqray.android.util.ContextUtils
     "MemberVisibilityCanBePrivate",
     "Unchecked_cast"
 )
-open class StateAdapter<T : StateAdapter<T>>(
-    @param:LayoutRes private val layoutResId: Int
-) {
-
-    /** 文本内容 **/
-    private var text: String? = null
-
-    /** 默认文本内容  */
-    private var defaultText: String? = null
-
-    /** 背景 **/
-    private var background: Any? = R.color.background
+open class StateAdapter<T : StateAdapter<T>>(@LayoutRes private val layoutResId: Int) {
 
     /** 关联的容器和布局的内容 **/
     private val views = arrayOfNulls<View>(2)
 
+    /** 默认文本、当前文本 **/
+    private val texts = arrayOfNulls<String>(2)
+
+    /** 文本颜色 **/
+    private var textColor: Int = R.color.hint
+
+    /** 文本颜色 **/
+    private var textSize: Any = R.dimen.body
+
+    /** 文本样式 **/
+    private var textStyle: Int = 0
+
+    /** 文本控件 **/
+    internal var textView: TextView? = null
+
+    /** 背景 **/
+    private var background: Any? = R.color.background
+
     /** 视图 **/
     val view get() = views[1]
 
-    /** 是否未连接 **/
-    val isNotAttached = views[0] == null
-
     internal fun onAttach(layout: StateLayout) {
         views[0] = layout
-        views[1] = ContextUtils.inflate(layoutResId)
+        views[1] = ViewUtils.inflate(layoutResId)
         views[1]?.let {
             it.isClickable = true
             it.isFocusable = true
-            it.layoutParams = ViewGroup.LayoutParams(-1, -1)
             onViewCreated(it)
         }
     }
@@ -58,32 +67,34 @@ open class StateAdapter<T : StateAdapter<T>>(
     protected open fun onViewCreated(view: View) {}
 
     /**
-     * 文本内容发生了变化
-     * @param text 文本内容
+     * 视图发生变化，会多次调用
      */
-    protected open fun onTextChanged(text: String?) {}
-
-    /**
-     * 背景发生了变化
-     * @param background 背景
-     */
-    protected open fun onBackgroundChanged(background: Drawable?) = run {  view?.background = background }
-
-    /**
-     * 控件变化后的回调，在[onTextChanged]、[onBackgroundChanged]之后调用,
-     * 多次调用，每次显示都会调用
-     * @param view 内容控件
-     */
-    protected open fun onPostViewChanged(view: View) {}
+    protected open fun onViewChanged(view: View) {
+        // 设置文本颜色
+        textView?.let {
+            // 设置文本
+            it.text = texts[1] ?: texts[0]
+            // 设置文本颜色
+            it.setTextColor(GetCompat.getColor(textColor))
+            // 设置文本大小
+            when(textSize) {
+                is Int -> it.setTextSize(TypedValue.COMPLEX_UNIT_PX, Sizes.px(textSize as Int))
+                is Float -> it.setTextSize(TypedValue.COMPLEX_UNIT_PX, textSize as Float)
+            }
+        }
+        // 背景变化
+        when (background) {
+            is Int -> view.background = GetCompat.getDrawable(background as Int)
+            is Drawable -> view.background = background as Drawable
+            else -> view.background = null
+        }
+    }
 
     /**
      * 显示界面
      * @param text 文本内容
      */
-    internal fun show(text: String?) {
-        this.text = text
-        show(true)
-    }
+    internal fun show(text: String?) = show(true).let { texts[1] = text }
 
     /**
      * 隐藏界面
@@ -97,7 +108,7 @@ open class StateAdapter<T : StateAdapter<T>>(
         view?.let {
             val parent = views[0]!! as ViewGroup
             if (show) {
-                onViewChanged()
+                onViewChanged(it)
                 parent.addView(it)
                 it.bringToFront()
             } else parent.removeView(it)
@@ -105,55 +116,59 @@ open class StateAdapter<T : StateAdapter<T>>(
     }
 
     /**
-     * 控件变化
+     * 设置默认的文本内容
+     * @param text 文本内容
      */
-    private fun onViewChanged() {
-        // 视图未设置，不继续处理
-        if (view == null) return
-        // 文本变化
-        onTextChanged(text ?: defaultText)
-        // 背景变化
-        when (background) {
-            is Int -> onBackgroundChanged(ContextUtils.getDrawable(background as Int))
-            is Drawable -> onBackgroundChanged(background as Drawable)
-            else -> onBackgroundChanged(null)
-        }
-        onPostViewChanged(view!!)
-    }
+    fun setDefaultText(text: String?) = also { texts[0] = text } as T
 
     /**
      * 设置文本内容
      * @param text 文本内容
      */
-    fun setText(text: String?) = also {
-        this.text = text
-        view?.let { onTextChanged(text) }
-    } as T
+    fun setText(text: String?) = also { texts[1] = text } as T
 
     /**
-     * 设置默认的文本内容
-     * @param text 文本内容
+     * 设置文本颜色
+     * @param any 颜色资源或色值
      */
-    fun setDefaultText(text: String?) = also { this.defaultText = text } as T
+    @SuppressLint("ResourceAsColor")
+    fun setTextColor(@ColorRes @ColorInt any: Int) = also { textColor = any } as T
+
+    /**
+     * 设置文本大小
+     * @param id 尺寸ID
+     */
+    fun setTextSize(@DimenRes id: Int) = also { textSize = id } as T
+
+    /**
+     * 设置文本大小
+     * @param size 大小
+     */
+    fun setTextSize(size: Float) = setTextSize(size, TypedValue.COMPLEX_UNIT_DIP)
+
+    /**
+     * 设置文本大小
+     * @param size 大小
+     * @param unit 尺寸
+     */
+    fun setTextSize(size: Float, unit: Int) = also { textSize = Sizes.applyDimension(size, unit) } as T
+
+    /**
+     * 设置文本样式
+     * @param style 样式
+     */
+    fun setTextStyle(style: Int) = also { textStyle = style } as T
 
     /**
      * 设置背景
      * @param background [Drawable]
      */
-    fun setBackground(background: Drawable?) = also {
-        this.background = background
-        view?.let { onBackgroundChanged(background) }
-    } as T
+    fun setBackground(background: Drawable?) = also { this.background = background } as T
 
     /**
-     * 设置背景资源
-     * @param id 资源ID[DrawableRes]
+     * 设置背景
+     * @param any 资源ID或色值
      */
-    fun setBackgroundResource(@DrawableRes id: Int) = also { setBackground(ContextUtils.getDrawable(id)) }
+    fun setBackground(any: Int) = also { this.background = any } as T
 
-    /**
-     * 设置背景颜色
-     * @param color 颜色
-     */
-    fun setBackgroundColor(color: Int) = also { setBackground(ColorDrawable(color)) }
 }

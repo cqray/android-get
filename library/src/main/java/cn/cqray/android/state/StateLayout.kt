@@ -40,6 +40,15 @@ class StateLayout @JvmOverloads constructor(
     /** 是否空闲状态 **/
     val isIdle = currentState == ViewState.IDLE
 
+    /** 忙碌视图适配器 **/
+    val busyAdapter: StateAdapter<*> get() = getAdapter(ViewState.BUSY)!!
+
+    /** 空白视图适配器 **/
+    val emptyAdapter: StateAdapter<*> get() = getAdapter(ViewState.EMPTY)!!
+
+    /** 异常视图适配器 **/
+    val errorAdapter: StateAdapter<*> get() = getAdapter(ViewState.ERROR)!!
+
     /** 移除内容控件 **/
     fun removeContents(): MutableList<View> {
         val list = ArrayList<View>()
@@ -122,7 +131,7 @@ class StateLayout @JvmOverloads constructor(
         // 显示对应的状态控件
         val adapter = getAdapter(state)
         adapter?.let {
-            if (it.isNotAttached) {
+            if (it.view == null) {
                 it.onAttach(this@StateLayout)
                 it.view?.setTag(View.NO_ID, adapter.javaClass)
             }

@@ -28,6 +28,12 @@ class StateDelegate {
     /** 已关联的布局 **/
     private var attachedLayout: ViewGroup? = null
 
+    val busyAdapter: StateAdapter<*> get() = stateLayout.busyAdapter
+
+    val emptyAdapter: StateAdapter<*> get() = stateLayout.emptyAdapter
+
+    val errorAdapter: StateAdapter<*> get() = stateLayout.errorAdapter
+
     /** 状态控件 **/
     private val stateLayout by lazy {
         StateLayout(ContextUtils.get()).also {

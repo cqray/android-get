@@ -1,6 +1,8 @@
 package cn.cqray.android.util
 
+import android.app.Activity
 import android.content.Context
+import android.content.ContextWrapper
 import android.content.res.AssetManager
 import android.content.res.Resources
 import android.graphics.drawable.Drawable
@@ -12,6 +14,7 @@ import androidx.annotation.*
 import androidx.core.content.ContextCompat
 import cn.cqray.android.Get
 import cn.cqray.android.app.GetManager
+import java.util.concurrent.atomic.AtomicReference
 
 /**
  * @author LeiJue
@@ -37,7 +40,6 @@ object ContextUtils {
         //Resources.getSystem().getValueForDensity()
         return ContextCompat.getDrawable(get(), resId)
     }
-
 
 
 //    fun getDrawable(@ColorInt @DrawableRes any: Int, forceColor: Boolean = false): Drawable? {
@@ -70,6 +72,15 @@ object ContextUtils {
     fun main(args: Array<String>?) {
         val index = null in arrayOf(0, null)
         println(index)
+    }
+
+    fun context2Activity(context: Context): Activity? {
+        var tempContext = context
+        while (tempContext is ContextWrapper) {
+            if (tempContext is Activity) return tempContext
+            else tempContext = tempContext.baseContext
+        }
+        return null
     }
 
 }
