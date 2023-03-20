@@ -1,5 +1,7 @@
 package cn.cqray.android.util
 
+import java.lang.reflect.ParameterizedType
+
 object ReflectUtil {
 
     fun setField(src: Any, name: String, value: Any?) {
@@ -15,5 +17,13 @@ object ReflectUtil {
                 field.set(src, value)
             }
         }
+    }
+
+    fun getActualTypeArgument(clazz: Class<*>): Class<*>? {
+        val type = clazz.genericSuperclass
+        if (type is ParameterizedType) {
+            return type.actualTypeArguments?.getOrNull(0) as Class<*>
+        }
+        return null
     }
 }

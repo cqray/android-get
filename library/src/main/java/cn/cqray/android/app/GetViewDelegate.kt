@@ -156,6 +156,7 @@ class GetViewDelegate internal constructor(
             setNativeContentView(view)
             return
         }
+        removeContentView()
         initRefreshLayout()
         initContentView()
         initGetView()
@@ -174,11 +175,27 @@ class GetViewDelegate internal constructor(
      */
     fun setNativeContentView(view: View) {
         (view.parent as? ViewGroup)?.removeView(view)
+        removeContentView()
         ensureSetNativeContentView()
         initRefreshLayout()
         initContentView()
         initGetView()
         addContentView(view)
+    }
+
+    fun removeContentView() {
+        when (val layout = binding.getContent.getChildAt(0)) {
+            is StateLayout -> layout.removeAllViews()
+            is SmartRefreshLayout -> {
+                for (i in 0 until layout.childCount) {
+                    val child = layout.getChildAt(i)
+                    if (child is StateLayout) {
+                        child.removeAllViews()
+                    }
+                }
+            }
+            else -> binding.getContent.removeAllViews()
+        }
     }
 
     fun addContentView(view: View) {
@@ -336,8 +353,12 @@ class GetViewDelegate internal constructor(
             if (setGetContentView) ReflectUtil.setField(provider, "refreshLayout", refreshLayout)
         }
         // 状态委托连接界面
-        if (provider is Activity) stateDelegate.attachActivity(provider)
-        else if (provider is Fragment) stateDelegate.attachFragment(provider)
+        if (provider is Activity) {
+            stateDelegate.attachActivity(provider)
+        } else if (provider is Fragment) {
+            stateDelegate.attachFragment(provider)
+            background.value = Get.init.fragmentBackgroundGet()
+        }
         // 初始化标题
         initToolbar()
         // 初始化ButterKnife
@@ -362,33 +383,6 @@ class GetViewDelegate internal constructor(
 //            background = init.background?.invoke() ?: background
             visibility = if (setGetContentView) View.VISIBLE else View.GONE
             setToolbarInit(Get.init.toolbarInit!!)
-//            setPaddingSE(init.contentPadding)
-//            // 回退按钮部分
-//            setBackRipple(init.backRipple)
-//            setBackIcon(init.backIcon)
-//            setBackIconSpace(init.backIconSpace)
-//            setBackIconTintColor(init.backIconTintColor)
-//            setBackText(init.backText)
-//            setBackTextColor(init.backTextColor)
-//            setBackTextSize(init.backTextSize)
-//            setBackTextTypeface(init.backTextTypeface)
-//            // 标题部分
-//            setTitleCenter(init.titleCenter)
-//            setTitleSpace(init.titleSpace)
-//            setTitleTextColor(init.titleTextColor)
-//            setTitleTextSize(init.titleTextSize)
-//            setTitleTextTypeface(init.titleTextTypeFace)
-//            // Action部分
-//            setActionRipple(init.actionRipple)
-//            setActionSpace(init.actionSpace)
-//            setActionTextColor(init.actionTextColor)
-//            setActionTextSize(init.actionTextSize)
-//            setActionTextTypeface(init.actionTextTypeface)
-//            // 分割线部分
-//            setDividerDrawable(init.dividerDrawable)
-//            setDividerHeight(init.dividerHeight)
-//            setDividerMargin(init.dividerMargin)
-//            setDividerVisible(init.dividerVisible)
         }
     }
 

@@ -1,5 +1,7 @@
 package cn.cqray.android.app
 
+import android.graphics.drawable.ColorDrawable
+import android.graphics.drawable.Drawable
 import androidx.annotation.Keep
 import cn.cqray.android.Get
 import cn.cqray.android.anim.GetFragmentAnimator
@@ -7,6 +9,7 @@ import cn.cqray.android.log.GetLogInit
 import cn.cqray.android.state.StateInit
 import cn.cqray.android.tip.GetTipInit
 import cn.cqray.android.ui.page.GetPaginationInit
+import cn.cqray.android.util.Colors
 import cn.cqray.android.widget.GetToolbarInit
 import java.io.Serializable
 
@@ -43,4 +46,6 @@ class GetInit : Serializable {
 
     /** [Get]Fragment全局动画 **/
     var fragmentAnimator: GetFragmentAnimator? = null
+
+    var fragmentBackgroundGet: Function0<Drawable?> = { ColorDrawable(Colors.background()) }
 }
