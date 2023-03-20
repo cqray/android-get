@@ -6,7 +6,7 @@ import androidx.annotation.Keep
 import cn.cqray.android.Get
 import cn.cqray.android.anim.GetFragmentAnimator
 import cn.cqray.android.log.GetLogInit
-import cn.cqray.android.state.StateInit
+import cn.cqray.android.state.GetStateInit
 import cn.cqray.android.tip.GetTipInit
 import cn.cqray.android.ui.page.GetPaginationInit
 import cn.cqray.android.util.Colors
@@ -23,9 +23,9 @@ class GetInit : Serializable {
         }
 
     /** [Get]提示初始化配置  **/
-    var stateInit: StateInit? = StateInit()
+    var stateInit: GetStateInit? = GetStateInit()
         set(init) {
-            field = init ?: StateInit()
+            field = init ?: GetStateInit()
         }
 
     /** [Get]提示初始化配置  **/

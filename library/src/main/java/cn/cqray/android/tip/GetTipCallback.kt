@@ -6,6 +6,7 @@ package cn.cqray.android.tip
  */
 @JvmDefaultWithoutCompatibility
 interface GetTipCallback {
+
     /**
      * Tip 显示
      */

@@ -5,12 +5,12 @@ package cn.cqray.android.state
  * @author Cqray
  */
 @JvmDefaultWithoutCompatibility
-interface StateProvider {
+interface GetStateProvider {
 
     /**
-     * 获取并初始化[StateDelegate]
+     * 获取并初始化[GetStateDelegate]
      */
-    val stateDelegate: StateDelegate
+    val stateDelegate: GetStateDelegate
 
     /**
      * 设置忙碌状态
@@ -55,5 +55,5 @@ interface StateProvider {
      * @param state 视图状态
      * @param text 文本信息
      */
-    fun setState(state: ViewState, text: String?) = stateDelegate.setState(state, text)
+    fun setState(state: GetViewState, text: String?) = stateDelegate.setState(state, text)
 }

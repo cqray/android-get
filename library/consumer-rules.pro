@@ -9,6 +9,7 @@
 -keep public class * extends android.preference.Preference
 -keep public class * extends android.view.View
 -keep public class * extends androidx.fragment.app.Fragment
+-keep public class * extends androidx.viewbinding.ViewBinding
 -keepnames public class * extends androidx.fragment.app.Fragment
 
 # 保证AndroidViewModel构造函数不被混淆

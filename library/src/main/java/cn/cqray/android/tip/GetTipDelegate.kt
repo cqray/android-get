@@ -7,7 +7,7 @@ import cn.cqray.android.app.GetDelegate
  * [Get]提示委托
  * @author Cqray
  */
-class GetTipDelegate(provider: GetTipProvider): GetDelegate<GetTipProvider>(provider) {
+class GetTipDelegate(provider: GetTipProvider) : GetDelegate<GetTipProvider>(provider) {
 
     /**
      * 显示Tip
@@ -44,10 +44,6 @@ class GetTipDelegate(provider: GetTipProvider): GetDelegate<GetTipProvider>(prov
         text: CharSequence?,
         init: GetTipInit?,
         callback: GetTipCallback?
-    ) {
-        val defInit = Get.init.tipInit!!
-        val defAdapter = init?.tipAdapter ?: defInit.tipAdapter
-        val newAdapter = defAdapter ?: GetTipAdapterImpl()
-        newAdapter.show(this, level, text, init, callback)
-    }
+    ) = GetTip.show(level, text, init, callback)
+
 }

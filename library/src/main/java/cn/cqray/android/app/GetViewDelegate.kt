@@ -23,9 +23,8 @@ import androidx.viewbinding.ViewBinding
 import cn.cqray.android.Get
 import cn.cqray.android.R
 import cn.cqray.android.databinding.GetViewDefaultLayoutBinding
-import cn.cqray.android.state.StateDelegate
-import cn.cqray.android.state.StateLayout
-import cn.cqray.android.state.StateProvider
+import cn.cqray.android.state.GetStateDelegate
+import cn.cqray.android.state.GetStateLayout
 import cn.cqray.android.third.ButterKnifeUtils
 import cn.cqray.android.util.*
 import cn.cqray.android.util.ContextUtils.inflate
@@ -51,13 +50,10 @@ class GetViewDelegate internal constructor(
     /** 是否设置Get扩展界面（原子性，无特殊作用，为了让变量变为 final） */
     private var setGetContentView = true//= AtomicBoolean(true)
 
-//    /** 关联的内容控件（原子对象，无特殊作用，为了让变量变为 final） */
-//    private val attachedContentView = AtomicReference<View?>()
-
     /** [ViewBinding]实例 **/
     private val binding by lazy { GetViewDefaultLayoutBinding.inflate(ContextUtils.layoutInflater) }
 
-    val stateDelegate by lazy { StateDelegate() }
+    val stateDelegate by lazy { GetStateDelegate() }
 
     /** 根控件 */
     val root: View by lazy { binding.root }
@@ -183,29 +179,34 @@ class GetViewDelegate internal constructor(
         addContentView(view)
     }
 
+    /**
+     * 移除内容视图
+     */
     fun removeContentView() {
-        when (val layout = binding.getContent.getChildAt(0)) {
-            is StateLayout -> layout.removeAllViews()
-            is SmartRefreshLayout -> {
-                for (i in 0 until layout.childCount) {
-                    val child = layout.getChildAt(i)
-                    if (child is StateLayout) {
-                        child.removeAllViews()
-                    }
+        val layout = binding.getContent.getChildAt(0)
+        if (layout is GetStateLayout) {
+            layout.removeAllViews()
+        } else if (layout is SmartRefreshLayout) {
+            for (i in 0 until layout.childCount) {
+                val child = layout.getChildAt(i)
+                if (child is GetStateLayout) {
+                    child.removeAllViews()
                 }
             }
-            else -> binding.getContent.removeAllViews()
         }
     }
 
+    /**
+     * 添加内容视图
+     */
     fun addContentView(view: View) {
         val layout = binding.getContent.getChildAt(0)
-        if (layout is StateLayout) {
+        if (layout is GetStateLayout) {
             layout.addView(view)
         } else if (layout is SmartRefreshLayout) {
             for (i in 0 until layout.childCount) {
                 val child = layout.getChildAt(i)
-                if (child is StateLayout) {
+                if (child is GetStateLayout) {
                     child.addView(view)
                 }
             }

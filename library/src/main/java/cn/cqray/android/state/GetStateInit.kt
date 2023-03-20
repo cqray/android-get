@@ -1,10 +1,10 @@
 package cn.cqray.android.state
 
 /**
- * [StateDelegate]全局配置
+ * [GetStateDelegate]全局配置
  * @author Cqray
  */
-class StateInit {
+class GetStateInit {
 
 //    /** 日志等级 **/
 //    var busyAdapter: StateAdapter<*>? = BusyAdapter()
@@ -25,11 +25,11 @@ class StateInit {
 //        }
 
     /** 忙碌适配器 **/
-    var busyAdapterCreator: Function0<StateAdapter<*>> = { BusyAdapter() }
+    var busyAdapterCreator: Function0<GetStateAdapter<*>> = { GetBusyAdapter() }
 
     /** 空白适配器 **/
-    var emptyAdapterCreator: Function0<StateAdapter<*>> = { EmptyAdapter() }
+    var emptyAdapterCreator: Function0<GetStateAdapter<*>> = { GetEmptyAdapter() }
 
     /** 异常适配器 **/
-    var errorAdapterCreator: Function0<StateAdapter<*>> = { ErrorAdapter() }
+    var errorAdapterCreator: Function0<GetStateAdapter<*>> = { GetErrorAdapter() }
 }

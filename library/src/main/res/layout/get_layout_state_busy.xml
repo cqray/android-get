@@ -6,6 +6,8 @@
     android:layout_height="match_parent"
     android:clickable="true"
     android:focusable="true"
+    android:clipChildren="false"
+    android:clipToPadding="false"
     tools:ignore="ContentDescription,UselessParent">
 
     <LinearLayout
@@ -13,16 +15,15 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:orientation="vertical"
-        android:paddingTop="@dimen/content"
-        android:paddingBottom="@dimen/content"
-        android:paddingLeft="@dimen/large"
-        android:paddingRight="@dimen/large"
+        android:padding="@dimen/content"
+        android:clipChildren="false"
+        android:clipToPadding="false"
         android:gravity="center">
 
         <com.github.ybq.android.spinkit.SpinKitView
             android:id="@+id/get_state_spin_kit"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
             app:SpinKit_Color="@color/colorPrimary"
             app:SpinKit_Style="Circle" />
 

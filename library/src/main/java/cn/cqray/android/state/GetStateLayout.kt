@@ -15,39 +15,39 @@ import cn.cqray.android.Get
     "MemberVisibilityCanBePrivate",
     "Unused"
 )
-class StateLayout @JvmOverloads constructor(
+class GetStateLayout @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
 ) : FrameLayout(context, attrs, defStyleAttr) {
 
     /** 适配器集合  */
-    private val adapters = SparseArray<StateAdapter<*>>()
+    private val adapters = SparseArray<GetStateAdapter<*>>()
 
     /** 当前状态 **/
-    var currentState: ViewState = ViewState.IDLE
+    var currentState: GetViewState = GetViewState.IDLE
         private set
 
     /** 是否忙碌 **/
-    val isBusy = currentState == ViewState.BUSY
+    val isBusy = currentState == GetViewState.BUSY
 
     /** 是否空 **/
-    val isEmpty = currentState == ViewState.EMPTY
+    val isEmpty = currentState == GetViewState.EMPTY
 
     /** 是否异常 **/
-    val isError = currentState == ViewState.ERROR
+    val isError = currentState == GetViewState.ERROR
 
     /** 是否空闲状态 **/
-    val isIdle = currentState == ViewState.IDLE
+    val isIdle = currentState == GetViewState.IDLE
 
     /** 忙碌视图适配器 **/
-    val busyAdapter: StateAdapter<*> get() = getAdapter(ViewState.BUSY)!!
+    val busyAdapter: GetStateAdapter<*> get() = getAdapter(GetViewState.BUSY)!!
 
     /** 空白视图适配器 **/
-    val emptyAdapter: StateAdapter<*> get() = getAdapter(ViewState.EMPTY)!!
+    val emptyAdapter: GetStateAdapter<*> get() = getAdapter(GetViewState.EMPTY)!!
 
     /** 异常视图适配器 **/
-    val errorAdapter: StateAdapter<*> get() = getAdapter(ViewState.ERROR)!!
+    val errorAdapter: GetStateAdapter<*> get() = getAdapter(GetViewState.ERROR)!!
 
     /** 移除内容控件 **/
     fun removeContents(): MutableList<View> {
@@ -67,26 +67,26 @@ class StateLayout @JvmOverloads constructor(
      * 设置忙碌状态适配器
      * @param adapter 适配器
      */
-    fun setBusyAdapter(adapter: StateAdapter<*>?) = setAdapter(ViewState.BUSY, adapter)
+    fun setBusyAdapter(adapter: GetStateAdapter<*>?) = setAdapter(GetViewState.BUSY, adapter)
 
     /**
      * 设置空状态适配器
      * @param adapter 适配器
      */
-    fun setEmptyAdapter(adapter: StateAdapter<*>?) = setAdapter(ViewState.EMPTY, adapter)
+    fun setEmptyAdapter(adapter: GetStateAdapter<*>?) = setAdapter(GetViewState.EMPTY, adapter)
 
     /**
      * 设置错误状态适配器
      * @param adapter 适配器
      */
-    fun setErrorAdapter(adapter: StateAdapter<*>?) = setAdapter(ViewState.ERROR, adapter)
+    fun setErrorAdapter(adapter: GetStateAdapter<*>?) = setAdapter(GetViewState.ERROR, adapter)
 
     /**
      * 设置对应状态的适配器
      * @param state 指定状态
      * @param adapter 适配器
      */
-    private fun setAdapter(state: ViewState, adapter: StateAdapter<*>?) {
+    private fun setAdapter(state: GetViewState, adapter: GetStateAdapter<*>?) {
         adapters[state.ordinal]?.hide()
         adapters.put(state.ordinal, adapter)
     }
@@ -95,31 +95,31 @@ class StateLayout @JvmOverloads constructor(
      * 设置为忙碌状态
      * @param text 文本信息
      */
-    fun setBusy(text: String? = null) = setState(ViewState.BUSY, text)
+    fun setBusy(text: String? = null) = setState(GetViewState.BUSY, text)
 
     /**
      * 设置为空状态
      * @param text 文本信息
      */
-    fun setEmpty(text: String? = null) = setState(ViewState.EMPTY, text)
+    fun setEmpty(text: String? = null) = setState(GetViewState.EMPTY, text)
 
     /**
      * 设置为异常状态
      * @param text 文本信息
      */
-    fun setError(text: String? = null) = setState(ViewState.ERROR, text)
+    fun setError(text: String? = null) = setState(GetViewState.ERROR, text)
 
     /**
      * 设置为空闲状态
      */
-    fun setIdle() = setState(ViewState.IDLE, null)
+    fun setIdle() = setState(GetViewState.IDLE, null)
 
     /**
      * 设置对应状态
-     * @param state 状态[ViewState]
+     * @param state 状态[GetViewState]
      * @param text 文本内容
      */
-    fun setState(state: ViewState, text: String? = null) {
+    fun setState(state: GetViewState, text: String? = null) {
         // 更新状态
         currentState = state
         // 隐藏所有状态控件
@@ -132,7 +132,7 @@ class StateLayout @JvmOverloads constructor(
         val adapter = getAdapter(state)
         adapter?.let {
             if (it.view == null) {
-                it.onAttach(this@StateLayout)
+                it.onAttach(this@GetStateLayout)
                 it.view?.setTag(View.NO_ID, adapter.javaClass)
             }
         }
@@ -144,15 +144,15 @@ class StateLayout @JvmOverloads constructor(
      * 获取对应状态的适配器
      * @param state 指定状态
      */
-    private fun getAdapter(state: ViewState): StateAdapter<*>? {
+    private fun getAdapter(state: GetViewState): GetStateAdapter<*>? {
         var adapter = adapters[state.ordinal]
         if (adapter == null) {
             // 获取全局配置
             val init = Get.init.stateInit!!
             adapter = when (state) {
-                ViewState.BUSY -> init.busyAdapterCreator()
-                ViewState.EMPTY -> init.emptyAdapterCreator()
-                ViewState.ERROR -> init.errorAdapterCreator()
+                GetViewState.BUSY -> init.busyAdapterCreator()
+                GetViewState.EMPTY -> init.emptyAdapterCreator()
+                GetViewState.ERROR -> init.errorAdapterCreator()
                 else -> null
             }
             adapter?.hide()

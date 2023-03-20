@@ -4,7 +4,7 @@ package cn.cqray.android.state
  * 布局状态
  * @author Cqray
  */
-enum class ViewState {
+enum class GetViewState {
     /** 空闲  */
     IDLE,
 

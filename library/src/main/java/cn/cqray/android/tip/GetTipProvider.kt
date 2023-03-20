@@ -7,21 +7,18 @@ import cn.cqray.android.app.GetProvider
  * Tip提供者
  * @author Cqray
  */
-@Suppress("Deprecation")
 @JvmDefaultWithoutCompatibility
 interface GetTipProvider : GetProvider {
 
     /**
      * 获取并初始化[GetTipDelegate]
      */
-    val tipDelegate: GetTipDelegate
-        get() = GetDelegate.get(this, GetTipProvider::class.java)
+    val tipDelegate: GetTipDelegate get() = GetDelegate.get(this, GetTipProvider::class.java)
 
     /**
      * 显示Tip
      * @param text     文本内容 [CharSequence]
      */
-    @JvmDefault
     fun showTip(text: CharSequence?) = tipDelegate.showTip(text)
 
     /**
@@ -29,8 +26,7 @@ interface GetTipProvider : GetProvider {
      * @param text     文本内容 [CharSequence]
      * @param callback 结束回调 [GetTipCallback]
      */
-    @JvmDefault
-    fun showTip(text: CharSequence?, callback: GetTipCallback? = null) = tipDelegate.showTip(text, callback)
+    fun showTip(text: CharSequence?, callback: GetTipCallback?) = tipDelegate.showTip(text, callback)
 
     /**
      * 显示Tip
@@ -38,11 +34,10 @@ interface GetTipProvider : GetProvider {
      * @param init 配置属性 [GetTipInit]
      * @param callback 结束回调 [GetTipCallback]
      */
-    @JvmDefault
     fun showTip(
         text: CharSequence?,
         init: GetTipInit?,
-        callback: GetTipCallback? = null
+        callback: GetTipCallback?
     ) = tipDelegate.showTip(null, text, init, callback)
 
     /**
@@ -52,7 +47,6 @@ interface GetTipProvider : GetProvider {
      * @param init 配置属性 [GetTipInit]
      * @param callback 结束回调 [GetTipCallback]
      */
-    @JvmDefault
     fun showTip(
         level: GetTipLevel?,
         text: CharSequence?,
