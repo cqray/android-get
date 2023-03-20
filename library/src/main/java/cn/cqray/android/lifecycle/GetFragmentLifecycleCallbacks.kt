@@ -105,7 +105,7 @@ class GetFragmentLifecycleCallbacks(activity: FragmentActivity) :
         // 获取日志初始化配置
         val logInit = Get.init.logInit!!
         // 未启用则不继续
-        if (logInit.fragmentLifecycleLogEnable == false) return
+        if (!logInit.fragmentLifecycleLogEnable) return
         // 打印日志
         GetLog.d(
             GetManager.javaClass,

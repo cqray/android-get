@@ -1,4 +1,4 @@
-package cn.cqray.android.third
+package cn.cqray.android.util
 
 import android.view.View
 import butterknife.ButterKnife

@@ -7,7 +7,6 @@ import android.widget.TextView;
 
 import cn.cqray.android.app.GetFragment;
 import cn.cqray.android.log.GetLog;
-import cn.cqray.android.widget.SpinView;
 import cn.cqray.android.widget.TextDrawable;
 
 public class MainFragment extends GetFragment {

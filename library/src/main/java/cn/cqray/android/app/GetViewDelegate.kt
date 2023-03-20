@@ -25,7 +25,7 @@ import cn.cqray.android.R
 import cn.cqray.android.databinding.GetViewDefaultLayoutBinding
 import cn.cqray.android.state.GetStateDelegate
 import cn.cqray.android.state.GetStateLayout
-import cn.cqray.android.third.ButterKnifeUtils
+import cn.cqray.android.util.ButterKnifeUtils
 import cn.cqray.android.util.*
 import cn.cqray.android.util.ContextUtils.inflate
 import cn.cqray.android.widget.GetToolbar
