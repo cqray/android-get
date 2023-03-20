@@ -33,11 +33,11 @@
 <!--    <item name="get_top_nav" type="id" />-->
 <!--    <item name="get_bottom_nav" type="id" />-->
 
-    <!-- ViewState相关ID -->
-    <item name="get_state_img" type="id" />
-    <item name="get_state_text" type="id" />
-    <item name="get_state_retry" type="id" />
-    <item name="get_state_spin_kit" type="id" />
+<!--    &lt;!&ndash; ViewState相关ID &ndash;&gt;-->
+<!--    <item name="get_state_img" type="id" />-->
+<!--    <item name="get_state_text" type="id" />-->
+<!--    <item name="get_state_retry" type="id" />-->
+<!--    <item name="get_state_spin_kit" type="id" />-->
 
     <item name="get_tip_text" type="id" />
 

@@ -2,11 +2,15 @@ package cn.cqray.android.state
 
 import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
+import android.util.TypedValue
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.annotation.DrawableRes
+import androidx.core.graphics.drawable.DrawableCompat
 import cn.cqray.android.R
+import cn.cqray.android.util.Colors
+import cn.cqray.android.util.Sizes
 
 /**
  * 错误界面适配器
@@ -23,6 +27,9 @@ class ErrorAdapter : StateAdapter<ErrorAdapter>(R.layout.get_layout_state_error)
 
     /** 重试按钮是否显示 **/
     private var retryVisible = true
+
+    /** 重试文本 **/
+    private var retryText = "点击重试"
 
     /** 图片资源  */
     private var image: Any? = null
@@ -44,8 +51,16 @@ class ErrorAdapter : StateAdapter<ErrorAdapter>(R.layout.get_layout_state_error)
 
     override fun onViewChanged(view: View) {
         super.onViewChanged(view)
-        // 是否显示重试按钮
-        retryView?.visibility = if (retryVisible) View.VISIBLE else View.GONE
+        // 重试按钮属性
+        retryView?.let {
+            it.visibility = if (retryVisible) View.VISIBLE else View.GONE
+            // 文本
+            it.text = retryText
+            // 设置文本颜色
+            it.setTextColor(textView?.textColors)
+            // 设置文本大小
+            it.setTextSize(TypedValue.COMPLEX_UNIT_PX, textView?.textSize ?: Sizes.body())
+        }
         // 设置图片
         when (image) {
             is Int -> imageView?.setImageResource(image as Int)
@@ -54,6 +69,7 @@ class ErrorAdapter : StateAdapter<ErrorAdapter>(R.layout.get_layout_state_error)
             else -> imageView?.setImageBitmap(null)
         }
     }
+    fun setRetryText(text: String) = also { retryText = text }
 
     fun setRetryVisible(visible: Boolean) = also { retryVisible = visible }
 

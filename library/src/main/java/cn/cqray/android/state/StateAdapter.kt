@@ -52,13 +52,19 @@ open class StateAdapter<T : StateAdapter<T>>(@LayoutRes private val layoutResId:
 
     internal fun onAttach(layout: StateLayout) {
         views[0] = layout
-        views[1] = ViewUtils.inflate(layoutResId)
+        views[1] = onCreateView(layout)
         views[1]?.let {
             it.isClickable = true
             it.isFocusable = true
             onViewCreated(it)
         }
     }
+
+    /**
+     * 创建内容视图
+     * @param parent 父视图
+     */
+    protected open fun onCreateView(parent: ViewGroup): View = ViewUtils.inflate(layoutResId)
 
     /**
      * 控件被创建，仅调用一次

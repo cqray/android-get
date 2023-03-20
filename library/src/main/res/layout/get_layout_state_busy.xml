@@ -20,14 +20,14 @@
         android:gravity="center">
 
         <com.github.ybq.android.spinkit.SpinKitView
-            android:id="@id/get_state_spin_kit"
+            android:id="@+id/get_state_spin_kit"
             android:layout_width="40dp"
             android:layout_height="40dp"
             app:SpinKit_Color="@color/colorPrimary"
             app:SpinKit_Style="Circle" />
 
         <TextView
-            android:id="@id/get_state_text"
+            android:id="@+id/get_state_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/small"

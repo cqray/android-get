@@ -28,7 +28,7 @@ public class MainFragment extends GetFragment {
         getStateDelegate()
                 .getEmptyAdapter()
                 .setTextColor(Color.YELLOW);
-        setError();
+        setBusy();
     }
 
     @Override

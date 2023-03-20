@@ -9,7 +9,7 @@
     tools:ignore="ContentDescription, HardcodedText">
 
     <ImageView
-        android:id="@id/get_state_img"
+        android:id="@+id/get_state_img"
         android:layout_width="140dp"
         android:layout_height="140dp"
         android:layout_gravity="center"
@@ -17,7 +17,7 @@
         android:scaleType="fitXY"/>
 
     <TextView
-        android:id="@id/get_state_text"
+        android:id="@+id/get_state_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="暂无数据"
