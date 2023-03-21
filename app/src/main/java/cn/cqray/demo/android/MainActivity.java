@@ -27,7 +27,7 @@ public class MainActivity extends GetNavActivity {
         GetCache cache = new GetCache();
         cache.put("123", 10);
 
-        showTip("6666666", () -> {});
+//        showTip("6666666");
 
         Log.e("数据", "" + cache.getInt("123"));
 

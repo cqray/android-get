@@ -14,47 +14,66 @@ object GetTip {
 
     /**
      * 显示Tip
-     * @param text Tip内容 [CharSequence]
+     * @param text 文本内容 [CharSequence]
      */
     @JvmStatic
-    fun show(text: CharSequence?) = show(
-        level = GetTipLevel.INFO,
-        text = text,
-        init = null,
-        callback = null
-    )
+    fun show(text: CharSequence?) = show(text, null, null, null)
 
     /**
      * 显示Tip
-     * @param text     Tip内容 [CharSequence]
-     * @param callback TIP回调 [GetTipCallback]
-     */
-    @JvmStatic
-    fun show(text: CharSequence?, callback: GetTipCallback?) = show(
-        level = GetTipLevel.INFO,
-        text = text,
-        init = null,
-        callback = callback
-    )
-
-    /**
-     * 显示Tip
-     * @param level Tip级别 [GetTipLevel]，默认INFO
-     * @param text Tip内容 [CharSequence]
-     * @param init Tip属性 [GetTipInit]
-     * @param callback TIP回调 [GetTipCallback]
+     * @param text 文本内容 [CharSequence]
+     * @param hideCallback 隐藏回调
      */
     @JvmStatic
     fun show(
-        level: GetTipLevel?,
+        text: CharSequence?,
+        hideCallback: Function0<Unit>?,
+    ) = show(text, null, hideCallback, null)
+
+    /**
+     * 显示Tip
+     * @param text 文本内容 [CharSequence]
+     * @param hideCallback 隐藏回调
+     * @param showCallback 显示回调
+     */
+    @JvmStatic
+    fun show(
+        text: CharSequence?,
+        hideCallback: Function0<Unit>?,
+        showCallback: Function0<Unit>?,
+    ) = show(text, null, hideCallback, showCallback)
+
+    /**
+     * 显示Tip
+     * @param text 文本内容 [CharSequence]
+     * @param init 配置属性 [GetTipInit]
+     * @param hideCallback 隐藏回调
+     */
+    @JvmStatic
+    fun show(
         text: CharSequence?,
         init: GetTipInit?,
-        callback: GetTipCallback?
+        hideCallback: Function0<Unit>?,
+    ) = show(text, init, hideCallback, null)
+
+    /**
+     * 显示Tip
+     * @param text 文本内容 [CharSequence]
+     * @param init 配置属性 [GetTipInit]
+     * @param hideCallback 隐藏回调
+     * @param showCallback 显示回调
+     */
+    @JvmStatic
+    fun show(
+        text: CharSequence?,
+        init: GetTipInit?,
+        hideCallback: Function0<Unit>?,
+        showCallback: Function0<Unit>?,
     ) {
-        val defInit = Get.init.tipInit!!
+        val defInit = Get.init.tipInit
         val defAdapter = init?.tipAdapter ?: defInit.tipAdapter
-        val newAdapter = defAdapter ?: GetTipAdapterImpl()
-        newAdapter.show(this, level, text, init, callback)
+        val newAdapter = defAdapter ?: GetTipDefAdapter()
+        newAdapter.show(this, text, init, hideCallback, showCallback)
     }
 }
 

@@ -39,6 +39,6 @@
 <!--    <item name="get_state_retry" type="id" />-->
 <!--    <item name="get_state_spin_kit" type="id" />-->
 
-    <item name="get_tip_text" type="id" />
+<!--    <item name="get_tip_text" type="id" />-->
 
 </resources>

@@ -29,10 +29,7 @@ class GetInit : Serializable {
         }
 
     /** [Get]提示初始化配置  **/
-    var tipInit: GetTipInit? = GetTipInit()
-        set(init) {
-            field = init ?: GetTipInit()
-        }
+    var tipInit: GetTipInit = GetTipInit()
 
     var toolbarInit: GetToolbarInit? = GetToolbarInit()
         set(init) {

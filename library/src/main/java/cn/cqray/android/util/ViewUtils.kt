@@ -12,6 +12,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
+import android.widget.FrameLayout
 import androidx.annotation.LayoutRes
 import androidx.core.view.ViewCompat
 import androidx.recyclerview.widget.RecyclerView
@@ -32,7 +33,7 @@ object ViewUtils {
     @JvmStatic
     fun <VB : ViewBinding> binding(bindingClass: Class<VB>): VB {
         val activity = GetManager.topActivity
-        val context = activity?: Get.context
+        val context = activity ?: Get.context
         val content = activity?.findViewById<ViewGroup>(android.R.id.content)
         val method = bindingClass.getMethod(
             "inflate",
@@ -49,10 +50,16 @@ object ViewUtils {
      */
     @JvmStatic
     fun inflate(@LayoutRes id: Int): View {
-        val activity = GetManager.topActivity
-        val context = activity?: Get.context
-        val content = activity?.findViewById<ViewGroup>(android.R.id.content)
-        return LayoutInflater.from(context).inflate(id, content, false)
+        GetManager.topActivity?.let {
+            val parent = it.findViewById<ViewGroup>(android.R.id.content)
+            return LayoutInflater.from(it).inflate(id, parent, false)
+        }
+        var parent = FrameLayout(Get.context).also {
+            it.layoutParams = ViewGroup.LayoutParams(-1, -1)
+        }
+        val view = LayoutInflater.from(Get.context).inflate(id, parent, false)
+        System.gc()
+        return view
     }
 
     //    /** 设置Margin，默认单位DP **/

@@ -17,40 +17,40 @@ interface GetTipProvider : GetProvider {
 
     /**
      * 显示Tip
-     * @param text     文本内容 [CharSequence]
+     * @param text 文本内容 [CharSequence]
      */
-    fun showTip(text: CharSequence?) = tipDelegate.showTip(text)
+    fun showTip(text: CharSequence?) = showTip(text, null, null, null)
 
     /**
      * 显示Tip
-     * @param text     文本内容 [CharSequence]
-     * @param callback 结束回调 [GetTipCallback]
+     * @param text 文本内容 [CharSequence]
+     * @param hideCallback 隐藏回调
      */
-    fun showTip(text: CharSequence?, callback: GetTipCallback?) = tipDelegate.showTip(text, callback)
+    fun showTip(text: CharSequence?, hideCallback: Function0<Unit>?) = showTip(text, null, hideCallback, null)
+
+    /**
+     * 显示Tip
+     * @param text 文本内容 [CharSequence]
+     * @param hideCallback 隐藏回调
+     * @param showCallback 显示回调
+     */
+    fun showTip(
+        text: CharSequence?,
+        hideCallback: Function0<Unit>?,
+        showCallback: Function0<Unit>?,
+    ) = showTip(text, null, hideCallback, showCallback)
 
     /**
      * 显示Tip
      * @param text 文本内容 [CharSequence]
      * @param init 配置属性 [GetTipInit]
-     * @param callback 结束回调 [GetTipCallback]
+     * @param hideCallback 隐藏回调
+     * @param showCallback 显示回调
      */
     fun showTip(
         text: CharSequence?,
         init: GetTipInit?,
-        callback: GetTipCallback?
-    ) = tipDelegate.showTip(null, text, init, callback)
-
-    /**
-     * 显示Tip
-     * @param level 提示等级 [GetTipLevel]
-     * @param text 文本内容 [CharSequence]
-     * @param init 配置属性 [GetTipInit]
-     * @param callback 结束回调 [GetTipCallback]
-     */
-    fun showTip(
-        level: GetTipLevel?,
-        text: CharSequence?,
-        init: GetTipInit?,
-        callback: GetTipCallback?
-    ) = tipDelegate.showTip(level, text, init, callback)
+        hideCallback: Function0<Unit>?,
+        showCallback: Function0<Unit>?,
+    ) = tipDelegate.showTip(text, init, hideCallback, showCallback)
 }

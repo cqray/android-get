@@ -7,43 +7,71 @@ import cn.cqray.android.app.GetDelegate
  * [Get]提示委托
  * @author Cqray
  */
+@Suppress(
+    "MemberVisibilityCanBePrivate",
+    "Unused"
+)
 class GetTipDelegate(provider: GetTipProvider) : GetDelegate<GetTipProvider>(provider) {
 
-    /**
-     * 显示Tip
-     * @param text     文本内容 [CharSequence]
-     */
-    fun showTip(text: CharSequence?) = showTip(
-        level = null,
-        text = text,
-        init = null,
-        callback = null
-    )
+    /** 初始化配置 **/
+    var tipInit: GetTipInit? = null
 
     /**
      * 显示Tip
-     * @param text     文本内容 [CharSequence]
-     * @param callback 结束回调 [GetTipCallback]
+     * @param text 文本内容 [CharSequence]
      */
-    fun showTip(text: CharSequence?, callback: GetTipCallback? = null) = showTip(
-        level = null,
-        text = text,
-        init = null,
-        callback = callback
-    )
+    fun showTip(text: CharSequence?) = showTip(text, null, null, null)
 
     /**
      * 显示Tip
-     * @param level    提示等级 [GetTipLevel]
-     * @param text     文本内容 [CharSequence]
-     * @param init 配置属性 [GetTipInit]
-     * @param callback 结束回调 [GetTipCallback]
+     * @param text 文本内容 [CharSequence]
+     * @param hideCallback 隐藏回调
      */
     fun showTip(
-        level: GetTipLevel?,
+        text: CharSequence?,
+        hideCallback: Function0<Unit>?,
+    ) = showTip(text, null, hideCallback, null)
+
+    /**
+     * 显示Tip
+     * @param text 文本内容 [CharSequence]
+     * @param hideCallback 隐藏回调
+     * @param showCallback 显示回调
+     */
+    fun showTip(
+        text: CharSequence?,
+        hideCallback: Function0<Unit>?,
+        showCallback: Function0<Unit>?,
+    ) = showTip(text, null, hideCallback, showCallback)
+
+    /**
+     * 显示Tip
+     * @param text 文本内容 [CharSequence]
+     * @param init 配置属性 [GetTipInit]
+     * @param hideCallback 隐藏回调
+     */
+    fun showTip(
         text: CharSequence?,
         init: GetTipInit?,
-        callback: GetTipCallback?
-    ) = GetTip.show(level, text, init, callback)
+        hideCallback: Function0<Unit>?,
+    ) = showTip(text, init, hideCallback, null)
 
+    /**
+     * 显示Tip
+     * @param text 文本内容 [CharSequence]
+     * @param init 配置属性 [GetTipInit]
+     * @param hideCallback 隐藏回调
+     * @param showCallback 显示回调
+     */
+    fun showTip(
+        text: CharSequence?,
+        init: GetTipInit?,
+        hideCallback: Function0<Unit>?,
+        showCallback: Function0<Unit>?,
+    ) {
+        val defInit = tipInit ?: Get.init.tipInit
+        val defAdapter = init?.tipAdapter ?: defInit.tipAdapter
+        val newAdapter = defAdapter ?: GetTipDefAdapter()
+        newAdapter.show(this, text, init, hideCallback, showCallback)
+    }
 }

@@ -10,6 +10,7 @@ import java.io.Serializable
  */
 class GetTipInit : Serializable {
     /** Tip 适配器  */
+    @Transient
     var tipAdapter: GetTipAdapter? = null
 
     /** 在底部  */

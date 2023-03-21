@@ -24,10 +24,12 @@ public class MainFragment extends GetFragment {
 //        sv.setArcStrokeWidth(10);
 //        sv.setRoundUseTime(2000);
 
-        getStateDelegate()
-                .getEmptyAdapter()
-                .setTextColor(Color.YELLOW);
-        setBusy();
+//        getStateDelegate()
+//                .getEmptyAdapter()
+//                .setTextColor(Color.YELLOW);
+//        setBusy();
+
+        showTip("6666");
     }
 
     @Override
