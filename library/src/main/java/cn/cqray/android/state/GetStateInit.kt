@@ -6,24 +6,6 @@ package cn.cqray.android.state
  */
 class GetStateInit {
 
-//    /** 日志等级 **/
-//    var busyAdapter: StateAdapter<*>? = BusyAdapter()
-//        set(adapter) {
-//            field = adapter ?: BusyAdapter()
-//        }
-//
-//    /** 日志等级 **/
-//    var emptyAdapter: StateAdapter<*>? = EmptyAdapter()
-//        set(adapter) {
-//            field = adapter ?: EmptyAdapter()
-//        }
-//
-//    /** 日志等级 **/
-//    var errorAdapter: StateAdapter<*>? = ErrorAdapter()
-//        set(adapter) {
-//            field = adapter ?: ErrorAdapter()
-//        }
-
     /** 忙碌适配器 **/
     var busyAdapterCreator: Function0<GetStateAdapter<*>> = { GetBusyAdapter() }
 

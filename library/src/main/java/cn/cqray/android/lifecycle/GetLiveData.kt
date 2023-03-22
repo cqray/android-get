@@ -2,7 +2,7 @@ package cn.cqray.android.lifecycle
 
 import android.os.Looper
 import androidx.lifecycle.MutableLiveData
-import cn.cqray.android.app.GetManager
+import cn.cqray.android.Get
 
 /**
  * [MutableLiveData]修改版
@@ -19,7 +19,7 @@ class GetLiveData<T> : MutableLiveData<T> {
         if (Looper.myLooper() == Looper.getMainLooper()) {
             super.setValue(value)
         } else {
-            GetManager.runOnUiThreadDelayed({ super.setValue(value) })
+            Get.runOnUiThreadDelayed({ super.setValue(value) })
         }
     }
 
@@ -27,7 +27,7 @@ class GetLiveData<T> : MutableLiveData<T> {
         if (Looper.myLooper() == Looper.getMainLooper()) {
             super.setValue(value)
         } else {
-            GetManager.runOnUiThreadDelayed({ super.setValue(value) })
+            Get.runOnUiThreadDelayed({ super.setValue(value) })
         }
     }
 }

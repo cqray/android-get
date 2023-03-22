@@ -20,7 +20,6 @@ import androidx.recyclerview.widget.SimpleItemAnimator
 import androidx.viewbinding.ViewBinding
 import androidx.viewpager2.widget.ViewPager2
 import cn.cqray.android.Get
-import cn.cqray.android.app.GetManager
 import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.shape.MaterialShapeUtils
 import java.util.concurrent.atomic.AtomicReference
@@ -32,7 +31,7 @@ object ViewUtils {
 
     @JvmStatic
     fun <VB : ViewBinding> binding(bindingClass: Class<VB>): VB {
-        val activity = GetManager.topActivity
+        val activity = Get.topActivity
         val context = activity ?: Get.context
         val content = activity?.findViewById<ViewGroup>(android.R.id.content)
         val method = bindingClass.getMethod(
@@ -50,7 +49,7 @@ object ViewUtils {
      */
     @JvmStatic
     fun inflate(@LayoutRes id: Int): View {
-        GetManager.topActivity?.let {
+        Get.topActivity?.let {
             val parent = it.findViewById<ViewGroup>(android.R.id.content)
             return LayoutInflater.from(it).inflate(id, parent, false)
         }

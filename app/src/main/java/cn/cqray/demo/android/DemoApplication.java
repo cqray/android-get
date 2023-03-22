@@ -1,10 +1,13 @@
 package cn.cqray.demo.android;
 
+import android.app.Application;
 import android.content.Context;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.multidex.MultiDexApplication;
 
+import com.blankj.utilcode.util.Utils;
 import com.scwang.smart.refresh.footer.ClassicsFooter;
 import com.scwang.smart.refresh.header.ClassicsHeader;
 import com.scwang.smart.refresh.layout.SmartRefreshLayout;
@@ -38,6 +41,10 @@ public class DemoApplication extends MultiDexApplication {
     @Override
     public void onCreate() {
         super.onCreate();
+        Application app = Utils.getApp();
+
+        Log.e("数据", "APPlication是否相同：" + (app == this));
+
         GetToolbarInit toolbarInit = new GetToolbarInit();
         toolbarInit.setElevation(100F);
         toolbarInit.setBackIcon(R.drawable.def_back_common_dark);
@@ -45,7 +52,7 @@ public class DemoApplication extends MultiDexApplication {
         GetInit getInit = new GetInit();
         getInit.setToolbarInit(toolbarInit);
 
-        Get.init(this, getInit);
+//        Get.init(this, getInit);
 
     }
 }

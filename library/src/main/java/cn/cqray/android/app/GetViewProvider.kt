@@ -153,11 +153,6 @@ interface GetViewProvider : GetStateProvider, GetProvider {
     fun hideToolbar() = viewDelegate.hideToolbar()
 
     /**
-     * 侵入标题
-     */
-    fun immersionToolbar() = viewDelegate.immersionToolbar()
-
-    /**
      * 查找View
      */
     fun <T : View> findViewById(@IdRes id: Int): T = viewDelegate.findViewById(id)

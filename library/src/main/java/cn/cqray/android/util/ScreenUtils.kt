@@ -13,13 +13,12 @@ import android.os.Build
 import android.view.*
 import cn.cqray.android.Get
 import cn.cqray.android.Get.context
-import cn.cqray.android.app.GetManager
 
 @Suppress("MemberVisibilityCanBePrivate", "Unused")
 object ScreenUtils {
 
     /** 非NULL上下文 **/
-    private fun noNullContext(context: Context?) = context ?: GetManager.topActivity ?: Get.context
+    private fun noNullContext(context: Context?) = context ?: Get.topActivity ?: Get.context
 
     /**
      * 获取屏幕信息
@@ -207,7 +206,7 @@ object ScreenUtils {
     /** 状态栏是否显示 **/
     @JvmStatic
     fun isStatusBarShown(activity: Activity?): Boolean {
-        return (activity ?: GetManager.topActivity)?.let {
+        return (activity ?: Get.topActivity)?.let {
             val window = it.window ?: return true
             val outRect = Rect().also { rect -> window.decorView.getWindowVisibleDisplayFrame(rect) }
             return outRect.top > 0

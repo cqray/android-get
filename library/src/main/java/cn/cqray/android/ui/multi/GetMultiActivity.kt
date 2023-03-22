@@ -4,7 +4,6 @@ import android.os.Bundle
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.widget.ViewPager2
 import cn.cqray.android.app.GetActivity
-import cn.cqray.java.tool.SizeUnit
 import com.flyco.tablayout.CommonTabLayout
 
 /**
@@ -47,11 +46,11 @@ open class GetMultiActivity : GetActivity(), GetMultiProvider {
 
     fun setTabElevation(elevation: Float) = viewModel.setTabElevation(elevation)
 
-    fun setTabElevation(elevation: Float, unit: SizeUnit) = viewModel.setTabElevation(elevation, unit)
+    fun setTabElevation(elevation: Float, unit: Int) = viewModel.setTabElevation(elevation, unit)
 
     fun setTabHeight(height: Float) = viewModel.setTabHeight(height)
 
-    fun setTabHeight(height: Float, unit: SizeUnit) = viewModel.setTabHeight(height, unit)
+    fun setTabHeight(height: Float, unit: Int) = viewModel.setTabHeight(height, unit)
 
     fun setFragmentDragEnable(enable: Boolean) = viewModel.setFragmentDragEnable(enable)
 

@@ -29,7 +29,7 @@ open class GetDelegate<P : GetProvider>(val provider: P) {
             override fun onDestroy(owner: LifecycleOwner) {
                 super.onDestroy(owner)
                 // 延时回收资源
-                GetManager.runOnUiThreadDelayed({
+                Get.runOnUiThreadDelayed({
                     val key = "${provider.hashCode()}-${providerName.get()}"
                     cacheDelegates[key]?.onCleared()
                     cacheDelegates.remove(key)
@@ -72,7 +72,6 @@ open class GetDelegate<P : GetProvider>(val provider: P) {
                 GetNavProvider::class.java -> GetNavDelegate(provider as GetNavProvider)
                 GetTipProvider::class.java -> GetTipDelegate(provider as GetTipProvider)
                 GetViewProvider::class.java -> GetViewDelegate(provider as GetViewProvider)
-//                StateProvider::class.java -> StateDelegate(provider as StateProvider)
                 else -> throw RuntimeException()
             }
             delegate.providerName.set(clazz.name)

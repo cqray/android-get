@@ -12,7 +12,6 @@ import androidx.core.view.ViewCompat
 import cn.cqray.android.Get
 import cn.cqray.android.R
 import cn.cqray.android.app.GetActivity
-import cn.cqray.android.app.GetManager.topActivity
 import cn.cqray.android.util.Sizes
 
 /**
@@ -27,7 +26,7 @@ class GetExcActivity : GetActivity() {
 
     fun dispatchThrowable(source: Any?, intro: String?, throwable: Throwable?) {
         val intent = Intent()
-        var context: Context? = topActivity
+        var context: Context? = Get.topActivity
         // 如果没有获取到Activity
         if (context == null) {
             // 则取全局Context

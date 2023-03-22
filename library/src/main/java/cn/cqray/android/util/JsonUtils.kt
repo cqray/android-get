@@ -13,16 +13,15 @@ object JsonUtils {
         return gson.fromJson(element, clazz)
     }
 
+    /**
+     * 深拷贝
+     * @param src 来源
+     * @param clazz 类型
+     */
     @JvmStatic
-    fun <T> deepClone(src: T?, clazz: Class<T>?): T? {
-        if (clazz == null) return null
-        var element :String?= null
-        try {
-             element = gson.toJson(src)
-        } catch (e : Exception) {
-            e.printStackTrace()
-        }
-        //val element = gson.toJsonTree(src)
-        return gson.fromJson(element, clazz)
+    fun <T> deepClone(src: T, clazz: Class<T>): T {
+        var json: String? = null
+        runCatching { json = gson.toJson(src) }
+        return gson.fromJson(json, clazz)
     }
 }

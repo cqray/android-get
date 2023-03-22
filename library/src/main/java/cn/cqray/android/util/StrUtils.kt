@@ -19,19 +19,4 @@ object StrUtils {
         val number = matcher.replaceAll("").trim()
         return number.toInt()
     }
-
-    @JvmStatic
-    fun main(args: Array<String>?) {
-
-        println(parseNum("123bc"))
-
-        var i = 1;
-
-        i?.let {
-
-            return
-        }
-        println(7777)
-
-    }
 }

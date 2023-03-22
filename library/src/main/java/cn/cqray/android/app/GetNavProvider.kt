@@ -60,17 +60,17 @@ interface GetNavProvider : GetProvider {
 
     /**
      * 启动界面
-     * @param to 目标界面[Class]
-     * @param callback 回调[GetIntentCallback]
+     * @param to 目标界面
+     * @param callback 回调
      */
-    fun to(to: Class<*>, callback: GetIntentCallback?) = navDelegate.to(GetIntent(to), callback)
+    fun to(to: Class<*>, callback: Function1<Bundle, Unit>?) = navDelegate.to(GetIntent(to), callback)
 
     /**
      * 启动界面
-     * @param intent [GetIntent]
-     * @param callback [GetIntentCallback]回调
+     * @param intent 意图
+     * @param callback 回调
      */
-    fun to(intent: GetIntent, callback: GetIntentCallback) = navDelegate.to(intent, callback)
+    fun to(intent: GetIntent, callback: Function1<Bundle, Unit>) = navDelegate.to(intent, callback)
 
     /**
      * 回退

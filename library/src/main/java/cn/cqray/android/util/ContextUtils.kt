@@ -6,15 +6,12 @@ import android.content.ContextWrapper
 import android.content.res.AssetManager
 import android.content.res.Resources
 import android.graphics.drawable.Drawable
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.*
 import androidx.core.content.ContextCompat
 import cn.cqray.android.Get
-import cn.cqray.android.app.GetManager
-import java.util.concurrent.atomic.AtomicReference
 
 /**
  * @author LeiJue
@@ -24,7 +21,7 @@ object ContextUtils {
 
     @JvmStatic
     fun get(): Context {
-        val act = GetManager.topActivity
+        val act = Get.topActivity
         return act ?: Get.context
     }
 
@@ -56,7 +53,7 @@ object ContextUtils {
 
     @JvmStatic
     fun inflate(@LayoutRes resId: Int): View {
-        val act = GetManager.topActivity
+        val act = Get.topActivity
         var parent: ViewGroup? = null
         if (act != null) parent = act.findViewById(android.R.id.content)
         return LayoutInflater.from(get()).inflate(resId, parent, false)
@@ -68,12 +65,6 @@ object ContextUtils {
         else resources.getResourceName(id!!)
     }
 
-    @JvmStatic
-    fun main(args: Array<String>?) {
-        val index = null in arrayOf(0, null)
-        println(index)
-    }
-
     fun context2Activity(context: Context): Activity? {
         var tempContext = context
         while (tempContext is ContextWrapper) {
@@ -82,5 +73,4 @@ object ContextUtils {
         }
         return null
     }
-
 }

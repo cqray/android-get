@@ -13,15 +13,13 @@ import java.lang.UnsupportedOperationException
 @JvmDefaultWithoutCompatibility
 interface GetProvider {
 
-    @JvmDefault
     fun getLifecycleOwner(): LifecycleOwner {
         if (this is LifecycleOwner) {
             return this
         }
-        throw RuntimeException("[GetProvider] must be implemented on LifecycleOwner.")
+        throw RuntimeException("[GetProvider] can't get LifecycleOwner.")
     }
 
-    @JvmDefault
     fun <T : ViewModel> getViewModel(clazz: Class<out ViewModel>): T {
         val owner = getLifecycleOwner()
         if (owner is ViewModelStoreOwner) {

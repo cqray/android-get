@@ -9,7 +9,7 @@ import cn.cqray.android.util.ReflectUtil
     "MemberVisibilityCanBePrivate",
     "Unchecked_cast"
 )
-abstract class GetBindingFragment<VB : ViewBinding> : GetFragment() {
+abstract class GetBindingActivity<VB : ViewBinding> : GetActivity() {
 
     val binding: VB by lazy { generateViewBinding() }
 

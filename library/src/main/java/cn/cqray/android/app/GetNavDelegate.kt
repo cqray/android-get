@@ -7,13 +7,12 @@ import androidx.annotation.IdRes
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.DefaultLifecycleObserver
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
+import cn.cqray.android.Get
 import cn.cqray.android.anim.AnimUtils
 import cn.cqray.android.helper.GetResultHelper
 import cn.cqray.android.lifecycle.GetViewModelProvider
 import cn.cqray.android.lifecycle.GetViewModel
-import java.lang.IllegalStateException
 import java.util.concurrent.atomic.AtomicBoolean
 
 /**
@@ -93,7 +92,7 @@ class GetNavDelegate(provider: GetNavProvider) : GetDelegate<GetNavProvider>(pro
             AnimUtils.getAnimDurationFromResource(animResId)
         }
         // 动画结束回调
-        GetManager.runOnUiThreadDelayed({ provider.onEnterAnimEnd() }, enterAnimDuration)
+        Get.runOnUiThreadDelayed({ provider.onEnterAnimEnd() }, enterAnimDuration)
     }
 
     /**
@@ -134,10 +133,10 @@ class GetNavDelegate(provider: GetNavProvider) : GetDelegate<GetNavProvider>(pro
 
     /**
      * 启动界面
-     * @param intent [GetIntent]
-     * @param callback [GetIntentCallback]回调
+     * @param intent 意图
+     * @param callback 回调
      */
-    fun to(intent: GetIntent, callback: GetIntentCallback?) {
+    fun to(intent: GetIntent, callback: Function1<Bundle, Unit>?) {
         viewModel.to(intent)
         callback?.let { GetResultHelper.registerReceiver(lifecycleOwner, it) }
     }

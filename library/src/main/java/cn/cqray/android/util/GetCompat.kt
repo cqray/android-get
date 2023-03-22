@@ -8,7 +8,6 @@ import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
 import androidx.core.content.ContextCompat
 import cn.cqray.android.Get
-import cn.cqray.android.app.GetManager
 
 @Suppress("ResourceType")
 object GetCompat {
@@ -23,7 +22,7 @@ object GetCompat {
 //        return act ?: Get.context
 //    }
 
-    private val context get() = run { GetManager.topActivity ?: Get.context }
+    private val context get() = run { Get.topActivity ?: Get.context }
 
     /**
      * 获取[Drawable]实例

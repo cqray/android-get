@@ -7,7 +7,7 @@ import android.content.Intent;
 import androidx.annotation.NonNull;
 
 import cn.cqray.android.Get;
-import cn.cqray.android.app.GetManager;
+import cn.cqray.android._Get;
 
 /**
  * 异常管理界面
@@ -20,7 +20,7 @@ public class ExceptionDispatcher {
 
     public static void dispatchThrowable(Object source, String intro, Throwable throwable) {
         Intent intent = new Intent();
-        Context context = GetManager.getTopActivity();
+        Context context = Get.getTopActivity();
         // 如果没有获取到Activity
         if (context == null) {
             // 则取全局Context

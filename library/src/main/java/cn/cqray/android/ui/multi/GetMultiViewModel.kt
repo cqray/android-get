@@ -1,5 +1,6 @@
 package cn.cqray.android.ui.multi
 
+import android.util.TypedValue
 import android.view.View
 import android.widget.FrameLayout
 import androidx.fragment.app.Fragment
@@ -9,7 +10,6 @@ import cn.cqray.android.databinding.GetMultiLayoutBinding
 import cn.cqray.android.lifecycle.GetViewModel
 import cn.cqray.android.util.ContextUtils
 import cn.cqray.android.util.Sizes
-import cn.cqray.java.tool.SizeUnit
 import com.flyco.tablayout.CommonTabLayout
 import com.flyco.tablayout.listener.CustomTabEntity
 import com.flyco.tablayout.listener.OnTabSelectListener
@@ -147,14 +147,14 @@ class GetMultiViewModel(lifecycleOwner: LifecycleOwner) : GetViewModel(lifecycle
      * 设置TabLayout阴影高度
      * @param elevation 阴影高度
      */
-    fun setTabElevation(elevation: Float) = setTabElevation(elevation, SizeUnit.DIP)
+    fun setTabElevation(elevation: Float) = setTabElevation(elevation, TypedValue.COMPLEX_UNIT_DIP)
 
     /**
      * 设置TabLayout阴影高度
      * @param elevation 阴影高度
      * @param unit 单位
      */
-    fun setTabElevation(elevation: Float, unit: SizeUnit) {
+    fun setTabElevation(elevation: Float, unit: Int) {
         val size = Sizes.applyDimension(elevation, unit)
         binding.multiTopNav.elevation = size
         binding.multiBottomNav.elevation = size
@@ -164,14 +164,14 @@ class GetMultiViewModel(lifecycleOwner: LifecycleOwner) : GetViewModel(lifecycle
      * 设置TabLayout高度
      * @param height 高度
      */
-    fun setTabHeight(height: Float) = setTabHeight(height, SizeUnit.DIP)
+    fun setTabHeight(height: Float) = setTabHeight(height, TypedValue.COMPLEX_UNIT_DIP)
 
     /**
      * 设置TabLayout高度
      * @param height 高度
      * @param unit 单位
      */
-    fun setTabHeight(height: Float, unit: SizeUnit) {
+    fun setTabHeight(height: Float, unit: Int) {
         val size = Sizes.applyDimension(height, unit)
         multiTab.layoutParams.height = size.toInt()
     }

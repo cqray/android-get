@@ -6,8 +6,6 @@ import android.util.TypedValue
 import androidx.annotation.DimenRes
 import cn.cqray.android.Get
 import cn.cqray.android.R
-import cn.cqray.android.app.GetManager
-import cn.cqray.java.tool.SizeUnit
 
 /**
  * 尺寸工具类
@@ -18,7 +16,7 @@ object Sizes {
 
     private val context: Context
         get() {
-            val context = GetManager.topActivity
+            val context = Get.topActivity
             return context ?: Get.application
         }
 
@@ -131,18 +129,20 @@ object Sizes {
     @JvmStatic
     fun px2sp(pxValue: Float) = pxValue / spScale
 
-    @JvmStatic
-    fun applyDimension(value: Float, unit: SizeUnit): Float {
-        when (unit.type) {
-            TypedValue.COMPLEX_UNIT_PX -> return value
-            TypedValue.COMPLEX_UNIT_DIP -> return value * dpScale
-            TypedValue.COMPLEX_UNIT_SP -> return value * spScale
-            TypedValue.COMPLEX_UNIT_PT -> return value * ptScale
-            TypedValue.COMPLEX_UNIT_IN -> return value * inScale
-            TypedValue.COMPLEX_UNIT_MM -> return value * mmScale
-        }
-        return 0F
-    }
+//    @JvmStatic
+//    fun applyDimension(value: Float, unit: SizeUnit): Float {
+//        when (unit.type) {
+//            TypedValue.COMPLEX_UNIT_PX -> return value
+//            TypedValue.COMPLEX_UNIT_DIP -> return value * dpScale
+//            TypedValue.COMPLEX_UNIT_SP -> return value * spScale
+//            TypedValue.COMPLEX_UNIT_PT -> return value * ptScale
+//            TypedValue.COMPLEX_UNIT_IN -> return value * inScale
+//            TypedValue.COMPLEX_UNIT_MM -> return value * mmScale
+//        }
+//        return 0F
+//    }
+
+
 
     @JvmStatic
     fun applyDimension(value: Float, unit: Int): Float {

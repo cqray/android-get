@@ -2,8 +2,8 @@ package cn.cqray.android.app
 
 import android.app.Activity
 import android.content.Intent
-import android.util.Log
 import android.view.View
+import androidx.activity.ComponentActivity
 import androidx.annotation.IdRes
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
@@ -19,7 +19,7 @@ import cn.cqray.android.exc.ExceptionDispatcher
 import cn.cqray.android.helper.GetClickHelper
 import cn.cqray.android.lifecycle.GetViewModel
 import cn.cqray.android.log.GetLog
-import cn.cqray.android.util.ActivityUtils
+import com.blankj.utilcode.util.ActivityUtils
 import java.util.*
 import java.util.concurrent.atomic.AtomicInteger
 import kotlin.Exception
@@ -87,7 +87,6 @@ internal class GetNavViewModel(owner: LifecycleOwner) : GetViewModel(owner) {
     fun onBackPressed() {
         val fragment = topFragment
         if (fragment is GetNavProvider) {
-            Log.e("数据", "回退拉  ")
             if (!fragment.onBackPressedGet()) {
                 // 有多个Fragment，则直接回退
                 if (backStack.size > 1) back()
@@ -170,7 +169,7 @@ internal class GetNavViewModel(owner: LifecycleOwner) : GetViewModel(owner) {
         if (Activity::class.java.isAssignableFrom(intent.toClass!!)) {
             val actIntent = Intent(activity, intent.toClass)
             actIntent.putExtras(intent.arguments)
-            ActivityUtils.toActivity(actIntent)
+            Get.toActivity(actIntent)
             return
         }
         // 跳转Fragment
@@ -240,10 +239,10 @@ internal class GetNavViewModel(owner: LifecycleOwner) : GetViewModel(owner) {
         // 是否是回退到Activity
         val isBackToActivity = Activity::class.java.isAssignableFrom(back)
         // 目标界面是否是Fragment
-        val isToFragment = GetUtils.isGetFragmentClass(to)
+        val isToFragment = isGetFragmentClass(to)
         // 回退到指定的Activity
         if (isBackToActivity) {
-            ActivityUtils.backToActivity(back as Class<out Activity>, inclusive)
+            ActivityUtils.finishToActivity(back as Class<out Activity>, inclusive)
             return
         }
         // 回退至根Fragment（包含），不启动新的Fragment，则销毁Activity
@@ -300,6 +299,7 @@ internal class GetNavViewModel(owner: LifecycleOwner) : GetViewModel(owner) {
             ExceptionDispatcher.dispatchStarterThrowable(
                 null, "请先调用loadRootFragment()。", "未设置containerId，便开始调用to()方法。"
             )
+
             return false
         }
         return true
@@ -311,7 +311,7 @@ internal class GetNavViewModel(owner: LifecycleOwner) : GetViewModel(owner) {
      */
     private fun checkToClassReady(intent: GetIntent): Boolean {
         val to = intent.toClass
-        val valid = GetUtils.isGetActivityClass(to) || GetUtils.isGetFragmentClass(to)
+        val valid = isGetActivityClass(to) || isGetFragmentClass(to)
         return valid.also {
             if (it) return true
             ExceptionDispatcher.dispatchStarterThrowable(
@@ -356,5 +356,25 @@ internal class GetNavViewModel(owner: LifecycleOwner) : GetViewModel(owner) {
 
         /** Fragment 动画时长关键字 **/
         const val FRAGMENT_ANIM_DURATION_Tag = "Get:Fragment_anim_duration"
+
+        /**
+         * 是否是实现了[GetNavProvider]接口的Fragment
+         * @param clazz 类型
+         */
+        fun isGetFragmentClass(clazz: Class<*>?): Boolean {
+            return clazz != null
+                    && Fragment::class.java.isAssignableFrom(clazz)
+                    && GetNavProvider::class.java.isAssignableFrom(clazz)
+        }
+
+        /**
+         * 是否是实现了[GetNavProvider]接口的Activity
+         * @param clazz 类型
+         */
+        fun isGetActivityClass(clazz: Class<*>?): Boolean {
+            return clazz != null
+                    && ComponentActivity::class.java.isAssignableFrom(clazz)
+                    && GetNavProvider::class.java.isAssignableFrom(clazz)
+        }
     }
 }

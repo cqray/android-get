@@ -12,7 +12,6 @@ import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
 import cn.cqray.android.Get
-import cn.cqray.android.app.GetManager
 import kotlin.math.abs
 
 /**
@@ -35,7 +34,7 @@ object KeyboardUtils {
     private const val TAG_ON_5497_BUG_FIX_LISTENER = -9
 
     /** 当前[Activity] **/
-    private val currentActivity get() = GetManager.topActivity
+    private val currentActivity get() = Get.topActivity
 
     /** 软键盘管理器 **/
     private fun imm(context: Context?): InputMethodManager {

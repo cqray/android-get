@@ -5,13 +5,12 @@ import androidx.annotation.ColorRes
 import androidx.core.content.ContextCompat
 import cn.cqray.android.Get
 import cn.cqray.android.R
-import cn.cqray.android.app.GetManager
 
 object Colors {
 
     private val context: Context
         get() {
-            val context = GetManager.topActivity
+            val context = Get.topActivity
             return context ?: Get.application
         }
 

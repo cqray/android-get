@@ -40,9 +40,7 @@ import java.util.concurrent.atomic.AtomicReference
     "MemberVisibilityCanBePrivate",
     "Unused"
 )
-class GetViewDelegate internal constructor(
-    provider: GetViewProvider
-) : GetDelegate<GetViewProvider>(provider) {
+class GetViewDelegate internal constructor(provider: GetViewProvider) : GetDelegate<GetViewProvider>(provider) {
 
     /** ButterKnife绑定（原子对象，无特殊作用，为了让变量变为 final） */
     private val knifeUnBinder = AtomicReference<Any?>()
@@ -53,6 +51,7 @@ class GetViewDelegate internal constructor(
     /** [ViewBinding]实例 **/
     private val binding by lazy { GetViewDefaultLayoutBinding.inflate(ContextUtils.layoutInflater) }
 
+    /** 状态委托 **/
     val stateDelegate by lazy { GetStateDelegate() }
 
     /** 根控件 */
@@ -100,16 +99,6 @@ class GetViewDelegate internal constructor(
             }
         }
     }
-
-//    /** 状态管理器 */
-//    val stateDelegate: StateDelegate? by lazy {
-//        if (provider is StateProvider) provider.stateDelegate
-//        else null
-////        null
-//    }
-
-//    /** 内容控件 */
-//    val contentView: View? get() = attachedContentView.get()
 
     /**
      * 上下文
@@ -292,13 +281,6 @@ class GetViewDelegate internal constructor(
     /** 显示标题栏 */
     fun hideToolbar() = run { toolbar.visibility = View.GONE }
 
-    /** 侵入标题栏 */
-    fun immersionToolbar() {
-        val params = toolbar.layoutParams as ViewGroup.MarginLayoutParams
-        params.topMargin = ScreenUtils.getStatusBarHeight(toolbar.context)
-        toolbar.requestLayout()
-    }
-
     /**
      * 查找控件
      * @param resId 控件Id
@@ -379,9 +361,7 @@ class GetViewDelegate internal constructor(
         }
         // 设置全局属性
         with(toolbar) {
-//            val init = Get.init.toolbarInit!!
-//            elevation = init.elevation ?: Sizes.dp(R.dimen.elevation)
-//            background = init.background?.invoke() ?: background
+            // 原始界面默认不显示标题
             visibility = if (setGetContentView) View.VISIBLE else View.GONE
             setToolbarInit(Get.init.toolbarInit!!)
         }

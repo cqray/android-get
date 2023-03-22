@@ -13,15 +13,9 @@ import android.content.pm.PackageManager.NameNotFoundException
 import android.content.res.TypedArray
 import android.graphics.drawable.Drawable
 import android.os.Build
-import android.os.Bundle
-import androidx.fragment.app.FragmentActivity
 import cn.cqray.android.Get
 import cn.cqray.android.Get.context
-import cn.cqray.android.app.GetManager
-import cn.cqray.android.app.GetNavProvider
-import cn.cqray.android.lifecycle.GetActivityLifecycleCallbacks
 import cn.cqray.android.lifecycle.GetAppLifecycleCallbacks
-import cn.cqray.android.lifecycle.GetFragmentLifecycleCallbacks
 import java.util.*
 import java.util.concurrent.atomic.AtomicReference
 
@@ -29,7 +23,7 @@ import java.util.concurrent.atomic.AtomicReference
  * [Activity]工具类
  * @author Cqray
  */
-@Suppress("unused", "MemberVisibilityCanBePrivate")
+
 object ActivityUtils {
 
     /** Activity列表 **/
@@ -43,7 +37,6 @@ object ActivityUtils {
 
     /** App生命周期回调 **/
     private val appLifecycleCallbacks = ArrayList<GetAppLifecycleCallbacks>()
-
 
     /**
      * 设置栈顶Activity
@@ -74,26 +67,26 @@ object ActivityUtils {
     }
 
 
-    fun toActivity(intent: Intent) = toActivity(intent, null as Bundle?)
-
-    /**
-     * 跳转指定Activity
-     * @param intent 目标意图
-     * @param options 配置参数
-     */
-    fun toActivity(intent: Intent, options: Bundle?): Boolean {
-        // 获取上下文
-        val context = GetManager.topActivity ?: Get.application
-        // 判断目标Activity是否可用
-        if (!isIntentAvailable(intent)) {
-            return false
-        }
-        // 不是Activity，需要添加FLAG_ACTIVITY_NEW_TASK标识
-        if (context !is Activity) intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-        // 启动Activity
-        context.startActivity(intent, options)
-        return true
-    }
+//    fun toActivity(intent: Intent) = toActivity(intent, null as Bundle?)
+//
+//    /**
+//     * 跳转指定Activity
+//     * @param intent 目标意图
+//     * @param options 配置参数
+//     */
+//    fun toActivity(intent: Intent, options: Bundle?): Boolean {
+//        // 获取上下文
+//        val context = GetManager.topActivity ?: Get.application
+//        // 判断目标Activity是否可用
+//        if (!isIntentAvailable(intent)) {
+//            return false
+//        }
+//        // 不是Activity，需要添加FLAG_ACTIVITY_NEW_TASK标识
+//        if (context !is Activity) intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+//        // 启动Activity
+//        context.startActivity(intent, options)
+//        return true
+//    }
 
     @JvmStatic
     fun backToActivity(backTo: Class<out Activity>, inclusive: Boolean) {
@@ -222,6 +215,7 @@ object ActivityUtils {
     /**
      * 检查屏幕横竖屏或者锁定就是固定
      */
+    @SuppressLint("SoonBlockedPrivateApi")
     fun isTranslucentOrFloating(activity: Activity): Boolean {
         var isTranslucentOrFloating = false
         try {
@@ -258,6 +252,7 @@ object ActivityUtils {
     /**
      * 设置屏幕不固定，绕过检查
      */
+    @SuppressLint("DiscouragedPrivateApi")
     private fun fixOrientation(activity: Activity) {
         try {
             val activityClass = Activity::class.java
