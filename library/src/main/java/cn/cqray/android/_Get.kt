@@ -58,6 +58,19 @@ internal object _Get {
     }
 
     /**
+     * 在UI线程上延时执行程序
+     * @param runnable  需要执行的内容
+     * @param delayed   延时时长(ms)
+     */
+    @JvmStatic
+    fun runOnUiThreadDelayed(runnable: Runnable, delayed: Int? = null) {
+        val message = Message.obtain()
+        message.what = 0
+        message.obj = runnable
+        handler.sendMessageDelayed(message, (delayed ?: 0).toLong())
+    }
+
+    /**
      * 注册[Activity]生命周期
      */
     private fun registerActivityLifecycleCallbacks() {
@@ -170,19 +183,6 @@ internal object _Get {
         appLifecycleCallbacks.forEach { it.onTerminated() }
         handler.removeMessages(0)
         GetLog.d(this, "Application is terminated.")
-    }
-
-    /**
-     * 在UI线程上延时执行程序
-     * @param runnable  需要执行的内容
-     * @param delayed   延时时长(ms)
-     */
-    @JvmStatic
-    fun runOnUiThreadDelayed(runnable: Runnable, delayed: Int? = null) {
-        val message = Message.obtain()
-        message.what = 0
-        message.obj = runnable
-        handler.sendMessageDelayed(message, (delayed ?: 0).toLong())
     }
 
     /**

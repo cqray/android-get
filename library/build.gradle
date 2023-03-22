@@ -107,7 +107,7 @@ dependencies {
     //noinspection GradleDependency
     api "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 
-    compileOnly 'com.orhanobut:logger:2.2.0'
+//    compileOnly 'com.orhanobut:logger:2.2.0'
 
 //    // 协程 支持包   ------   AndroidX 扩展包
 //    //引入协程包,里面包了core核心包

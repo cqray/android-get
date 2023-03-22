@@ -4,7 +4,6 @@ import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import cn.cqray.android.Get
 import cn.cqray.android.log.GetLog
-import cn.cqray.android.log.GetLogLevel
 import cn.cqray.android.ui.multi.GetMultiDelegate
 import cn.cqray.android.ui.multi.GetMultiProvider
 import cn.cqray.android.tip.GetTipDelegate
@@ -43,16 +42,15 @@ open class GetDelegate<P : GetProvider>(val provider: P) {
      * @param level 日志等级
      * @param method 所在方法
      * @param text 日志内容
-     * @param th 异常信息
      */
-    internal fun printLog(level: GetLogLevel, method: String, text: String, th: Throwable? = null) {
+    internal fun printLog(@GetLog.Level level: Int, method: String, text: String) {
         // 日志内容
         val message = " \n" +
                 "       Owner Class: ${provider::class.java.name}\n" +
                 "       Used Method: $method\n" +
                 "       Content: $text"
         // 打印日志
-        GetLog.print(level, this::class.java, message, th)
+        GetLog.print(level, message)
     }
 
     protected open fun onCleared() {}

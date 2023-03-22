@@ -1,75 +1,150 @@
 package cn.cqray.android.log
 
+import android.util.Log
+import androidx.annotation.IntDef
 import cn.cqray.android.Get
 
 /**
  * [Get]日志
  * @author Cqray
  */
-@Suppress("unused")
+@Suppress(
+    "MemberVisibilityCanBePrivate",
+    "Unused"
+)
 object GetLog {
 
-    @JvmStatic
-    fun v(message: String?) = print(GetLogLevel.V, null, message, null)
+    const val V = Log.VERBOSE
+    const val D = Log.DEBUG
+    const val I = Log.INFO
+    const val W = Log.WARN
+    const val E = Log.ERROR
+    const val A = Log.ASSERT
 
-    @JvmStatic
-    fun v(tag: Any?, message: String?) = print(GetLogLevel.V, tag, message, null)
+    @IntDef(V, D, I, W, E, A)
+    @Retention(AnnotationRetention.SOURCE)
+    annotation class Level
 
-    @JvmStatic
-    fun d(message: String?) = print(GetLogLevel.D, null, message, null)
+    /** 日志适配器缓存 **/
+    @Suppress("ObjectPropertyName")
+    private var _logAdapter: GetLogAdapter? = null
 
-    @JvmStatic
-    fun d(tag: Any?, message: String?) = print(GetLogLevel.D, tag, message, null)
-
-    @JvmStatic
-    fun i(message: String?) = print(GetLogLevel.I, null, message, null)
-
-    @JvmStatic
-    fun i(tag: Any?, message: String?) = print(GetLogLevel.I, tag, message, null)
-
-    @JvmStatic
-    fun w(message: String?) = print(GetLogLevel.W, null, message, null)
-
-    @JvmStatic
-    fun w(tag: Any?, message: String?) = print(GetLogLevel.W, tag, message, null)
-
-    @JvmStatic
-    fun e(text: String?) = print(GetLogLevel.E, null, text, null)
-
-    @JvmStatic
-    fun e(tag: Any?, text: String?) = print(GetLogLevel.E, tag, text, null)
-
-    @JvmStatic
-    fun e(tag: Any?, text: String?, exc: Throwable?) = print(GetLogLevel.E, tag, text, exc)
-
-    @JvmStatic
-    fun wtf(message: String?) = print(GetLogLevel.WTF, null, message, null)
-
-    @JvmStatic
-    fun wtf(tag: Any?, message: String?) = print(GetLogLevel.WTF, tag, message, null)
-
-    @JvmStatic
-    fun print(level: GetLogLevel?, tag: Any?, message: String?, tr: Throwable?) {
-        // 获取配置
-        val logInit = Get.init.logInit!!
-        val logTag = logInit.tag
-        val logLevel = logInit.logLevel
-        val logAdapter = logInit.logAdapter
-        // 判断日志是否需要打印
-        if (logLevel == GetLogLevel.NONE) return
-        if ((level?.ordinal ?: 0) < logLevel.ordinal) return
-        // 无需要打印的内容
-        if (message == null && tr == null) return
-        // 获取当前日志标识
-        val newTag = logTag + when (tag) {
-            null -> ""
-            is String -> "-$tag"
-            is Class<*> -> "-${tag.simpleName}"
-            else -> "-${tag.javaClass.simpleName}"
+    /** 日志适配器 **/
+    private val logAdapter: GetLogAdapter
+        get() {
+            val adapter = Get.init.logInit!!.logAdapter
+            if (_logAdapter != adapter) _logAdapter = adapter
+            return adapter
         }
-        // 获取日志内容
-        val newMessage = message ?: if (level != GetLogLevel.E) tr!!.message else ""
-        // 打印日志
-        logAdapter.print(level ?: GetLogLevel.V, newTag, newMessage ?: "", tr)
-    }
+
+    @JvmStatic
+    fun v(vararg contents: Any?) = logAdapter.print(V, null, contents)
+
+    @JvmStatic
+    fun vTag(tag: String?, vararg contents: Any?) = logAdapter.print(V, tag, contents)
+
+    @JvmStatic
+    fun d(vararg contents: Any?) = logAdapter.print(D, null, contents)
+
+    @JvmStatic
+    fun dTag(tag: String?, vararg contents: Any?) = logAdapter.print(D, tag, contents)
+
+    @JvmStatic
+    fun i(vararg contents: Any?) = logAdapter.print(I, null, contents)
+    
+    @JvmStatic
+    fun iTag(tag: String?, vararg contents: Any?) = logAdapter.print(I, tag, contents)
+
+    @JvmStatic
+    fun w(vararg contents: Any?) = logAdapter.print(W, null, contents)
+
+    @JvmStatic
+    fun wTag(tag: String?, vararg contents: Any?) = logAdapter.print(W, tag, contents)
+
+    @JvmStatic
+    fun e(vararg contents: Any?) = logAdapter.print(E, null, contents)
+
+    @JvmStatic
+    fun eTag(tag: String?, vararg contents: Any?) = logAdapter.print(E, tag, contents)
+
+    @JvmStatic
+    fun a(vararg contents: Any?) = logAdapter.print(A, null, contents)
+
+    @JvmStatic
+    fun aTag(tag: String?, vararg contents: Any?) = logAdapter.print(A, tag, contents)
+
+    @JvmStatic
+    fun print(@Level level: Int, tag: String?, vararg contents: Any?) = logAdapter.print(level, tag, *contents)
+
+    @JvmStatic
+    fun file(content: String?) = logAdapter.file(D, null, content)
+
+    @JvmStatic
+    fun file(tag: String?, content: String?) = logAdapter.file(D, tag, content)
+
+    @JvmStatic
+    fun file(@Level level: Int, content: String?) = logAdapter.file(level, null, content)
+
+    @JvmStatic
+    fun file(@Level level: Int, tag: String?, content: String?) = logAdapter.file(level, tag, content)
+
+    @JvmStatic
+    fun json(content: String?) = logAdapter.json(D, null, content)
+
+    @JvmStatic
+    fun json(tag: String?, content: String?) = logAdapter.json(D, tag, content)
+
+    @JvmStatic
+    fun json(@Level level: Int, content: String?) = logAdapter.json(level, null, content)
+
+    @JvmStatic
+    fun json(@Level level: Int, tag: String?, content: String?) = logAdapter.json(level, tag, content)
+
+    @JvmStatic
+    fun xml(content: String?) = logAdapter.xml(D, null, content)
+
+    @JvmStatic
+    fun xml(tag: String?, content: String?) = logAdapter.xml(D, tag, content)
+
+    @JvmStatic
+    fun xml(@Level level: Int, content: String?) = logAdapter.xml(level, null, content)
+
+    @JvmStatic
+    fun xml(@Level level: Int, tag: String?, content: String?) = logAdapter.xml(level, tag, content)
+
+    @JvmStatic
+    fun iFile(content: String?) = logAdapter.file(I, null, content)
+
+    @JvmStatic
+    fun iFile(tag: String?, content: String?) = logAdapter.file(I, tag, content)
+
+    @JvmStatic
+    fun iJson(content: String?) = logAdapter.json(I, null, content)
+
+    @JvmStatic
+    fun iJson(tag: String?, content: String?) = logAdapter.json(I, tag, content)
+
+    @JvmStatic
+    fun iXml(content: String?) = logAdapter.xml(I, null, content)
+
+    @JvmStatic
+    fun iXml(tag: String?, content: String?) = logAdapter.xml(I, tag, content)
+
+    @JvmStatic
+    fun eFile(content: String?) = logAdapter.file(I, null, content)
+
+    @JvmStatic
+    fun eFile(tag: String?, content: String?) = logAdapter.file(I, tag, content)
+
+    @JvmStatic
+    fun eJson(content: String?) = logAdapter.json(I, null, content)
+
+    @JvmStatic
+    fun eJson(tag: String?, content: String?) = logAdapter.json(I, tag, content)
+
+    @JvmStatic
+    fun eXml(content: String?) = logAdapter.xml(I, null, content)
+
+    @JvmStatic
+    fun eXml(tag: String?, content: String?) = logAdapter.xml(I, tag, content)
 }
