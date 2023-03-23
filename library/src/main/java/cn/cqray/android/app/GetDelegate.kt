@@ -15,11 +15,14 @@ import java.util.concurrent.atomic.AtomicReference
  * [Get]委托基类
  * @author Cqray
  */
-@Suppress("unused")
+@Suppress(
+    "Unchecked_cast",
+    "unused"
+)
 open class GetDelegate<P : GetProvider>(val provider: P) {
 
-    /** [GetProvider]子类类名（原子对象，实际意义，仅为让变量为 final） **/
-    private val providerName = AtomicReference<String>()
+    /** [GetProvider]子类类名 **/
+    private val providerRef = AtomicReference<String>()
 
     init {
         // 订阅资源回收
@@ -29,7 +32,7 @@ open class GetDelegate<P : GetProvider>(val provider: P) {
                 super.onDestroy(owner)
                 // 延时回收资源
                 Get.runOnUiThreadDelayed({
-                    val key = "${provider.hashCode()}-${providerName.get()}"
+                    val key = "${provider.hashCode()}-${providerRef.get()}"
                     cacheDelegates[key]?.onCleared()
                     cacheDelegates.remove(key)
                 })
@@ -62,17 +65,20 @@ open class GetDelegate<P : GetProvider>(val provider: P) {
 
         @JvmStatic
         @Synchronized
-        @Suppress("unchecked_cast")
         fun <P : GetProvider, D : GetDelegate<*>> get(provider: P, clazz: Class<P>): D {
             val key = "${provider.hashCode()}-${clazz.name}"
             val delegate = cacheDelegates[key] ?: when (clazz) {
+                // 多界面提供器
                 GetMultiProvider::class.java -> GetMultiDelegate(provider as GetMultiProvider)
+                // 导航界面提供器
                 GetNavProvider::class.java -> GetNavDelegate(provider as GetNavProvider)
+                // 提示提供器
                 GetTipProvider::class.java -> GetTipDelegate(provider as GetTipProvider)
+                // 界面提供器
                 GetViewProvider::class.java -> GetViewDelegate(provider as GetViewProvider)
                 else -> throw RuntimeException()
             }
-            delegate.providerName.set(clazz.name)
+            delegate.providerRef.set(clazz.name)
             // 存入缓存中
             cacheDelegates[key] = delegate
             return delegate as D

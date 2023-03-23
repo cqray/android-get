@@ -1,10 +1,10 @@
 package cn.cqray.android.`object`
 
-import cn.cqray.android.util.StrUtils
 import com.google.gson.annotations.SerializedName
 
 import java.io.Serializable
 import java.util.ArrayList
+import java.util.regex.Pattern
 
 /**
  * 网络请求响应体
@@ -22,7 +22,13 @@ class ResponseData<T> : Serializable {
     var data: T? = null
 
     /** [code]整型值 **/
-    val codeAsInt: Int get() = StrUtils.toInt(code!!)
+    val codeAsInt: Int get() {
+        val regex = "\\D"
+        val pattern = Pattern.compile(regex)
+        val matcher = pattern.matcher(code!!)
+        val number = matcher.replaceAll("").trim()
+        return number.toInt()
+    }
 
     //        return Starter.getInstance()
 //                .getStarterStrategy()

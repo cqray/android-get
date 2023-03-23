@@ -5,6 +5,7 @@ import android.graphics.drawable.Drawable
 import androidx.annotation.Keep
 import cn.cqray.android.Get
 import cn.cqray.android.anim.GetFragmentAnimator
+import cn.cqray.android.anim.GetVerticalAnimator
 import cn.cqray.android.log.GetLogInit
 import cn.cqray.android.state.GetStateInit
 import cn.cqray.android.tip.GetTipInit
@@ -42,7 +43,7 @@ class GetInit : Serializable {
         }
 
     /** [Get]Fragment全局动画 **/
-    var fragmentAnimator: GetFragmentAnimator? = null
+    var fragmentAnimator: GetFragmentAnimator = GetVerticalAnimator()
 
     var fragmentBackgroundGet: Function0<Drawable?> = { ColorDrawable(Colors.background()) }
 }

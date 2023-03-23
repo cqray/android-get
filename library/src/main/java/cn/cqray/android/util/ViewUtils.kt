@@ -173,15 +173,15 @@ object ViewUtils {
         }
     }
 
-    /**
-     * View转Bitmap
-     * @param view 视图
-     */
-    @JvmStatic
-    fun view2Bitmap(view: View?) = ImageUtils.view2Bitmap(view)
-
-//    /** 渲染界面  */
-//    fun inflate(@LayoutRes resId: Int): View {
-//        return ContextUtils.inflate(resId)
-//    }
+//    /**
+//     * View转Bitmap
+//     * @param view 视图
+//     */
+//    @JvmStatic
+//    fun view2Bitmap(view: View?) = ImageUtils.view2Bitmap(view)
+//
+////    /** 渲染界面  */
+////    fun inflate(@LayoutRes resId: Int): View {
+////        return ContextUtils.inflate(resId)
+////    }
 }

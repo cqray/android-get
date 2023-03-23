@@ -14,8 +14,8 @@ import androidx.core.view.ViewCompat
 import cn.cqray.android.Get
 import cn.cqray.android.databinding.GetLayoutTipBinding
 import cn.cqray.android.util.JsonUtils
-import cn.cqray.android.util.ScreenUtils
 import cn.cqray.android.util.Sizes
+import com.blankj.utilcode.util.ScreenUtils
 import java.util.*
 
 /**

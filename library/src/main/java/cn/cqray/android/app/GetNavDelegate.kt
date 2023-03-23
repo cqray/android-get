@@ -19,27 +19,23 @@ import java.util.concurrent.atomic.AtomicBoolean
  * Get框架导航委托
  * @author Cqray
  */
-@Suppress("unused", "MemberVisibilityCanBePrivate")
+@Suppress(
+    "MemberVisibilityCanBePrivate",
+    "Unused"
+)
 class GetNavDelegate(provider: GetNavProvider) : GetDelegate<GetNavProvider>(provider) {
 
-    /** 导航[GetViewModel] **/
-    private val viewModel: GetNavViewModel by lazy {
-        // 确保ViewModel是在CREATED之后调用
-        val currentState = lifecycleOwner.lifecycle.currentState
-//        if (!currentState.isAtLeast(Lifecycle.State.CREATED))
-//            throw IllegalStateException("Please make sure ${provider.javaClass.simpleName}'s state is created.")
-        // 获取ViewModel实例
-        GetViewModelProvider(activity).get(GetNavViewModel::class.java)
-    }
-
     /** 是否已懒加载 **/
-    private val lazyLoaded = AtomicBoolean()
+    private var isLazyLoad = false
+
+    /** 导航[GetViewModel] **/
+    private val viewModel by lazy { GetViewModelProvider(activity).get(GetNavViewModel::class.java) }
 
     /** [LifecycleOwner]生命周期管理持有 **/
-    val lifecycleOwner: LifecycleOwner = provider as LifecycleOwner
+    val lifecycleOwner = provider as LifecycleOwner
 
     /** [FragmentActivity]实例 **/
-    val activity: FragmentActivity by lazy {
+    val activity by lazy {
         if (provider is FragmentActivity) provider
         else (provider as Fragment).requireActivity()
     }
@@ -51,7 +47,7 @@ class GetNavDelegate(provider: GetNavProvider) : GetDelegate<GetNavProvider>(pro
     val fragments get() = viewModel.fragments
 
     /** Fragment容器ID **/
-    val fragmentContainerId get() = viewModel.fragmentContainerId
+    val fragmentContainerId get() = viewModel.containerId
 
     /**
      * 主要是初始化[GetNavViewModel]以及管理[Activity.onBackPressed]事件
@@ -72,9 +68,9 @@ class GetNavDelegate(provider: GetNavProvider) : GetDelegate<GetNavProvider>(pro
             override fun onResume(owner: LifecycleOwner) {
                 super.onResume(owner)
                 // 懒加载实现
-                if (!lazyLoaded.get()) {
+                if (!isLazyLoad) {
                     provider.onLazyLoad()
-                    lazyLoaded.set(true)
+                    isLazyLoad = true
                 }
             }
         })

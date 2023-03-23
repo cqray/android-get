@@ -3,7 +3,6 @@ package cn.cqray.android.app
 import android.app.Activity
 import android.content.Intent
 import android.view.View
-import androidx.activity.ComponentActivity
 import androidx.annotation.IdRes
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
@@ -13,24 +12,18 @@ import androidx.lifecycle.LifecycleOwner
 import cn.cqray.android.Get
 import cn.cqray.android.anim.AnimUtils
 
-import cn.cqray.android.anim.GetVerticalAnimator
 import cn.cqray.android.anim.GetFragmentAnimator
-import cn.cqray.android.exc.ExceptionDispatcher
-import cn.cqray.android.helper.GetClickHelper
 import cn.cqray.android.lifecycle.GetViewModel
 import cn.cqray.android.log.GetLog
 import com.blankj.utilcode.util.ActivityUtils
 import java.util.*
-import java.util.concurrent.atomic.AtomicInteger
-import kotlin.Exception
 
 /**
  * [GetNavDelegate]逻辑实现，由[FragmentActivity]持有
  * @author Cqray
  */
 @Suppress(
-    "MemberVisibilityCanBePrivate",
-    "Unused"
+    "MemberVisibilityCanBePrivate", "Unused"
 )
 internal class GetNavViewModel(owner: LifecycleOwner) : GetViewModel(owner) {
 
@@ -46,34 +39,29 @@ internal class GetNavViewModel(owner: LifecycleOwner) : GetViewModel(owner) {
         }
     }
 
-    /** 容器Id  */
-    private val containerId = AtomicInteger(View.NO_ID)
-
     /** 回退栈  */
     private val backStack = Stack<String>()
 
-    /** 点击事件帮助类 **/
-    private val clickHelper = GetClickHelper()
-
     /** 持有的Activity **/
-    private val activity: FragmentActivity get() = lifecycleOwner as FragmentActivity
+    private val activity get() = lifecycleOwner as FragmentActivity
 
     /** Fragment管理器 **/
-    private val fragmentManager: FragmentManager get() = activity.supportFragmentManager
+    private val fragmentManager get() = activity.supportFragmentManager
+
+    /** 容器Id  */
+    var containerId = View.NO_ID
+        private set
 
     /** 栈顶的Fragment **/
-    val topFragment: Fragment?
+    val topFragment
         get() = if (backStack.isEmpty()) null
         else fragmentManager.findFragmentByTag(backStack.peek())
 
     /** 获取堆栈的Fragment列表 **/
-    val fragments: MutableList<Fragment>
+    val fragments
         get() = MutableList(backStack.size) {
             fragmentManager.findFragmentByTag(backStack[it])!!
         }
-
-    /** Fragment容器ID **/
-    val fragmentContainerId get() = containerId.get()
 
     /**
      * 资源回收
@@ -106,7 +94,7 @@ internal class GetNavViewModel(owner: LifecycleOwner) : GetViewModel(owner) {
         // Fragment工厂
         val factory = fragmentManager.fragmentFactory
         // 创建Fragment
-        val fragment = factory.instantiate(activity.classLoader, intent.toClass!!.name)
+        val fragment = factory.instantiate(activity.classLoader, intent.toClass.name)
         // 设置参数
         fragment.arguments = intent.arguments.also { it.putString(FRAGMENT_ID_TAG, uuid) }
         // 返回Fragment
@@ -137,7 +125,7 @@ internal class GetNavViewModel(owner: LifecycleOwner) : GetViewModel(owner) {
      * @param clazz fragment对应class
      */
     fun isRootFragment(clazz: Class<*>): Boolean {
-        if (!Fragment::class.java.isAssignableFrom(clazz)) return false
+        if (!GetUtils.isGetFragmentClass(clazz)) return false
         if (backStack.isEmpty()) return false
         return backStack.firstElement().split("-")[0] == clazz.name
     }
@@ -148,7 +136,7 @@ internal class GetNavViewModel(owner: LifecycleOwner) : GetViewModel(owner) {
      * @param intent [GetIntent]
      */
     fun loadRootFragment(@IdRes containerId: Int, intent: GetIntent) {
-        this.containerId.set(containerId)
+        this.containerId = containerId
         to(intent)
     }
 
@@ -157,18 +145,24 @@ internal class GetNavViewModel(owner: LifecycleOwner) : GetViewModel(owner) {
      * @param intent [GetIntent]
      */
     fun to(intent: GetIntent) {
-        // 拦截快速点击
-        if (clickHelper.isQuickClick()) return
-        // 检查容器就绪
-        if (!checkContainerReady()) return
-        // 检查To Class 就绪
-        if (!checkToClassReady(intent)) return
+        if (intent.isSingleTop && topFragment?.javaClass == intent.toClass) {
+            // Fragment满足SingleTop的拦截条件
+            // 则不进行后续操作
+            return
+        }
+//        // 检查Fragment是否满足SingleTop的拦截条件
+//        if (checkFragmentSingleTop(intent)) return
+//        // 检查Fragment是否满足SingleTask的拦截条件
+//        if (checkFragmentSingleTask(intent)) return
+        // 检查容器ID
+        checkContainerID()
         // 处理回退
-        backTo(intent.backToClass, intent.toClass, intent.backInclusive)
+        backTo(intent.backToClass, intent.toClass, intent.isBackInclusive)
         // 跳转Activity
-        if (Activity::class.java.isAssignableFrom(intent.toClass!!)) {
+        if (GetUtils.isActivityClass(intent.toClass)) {
             val actIntent = Intent(activity, intent.toClass)
             actIntent.putExtras(intent.arguments)
+            if (intent.isSingleTop) actIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
             Get.toActivity(actIntent)
             return
         }
@@ -197,22 +191,22 @@ internal class GetNavViewModel(owner: LifecycleOwner) : GetViewModel(owner) {
         // 获取FragmentTag
         val fTag = getFragmentTag(fragment)
         // 添加Fragment
-        ft.add(containerId.get(), fragment, fTag)
+        ft.add(containerId, fragment, fTag)
         // 设置初始化生命周期
         ft.setMaxLifecycle(fragment, Lifecycle.State.RESUMED)
         // 设置当前Fragment
         ft.setPrimaryNavigationFragment(fragment)
         // 加入BackStack
         ft.addToBackStack(fTag)
-        try {
+        runCatching {
             // 提交事务
             ft.setReorderingAllowed(true)
             ft.commit()
             // 事务提交成功，则加入回退栈
             backStack.add(fTag)
-        } catch (exc: Exception) {
+        }.onFailure {
             // 打印错误日志
-            printLog("to", "to start [${intent.toClass!!.simpleName}] failed.", exc)
+            logE("to", "to start [${intent.toClass.simpleName}] failed.", it)
         }
     }
 
@@ -237,9 +231,9 @@ internal class GetNavViewModel(owner: LifecycleOwner) : GetViewModel(owner) {
         // 回退目标为NULL，不处理
         if (back == null) return
         // 是否是回退到Activity
-        val isBackToActivity = Activity::class.java.isAssignableFrom(back)
+        val isBackToActivity = GetUtils.isActivityClass(back)
         // 目标界面是否是Fragment
-        val isToFragment = isGetFragmentClass(to)
+        val isToFragment = GetUtils.isGetFragmentClass(to)
         // 回退到指定的Activity
         if (isBackToActivity) {
             ActivityUtils.finishToActivity(back as Class<out Activity>, inclusive)
@@ -250,23 +244,18 @@ internal class GetNavViewModel(owner: LifecycleOwner) : GetViewModel(owner) {
             activity.finish()
             return
         }
-        // 需要回到的Fragment标识
-        var backTag: String? = null
+        // 需要回到的Fragment标志位
+        var backIndex = -1
         // 查找对应的Fragment
         for (i in backStack.indices) {
-            val fTag = backStack[i]
             // 匹配到对应的Fragment
-            if (fTag.split("-")[0] == back.name) {
-                backTag =
-                    if (!inclusive)
-                        if (i == backStack.size - 1) null
-                        else backStack[i + 1]
-                    else fTag
+            if (backStack[i].split("-")[0] == back.name) {
+                backIndex = i + if (inclusive) 0 else 1
                 break
             }
         }
         // 回退出栈
-        popBackStack(backTag)
+        popBackStack(backStack.getOrNull(backIndex))
     }
 
     /**
@@ -275,48 +264,37 @@ internal class GetNavViewModel(owner: LifecycleOwner) : GetViewModel(owner) {
     private fun popBackStack(name: String?) {
         name?.let {
             if (fragmentManager.isStateSaved) return
-            try {
+            runCatching {
                 // FragmentManager回退到指定标签（包含自身）
                 fragmentManager.popBackStackImmediate(name, FragmentManager.POP_BACK_STACK_INCLUSIVE)
                 // FragmentManager回退成功，则清除回退栈指定数据
                 for (i in backStack.indices.reversed()) {
-                    if (name == backStack.removeAt(i)) {
-                        break
-                    }
+                    // 移除缓存一直到指定的名称位置
+                    if (name == backStack.removeAt(i)) break
                 }
-            } catch (exc: Exception) {
+            }.onFailure {
                 // 打印错误日志
-                printLog("back", "pop back stack error.", exc)
+                logE("back", "pop back stack error.", it)
             }
         }
     }
 
     /**
-     * 检查容器是否准备就绪
+     * 检查[Fragment]是否满足[GetIntent.SINGLE_TOP]的拦截条件
      */
-    private fun checkContainerReady(): Boolean {
-        if (containerId.get() == View.NO_ID) {
-            ExceptionDispatcher.dispatchStarterThrowable(
-                null, "请先调用loadRootFragment()。", "未设置containerId，便开始调用to()方法。"
-            )
-
-            return false
+    private fun checkFragmentSingleTop(intent: GetIntent): Boolean {
+        if (intent.isSingleTop) {
+            return topFragment?.javaClass == intent.toClass
         }
-        return true
+        return false
     }
-
     /**
-     * 检查目标界面是否准备就绪
-     * @param intent 意图
+     * 检查容器ID是否设置
      */
-    private fun checkToClassReady(intent: GetIntent): Boolean {
-        val to = intent.toClass
-        val valid = isGetActivityClass(to) || isGetFragmentClass(to)
-        return valid.also {
-            if (it) return true
-            ExceptionDispatcher.dispatchStarterThrowable(
-                null, "未设置目标Class。", "to()跳转界面时没设置目标Class。"
-            )
+    private fun checkContainerID() {
+        if (containerId == View.NO_ID) {
+            // 未调用loadRootFragment，抛出异常
+            throw IllegalStateException("Did you forget call loadRootFragment?")
         }
     }
 
@@ -328,53 +306,37 @@ internal class GetNavViewModel(owner: LifecycleOwner) : GetViewModel(owner) {
     private fun getFragmentAnimator(fragment: Fragment, intent: GetIntent): GetFragmentAnimator {
         // 从下至上，一级级获取优先级高的动画设置
         return intent.fragmentAnimator
+        // 意图中无动画，则使用当前Fragment的动画
             ?: (fragment as? GetNavProvider)?.onCreateFragmentAnimator()
+            // Fragment无动画，则使用Activity的动画
             ?: (lifecycleOwner as? GetNavProvider)?.onCreateFragmentAnimator()
+            // Activity无动画，则使用全局动画
             ?: Get.init.fragmentAnimator
-            ?: GetVerticalAnimator()
     }
 
     /**
      * 打印日志
      * @param method 所在方法
      * @param text 日志内容
-     * @param th 异常信息
      */
-    private fun printLog(method: String, text: String, th: Throwable? = null) {
+    private fun logE(method: String, text: String, th: Throwable? = null) {
+        val tag = GetNavDelegate::class.java.simpleName
         // 日志内容
         val message = " \n" +
                 "       Owner Class: ${lifecycleOwner::class.java.name}\n" +
                 "       Used Method: $method\n" + "" +
                 "       Content: $text"
         // 打印日志
-        GetLog.e(GetNavDelegate::class.java, message, th)
+        if (th == null) GetLog.eTag(tag, message)
+        else GetLog.eTag(tag, message, th)
     }
 
     private companion object {
+
         /** Fragment ID 关键字 **/
         const val FRAGMENT_ID_TAG = "Get:Fragment_id"
 
         /** Fragment 动画时长关键字 **/
         const val FRAGMENT_ANIM_DURATION_Tag = "Get:Fragment_anim_duration"
-
-        /**
-         * 是否是实现了[GetNavProvider]接口的Fragment
-         * @param clazz 类型
-         */
-        fun isGetFragmentClass(clazz: Class<*>?): Boolean {
-            return clazz != null
-                    && Fragment::class.java.isAssignableFrom(clazz)
-                    && GetNavProvider::class.java.isAssignableFrom(clazz)
-        }
-
-        /**
-         * 是否是实现了[GetNavProvider]接口的Activity
-         * @param clazz 类型
-         */
-        fun isGetActivityClass(clazz: Class<*>?): Boolean {
-            return clazz != null
-                    && ComponentActivity::class.java.isAssignableFrom(clazz)
-                    && GetNavProvider::class.java.isAssignableFrom(clazz)
-        }
     }
 }

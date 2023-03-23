@@ -1,8 +1,10 @@
 package cn.cqray.android.app
 
 import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.os.Parcelable
+import androidx.annotation.IntDef
 import androidx.fragment.app.Fragment
 import cn.cqray.android.anim.GetFragmentAnimator
 import java.io.Serializable
@@ -12,48 +14,38 @@ import java.util.*
  * 导航意图
  * @author Cqray
  */
-@Suppress("unused", "MemberVisibilityCanBePrivate")
-class GetIntent : Serializable {
-
-    constructor()
-
-    constructor(toClass: Class<*>) {
-        checkClass(toClass)
-        intentCache[0] = toClass
-    }
-
-    constructor(toClass: Class<*>, args: Bundle) {
-        checkClass(toClass)
-        intentCache[0] = toClass
-        arguments.putAll(args)
-    }
-
-    /** 缓存，无实际意义，只是为了字段为final，好看 **/
-    private val intentCache = arrayOfNulls<Any>(4)
+@Suppress(
+    "MemberVisibilityCanBePrivate",
+    "Unused"
+)
+class GetIntent(
+    /** 目标界面[Class]，仅支持实现[GetNavProvider]的[Fragment]以及[Activity]  **/
+    val toClass: Class<*>
+) {
 
     /** 参数  */
     val arguments = Bundle()
 
-    /** 目标界面[Class]，仅支持实现[GetNavProvider]的[Fragment]以及[Activity] **/
-    val toClass get() = intentCache[0] as Class<*>?
-
     /** 回退目标界面[Class]，仅支持实现[GetNavProvider]的[Fragment]以及[Activity] **/
-    val backToClass get() = intentCache[1] as Class<*>?
+    var backToClass: Class<*>? = null
+        private set
 
     /** 是否包含指定回退的界面  */
-    val backInclusive get() = (intentCache[2] as Boolean?) ?: false
+    var isBackInclusive: Boolean = false
+        private set
+
+    /** 是否是SingleTop模式，类似于 **/
+    var isSingleTop: Boolean = true
+        private set
 
     /** Fragment动画  */
-    val fragmentAnimator get() = intentCache[3] as GetFragmentAnimator?
+    var fragmentAnimator: GetFragmentAnimator? = null
+        private set
 
-    /**
-     * 跳转指定目标界面
-     * @param to 指定界面Class，仅支持实现[GetNavProvider]的[Fragment]以及[Activity]
-     */
-    fun setTo(to: Class<*>) = also {
-        checkClass(to)
-        intentCache[0] = to
-    }
+//    /** 启动模式 **/
+//    @LaunchMode
+//    var launchMode: Int = STANDARD
+//        private set
 
     /**
      * 回退到指定目标界面（包含自身）
@@ -68,11 +60,17 @@ class GetIntent : Serializable {
      */
     fun setBackTo(backTo: Class<*>?, inclusive: Boolean) = also {
         backTo?.let { checkClass(backTo) }
-        intentCache[1] = backTo
-        intentCache[2] = inclusive
+        backToClass = backTo
+        isBackInclusive = inclusive
     }
 
-    fun setFragmentAnimator(animator: GetFragmentAnimator?) = also { intentCache[3] = animator }
+    /**
+     * 设置是否使用SingleTop模式，默认true
+     * @param singleTop 是否使用SingleTop模式
+     */
+    fun setSingleTop(singleTop: Boolean) = also { isSingleTop = singleTop }
+
+    fun setFragmentAnimator(animator: GetFragmentAnimator?) = also { fragmentAnimator = animator }
 
     fun put(key: String?, value: Boolean?) = put(key, value as Any?)
 
@@ -152,5 +150,15 @@ class GetIntent : Serializable {
         val isProvider = GetNavProvider::class.java.isAssignableFrom(clazz)
         if (!isProvider) throw RuntimeException("[${clazz.simpleName}] must implements GetNavProvider.")
         if (!isActivity && !isFragment) throw RuntimeException("[${clazz.simpleName}] must be Activity or Fragment.")
+    }
+
+    companion object {
+        const val STANDARD = Intent.FLAG_ACTIVITY_NEW_TASK
+        const val SINGLE_TOP = Intent.FLAG_ACTIVITY_SINGLE_TOP
+        const val SINGLE_TASK = Intent.FLAG_ACTIVITY_CLEAR_TOP
+
+        @IntDef
+        @Retention(AnnotationRetention.SOURCE)
+        annotation class LaunchMode
     }
 }

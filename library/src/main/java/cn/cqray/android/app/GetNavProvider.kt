@@ -41,6 +41,12 @@ interface GetNavProvider : GetProvider {
     fun onLazyLoad() {}
 
     /**
+     * SingleTop时，传入的数据读取
+     * @param
+     */
+    fun onNewBundleGet(bundle: Bundle?) {}
+
+    /**
      * 设置返回数据
      * @param data [Bundle]返回数据
      */

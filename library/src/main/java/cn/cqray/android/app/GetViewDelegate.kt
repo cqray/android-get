@@ -25,12 +25,10 @@ import cn.cqray.android.R
 import cn.cqray.android.databinding.GetViewDefaultLayoutBinding
 import cn.cqray.android.state.GetStateDelegate
 import cn.cqray.android.state.GetStateLayout
-import cn.cqray.android.util.ButterKnifeUtils
 import cn.cqray.android.util.*
 import cn.cqray.android.util.ContextUtils.inflate
 import cn.cqray.android.widget.GetToolbar
 import com.scwang.smart.refresh.layout.SmartRefreshLayout
-import java.util.concurrent.atomic.AtomicReference
 
 /**
  * 界面布局代理
@@ -42,11 +40,11 @@ import java.util.concurrent.atomic.AtomicReference
 )
 class GetViewDelegate internal constructor(provider: GetViewProvider) : GetDelegate<GetViewProvider>(provider) {
 
-    /** ButterKnife绑定（原子对象，无特殊作用，为了让变量变为 final） */
-    private val knifeUnBinder = AtomicReference<Any?>()
+    /** ButterKnife绑定 **/
+    private var knifeUnBinder: Any? = null
 
-    /** 是否设置Get扩展界面（原子性，无特殊作用，为了让变量变为 final） */
-    private var setGetContentView = true//= AtomicBoolean(true)
+    /** 是否设置Get扩展界面 **/
+    private var setGetContentView: Boolean = true
 
     /** [ViewBinding]实例 **/
     private val binding by lazy { GetViewDefaultLayoutBinding.inflate(ContextUtils.layoutInflater) }
@@ -109,7 +107,7 @@ class GetViewDelegate internal constructor(provider: GetViewProvider) : GetDeleg
 
     /** 清理资源 */
     override fun onCleared() {
-        ButterKnifeUtils.unbind(knifeUnBinder.get())
+        ButterKnifeUtils.unbind(knifeUnBinder)
         System.gc()
     }
 
@@ -301,6 +299,12 @@ class GetViewDelegate internal constructor(provider: GetViewProvider) : GetDeleg
     fun setBackgroundColor(@ColorInt color: Int) = setBackground(ColorDrawable(color))
 
     /**
+     * 设置背景资源ID或颜色
+     * @param any 资源ID或颜色
+     */
+    fun setBackground(any: Int) = setBackground(GetCompat.getDrawable(any))
+
+    /**
      * 设置背景
      * @param drawable 图像
      */
@@ -391,7 +395,7 @@ class GetViewDelegate internal constructor(provider: GetViewProvider) : GetDeleg
 
     /** 初始化ButterKnife */
     private fun initUnBinder() {
-        ButterKnifeUtils.unbind(knifeUnBinder.get())
-        knifeUnBinder.set(ButterKnifeUtils.bind(provider, root))
+        ButterKnifeUtils.unbind(knifeUnBinder)
+        knifeUnBinder = ButterKnifeUtils.bind(provider, root)
     }
 }

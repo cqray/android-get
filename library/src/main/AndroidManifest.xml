@@ -3,8 +3,5 @@
 
     <application>
 
-        <activity
-            android:name=".exc.GetExcActivity"
-            android:launchMode="singleTop" />
     </application>
 </manifest>
