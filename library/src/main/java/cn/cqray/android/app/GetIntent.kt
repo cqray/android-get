@@ -26,9 +26,9 @@ class GetIntent(
     /** 参数  */
     val arguments = Bundle()
 
-    /** 回退目标界面[Class]，仅支持实现[GetNavProvider]的[Fragment]以及[Activity] **/
-    var backToClass: Class<*>? = null
-        private set
+//    /** 回退目标界面[Class]，仅支持实现[GetNavProvider]的[Fragment]以及[Activity] **/
+//    var backToClass: Class<*>? = null
+//        private set
 
     /** 是否包含指定回退的界面  */
     var isBackInclusive: Boolean = false
@@ -42,27 +42,29 @@ class GetIntent(
     var fragmentAnimator: GetFragmentAnimator? = null
         private set
 
-//    /** 启动模式 **/
-//    @LaunchMode
-//    var launchMode: Int = STANDARD
-//        private set
+    /** 启动模式 **/
+    @LaunchMode
+    var launchMode: Int = STANDARD
+        private set
+//
+//    /**
+//     * 回退到指定目标界面（包含自身）
+//     * @param backTo 指定目标界面Class，仅支持实现[GetNavProvider]的[Fragment]以及[Activity]
+//     */
+//    fun setBackTo(backTo: Class<*>) = setBackTo(backTo, true)
+//
+//    /**
+//     * 回退到指定目标界面
+//     * @param backTo 指定目标界面Class，仅支持实现[GetNavProvider]的[Fragment]以及[Activity]
+//     * @param inclusive 是否包含自身
+//     */
+//    fun setBackTo(backTo: Class<*>?, inclusive: Boolean) = also {
+//        backTo?.let { checkClass(backTo) }
+//        backToClass = backTo
+//        isBackInclusive = inclusive
+//    }
 
-    /**
-     * 回退到指定目标界面（包含自身）
-     * @param backTo 指定目标界面Class，仅支持实现[GetNavProvider]的[Fragment]以及[Activity]
-     */
-    fun setBackTo(backTo: Class<*>) = setBackTo(backTo, true)
-
-    /**
-     * 回退到指定目标界面
-     * @param backTo 指定目标界面Class，仅支持实现[GetNavProvider]的[Fragment]以及[Activity]
-     * @param inclusive 是否包含自身
-     */
-    fun setBackTo(backTo: Class<*>?, inclusive: Boolean) = also {
-        backTo?.let { checkClass(backTo) }
-        backToClass = backTo
-        isBackInclusive = inclusive
-    }
+    fun setLaunchMode(@LaunchMode mode: Int) = also { this.launchMode = mode }
 
     /**
      * 设置是否使用SingleTop模式，默认true

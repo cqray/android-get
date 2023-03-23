@@ -5,7 +5,10 @@ import android.os.Bundle;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.Nullable;
+
 import cn.cqray.android.app.GetFragment;
+import cn.cqray.android.app.GetIntent;
 import cn.cqray.android.log.GetLog;
 import cn.cqray.android.widget.TextDrawable;
 
@@ -16,26 +19,25 @@ public class MainFragment extends GetFragment {
         super.onCreate(savedInstanceState);
 
         setGetContentView(R.layout.activity_main);
-//        setBusy();
-//        ImageView iv = getViewDelegate().findViewById(R.id.iv);
-//        SpinView sv = getViewDelegate().findViewById(R.id.sv);
-//        TextView view = getViewDelegate().findViewById(R.id.tv);
-//        sv.setArcCount(2);
-//        sv.setArcStrokeWidth(10);
-//        sv.setRoundUseTime(2000);
 
-//        getStateDelegate()
-//                .getEmptyAdapter()
-//                .setTextColor(Color.YELLOW);
-//        setBusy();
+        findViewById(R.id.tv).setOnClickListener(v  -> {
 
-        showTip("6666");
+            this.to(new GetIntent(MainFragment2.class));
+            this.to(new GetIntent(MainFragment2.class).setLaunchMode(GetIntent.SINGLE_TASK));
+        });
+
     }
 
     @Override
     public void onStop() {
         super.onStop();
         GetLog.d("onStop");
+    }
+
+    @Override
+    public void onNewBundleGet(@Nullable Bundle bundle) {
+        super.onNewBundleGet(bundle);
+        GetLog.e("onNewBundleGet!!!!!!!!");
     }
 
     @Override

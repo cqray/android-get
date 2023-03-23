@@ -1,9 +1,12 @@
 package cn.cqray.demo.android;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import androidx.annotation.Nullable;
 
 import cn.cqray.android.app.GetFragment;
 import cn.cqray.android.log.GetLog;
@@ -33,6 +36,15 @@ public class MainFragment2 extends GetMultiFragment {
 //
 //        showFragment(2);
 //        removeFragment(2);
+
+    }
+
+
+    @Override
+    public void onNewBundleGet(@Nullable Bundle bundle) {
+        super.onNewBundleGet(bundle);
+        Log.e("数据","onNewBundleGet2222");
+
 
     }
 

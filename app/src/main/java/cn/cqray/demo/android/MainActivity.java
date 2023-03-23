@@ -21,25 +21,6 @@ public class MainActivity extends GetNavActivity {
 
         loadRootFragment(MainFragment.class);
 
-        showToolbar();
-        toolbar.setPaddingSE(30F);
-
-        GetCache cache = new GetCache();
-        cache.put("123", 10);
-
-        GetIntent intent = new GetIntent();
-
-
-//        showTip("6666666");
-
-        Log.e("数据", "" + cache.getInt("123"));
-
-        GetLog.e("6666");
-
-        GetLog.eTag(null, new float[]{0f, 1f, 2f, 3f});
-
-        GetLog.xml(GetLog.A, "6666");
-
     }
 
     @Override

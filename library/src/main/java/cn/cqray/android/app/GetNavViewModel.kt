@@ -2,6 +2,7 @@ package cn.cqray.android.app
 
 import android.app.Activity
 import android.content.Intent
+import android.util.Log
 import android.view.View
 import androidx.annotation.IdRes
 import androidx.fragment.app.Fragment
@@ -16,6 +17,7 @@ import cn.cqray.android.anim.GetFragmentAnimator
 import cn.cqray.android.lifecycle.GetViewModel
 import cn.cqray.android.log.GetLog
 import com.blankj.utilcode.util.ActivityUtils
+import com.blankj.utilcode.util.GsonUtils
 import java.util.*
 
 /**
@@ -60,8 +62,11 @@ internal class GetNavViewModel(owner: LifecycleOwner) : GetViewModel(owner) {
     /** 获取堆栈的Fragment列表 **/
     val fragments
         get() = MutableList(backStack.size) {
+            Log.e("数据231", "${fragmentManager == null}")
             fragmentManager.findFragmentByTag(backStack[it])!!
         }
+
+//    val fragments = mutableListOf<Fragment>()
 
     /**
      * 资源回收
@@ -145,19 +150,20 @@ internal class GetNavViewModel(owner: LifecycleOwner) : GetViewModel(owner) {
      * @param intent [GetIntent]
      */
     fun to(intent: GetIntent) {
-        if (intent.isSingleTop && topFragment?.javaClass == intent.toClass) {
-            // Fragment满足SingleTop的拦截条件
-            // 则不进行后续操作
-            return
-        }
-//        // 检查Fragment是否满足SingleTop的拦截条件
-//        if (checkFragmentSingleTop(intent)) return
-//        // 检查Fragment是否满足SingleTask的拦截条件
-//        if (checkFragmentSingleTask(intent)) return
+//        if (intent.isSingleTop && topFragment?.javaClass == intent.toClass) {
+//            // Fragment满足SingleTop的拦截条件
+//            // 则不进行后续操作
+//            (topFragment as GetNavProvider).onNewBundleGet(intent.arguments)
+//            return
+//        }
+        // 检查Fragment是否满足SingleTop的拦截条件
+        if (checkFragmentSingleTop(intent)) return
+        // 检查Fragment是否满足SingleTask的拦截条件
+        if (checkFragmentSingleTask(intent)) return
         // 检查容器ID
         checkContainerID()
-        // 处理回退
-        backTo(intent.backToClass, intent.toClass, intent.isBackInclusive)
+//        // 处理回退
+//        backTo(intent.backToClass, intent.toClass, intent.isBackInclusive)
         // 跳转Activity
         if (GetUtils.isActivityClass(intent.toClass)) {
             val actIntent = Intent(activity, intent.toClass)
@@ -283,11 +289,41 @@ internal class GetNavViewModel(owner: LifecycleOwner) : GetViewModel(owner) {
      * 检查[Fragment]是否满足[GetIntent.SINGLE_TOP]的拦截条件
      */
     private fun checkFragmentSingleTop(intent: GetIntent): Boolean {
-        if (intent.isSingleTop) {
-            return topFragment?.javaClass == intent.toClass
+        if (intent.launchMode == GetIntent.SINGLE_TOP) {
+            if (topFragment?.javaClass == intent.toClass) {
+                // 调用重复方法
+                (topFragment as GetNavProvider).onNewBundleGet(intent.arguments)
+                return true
+            }
         }
         return false
     }
+
+    /**
+     * 检查[Fragment]是否满足[GetIntent.SINGLE_TOP]的拦截条件
+     */
+    private fun checkFragmentSingleTask(intent: GetIntent): Boolean {
+        if (intent.launchMode == GetIntent.SINGLE_TASK) {
+            // 需要回到的Fragment标志位
+            var backIndex = -1
+            // 查找对应的Fragment
+            for (i in backStack.indices) {
+                // 匹配到对应的Fragment
+                if (backStack[i].split("-")[0] == intent.toClass.name) {
+                    Log.e("数据", "123132133|${backStack.size}|${backStack.getOrNull(i + 1)}")
+                    // 回退
+                    popBackStack(backStack.getOrNull(i + 1))
+                    Log.e("数据", "123132133|${backStack.size}|${GsonUtils.toJson(fragments)}")
+
+                    // 调用重复方法
+                    (topFragment as? GetNavProvider)?.onNewBundleGet(intent.arguments)
+                    return true
+                }
+            }
+        }
+        return false
+    }
+
     /**
      * 检查容器ID是否设置
      */
