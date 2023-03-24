@@ -2,7 +2,6 @@ package cn.cqray.android.lifecycle
 
 import android.content.Context
 import android.os.Bundle
-import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentManager
@@ -43,20 +42,6 @@ class GetFragmentLifecycleCallbacks(activity: FragmentActivity) :
         if (f is GetNavProvider) {
             // GetNavDelegate调用onCreated()
             f.navDelegate.onCreated()
-        }
-    }
-
-    override fun onFragmentViewCreated(
-        fm: FragmentManager,
-        f: Fragment,
-        v: View,
-        savedInstanceState: Bundle?
-    ) {
-        super.onFragmentViewCreated(fm, f, v, savedInstanceState)
-        printFragmentStateLog(f, "onFragmentViewCreated")
-        if (f is GetNavProvider) {
-            // GetNavDelegate调用onViewCreated()
-            f.navDelegate.onViewCreated()
         }
     }
 

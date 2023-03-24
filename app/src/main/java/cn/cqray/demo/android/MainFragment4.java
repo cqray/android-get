@@ -35,7 +35,7 @@ public class MainFragment4 extends GetPaginationFragment<Integer> {
     }
 
     @Override
-    public boolean onBackPressedGet() {
-        return super.onBackPressedGet();
+    public boolean onBackPress() {
+        return super.onBackPress();
     }
 }

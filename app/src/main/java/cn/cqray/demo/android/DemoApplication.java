@@ -52,7 +52,7 @@ public class DemoApplication extends MultiDexApplication {
         GetInit getInit = new GetInit();
         getInit.setToolbarInit(toolbarInit);
 
-//        Get.init(this, getInit);
+        Get.init(this, getInit);
 
     }
 }

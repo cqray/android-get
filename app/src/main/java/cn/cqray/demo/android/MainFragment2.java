@@ -1,5 +1,6 @@
 package cn.cqray.demo.android;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -40,13 +41,21 @@ public class MainFragment2 extends GetMultiFragment {
     }
 
 
+//    @Override
+//    public void onNewIntent(@Nullable Intent intent) {
+//        super.onNewIntent(intent);
+//        Log.e("数据","onNewBundleGet2222");
+//    }
+//
+//    @Override
+//    public void onNewBundle(@Nullable Bundle data) {
+//        super.onNewBundle(data);
+//        Log.e("数据","onNewBundleGet2222");
+//    }
+
     @Override
-    public void onNewBundleGet(@Nullable Bundle bundle) {
-        super.onNewBundleGet(bundle);
-        Log.e("数据","onNewBundleGet2222");
-
-
+    public void onNewArguments(@Nullable Bundle arguments) {
+        super.onNewArguments(arguments);
+        //Log.e("数据", "onNewArguments");
     }
-
-
 }

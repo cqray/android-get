@@ -4,7 +4,6 @@ import android.app.Activity
 import android.app.Application
 import android.content.Context
 import android.content.Intent
-import android.os.Message
 
 import cn.cqray.android.app.GetInit
 import com.blankj.utilcode.util.ActivityUtils

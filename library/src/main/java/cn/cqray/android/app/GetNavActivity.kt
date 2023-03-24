@@ -32,4 +32,6 @@ open class GetNavActivity : GetActivity() {
     fun loadRootFragment(rootClass: Class<*>) = navDelegate.loadRootFragment(containerId, rootClass)
 
     fun loadRootFragment(intent: GetIntent) = navDelegate.loadRootFragment(containerId, intent)
+
+
 }

@@ -26,13 +26,13 @@ import java.util.concurrent.atomic.AtomicBoolean
 class GetNavDelegate(provider: GetNavProvider) : GetDelegate<GetNavProvider>(provider) {
 
     /** 是否已懒加载 **/
-    private var isLazyLoad = false
-
-    /** 导航[GetViewModel] **/
-    private val viewModel by lazy { GetViewModelProvider(activity).get(GetNavViewModel::class.java) }
+    private val isLazyLoad = AtomicBoolean()
 
     /** [LifecycleOwner]生命周期管理持有 **/
     val lifecycleOwner = provider as LifecycleOwner
+
+    /** 导航[GetViewModel] **/
+    private val viewModel by lazy { GetViewModelProvider(activity).get(GetNavViewModel::class.java) }
 
     /** [FragmentActivity]实例 **/
     val activity by lazy {
@@ -46,16 +46,13 @@ class GetNavDelegate(provider: GetNavProvider) : GetDelegate<GetNavProvider>(pro
     /** 回退栈Fragments **/
     val fragments get() = viewModel.fragments
 
-    /** Fragment容器ID **/
-    val fragmentContainerId get() = viewModel.containerId
-
     /**
      * 主要是初始化[GetNavViewModel]以及管理[Activity.onBackPressed]事件
      */
     internal fun onCreated() {
         if (provider is FragmentActivity) {
             // 监听Activity的back事件
-            provider.onBackPressedDispatcher.addCallback(activity,
+            provider.onBackPressedDispatcher.addCallback(provider,
                 object : OnBackPressedCallback(true) {
                     override fun handleOnBackPressed() {
                         // 处理回退事件
@@ -68,18 +65,21 @@ class GetNavDelegate(provider: GetNavProvider) : GetDelegate<GetNavProvider>(pro
             override fun onResume(owner: LifecycleOwner) {
                 super.onResume(owner)
                 // 懒加载实现
-                if (!isLazyLoad) {
+                if (!isLazyLoad.get()) {
                     provider.onLazyLoad()
-                    isLazyLoad = true
+                    isLazyLoad.set(true)
                 }
             }
         })
+        // 等待动画结束
+        waitEnterAnimEnd()
     }
 
     /**
-     * 主要实现[GetNavProvider.onEnterAnimEnd]回调
+     * 等待Fragment、Activity进入动画结束
+     * 实现[GetNavProvider.onEnterAnimEnd]回调
      */
-    internal fun onViewCreated() {
+    private fun waitEnterAnimEnd() {
         // 获取动画时长
         val enterAnimDuration: Int = if (provider is Fragment) {
             viewModel.getFragmentEnterAnimDuration(provider)

@@ -98,16 +98,6 @@ internal object _Get {
                 printActivityStateLog(activity, "onActivityCreated")
             }
 
-            override fun onActivityPostCreated(activity: Activity, savedInstanceState: Bundle?) {
-                // 监管GetNavProvider
-                if (activity is GetNavProvider) {
-                    // GetNavDelegate调用onViewCreated()
-                    activity.navDelegate.onViewCreated()
-                }
-                // 打印日志
-                printActivityStateLog(activity, "onActivityPostCreated")
-            }
-
             override fun onActivityStarted(activity: Activity) = printActivityStateLog(activity, "onActivityStarted")
 
             override fun onActivityResumed(activity: Activity) = printActivityStateLog(activity, "onActivityResumed")

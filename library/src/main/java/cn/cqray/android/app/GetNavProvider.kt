@@ -25,10 +25,10 @@ interface GetNavProvider : GetProvider {
     fun onCreateFragmentAnimator(): GetFragmentAnimator? = null
 
     /**
-     * 回退事件拦截
+     * 回退事件拦截，类似[Activity.onBackPressed]
      * @return true 拦截 false 不拦截
      */
-    fun onBackPressedGet(): Boolean = false
+    fun onBackPress(): Boolean = false
 
     /**
      * 进入动画结束
@@ -41,10 +41,10 @@ interface GetNavProvider : GetProvider {
     fun onLazyLoad() {}
 
     /**
-     * SingleTop时，传入的数据读取
-     * @param
+     * [Fragment]实现类似[Activity.onNewIntent]功能
+     * @param arguments 重新传入参数
      */
-    fun onNewBundleGet(bundle: Bundle?) {}
+    fun onNewArguments(arguments: Bundle?) {}
 
     /**
      * 设置返回数据
@@ -76,7 +76,7 @@ interface GetNavProvider : GetProvider {
      * @param intent 意图
      * @param callback 回调
      */
-    fun to(intent: GetIntent, callback: Function1<Bundle, Unit>) = navDelegate.to(intent, callback)
+    fun to(intent: GetIntent, callback: Function1<Bundle, Unit>?) = navDelegate.to(intent, callback)
 
     /**
      * 回退

@@ -2,22 +2,20 @@ package cn.cqray.android.app
 
 import android.app.Activity
 import android.content.Intent
-import android.util.Log
 import android.view.View
 import androidx.annotation.IdRes
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentManager
+import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import cn.cqray.android.Get
 import cn.cqray.android.anim.AnimUtils
-
 import cn.cqray.android.anim.GetFragmentAnimator
 import cn.cqray.android.lifecycle.GetViewModel
 import cn.cqray.android.log.GetLog
 import com.blankj.utilcode.util.ActivityUtils
-import com.blankj.utilcode.util.GsonUtils
 import java.util.*
 
 /**
@@ -25,7 +23,9 @@ import java.util.*
  * @author Cqray
  */
 @Suppress(
-    "MemberVisibilityCanBePrivate", "Unused"
+    "MemberVisibilityCanBePrivate",
+    "Unchecked_cast",
+    "Unused"
 )
 internal class GetNavViewModel(owner: LifecycleOwner) : GetViewModel(owner) {
 
@@ -41,8 +41,8 @@ internal class GetNavViewModel(owner: LifecycleOwner) : GetViewModel(owner) {
         }
     }
 
-    /** 回退栈  */
-    private val backStack = Stack<String>()
+    /** [Fragment]记录 **/
+    private val backStack = Stack<Fragment>()
 
     /** 持有的Activity **/
     private val activity get() = lifecycleOwner as FragmentActivity
@@ -51,42 +51,25 @@ internal class GetNavViewModel(owner: LifecycleOwner) : GetViewModel(owner) {
     private val fragmentManager get() = activity.supportFragmentManager
 
     /** 容器Id  */
-    var containerId = View.NO_ID
-        private set
+    private var containerId = View.NO_ID
 
     /** 栈顶的Fragment **/
-    val topFragment
-        get() = if (backStack.isEmpty()) null
-        else fragmentManager.findFragmentByTag(backStack.peek())
+    val topFragment get() = backStack.lastOrNull()
 
-    /** 获取堆栈的Fragment列表 **/
-    val fragments
-        get() = MutableList(backStack.size) {
-            Log.e("数据231", "${fragmentManager == null}")
-            fragmentManager.findFragmentByTag(backStack[it])!!
-        }
-
-//    val fragments = mutableListOf<Fragment>()
-
-    /**
-     * 资源回收
-     */
-    override fun onCleared() {
-        super.onCleared()
-        backStack.clear()
-    }
+    /** 返回Fragment列表 **/
+    val fragments get() = mutableListOf<Fragment>().also { it.addAll(backStack) }
 
     /** 回退实现 **/
     fun onBackPressed() {
         val fragment = topFragment
         if (fragment is GetNavProvider) {
-            if (!fragment.onBackPressedGet()) {
+            if (!fragment.onBackPress()) {
                 // 有多个Fragment，则直接回退
                 if (backStack.size > 1) back()
                 // 只有0-1个Fragment，则检查Activity的拦截
-                else if (!(activity as GetNavProvider).onBackPressedGet()) back()
+                else if (!(activity as GetNavProvider).onBackPress()) back()
             }
-        } else if (!(activity as GetNavProvider).onBackPressedGet()) back()
+        } else if (!(activity as GetNavProvider).onBackPress()) back()
     }
 
     /**
@@ -100,6 +83,13 @@ internal class GetNavViewModel(owner: LifecycleOwner) : GetViewModel(owner) {
         val factory = fragmentManager.fragmentFactory
         // 创建Fragment
         val fragment = factory.instantiate(activity.classLoader, intent.toClass.name)
+        // 销毁时移除Fragment
+        fragment.lifecycle.addObserver(object : DefaultLifecycleObserver {
+            override fun onDestroy(owner: LifecycleOwner) {
+                super.onDestroy(owner)
+                backStack.remove(owner as Fragment)
+            }
+        })
         // 设置参数
         fragment.arguments = intent.arguments.also { it.putString(FRAGMENT_ID_TAG, uuid) }
         // 返回Fragment
@@ -129,11 +119,7 @@ internal class GetNavViewModel(owner: LifecycleOwner) : GetViewModel(owner) {
      * 是否是最先加载的Fragment
      * @param clazz fragment对应class
      */
-    fun isRootFragment(clazz: Class<*>): Boolean {
-        if (!GetUtils.isGetFragmentClass(clazz)) return false
-        if (backStack.isEmpty()) return false
-        return backStack.firstElement().split("-")[0] == clazz.name
-    }
+    fun isRootFragment(clazz: Class<*>) = backStack.firstOrNull()?.javaClass == clazz
 
     /**
      * 设置根Fragment
@@ -150,27 +136,14 @@ internal class GetNavViewModel(owner: LifecycleOwner) : GetViewModel(owner) {
      * @param intent [GetIntent]
      */
     fun to(intent: GetIntent) {
-//        if (intent.isSingleTop && topFragment?.javaClass == intent.toClass) {
-//            // Fragment满足SingleTop的拦截条件
-//            // 则不进行后续操作
-//            (topFragment as GetNavProvider).onNewBundleGet(intent.arguments)
-//            return
-//        }
-        // 检查Fragment是否满足SingleTop的拦截条件
-        if (checkFragmentSingleTop(intent)) return
-        // 检查Fragment是否满足SingleTask的拦截条件
-        if (checkFragmentSingleTask(intent)) return
+        // 检查是否是启动Activity
+        if (checkActivity(intent)) return
+        // 检查是否满足Fragment拦截条件
+        if (checkFragment(intent)) return
         // 检查容器ID
-        checkContainerID()
-//        // 处理回退
-//        backTo(intent.backToClass, intent.toClass, intent.isBackInclusive)
-        // 跳转Activity
-        if (GetUtils.isActivityClass(intent.toClass)) {
-            val actIntent = Intent(activity, intent.toClass)
-            actIntent.putExtras(intent.arguments)
-            if (intent.isSingleTop) actIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
-            Get.toActivity(actIntent)
-            return
+        if (containerId == View.NO_ID) {
+            // 未调用loadRootFragment，抛出异常
+            throw IllegalStateException("Did you forget call loadRootFragment?")
         }
         // 跳转Fragment
         // 获取Fragment事务
@@ -208,8 +181,8 @@ internal class GetNavViewModel(owner: LifecycleOwner) : GetViewModel(owner) {
             // 提交事务
             ft.setReorderingAllowed(true)
             ft.commit()
-            // 事务提交成功，则加入回退栈
-            backStack.add(fTag)
+            // 事务提交成功，则Fragment加入回退栈
+            backStack.add(fragment)
         }.onFailure {
             // 打印错误日志
             logE("to", "to start [${intent.toClass.simpleName}] failed.", it)
@@ -217,66 +190,54 @@ internal class GetNavViewModel(owner: LifecycleOwner) : GetViewModel(owner) {
     }
 
     /** 回退 **/
-    fun back() = if (backStack.size <= 1) activity.finish() else popBackStack(backStack.peek())
+    fun back() {
+        // 只剩根Fragment，则直接结束Activity
+        if (backStack.size <= 1) activity.finish()
+        // 否则回退当前Fragment
+        else popBackStack(backStack.lastOrNull())
+    }
 
     /**
      * 回退到指定的界面
      * @param back 目标界面[Class]，仅支持实现[GetNavProvider]的[Fragment]以及[Activity]
-     * @param inclusive 是否包含指定回退的界面，默认true
-     */
-    fun backTo(back: Class<*>, inclusive: Boolean) = backTo(back, null, inclusive)
-
-    /**
-     * 回退到指定的界面
-     * @param back 目标界面[Class]，仅支持实现[GetNavProvider]的[Fragment]以及[Activity]
-     * @param to 需要启动的界面[Class]
      * @param inclusive 是否包含指定回退的界面
      */
-    @Suppress("unchecked_cast")
-    private fun backTo(back: Class<*>?, to: Class<*>?, inclusive: Boolean) {
-        // 回退目标为NULL，不处理
-        if (back == null) return
-        // 是否是回退到Activity
-        val isBackToActivity = GetUtils.isActivityClass(back)
-        // 目标界面是否是Fragment
-        val isToFragment = GetUtils.isGetFragmentClass(to)
+    fun backTo(back: Class<*>, inclusive: Boolean) {
         // 回退到指定的Activity
-        if (isBackToActivity) {
+        if (GetUtils.isActivityClass(back)) {
             ActivityUtils.finishToActivity(back as Class<out Activity>, inclusive)
             return
         }
         // 回退至根Fragment（包含），不启动新的Fragment，则销毁Activity
-        if (isRootFragment(back) && inclusive && !isToFragment) {
+        if (isRootFragment(back) && inclusive) {
             activity.finish()
             return
         }
-        // 需要回到的Fragment标志位
-        var backIndex = -1
-        // 查找对应的Fragment
-        for (i in backStack.indices) {
-            // 匹配到对应的Fragment
-            if (backStack[i].split("-")[0] == back.name) {
-                backIndex = i + if (inclusive) 0 else 1
-                break
-            }
+        // 查找回退Class在的Fragment在记录中的对应的位置（最后一个匹配的位置）
+        val index = backStack.indexOfLast { it.javaClass == back }.let {
+            // 未找到
+            if (it == -1) -1
+            // 不包含自身则索引+1
+            else it + (if (inclusive) 0 else 1)
         }
-        // 回退出栈
-        popBackStack(backStack.getOrNull(backIndex))
+        // 回退到指定的Fragment
+        popBackStack(backStack.getOrNull(index))
     }
 
     /**
-     * 回退到指定标签（包含自身）
+     * 回退到指定[Fragment]（包含自身）
+     * @param fragment [Fragment]实例
      */
-    private fun popBackStack(name: String?) {
-        name?.let {
+    private fun popBackStack(fragment: Fragment?) {
+        fragment?.let {
             if (fragmentManager.isStateSaved) return
             runCatching {
-                // FragmentManager回退到指定标签（包含自身）
-                fragmentManager.popBackStackImmediate(name, FragmentManager.POP_BACK_STACK_INCLUSIVE)
-                // FragmentManager回退成功，则清除回退栈指定数据
+                // 处理回退
+                fragmentManager.popBackStackImmediate(getFragmentTag(it), FragmentManager.POP_BACK_STACK_INCLUSIVE)
+                // 从回退栈中手动移除
                 for (i in backStack.indices.reversed()) {
-                    // 移除缓存一直到指定的名称位置
-                    if (name == backStack.removeAt(i)) break
+                    // 倒序移除，直到指定的Fragment
+                    if (backStack.removeAt(i) == it) break
                 }
             }.onFailure {
                 // 打印错误日志
@@ -286,52 +247,62 @@ internal class GetNavViewModel(owner: LifecycleOwner) : GetViewModel(owner) {
     }
 
     /**
-     * 检查[Fragment]是否满足[GetIntent.SINGLE_TOP]的拦截条件
+     * 检查是否是启动[Activity]，是则拦截
+     * @param intent 意图
      */
-    private fun checkFragmentSingleTop(intent: GetIntent): Boolean {
-        if (intent.launchMode == GetIntent.SINGLE_TOP) {
-            if (topFragment?.javaClass == intent.toClass) {
-                // 调用重复方法
-                (topFragment as GetNavProvider).onNewBundleGet(intent.arguments)
-                return true
+    private fun checkActivity(intent: GetIntent): Boolean {
+        if (GetUtils.isActivityClass(intent.toClass)) {
+            val actIntent = Intent(activity, intent.toClass)
+            actIntent.putExtras(intent.arguments)
+            actIntent.addFlags(intent.launchMode)
+            if (intent.launchMode != 0) {
+                // 重复加载，传入新的参数
+                val activity = ActivityUtils.getActivityList()?.findLast { it.javaClass == intent.toClass }
+                (activity as? GetNavProvider)?.let {
+                    activity.intent.putExtras(intent.arguments)
+                    it.onNewArguments(intent.arguments)
+                }
             }
+            ActivityUtils.startActivity(actIntent)
+            return true
         }
         return false
     }
 
     /**
-     * 检查[Fragment]是否满足[GetIntent.SINGLE_TOP]的拦截条件
+     * 检查是否满足[Fragment]拦截条件
+     * 条件1：[GetIntent.SINGLE_TOP]并匹配
+     * 条件2：[GetIntent.SINGLE_TASK]并匹配
+     * @param intent 意图
      */
-    private fun checkFragmentSingleTask(intent: GetIntent): Boolean {
-        if (intent.launchMode == GetIntent.SINGLE_TASK) {
-            // 需要回到的Fragment标志位
-            var backIndex = -1
-            // 查找对应的Fragment
-            for (i in backStack.indices) {
-                // 匹配到对应的Fragment
-                if (backStack[i].split("-")[0] == intent.toClass.name) {
-                    Log.e("数据", "123132133|${backStack.size}|${backStack.getOrNull(i + 1)}")
-                    // 回退
-                    popBackStack(backStack.getOrNull(i + 1))
-                    Log.e("数据", "123132133|${backStack.size}|${GsonUtils.toJson(fragments)}")
-
-                    // 调用重复方法
-                    (topFragment as? GetNavProvider)?.onNewBundleGet(intent.arguments)
+    private fun checkFragment(intent: GetIntent): Boolean {
+        when(intent.launchMode) {
+            GetIntent.SINGLE_TOP -> {
+                // 匹配到相同的Fragment
+                if (topFragment?.javaClass == intent.toClass) {
+                    // 重复加载，传入新的参数
+                    topFragment!!.requireArguments().putAll(intent.arguments)
+                    (topFragment as GetNavProvider).onNewArguments(intent.arguments)
                     return true
                 }
             }
+            GetIntent.SINGLE_TASK -> {
+                // 倒序遍历
+                for (i in backStack.indices.reversed()) {
+                    val fragment = backStack[i]
+                    // 匹配到相同的Fragment
+                    if (fragment.javaClass == intent.toClass) {
+                        popBackStack(backStack.getOrNull(i + 1))
+                        // 重复加载，传入新的参数
+                        fragment.requireArguments().putAll(intent.arguments)
+                        (fragment as GetNavProvider).onNewArguments(intent.arguments)
+                        return true
+                    }
+                }
+            }
+            else -> return false
         }
         return false
-    }
-
-    /**
-     * 检查容器ID是否设置
-     */
-    private fun checkContainerID() {
-        if (containerId == View.NO_ID) {
-            // 未调用loadRootFragment，抛出异常
-            throw IllegalStateException("Did you forget call loadRootFragment?")
-        }
     }
 
     /**

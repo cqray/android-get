@@ -2,6 +2,7 @@ package cn.cqray.demo.android;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MotionEvent;
 
 import org.jetbrains.annotations.Nullable;
 
@@ -23,8 +24,8 @@ public class MainActivity extends GetNavActivity {
 
     }
 
-    @Override
-    public boolean onBackPressedGet() {
-        return false;
-    }
+//    @Override
+//    public boolean onBackPress() {
+//        return super.onBackPress();
+//    }
 }

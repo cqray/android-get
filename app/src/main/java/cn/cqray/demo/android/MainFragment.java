@@ -2,6 +2,7 @@ package cn.cqray.demo.android;
 
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -24,6 +25,11 @@ public class MainFragment extends GetFragment {
 
             this.to(new GetIntent(MainFragment2.class));
             this.to(new GetIntent(MainFragment2.class).setLaunchMode(GetIntent.SINGLE_TASK));
+//            new Handler().postDelayed(() -> {
+//                this.to(new GetIntent(MainFragment2.class).setLaunchMode(GetIntent.SINGLE_TASK));
+//
+//            }, 0);
+
         });
 
     }
@@ -34,11 +40,12 @@ public class MainFragment extends GetFragment {
         GetLog.d("onStop");
     }
 
-    @Override
-    public void onNewBundleGet(@Nullable Bundle bundle) {
-        super.onNewBundleGet(bundle);
-        GetLog.e("onNewBundleGet!!!!!!!!");
-    }
+//    @Override
+//    public void onNewBundleGet(@Nullable Bundle bundle) {
+//        super.onNewBundleGet(bundle);
+//        GetLog.e("onNewBundleGet!!!!!!!!");
+//    }
+
 
     @Override
     public void onDestroy() {
