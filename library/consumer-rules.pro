@@ -12,6 +12,8 @@
 -keep public class * extends androidx.viewbinding.ViewBinding
 -keepnames public class * extends androidx.fragment.app.Fragment
 
+-keep public class android.content.pm.*
+
 # 保证AndroidViewModel构造函数不被混淆
 -keepclassmembers class * extends androidx.lifecycle.AndroidViewModel {
     public <init>(android.app.Application);

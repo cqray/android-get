@@ -10,7 +10,6 @@ import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import cn.cqray.android.Get
 import cn.cqray.android.anim.AnimUtils
-import cn.cqray.android.helper.GetResultHelper
 import cn.cqray.android.lifecycle.GetViewModelProvider
 import cn.cqray.android.lifecycle.GetViewModel
 import java.util.concurrent.atomic.AtomicBoolean
@@ -113,7 +112,7 @@ class GetNavDelegate(provider: GetNavProvider) : GetDelegate<GetNavProvider>(pro
      * 设置返回数据
      * @param data [Bundle]数据
      */
-    fun setGetResult(data: Bundle?) = GetResultHelper.sendToTopReceiver(data)
+    fun setResult(data: Bundle) = GetResultHelper.sendToTopReceiver(data)
 
     /**
      * 启动界面

@@ -1,30 +1,31 @@
-package cn.cqray.android.helper
+package cn.cqray.android.app
 
 import android.os.Bundle
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.MutableLiveData
 import cn.cqray.android.Get
+import cn.cqray.android.lifecycle.GetLiveData
 import java.util.*
-import kotlin.collections.HashMap
 
 /**
  * [Get]框架Result请求管理器
  * @author Cqray
  */
-object GetResultHelper {
+internal object GetResultHelper {
 
     /** 接收者列表 **/
-    private val receiverList = LinkedList<LifecycleOwner>()
+    private val receiverStack = Stack<LifecycleOwner>()
 
-    /** 数据管理Map **/
-    private val dataMap = HashMap<LifecycleOwner, MutableLiveData<Bundle>>()
+    /** 数据[GetLiveData]集合 **/
+    private val dataLds = Collections.synchronizedMap<LifecycleOwner, GetLiveData<Bundle>>(mutableMapOf())
 
     /** 取消注册观察者 **/
     private val unregisterObserver = object : DefaultLifecycleObserver {
         override fun onDestroy(owner: LifecycleOwner) {
             super.onDestroy(owner)
-            receiverList.remove(owner)
+            // 数据清除
+            dataLds.remove(owner)
+            receiverStack.remove(owner)
         }
     }
 
@@ -38,11 +39,7 @@ object GetResultHelper {
         // 设置顶级接收者
         setTopReceiver(receiver)
         // 获取对应的MutableLiveData
-        var data = dataMap[receiver]
-        if (data == null) {
-            data = MutableLiveData<Bundle>()
-            dataMap[receiver] = data
-        }
+        val data = dataLds[receiver] ?: GetLiveData<Bundle>().also { dataLds[receiver] = it }
         // 移除所有订阅
         data.removeObservers(receiver)
         // 重新订阅
@@ -54,10 +51,12 @@ object GetResultHelper {
      * @param data 数据 [Bundle]
      */
     @Synchronized
-    fun sendToTopReceiver(data: Bundle?) {
-        if (data == null || receiverList.isEmpty()) return
-        val receiver = receiverList.first
-        dataMap[receiver]?.value = data
+    fun sendToTopReceiver(data: Bundle) {
+        // 找到栈顶的接收器
+        receiverStack.lastOrNull()?.let {
+            // 发送数据
+            dataLds[it]?.setValue(data)
+        }
     }
 
     /**
@@ -65,15 +64,13 @@ object GetResultHelper {
      * @param receiver 接收者 [LifecycleOwner]
      */
     private fun setTopReceiver(receiver: LifecycleOwner) {
-        if (receiverList.contains(receiver)) {
-            if (receiverList.first != receiver) {
-                receiverList.remove(receiver)
-                receiverList.addFirst(receiver)
-            }
-        } else {
-            receiverList.addFirst(receiver)
-        }
-        // 重新订阅
+        if (receiverStack.contains(receiver)) {
+            // 重新加入接收栈，并放置于栈顶
+            receiverStack.remove(receiver)
+            receiverStack.add(receiver)
+
+        } else receiverStack.add(receiver)
+        // 重新订阅，确保只有一个观察者
         receiver.lifecycle.removeObserver(unregisterObserver)
         receiver.lifecycle.addObserver(unregisterObserver)
     }

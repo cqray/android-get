@@ -47,10 +47,15 @@ interface GetNavProvider : GetProvider {
     fun onNewArguments(arguments: Bundle?) {}
 
     /**
-     * 设置返回数据
+     * 设置返回空白数据，类似[Activity.setResult]
+     */
+    fun setResult() = navDelegate.setResult(Bundle())
+
+    /**
+     * 设置返回数据，类似[Activity.setResult]
      * @param data [Bundle]返回数据
      */
-    fun setGetResult(data: Bundle?) = navDelegate.setGetResult(data)
+    fun setResult(data: Bundle) = navDelegate.setResult(data)
 
     /**
      * 启动界面

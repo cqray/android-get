@@ -1,16 +1,12 @@
 package cn.cqray.demo.android;
 
 import android.os.Bundle;
-import android.util.Log;
-import android.view.MotionEvent;
+
+import com.blankj.utilcode.util.KeyboardUtils;
 
 import org.jetbrains.annotations.Nullable;
 
-import cn.cqray.android.app.GetInit;
-import cn.cqray.android.app.GetIntent;
 import cn.cqray.android.app.GetNavActivity;
-import cn.cqray.android.cache.GetCache;
-import cn.cqray.android.log.GetLog;
 
 public class MainActivity extends GetNavActivity {
 
@@ -21,7 +17,6 @@ public class MainActivity extends GetNavActivity {
 
 
         loadRootFragment(MainFragment.class);
-
     }
 
 //    @Override

@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 
+import cn.cqray.android.Get;
 import cn.cqray.android.app.GetFragment;
 import cn.cqray.android.log.GetLog;
 import cn.cqray.android.ui.multi.GetMultiFragment;
@@ -21,6 +22,7 @@ public class MainFragment2 extends GetMultiFragment {
         super.onCreating(savedInstanceState);
         setTabAtTop(false);
 
+        GetLog.eTag("数据", Get.getTopActivity());
 
 //        toolbar.setActionIcon(0, R.drawable.def_back_common_dark);
 //        loadMultiFragments(
@@ -37,6 +39,7 @@ public class MainFragment2 extends GetMultiFragment {
 //
 //        showFragment(2);
 //        removeFragment(2);
+
 
     }
 
@@ -56,6 +59,6 @@ public class MainFragment2 extends GetMultiFragment {
     @Override
     public void onNewArguments(@Nullable Bundle arguments) {
         super.onNewArguments(arguments);
-        //Log.e("数据", "onNewArguments");
+        Log.e("数据", "onNewArguments");
     }
 }

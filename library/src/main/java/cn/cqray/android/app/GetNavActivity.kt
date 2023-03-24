@@ -33,5 +33,4 @@ open class GetNavActivity : GetActivity() {
 
     fun loadRootFragment(intent: GetIntent) = navDelegate.loadRootFragment(containerId, intent)
 
-
 }

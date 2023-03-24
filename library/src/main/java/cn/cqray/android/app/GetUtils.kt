@@ -3,6 +3,10 @@ package cn.cqray.android.app
 import android.app.Activity
 import androidx.fragment.app.Fragment
 
+@Suppress(
+    "MemberVisibilityCanBePrivate",
+    "Unused"
+)
 internal object GetUtils {
 
     /**

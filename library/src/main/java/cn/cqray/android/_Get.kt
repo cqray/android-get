@@ -4,15 +4,14 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.Application
 import android.content.pm.ActivityInfo
+import android.content.res.TypedArray
 import android.os.*
-
 import androidx.fragment.app.FragmentActivity
 import cn.cqray.android.app.GetNavProvider
 import cn.cqray.android.lifecycle.GetActivityLifecycleCallbacks
 import cn.cqray.android.lifecycle.GetAppLifecycleCallbacks
 import cn.cqray.android.lifecycle.GetFragmentLifecycleCallbacks
 import cn.cqray.android.log.GetLog
-
 import com.blankj.utilcode.util.ActivityUtils
 import com.blankj.utilcode.util.AppUtils
 import com.blankj.utilcode.util.Utils
@@ -44,12 +43,16 @@ internal object _Get {
     @get:Synchronized
     val application: Application
         get() {
-            val app = Utils.getApp()
-            if (applicationRef.get() == null) init(app)
-            return Utils.getApp()
+            if (applicationRef.get() == null) {
+                throw RuntimeException("Did you forget call Get.init?")
+            }
+            return applicationRef.get()
         }
 
-    @JvmStatic
+    /**
+     * 初始化
+     * @param application 应用实例
+     */
     fun init(application: Application) {
         // 初始化配置
         applicationRef.set(application)
@@ -62,7 +65,6 @@ internal object _Get {
      * @param runnable  需要执行的内容
      * @param delayed   延时时长(ms)
      */
-    @JvmStatic
     fun runOnUiThreadDelayed(runnable: Runnable, delayed: Int? = null) {
         val message = Message.obtain()
         message.what = 0
@@ -78,6 +80,7 @@ internal object _Get {
         AppUtils.registerAppStatusChangedListener(object : Utils.OnAppStatusChangedListener {
             // 进入前台
             override fun onForeground(activity: Activity) = _Get.onForeground(activity)
+
             // 进入后台
             override fun onBackground(activity: Activity) = _Get.onBackground(activity)
         })
@@ -87,7 +90,7 @@ internal object _Get {
                 // 应用首次创建
                 if (ActivityUtils.getActivityList().isEmpty()) onCreated()
                 // 修复Android 8.0 固定竖屏的问题
-                hookOrientation(activity)
+                fixOrientation(activity)
                 // 监管GetNavProvider
                 if (activity is GetNavProvider) {
                     // GetNavDelegate调用onCreated()
@@ -130,12 +133,8 @@ internal object _Get {
         if (!logInit.activityLifecycleLogEnable) return
         // 打印日志
         GetLog.d(
-            Get::class.java,
-            String.format(
-                "%s [%d] -> %s",
-                activity.javaClass.name,
-                activity.hashCode(),
-                state
+            Get::class.java, String.format(
+                "%s [%d] -> %s", activity.javaClass.name, activity.hashCode(), state
             )
         )
     }
@@ -180,26 +179,34 @@ internal object _Get {
      * 修复android 8.0存在的问题
      * 在Activity中onCreate()中super之前调用
      */
-    private fun hookOrientation(activity: Activity) {
+    @SuppressLint(
+        "DiscouragedPrivateApi", "SoonBlockedPrivateApi", "PrivateApi"
+    )
+    private fun fixOrientation(activity: Activity) {
         // 目标版本8.0及其以上
         if (activity.applicationInfo.targetSdkVersion >= Build.VERSION_CODES.O) {
-            if (cn.cqray.android.util.ActivityUtils.isTranslucentOrFloating(activity)) {
-                fixOrientation(activity)
+            var isTranslucentOrFloating = false
+            runCatching {
+                val styleableClass = Class.forName("com.android.internal.R\$styleable")
+                val windowField = styleableClass.getDeclaredField("Window").also { it.isAccessible = true }
+                val styleableRes = (windowField[null] as IntArray)
+                val typedArray = activity.obtainStyledAttributes(styleableRes)
+                val activityInfoClass: Class<*> = ActivityInfo::class.java
+                // 调用检查是否屏幕旋转
+                val isTranslucentOrFloatingMethod = activityInfoClass.getDeclaredMethod(
+                    "isTranslucentOrFloating", TypedArray::class.java
+                ).also { it.isAccessible = true }
+                isTranslucentOrFloating = isTranslucentOrFloatingMethod.invoke(null, typedArray) as Boolean
             }
-        }
-    }
-
-    /**
-     * 设置屏幕不固定，绕过检查
-     */
-    @SuppressLint("DiscouragedPrivateApi")
-    private fun fixOrientation(activity: Activity) {
-        runCatching {
-            val activityClass = Activity::class.java
-            val mActivityInfoField = activityClass.getDeclaredField("mActivityInfo")
-            mActivityInfoField.isAccessible = true
-            val activityInfo = (mActivityInfoField[activity] as ActivityInfo)
-            activityInfo.screenOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
+            if (isTranslucentOrFloating) {
+                runCatching {
+                    val activityClass = Activity::class.java
+                    val mActivityInfoField = activityClass.getDeclaredField("mActivityInfo")
+                    mActivityInfoField.isAccessible = true
+                    val activityInfo = (mActivityInfoField[activity] as ActivityInfo)
+                    activityInfo.screenOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
+                }
+            }
         }
     }
 }
