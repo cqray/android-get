@@ -2,16 +2,19 @@ package cn.cqray.android.util
 
 import android.content.Context
 import android.content.res.Resources
-import android.util.TypedValue
 import androidx.annotation.DimenRes
 import cn.cqray.android.Get
 import cn.cqray.android.R
+import com.blankj.utilcode.util.SizeUtils
 
 /**
  * 尺寸工具类
  * @author Cqray
  */
-@Suppress("MemberVisibilityCanBePrivate", "Unused")
+@Suppress(
+    "MemberVisibilityCanBePrivate",
+    "Unused"
+)
 object Sizes {
 
     private val context: Context
@@ -31,103 +34,104 @@ object Sizes {
     val mmScale: Float get() = Resources.getSystem().displayMetrics.xdpi * (1.0f / 25.4f)
 
     @JvmStatic
-    fun line(): Float = px(R.dimen.line)
+    fun line(): Int = px(R.dimen.line)
 
     @JvmStatic
     fun lineDp(): Float = dp(R.dimen.line)
 
     @JvmStatic
-    fun larger(): Float = px(R.dimen.larger)
+    fun larger(): Int = px(R.dimen.larger)
 
     @JvmStatic
     fun largerDp(): Float = dp(R.dimen.larger)
 
     @JvmStatic
-    fun large(): Float = px(R.dimen.large)
+    fun large(): Int = px(R.dimen.large)
 
     @JvmStatic
     fun largeDp(): Float = dp(R.dimen.large)
 
     @JvmStatic
-    fun content(): Float = px(R.dimen.content)
+    fun content(): Int = px(R.dimen.content)
 
     @JvmStatic
     fun contentDp(): Float = dp(R.dimen.content)
 
     @JvmStatic
-    fun small(): Float = px(R.dimen.small)
+    fun small(): Int = px(R.dimen.small)
 
     @JvmStatic
     fun smallDp(): Float = dp(R.dimen.small)
 
     @JvmStatic
-    fun smaller(): Float = px(R.dimen.smaller)
+    fun smaller(): Int = px(R.dimen.smaller)
 
     @JvmStatic
     fun smallerDp(): Float = dp(R.dimen.smaller)
 
     @JvmStatic
-    fun divider(): Float = px(R.dimen.divider)
+    fun divider(): Int = px(R.dimen.divider)
 
     @JvmStatic
     fun dividerDp(): Float = dp(R.dimen.divider)
 
     @JvmStatic
-    fun h1(): Float = px(R.dimen.h1)
+    fun h1(): Int = px(R.dimen.h1)
 
     @JvmStatic
     fun h1Sp(): Float = sp(R.dimen.h1)
 
     @JvmStatic
-    fun h2(): Float = px(R.dimen.h2)
+    fun h2(): Int = px(R.dimen.h2)
 
     @JvmStatic
     fun h2Sp(): Float = sp(R.dimen.h2)
 
     @JvmStatic
-    fun h3(): Float = px(R.dimen.h3)
+    fun h3(): Int = px(R.dimen.h3)
 
     @JvmStatic
     fun h3Sp(): Float = sp(R.dimen.h3)
 
     @JvmStatic
-    fun body(): Float = px(R.dimen.body)
+    fun body(): Int = px(R.dimen.body)
 
     @JvmStatic
     fun bodySp(): Float = sp(R.dimen.body)
 
     @JvmStatic
-    fun caption(): Float = px(R.dimen.caption)
+    fun caption(): Int = px(R.dimen.caption)
 
     @JvmStatic
     fun captionSp(): Float = sp(R.dimen.caption)
 
     @JvmStatic
-    fun min(): Float = px(R.dimen.min)
+    fun min(): Int = px(R.dimen.min)
 
     @JvmStatic
     fun minSp(): Float = sp(R.dimen.min)
 
     @JvmStatic
-    fun px(@DimenRes resId: Int): Float = context.resources.getDimension(resId)
+    fun px(@DimenRes id: Int): Int = context.resources.getDimensionPixelSize(id)
 
     @JvmStatic
-    fun sp(@DimenRes resId: Int): Float = px2sp(px(resId))
+    fun sp(@DimenRes id: Int): Float = context.resources.getDimension(id) / spScale
 
     @JvmStatic
-    fun dp(@DimenRes resId: Int): Float = px2dp(px(resId))
+    fun dp(@DimenRes id: Int): Float = context.resources.getDimension(id) / dpScale
 
     @JvmStatic
-    fun dp2px(dpValue: Float) = (dpValue * dpScale + 0.5f).toInt()
+    fun px2dp(pxValue: Float) = SizeUtils.px2dp(pxValue)
 
     @JvmStatic
-    fun px2dp(pxValue: Float) = pxValue / dpScale
+    fun px2sp(pxValue: Float) = SizeUtils.px2sp(pxValue)
 
     @JvmStatic
-    fun sp2px(spValue: Float) = (spValue * spScale + 0.5f)
+    fun sp2px(spValue: Float) = SizeUtils.sp2px(spValue)
 
     @JvmStatic
-    fun px2sp(pxValue: Float) = pxValue / spScale
+    fun dp2px(dpValue: Float) = SizeUtils.dp2px(dpValue)
+
 
 //    @JvmStatic
 //    fun applyDimension(value: Float, unit: SizeUnit): Float {
@@ -142,18 +146,20 @@ object Sizes {
 //        return 0F
 //    }
 
-
-
     @JvmStatic
-    fun applyDimension(value: Float, unit: Int): Float {
-        when (unit) {
-            TypedValue.COMPLEX_UNIT_PX -> return value
-            TypedValue.COMPLEX_UNIT_DIP -> return value * dpScale
-            TypedValue.COMPLEX_UNIT_SP -> return value * spScale
-            TypedValue.COMPLEX_UNIT_PT -> return value * ptScale
-            TypedValue.COMPLEX_UNIT_IN -> return value * inScale
-            TypedValue.COMPLEX_UNIT_MM -> return value * mmScale
-        }
-        return 0F
-    }
+    fun applyDimension(value: Float, unit: Int) = SizeUtils.applyDimension(value, unit)
+
+
+//    @JvmStatic
+//    fun applyDimension(value: Float, unit: Int): Float {
+//        when (unit) {
+//            TypedValue.COMPLEX_UNIT_PX -> return value
+//            TypedValue.COMPLEX_UNIT_DIP -> return value * dpScale
+//            TypedValue.COMPLEX_UNIT_SP -> return value * spScale
+//            TypedValue.COMPLEX_UNIT_PT -> return value * ptScale
+//            TypedValue.COMPLEX_UNIT_IN -> return value * inScale
+//            TypedValue.COMPLEX_UNIT_MM -> return value * mmScale
+//        }
+//        return 0F
+//    }
 }

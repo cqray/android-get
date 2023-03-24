@@ -3,7 +3,7 @@
     <dimen name="toolbar">52dp</dimen>
     <dimen name="tabbed">48dp</dimen>
     <dimen name="loading">30dp</dimen>
-    <dimen name="divider">0.5dp</dimen>
+    <dimen name="divider">1.5dp</dimen>
     <dimen name="line">44dp</dimen>
 
     <dimen name="smaller">4dp</dimen>

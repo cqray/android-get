@@ -23,7 +23,7 @@ open class GetButtonLineItem<T : GetButtonLineItem<T>> internal constructor(
     var textColor = Colors.text()
 
     /** 文本大小 **/
-    var textSize = Sizes.h3()
+    var textSize: Float = Sizes.h3().toFloat()
 
     /** 文本样式 **/
     var textStyle = 0

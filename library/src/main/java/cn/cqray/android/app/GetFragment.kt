@@ -23,7 +23,8 @@ open class GetFragment : Fragment(),
     GetViewProvider,
     GetNavProvider,
     GetTipProvider,
-    GetRxProvider {
+    GetRxProvider,
+    GetKeyboardProvider {
 
     /** 标题栏 **/
     @Keep

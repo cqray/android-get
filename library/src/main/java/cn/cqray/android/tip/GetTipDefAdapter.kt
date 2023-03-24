@@ -13,8 +13,8 @@ import android.widget.Toast
 import androidx.core.view.ViewCompat
 import cn.cqray.android.Get
 import cn.cqray.android.databinding.GetLayoutTipBinding
-import cn.cqray.android.util.JsonUtils
 import cn.cqray.android.util.Sizes
+import com.blankj.utilcode.util.CloneUtils
 import com.blankj.utilcode.util.ScreenUtils
 import java.util.*
 
@@ -71,7 +71,7 @@ open class GetTipDefAdapter : GetTipAdapter {
      */
     private fun initTip(tipTask: TipTask) {
         // 深拷贝配置信息
-        val init = JsonUtils.deepClone(tipTask.init, GetTipInit::class.java)!!
+        val init = CloneUtils.deepClone(tipTask.init, GetTipInit::class.java)
         // 这一步用于自定义实现不同的效果
         onHandle(tipTask.text, init)
         // 初始化界面

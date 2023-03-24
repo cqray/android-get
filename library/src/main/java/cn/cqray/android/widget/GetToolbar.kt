@@ -137,14 +137,14 @@ class GetToolbar @JvmOverloads constructor(
      * 初始化基础控价
      */
     private fun initToolbarBasic(attrs: AttributeSet?) {
-        val elev = Sizes.px(R.dimen.elevation)
+        val elev = Sizes.px(R.dimen.elevation).toFloat()
         // 获取默认属性
         val ta = context.obtainStyledAttributes(attrs, R.styleable.GetToolbar)
         val elevation = ta.getDimension(R.styleable.GetToolbar_elevation, elev)
         val editable = ta.getBoolean(R.styleable.GetToolbar_titleEditable, false)
         // 默认属性
-        val paddingSE = ta.getDimension(R.styleable.GetToolbar_paddingSE, Sizes.px(R.dimen.content))
-        val titleSpace = ta.getDimension(R.styleable.GetToolbar_titleSpace, Sizes.px(R.dimen.content))
+        val paddingSE = ta.getDimension(R.styleable.GetToolbar_paddingSE, Sizes.px(R.dimen.content).toFloat())
+        val titleSpace = ta.getDimension(R.styleable.GetToolbar_titleSpace, Sizes.px(R.dimen.content).toFloat())
         val titleCenter = ta.getBoolean(R.styleable.GetToolbar_titleCenter, false)
         ta.recycle()
         // 设置标题栏背景
@@ -174,7 +174,7 @@ class GetToolbar @JvmOverloads constructor(
         val visible = ta.getBoolean(R.styleable.GetToolbar_backIconVisible, true)
         val text = ta.getString(R.styleable.GetToolbar_backText)
         val textColor = ta.getColor(R.styleable.GetToolbar_backTextColor, Color.WHITE)
-        val textSize = ta.getDimension(R.styleable.GetToolbar_backTextSize, Sizes.px(R.dimen.h3))
+        val textSize = ta.getDimension(R.styleable.GetToolbar_backTextSize, Sizes.px(R.dimen.h3).toFloat())
         val textStyle = ta.getInt(R.styleable.GetToolbar_backTextStyle, 0)
         ta.recycle()
         // 设置Back布局
@@ -197,9 +197,9 @@ class GetToolbar @JvmOverloads constructor(
     private fun initToolbarAction(attrs: AttributeSet?) {
         // 获取属性
         val ta = context.obtainStyledAttributes(attrs, R.styleable.GetToolbar)
-        val space = ta.getDimension(R.styleable.GetToolbar_actionSpace, Sizes.px(R.dimen.content))
+        val space = ta.getDimension(R.styleable.GetToolbar_actionSpace, Sizes.px(R.dimen.content).toFloat())
         val textColor = ta.getColor(R.styleable.GetToolbar_actionTextColor, Color.WHITE)
-        val textSize = ta.getDimension(R.styleable.GetToolbar_actionTextSize, Sizes.px(R.dimen.h3))
+        val textSize = ta.getDimension(R.styleable.GetToolbar_actionTextSize, Sizes.px(R.dimen.h3).toFloat())
         val textStyle = ta.getInt(R.styleable.GetToolbar_actionTextStyle, 0)
         ta.recycle()
         // 设置ActionLayout属性
@@ -219,7 +219,7 @@ class GetToolbar @JvmOverloads constructor(
         val ta = context.obtainStyledAttributes(attrs, R.styleable.GetToolbar)
         val text = ta.getString(R.styleable.GetToolbar_titleText)
         val textColor = ta.getColor(R.styleable.GetToolbar_titleTextColor, Color.WHITE)
-        val textSize = ta.getDimension(R.styleable.GetToolbar_titleTextSize, Sizes.px(R.dimen.h2))
+        val textSize = ta.getDimension(R.styleable.GetToolbar_titleTextSize, Sizes.px(R.dimen.h2).toFloat())
         val textStyle = ta.getInt(R.styleable.GetToolbar_titleTextStyle, 0)
         ta.recycle()
         // 设置标题

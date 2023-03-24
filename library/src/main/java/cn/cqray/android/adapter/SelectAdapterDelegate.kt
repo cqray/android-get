@@ -9,7 +9,7 @@ import com.chad.library.adapter.base.viewholder.BaseViewHolder
 
 /**
  * 选择类型的Adapter委托
- * @author LeiJue
+ * @author Cqray
  */
 @Suppress(
     "MemberVisibilityCanBePrivate",

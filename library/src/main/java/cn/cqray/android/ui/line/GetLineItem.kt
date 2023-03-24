@@ -7,9 +7,9 @@ import androidx.annotation.ColorInt
 import androidx.annotation.DrawableRes
 import cn.cqray.android.util.Colors
 import cn.cqray.android.util.ContextUtils
-import cn.cqray.android.util.JsonUtils
 
 import cn.cqray.android.util.Sizes
+import com.blankj.utilcode.util.CloneUtils
 import com.chad.library.adapter.base.entity.MultiItemEntity
 import java.io.*
 
@@ -30,7 +30,7 @@ open class GetLineItem<T : GetLineItem<T>>(
     var tag: Any? = null
 
     /** 行高  */
-    var height = Sizes.line()
+    var height: Float = Sizes.line().toFloat()
 
     /** 外部间隔，左上右下 **/
     val margins = FloatArray(4)
@@ -52,7 +52,7 @@ open class GetLineItem<T : GetLineItem<T>>(
 
     init {
         // 初始化间隔信息
-        val content = Sizes.content()
+        val content = Sizes.content().toFloat()
         paddings[0] = content
         paddings[2] = content
         dividerMargins[0] = content
@@ -135,7 +135,7 @@ open class GetLineItem<T : GetLineItem<T>>(
 
     fun backgroundRes(@DrawableRes id: Int) = also { background = ContextUtils.getDrawable(id) } as T
 
-    fun copy() = JsonUtils.deepClone(this, this.javaClass) as T
+    fun copy() = CloneUtils.deepClone(this, this.javaClass) as T
 
     @Suppress("UPPER_BOUND_VIOLATED_WARNING")
     companion object {

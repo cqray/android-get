@@ -14,7 +14,7 @@ import androidx.core.content.ContextCompat
 import cn.cqray.android.Get
 
 /**
- * @author LeiJue
+ * @author Cqray
  * @date 2022/5/19
  */
 object ContextUtils {

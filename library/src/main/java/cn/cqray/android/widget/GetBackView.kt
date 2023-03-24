@@ -63,9 +63,9 @@ class GetBackView @JvmOverloads constructor(
         val tintColor = ta.getColor(R.styleable.GetBackView_iconTint, -1)
         // 初始化默认属性
         val ripple = ta.getBoolean(R.styleable.GetBackView_ripple, true)
-        val iconSpace = ta.getDimension(R.styleable.GetBackView_iconSpace, Sizes.px(R.dimen.small))
+        val iconSpace = ta.getDimension(R.styleable.GetBackView_iconSpace, Sizes.px(R.dimen.small).toFloat())
         val textColor = ta.getColor(R.styleable.GetBackView_textColor, Color.WHITE)
-        val textSize = ta.getDimension(R.styleable.GetBackView_textSize, Sizes.px(R.dimen.body))
+        val textSize = ta.getDimension(R.styleable.GetBackView_textSize, Sizes.px(R.dimen.body).toFloat())
         val textStyle = ta.getInt(R.styleable.GetBackView_textStyle, 0)
         // 释放资源
         ta.recycle()

@@ -185,20 +185,7 @@ internal object _Get {
     private fun fixOrientation(activity: Activity) {
         // 目标版本8.0及其以上
         if (activity.applicationInfo.targetSdkVersion >= Build.VERSION_CODES.O) {
-            var isTranslucentOrFloating = false
-            runCatching {
-                val styleableClass = Class.forName("com.android.internal.R\$styleable")
-                val windowField = styleableClass.getDeclaredField("Window").also { it.isAccessible = true }
-                val styleableRes = (windowField[null] as IntArray)
-                val typedArray = activity.obtainStyledAttributes(styleableRes)
-                val activityInfoClass: Class<*> = ActivityInfo::class.java
-                // 调用检查是否屏幕旋转
-                val isTranslucentOrFloatingMethod = activityInfoClass.getDeclaredMethod(
-                    "isTranslucentOrFloating", TypedArray::class.java
-                ).also { it.isAccessible = true }
-                isTranslucentOrFloating = isTranslucentOrFloatingMethod.invoke(null, typedArray) as Boolean
-            }
-            if (isTranslucentOrFloating) {
+            if (isTranslucentOrFloating(activity)) {
                 runCatching {
                     val activityClass = Activity::class.java
                     val mActivityInfoField = activityClass.getDeclaredField("mActivityInfo")
@@ -208,5 +195,30 @@ internal object _Get {
                 }
             }
         }
+    }
+
+    /**
+     * 检查[Activity]横竖屏或者锁定就是固定
+     */
+    @SuppressLint(
+        "DiscouragedPrivateApi",
+        "SoonBlockedPrivateApi",
+        "PrivateApi"
+    )
+    fun isTranslucentOrFloating(activity: Activity): Boolean {
+        var isTranslucentOrFloating = false
+        runCatching {
+            val styleableClass = Class.forName("com.android.internal.R\$styleable")
+            val windowField = styleableClass.getDeclaredField("Window").also { it.isAccessible = true }
+            val styleableRes = (windowField[null] as IntArray)
+            val typedArray = activity.obtainStyledAttributes(styleableRes)
+            val activityInfoClass: Class<*> = ActivityInfo::class.java
+            // 调用检查是否屏幕旋转
+            val isTranslucentOrFloatingMethod = activityInfoClass.getDeclaredMethod(
+                "isTranslucentOrFloating", TypedArray::class.java
+            ).also { it.isAccessible = true }
+            isTranslucentOrFloating = isTranslucentOrFloatingMethod.invoke(null, typedArray) as Boolean
+        }
+        return isTranslucentOrFloating
     }
 }

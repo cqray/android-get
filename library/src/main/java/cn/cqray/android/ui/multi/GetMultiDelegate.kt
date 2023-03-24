@@ -13,7 +13,7 @@ import cn.cqray.android.util.ContextUtils
 import cn.cqray.android.util.ViewUtils
 /**
  * 多Fragment委托
- * @author LeiJue
+ * @author Cqray
  */
 @Suppress("MemberVisibilityCanBePrivate")
 class GetMultiDelegate(

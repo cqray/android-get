@@ -83,11 +83,11 @@ class GetActionLayout @JvmOverloads constructor(
         // 默认是否显示Action组件
         defaultVisible = ta.getBoolean(R.styleable.GetActionLayout_defaultVisible, true)
         // 默认组件间隔
-        defaultSpace = ta.getDimension(R.styleable.GetActionLayout_defaultSpace, Sizes.px(R.dimen.content))
+        defaultSpace = ta.getDimension(R.styleable.GetActionLayout_defaultSpace, Sizes.px(R.dimen.content).toFloat())
         // 默认文本颜色
         defaultTextColor = ta.getColor(R.styleable.GetActionLayout_defaultTextColor, Color.WHITE)
         // 默认文本大小
-        defaultTextSize = ta.getDimension(R.styleable.GetActionLayout_defaultTextSize, Sizes.px(R.dimen.body))
+        defaultTextSize = ta.getDimension(R.styleable.GetActionLayout_defaultTextSize, Sizes.px(R.dimen.body).toFloat())
         // 默认文本样式
         defaultTextStyle = ta.getInt(R.styleable.GetActionLayout_defaultTextStyle, 0)
         // 释放资源

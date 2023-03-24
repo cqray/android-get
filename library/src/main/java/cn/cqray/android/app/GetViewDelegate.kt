@@ -22,6 +22,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.viewbinding.ViewBinding
 import cn.cqray.android.Get
 import cn.cqray.android.R
+import cn.cqray.android._Get
 import cn.cqray.android.databinding.GetViewDefaultLayoutBinding
 import cn.cqray.android.state.GetStateDelegate
 import cn.cqray.android.state.GetStateLayout
@@ -84,7 +85,7 @@ class GetViewDelegate internal constructor(provider: GetViewProvider) : GetDeleg
                     }
                 }
                 if (provider is ComponentActivity) {
-                    val isTranslucentOrFloating = ActivityUtils.isTranslucentOrFloating(provider)
+                    val isTranslucentOrFloating = _Get.isTranslucentOrFloating(provider)
                     if (isTranslucentOrFloating) normalSet(any) else {
                         // 在Window窗口上设置背景
                         when (any) {

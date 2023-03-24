@@ -3,15 +3,18 @@ package cn.cqray.demo.android;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 
+import com.blankj.utilcode.util.KeyboardUtils;
+
 import cn.cqray.android.app.GetFragment;
 import cn.cqray.android.app.GetIntent;
 import cn.cqray.android.log.GetLog;
-import cn.cqray.android.widget.TextDrawable;
+import cn.cqray.android.util.Sizes;
 
 public class MainFragment extends GetFragment {
 
@@ -32,6 +35,19 @@ public class MainFragment extends GetFragment {
 
         });
 
+//        showSoftInput();
+//        showSoftInput();
+//        new Handler().postDelayed(() -> {
+//            hideSoftInput();
+//        }, 5000);
+//
+//        observeSoftInputChanged(this, h -> {
+//            Log.e("数据", "导读变化：" + h);
+//        });
+
+        Log.e("数据", "大小：" + Sizes.dividerDp());
+
+
     }
 
     @Override
@@ -39,6 +55,8 @@ public class MainFragment extends GetFragment {
         super.onStop();
         GetLog.d("onStop");
     }
+
+
 
 //    @Override
 //    public void onNewBundleGet(@Nullable Bundle bundle) {
@@ -50,6 +68,7 @@ public class MainFragment extends GetFragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
+//        KeyboardUtils.unregisterSoftInputChangedListener(requireActivity().getWindow());
         GetLog.d("onDestroy");
     }
 

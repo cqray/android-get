@@ -74,7 +74,7 @@ class GetBusyAdapter : GetStateAdapter<GetBusyAdapter>(R.layout.get_layout_state
         spinKitView?.setIndeterminateDrawable(SpriteFactory.create(spinStyle))
         frameView.background = GradientDrawable().also {
             it.setColor(GetCompat.getColor(frameColor))
-            it.cornerRadius = Sizes.small()
+            it.cornerRadius = Sizes.small().toFloat()
         }
     }
 

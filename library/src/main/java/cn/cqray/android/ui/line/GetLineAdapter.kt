@@ -57,7 +57,7 @@ open class GetLineAdapter : BaseMultiItemQuickAdapter<GetLineItem<*>, BaseViewHo
         val btn = holder.getView<TextView>(R.id.get_item_button)
         btn.text = item.text
         btn.setTextColor(item.textColor)
-        btn.setTextSize(TypedValue.COMPLEX_UNIT_PX, item.textSize)
+        btn.setTextSize(TypedValue.COMPLEX_UNIT_PX, item.textSize.toFloat())
     }
 
     /**

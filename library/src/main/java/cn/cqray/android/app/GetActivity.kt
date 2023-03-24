@@ -25,7 +25,8 @@ open class GetActivity : AppCompatActivity(),
     GetViewProvider,
     GetNavProvider,
     GetTipProvider,
-    GetRxProvider {
+    GetRxProvider,
+    GetKeyboardProvider {
 
     /** 标题栏 **/
     @Keep
@@ -66,6 +67,6 @@ open class GetActivity : AppCompatActivity(),
      * 查找View
      */
     final override fun <T : View> findViewById(@IdRes id: Int): T = super<AppCompatActivity>.findViewById(id)
-    
+
     open override fun onNewIntent(intent: Intent?) = super<AppCompatActivity>.onNewIntent(intent)
 }

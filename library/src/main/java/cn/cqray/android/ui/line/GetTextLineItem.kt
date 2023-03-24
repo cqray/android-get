@@ -24,7 +24,7 @@ class GetTextLineItem internal constructor(text: CharSequence?) : GetIconLineIte
     var endTextColor = Colors.text()
 
     /** 右端文本大小 **/
-    var endTextSize = Sizes.h3()
+    var endTextSize: Float = Sizes.h3().toFloat()
 
     /** 右端文本样式 **/
     var endTextStyle = 0
