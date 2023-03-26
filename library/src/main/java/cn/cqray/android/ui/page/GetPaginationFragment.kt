@@ -3,11 +3,16 @@ package cn.cqray.android.ui.page
 import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.LiveData
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import cn.cqray.android.app.GetFragment
+import cn.cqray.android.`object`.ResponseData
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.viewholder.BaseViewHolder
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.core.Observable
+import io.reactivex.rxjava3.schedulers.Schedulers
 
 /**
  * 分页Fragment
@@ -15,6 +20,7 @@ import com.chad.library.adapter.base.viewholder.BaseViewHolder
  */
 @Suppress(
     "MemberVisibilityCanBePrivate",
+    "Unused_parameter",
     "Unused"
 )
 abstract class GetPaginationFragment<T> : GetFragment(), GetPaginationProvider<T> {
@@ -43,7 +49,24 @@ abstract class GetPaginationFragment<T> : GetFragment(), GetPaginationProvider<T
         // 初始化分页委托
         paginationDelegate.setRefreshLayout(refreshLayout)
         paginationDelegate.adapter = adapter
-        paginationDelegate.addCallback { pageNum, pageSize -> onRefresh(pageNum, pageSize) }
+        paginationDelegate.addCallback { pageNum, pageSize ->
+            // LiveData方式请求
+            onRefreshLd(pageNum, pageSize)?.let {
+                it.observe(this) { ld -> finish(ld) }
+                return@let
+            }
+            // Rx方式请求
+            onRefreshRx(pageNum, pageSize)?.let { observable ->
+                // 请求列表
+                val d = observable.subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe({ finishWithResponse(it) }) { finishWithException(it) }
+                addDisposable(d)
+                return@let
+            }
+            // 其他方式请求
+            onRefresh(pageNum, pageSize)
+        }
     }
 
     override fun onLazyLoad() {
@@ -58,9 +81,23 @@ abstract class GetPaginationFragment<T> : GetFragment(), GetPaginationProvider<T
     protected abstract fun onCreateAdapter(): BaseQuickAdapter<T, out BaseViewHolder>
 
     /**
+     * RxJava方式刷新数据
+     * @param pageNum 页码
+     * @param pageSize 分页大小
+     */
+    protected fun onRefreshRx(pageNum: Int, pageSize: Int): Observable<ResponseData<List<T>?>>? = null
+
+    /**
+     * RxJava方式刷新数据
+     * @param pageNum 页码
+     * @param pageSize 分页大小
+     */
+    protected fun onRefreshLd(pageNum: Int, pageSize: Int): LiveData<List<T>?>? = null
+
+    /**
      * 刷新数据
      * @param pageNum 页码
      * @param pageSize 分页大小
      */
-    protected abstract fun onRefresh(pageNum: Int, pageSize: Int)
+    protected fun onRefresh(pageNum: Int, pageSize: Int) {}
 }

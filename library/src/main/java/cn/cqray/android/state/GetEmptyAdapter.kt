@@ -51,7 +51,7 @@ class GetEmptyAdapter : GetStateAdapter<GetEmptyAdapter>(R.layout.get_layout_sta
      * 设置背景资源
      * @param id 资源ID[DrawableRes]
      */
-    fun setImage(@DrawableRes id: Int?) = also { this.image = id }
+    fun setImage(@DrawableRes id: Int) = also { this.image = id }
 
     /**
      * 设置背景资源

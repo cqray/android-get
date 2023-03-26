@@ -1,5 +1,6 @@
 package cn.cqray.android.adapter
 
+import android.annotation.SuppressLint
 import android.util.SparseArray
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.MutableLiveData
@@ -35,10 +36,20 @@ class SelectAdapterDelegate<T>(val adapter: BaseQuickAdapter<T, out BaseViewHold
     /** 选中数据 **/
     val selectedData: List<T> get() = selectedDataLD.value!!
 
+    /**
+     * 订阅选中数据变化
+     * @param owner 生命周期管理
+     * @param observer 观察者
+     */
     fun observeSelectedData(owner: LifecycleOwner, observer: Observer<MutableList<T>>) {
         selectedDataLD.observe(owner, observer)
     }
 
+    /**
+     * 订阅选中超出数量限制
+     * @param owner 生命周期管理
+     * @param observer 观察者
+     */
     fun observeCountLimit(owner: LifecycleOwner, observer: Observer<Int>) {
         countLimitLD.observe(owner, observer)
     }
@@ -47,6 +58,7 @@ class SelectAdapterDelegate<T>(val adapter: BaseQuickAdapter<T, out BaseViewHold
      * 全部选中或全不选
      * @param selectAll true全选 false全不选
      */
+    @SuppressLint("NotifyDataSetChanged")
     fun selectAll(selectAll: Boolean) {
         selectedItems.clear()
         if (selectAll) {
@@ -127,7 +139,7 @@ class SelectAdapterDelegate<T>(val adapter: BaseQuickAdapter<T, out BaseViewHold
     /**
      * 通知选中的数据发生变化
      */
-    private fun notifySelectedChanged() {
+    fun notifySelectedChanged() {
         // 清空无效选中项
         clearInvalidSelectedItem()
         // 获取数据

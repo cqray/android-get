@@ -49,7 +49,7 @@ internal class GetLogAdapterImpl : GetLogAdapter {
             // log 栈深度，默认为 1
             .setStackDeep(init.stackDeep)
             // 设置栈偏移，比如二次封装的话就需要设置，默认为 0
-            .setStackOffset(init.stackOffset + 4)
+            .setStackOffset(init.stackOffset + 2)
             //===========================================
             //===============Logcat相关配置===============
             //===========================================

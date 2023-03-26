@@ -33,7 +33,7 @@ class GetFragmentLifecycleCallbacks(activity: FragmentActivity) :
 
     override fun onFragmentAttached(fm: FragmentManager, f: Fragment, context: Context) {
         super.onFragmentAttached(fm, f, context)
-        printFragmentStateLog(f, "onFragmentAttached")
+            printFragmentStateLog(f, "onFragmentAttached")
     }
 
     override fun onFragmentCreated(fm: FragmentManager, f: Fragment, savedInstanceState: Bundle?) {

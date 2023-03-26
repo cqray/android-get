@@ -5,6 +5,10 @@ import android.view.LayoutInflater
 import androidx.viewbinding.ViewBinding
 import cn.cqray.android.util.ReflectUtil
 
+/**
+ * 支持[ViewBinding]的[GetActivity]
+ * @author Cqray
+ */
 @Suppress(
     "MemberVisibilityCanBePrivate",
     "Unchecked_cast"

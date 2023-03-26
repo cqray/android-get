@@ -28,7 +28,7 @@ class GetNavDelegate(provider: GetNavProvider) : GetDelegate<GetNavProvider>(pro
     private val isLazyLoad = AtomicBoolean()
 
     /** [LifecycleOwner]生命周期管理持有 **/
-    val lifecycleOwner = provider as LifecycleOwner
+    val lifecycleOwner by lazy { provider as LifecycleOwner }
 
     /** 导航[GetViewModel] **/
     private val viewModel by lazy { GetViewModelProvider(activity).get(GetNavViewModel::class.java) }
