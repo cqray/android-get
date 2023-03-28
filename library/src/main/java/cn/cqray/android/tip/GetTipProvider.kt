@@ -36,8 +36,8 @@ interface GetTipProvider : GetProvider {
      */
     fun showTip(
         text: CharSequence?,
-        hideCallback: Function0<Unit>?,
-        showCallback: Function0<Unit>?,
+        hideCallback: Function0<Unit>? = null,
+        showCallback: Function0<Unit>? = null,
     ) = showTip(text, null, hideCallback, showCallback)
 
     /**

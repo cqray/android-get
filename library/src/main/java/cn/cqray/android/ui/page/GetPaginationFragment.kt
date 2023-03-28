@@ -85,19 +85,19 @@ abstract class GetPaginationFragment<T> : GetFragment(), GetPaginationProvider<T
      * @param pageNum 页码
      * @param pageSize 分页大小
      */
-    protected fun onRefreshRx(pageNum: Int, pageSize: Int): Observable<ResponseData<List<T>?>>? = null
+    protected open fun onRefreshRx(pageNum: Int, pageSize: Int): Observable<ResponseData<List<T>?>>? = null
 
     /**
      * RxJava方式刷新数据
      * @param pageNum 页码
      * @param pageSize 分页大小
      */
-    protected fun onRefreshLd(pageNum: Int, pageSize: Int): LiveData<List<T>?>? = null
+    protected open fun onRefreshLd(pageNum: Int, pageSize: Int): LiveData<List<T>?>? = null
 
     /**
      * 刷新数据
      * @param pageNum 页码
      * @param pageSize 分页大小
      */
-    protected fun onRefresh(pageNum: Int, pageSize: Int) {}
+    protected open fun onRefresh(pageNum: Int, pageSize: Int) {}
 }

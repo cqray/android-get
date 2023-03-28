@@ -1,9 +1,11 @@
 package cn.cqray.android.ui.line
 
 import android.util.TypedValue
+import androidx.annotation.ColorInt
 import androidx.annotation.StringRes
 import cn.cqray.android.util.Colors
 import cn.cqray.android.util.ContextUtils
+import cn.cqray.android.util.GetCompat
 import cn.cqray.android.util.Sizes
 
 /**
@@ -21,10 +23,11 @@ class GetTextLineItem internal constructor(text: CharSequence?) : GetIconLineIte
     var endText: CharSequence? = null
 
     /** 右端文本颜色 **/
+    @ColorInt
     var endTextColor = Colors.text()
 
     /** 右端文本大小 **/
-    var endTextSize: Float = Sizes.h3().toFloat()
+    var endTextSize: Float = Sizes.spH3()
 
     /** 右端文本样式 **/
     var endTextStyle = 0
@@ -33,6 +36,7 @@ class GetTextLineItem internal constructor(text: CharSequence?) : GetIconLineIte
     var endHint: CharSequence? = null
 
     /** 右端文本颜色 **/
+    @ColorInt
     var endHintColor = Colors.hint()
 
     override val itemType: Int get() = TEXT
@@ -41,11 +45,12 @@ class GetTextLineItem internal constructor(text: CharSequence?) : GetIconLineIte
 
     fun endText(text: CharSequence?) = also { this.endText = text }
 
-    fun endTextColor(color: Int) = also { endTextColor = color }
+    @JvmOverloads
+    fun endTextColor(any: Int, notId: Boolean = false) = also { endTextColor = GetCompat.getColor(any, notId) }
 
     fun endTextSize(size: Float) = endTextSize(size, TypedValue.COMPLEX_UNIT_DIP)
 
-    fun endTextSize(size: Float, unit: Int) = also { endTextSize = Sizes.applyDimension(size, unit) }
+    fun endTextSize(size: Float, unit: Int) = also { endTextSize = Sizes.any2sp(size, unit) }
 
     fun endTextStyle(textStyle: Int) = also { this.textStyle = textStyle }
 
@@ -53,5 +58,6 @@ class GetTextLineItem internal constructor(text: CharSequence?) : GetIconLineIte
 
     fun endHint(text: CharSequence?) = also { this.endHint = text }
 
-    fun endHintColor(color: Int) = also { endHintColor = color }
+    @JvmOverloads
+    fun endHintColor(any: Int, notId: Boolean = false) = also { endHintColor = GetCompat.getColor(any, notId) }
 }

@@ -57,8 +57,8 @@ class GetBusyAdapter : GetStateAdapter<GetBusyAdapter>(R.layout.get_layout_state
 
     override fun onViewChanged(view: View) {
         super.onViewChanged(view)
-        val cp = Sizes.content().toInt()
-        val lp  = Sizes.large().toInt()
+        val cp = Sizes.pxContent()
+        val lp  = Sizes.pxLarge()
         val frameView = spinKitView?.parent as View
         if (textView?.text.isNullOrEmpty()) {
             // 设置相应的间隔
@@ -74,7 +74,7 @@ class GetBusyAdapter : GetStateAdapter<GetBusyAdapter>(R.layout.get_layout_state
         spinKitView?.setIndeterminateDrawable(SpriteFactory.create(spinStyle))
         frameView.background = GradientDrawable().also {
             it.setColor(GetCompat.getColor(frameColor))
-            it.cornerRadius = Sizes.small().toFloat()
+            it.cornerRadius = Sizes.pxfSmall()
         }
     }
 

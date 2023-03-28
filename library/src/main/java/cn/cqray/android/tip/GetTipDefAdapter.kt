@@ -106,7 +106,7 @@ open class GetTipDefAdapter : GetTipAdapter {
      */
     private fun setTipTextInfo(view: TextView, init: GetTipInit) {
         // 设置Tip样式
-        val size = if (init.textSize == null) Sizes.h3Sp() else init.textSize
+        val size = if (init.textSize == null) Sizes.spH3() else init.textSize
         val sizePx = Sizes.dp2px(size!!).toFloat()
         val lrPadding = (sizePx * 3 / 2).toInt()
         val tbPadding = (sizePx * 2 / 3).toInt()

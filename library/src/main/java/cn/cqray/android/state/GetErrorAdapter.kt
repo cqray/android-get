@@ -57,7 +57,7 @@ class GetErrorAdapter : GetStateAdapter<GetErrorAdapter>(R.layout.get_layout_sta
             // 设置文本颜色
             it.setTextColor(textView?.textColors)
             // 设置文本大小
-            it.setTextSize(TypedValue.COMPLEX_UNIT_PX, textView?.textSize ?: Sizes.body().toFloat())
+            it.setTextSize(TypedValue.COMPLEX_UNIT_PX, textView?.textSize ?: Sizes.pxfBody())
         }
         // 设置图片
         when (image) {

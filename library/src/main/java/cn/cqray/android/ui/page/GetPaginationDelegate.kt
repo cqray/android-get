@@ -31,12 +31,6 @@ class GetPaginationDelegate<T>(val owner: LifecycleOwner) : GetStateProvider {
     /** 分页大小，默认为20  */
     var defaultPageSize = 20
 
-    /** 上次加载的数据对应页码  */
-    private var lastPageNum = 0
-
-    /** 当前加载的数据对应页码  */
-    private var currentPageNum = 0
-
     /**
      * 分页时是否充满每页。
      * 设置true，表示一页未满指定数量，则没有更多数据。
@@ -49,6 +43,12 @@ class GetPaginationDelegate<T>(val owner: LifecycleOwner) : GetStateProvider {
 
     /** 列表适配器  */
     var adapter: BaseQuickAdapter<T, out BaseViewHolder>? = null
+
+    /** 上次加载的数据对应页码  */
+    private var lastPageNum = 0
+
+    /** 当前加载的数据对应页码  */
+    private var currentPageNum = 0
 
     /** 是否是首次刷新数据  */
     private var firstRefresh = true

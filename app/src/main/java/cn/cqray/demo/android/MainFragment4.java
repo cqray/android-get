@@ -32,6 +32,7 @@ public class MainFragment4 extends GetPaginationFragment<Integer> {
 
         Log.e("数据", "12a1sd3fa");
         finish(Arrays.asList(1, 2, 3, 4));
+
     }
 
     @Override
