@@ -5,14 +5,12 @@ import androidx.annotation.ColorRes
 import androidx.core.content.ContextCompat
 import cn.cqray.android.Get
 import cn.cqray.android.R
+import com.blankj.utilcode.util.ActivityUtils
+import com.blankj.utilcode.util.Utils
 
 object Colors {
 
-    private val context: Context
-        get() {
-            val context = Get.topActivity
-            return context ?: Get.application
-        }
+    private val context: Context get() = ActivityUtils.getTopActivity() ?: Utils.getApp().applicationContext
 
     fun get(@ColorRes id: Int) = ContextCompat.getColor(context, id)
 

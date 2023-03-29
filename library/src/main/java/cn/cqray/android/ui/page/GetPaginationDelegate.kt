@@ -138,7 +138,6 @@ class GetPaginationDelegate<T>(val owner: LifecycleOwner) : GetStateProvider {
             // 如果是第一页
             if (currentPageNum == defaultPageNum) {
                 adapter?.setList(it)
-                Log.e("数据", "设置并更新了数据")
             } else if (!empty) {
                 adapter?.addData(it!!)
             }

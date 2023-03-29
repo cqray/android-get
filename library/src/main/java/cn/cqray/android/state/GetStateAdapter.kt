@@ -79,11 +79,11 @@ open class GetStateAdapter<T : GetStateAdapter<T>>(@LayoutRes private val layout
         // 设置文本颜色
         textView?.let {
             // 设置文本
-            it.text = texts[1] ?: texts[0]
+            it.text = texts[1]?.ifEmpty { texts[0] } ?: texts[0]
             // 设置文本颜色
             it.setTextColor(GetCompat.getColor(textColor))
             // 设置文本大小
-            when(textSize) {
+            when (textSize) {
                 is Int -> it.setTextSize(TypedValue.COMPLEX_UNIT_PX, Sizes.px(textSize as Int).toFloat())
                 is Float -> it.setTextSize(TypedValue.COMPLEX_UNIT_PX, textSize as Float)
             }

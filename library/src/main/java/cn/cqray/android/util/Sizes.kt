@@ -6,7 +6,9 @@ import android.util.TypedValue
 import androidx.annotation.DimenRes
 import cn.cqray.android.Get
 import cn.cqray.android.R
+import com.blankj.utilcode.util.ActivityUtils
 import com.blankj.utilcode.util.SizeUtils
+import com.blankj.utilcode.util.Utils
 
 /**
  * 尺寸工具类
@@ -19,7 +21,7 @@ import com.blankj.utilcode.util.SizeUtils
 )
 object Sizes {
 
-    private val context: Context get() = Get.context
+    private val context: Context get() = ActivityUtils.getTopActivity() ?: Utils.getApp().applicationContext
 
     private val dm: DisplayMetrics get() = context.resources.displayMetrics
 

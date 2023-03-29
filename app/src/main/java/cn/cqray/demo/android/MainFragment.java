@@ -45,7 +45,7 @@ public class MainFragment extends GetFragment {
 //            Log.e("数据", "导读变化：" + h);
 //        });
 
-        Log.e("数据", "大小：" + Sizes.dividerDp());
+        Log.e("数据", "大小：" + Sizes.dpSmall());
 
 
     }

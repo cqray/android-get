@@ -26,51 +26,16 @@ class GetIntent(
     /** 参数  */
     val arguments = Bundle()
 
-//    /** 回退目标界面[Class]，仅支持实现[GetNavProvider]的[Fragment]以及[Activity] **/
-//    var backToClass: Class<*>? = null
-//        private set
-
-    /** 是否包含指定回退的界面  */
-    var isBackInclusive: Boolean = false
-        private set
-
-    /** 是否是SingleTop模式，类似于 **/
-    var isSingleTop: Boolean = true
-        private set
-
     /** Fragment动画  */
-    var fragmentAnimator: GetFragmentAnimator? = null
-        private set
+    @JvmField
+    internal var fragmentAnimator: GetFragmentAnimator? = null
 
     /** 启动模式 **/
     @LaunchMode
-    var launchMode: Int = STANDARD
-        private set
-//
-//    /**
-//     * 回退到指定目标界面（包含自身）
-//     * @param backTo 指定目标界面Class，仅支持实现[GetNavProvider]的[Fragment]以及[Activity]
-//     */
-//    fun setBackTo(backTo: Class<*>) = setBackTo(backTo, true)
-//
-//    /**
-//     * 回退到指定目标界面
-//     * @param backTo 指定目标界面Class，仅支持实现[GetNavProvider]的[Fragment]以及[Activity]
-//     * @param inclusive 是否包含自身
-//     */
-//    fun setBackTo(backTo: Class<*>?, inclusive: Boolean) = also {
-//        backTo?.let { checkClass(backTo) }
-//        backToClass = backTo
-//        isBackInclusive = inclusive
-//    }
+    @JvmField
+    internal var launchMode: Int = SINGLE_TOP
 
-    fun setLaunchMode(@LaunchMode mode: Int) = also { this.launchMode = mode }
-
-    /**
-     * 设置是否使用SingleTop模式，默认true
-     * @param singleTop 是否使用SingleTop模式
-     */
-    fun setSingleTop(singleTop: Boolean) = also { isSingleTop = singleTop }
+    fun setLaunchMode(@LaunchMode mode: Int): GetIntent = also { this.launchMode = mode }
 
     fun setFragmentAnimator(animator: GetFragmentAnimator?) = also { fragmentAnimator = animator }
 

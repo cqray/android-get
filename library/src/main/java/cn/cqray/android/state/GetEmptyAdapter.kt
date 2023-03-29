@@ -6,6 +6,7 @@ import android.view.View
 import android.widget.ImageView
 import androidx.annotation.DrawableRes
 import cn.cqray.android.R
+import cn.cqray.android.util.Sizes
 
 /**
  * 空布局适配器实现
@@ -20,6 +21,9 @@ class GetEmptyAdapter : GetStateAdapter<GetEmptyAdapter>(R.layout.get_layout_sta
     /** 图片资源  */
     private var image: Any? = R.drawable.empty2
 
+    /** 图片尺寸 **/
+    private val imageSize = arrayOf(Int.MIN_VALUE, Int.MIN_VALUE)
+
     init {
         setDefaultText("暂无数据")
     }
@@ -32,6 +36,13 @@ class GetEmptyAdapter : GetStateAdapter<GetEmptyAdapter>(R.layout.get_layout_sta
 
     override fun onViewChanged(view: View) {
         super.onViewChanged(view)
+        val width = imageSize[0]
+        val height = imageSize[1]
+        val params = imageView?.layoutParams
+        // 改变图片大小
+        if (width != Int.MIN_VALUE && width != params?.width) params?.width = width
+        if (height != Int.MIN_VALUE && height != params?.height) params?.height = width
+
         // 设置图片
         when (image) {
             is Int -> imageView?.setImageResource(image as Int)
@@ -58,4 +69,8 @@ class GetEmptyAdapter : GetStateAdapter<GetEmptyAdapter>(R.layout.get_layout_sta
      * @param bitmap 图片[Bitmap]
      */
     fun setImage(bitmap: Bitmap?) = also { this.image = bitmap }
+
+    fun setImageWidth(width: Number) = also { this.imageSize[0] = Sizes.dp2px(width.toFloat()) }
+
+    fun setImageHeight(height: Number) = also { this.imageSize[1] = Sizes.dp2px(height.toFloat()) }
 }
