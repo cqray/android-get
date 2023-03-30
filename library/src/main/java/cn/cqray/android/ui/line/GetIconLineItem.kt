@@ -1,7 +1,11 @@
 package cn.cqray.android.ui.line
 
+import android.graphics.drawable.Drawable
 import androidx.annotation.DrawableRes
+import androidx.core.content.ContextCompat
 import cn.cqray.android.R
+import cn.cqray.android.util.ContextUtils
+import com.blankj.utilcode.util.Utils
 
 /**
  * 带图标行
@@ -17,14 +21,18 @@ open class GetIconLineItem<T : GetIconLineItem<T>> internal constructor(
 ) : GetButtonLineItem<T>(text) {
 
     /** 左图标 **/
-    var icon: Int? = null
+    var icon: Drawable? = null
 
     /** 右图标 **/
-    var next: Int? = R.drawable.def_line_next
+    var next: Drawable? = ContextCompat.getDrawable(Utils.getApp(), R.drawable.def_line_next)
 
     override val itemType: Int get() = ICON
 
-    fun icon(@DrawableRes id: Int?) = also { icon = id }
+    fun icon(@DrawableRes id: Int) = also { icon = ContextUtils.getDrawable(id) }
 
-    fun next(@DrawableRes id: Int?) = also { next = id }
+    fun icon(drawable: Drawable?) = also { icon = drawable }
+
+    fun next(@DrawableRes id: Int) = also { next = ContextUtils.getDrawable(id) }
+
+    fun next(drawable: Drawable?) = also { next = drawable }
 }

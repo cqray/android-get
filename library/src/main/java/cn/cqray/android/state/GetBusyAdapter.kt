@@ -3,6 +3,7 @@ package cn.cqray.android.state
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.view.View
+import android.view.ViewGroup.MarginLayoutParams
 import androidx.activity.ComponentActivity
 import androidx.annotation.ColorInt
 import androidx.lifecycle.DefaultLifecycleObserver
@@ -62,24 +63,37 @@ class GetBusyAdapter : GetStateAdapter<GetBusyAdapter>(R.layout.get_layout_state
 
     override fun onViewChanged(view: View) {
         super.onViewChanged(view)
+        // 文本不显示
+        val textGone = textView?.text.isNullOrEmpty()
+        textView?.let {
+            // 显示或隐藏
+            it.visibility = if (textGone) View.GONE else View.VISIBLE
+            // 间隔大小
+            val params = it.layoutParams as MarginLayoutParams
+            val margin = (spinSize / 4 + it.textSize) / 2
+            params.topMargin= margin.toInt()
+            it.requestLayout()
+        }
+        // 间隔信息
         val cp = Sizes.pxContent()
         val lp = Sizes.pxLarge()
-        val frameView = spinKitView?.parent as View
-        if (textView?.text.isNullOrEmpty()) {
-            // 设置相应的间隔
-            textView?.visibility = View.GONE
-            frameView.setPadding(cp, cp, cp, cp)
-        } else {
-            // 设置相应的间隔
-            textView?.visibility = View.VISIBLE
-            frameView.setPadding(lp, cp, lp, cp)
+        val startEnd = if (textGone) cp else lp
+        // 外框样式
+        val frameView = spinKitView?.parent as? View
+        frameView?.let {
+            it.background = GradientDrawable().also { drawable ->
+                drawable.setColor(frameColor)
+                drawable.cornerRadius = Sizes.pxfSmall()
+            }
+            it.setPadding(startEnd, cp, startEnd, cp)
         }
         // 设置SpinKitView样式
-        spinKitView?.setColor(spinColor)
-        spinKitView?.setIndeterminateDrawable(SpriteFactory.create(spinStyle))
-        frameView.background = GradientDrawable().also {
-            it.setColor(frameColor)
-            it.cornerRadius = Sizes.pxfSmall()
+        spinKitView?.let {
+            it.setColor(spinColor)
+            it.setIndeterminateDrawable(SpriteFactory.create(spinStyle))
+            it.layoutParams.width = spinSize
+            it.layoutParams.height = spinSize
+            it.requestLayout()
         }
     }
 

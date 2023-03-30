@@ -12,30 +12,27 @@ import java.util.ArrayList
  * @author Cqray
  */
 @Suppress("Unused")
-class GetMultiItem(
+class GetMultiItem @JvmOverloads constructor(
     /** 目标Fragment的[Class] **/
-    @Suppress val targetClass: Class<out Fragment>,
+    val targetClass: Class<out Fragment>,
     /** 目标Fragment名称 **/
-    val name: String?
+    val name: String? = null
 ) {
 
     /** 选中时的图标 **/
-    @Suppress
     var selectIcon: Int? = null
         private set
 
     /** 未选中时的图标 **/
-    @Suppress
     var unselectIcon: Int? = null
         private set
 
     /** 传入参数  */
-    @Suppress
     val arguments = Bundle()
 
-    fun selectIcon(@DrawableRes icon: Int?) = also { selectIcon = icon }
+    fun selectIcon(@DrawableRes icon: Int) = also { selectIcon = icon }
 
-    fun unselectIcon(@DrawableRes icon: Int?) = also { unselectIcon = icon }
+    fun unselectIcon(@DrawableRes icon: Int) = also { unselectIcon = icon }
 
     fun put(key: String?, value: Boolean?) = put(key, value as Any?)
 

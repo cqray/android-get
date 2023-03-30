@@ -3,6 +3,7 @@ package cn.cqray.android.state
 import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
 import android.view.View
+import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.annotation.DrawableRes
 import cn.cqray.android.R
@@ -22,7 +23,7 @@ class GetEmptyAdapter : GetStateAdapter<GetEmptyAdapter>(R.layout.get_layout_sta
     private var image: Any? = R.drawable.empty2
 
     /** 图片尺寸 **/
-    private val imageSize = arrayOf(Int.MIN_VALUE, Int.MIN_VALUE)
+    private val imageSize = arrayOf(Sizes.dp2px(80), Sizes.dp2px(80))
 
     init {
         setDefaultText("暂无数据")
@@ -36,12 +37,24 @@ class GetEmptyAdapter : GetStateAdapter<GetEmptyAdapter>(R.layout.get_layout_sta
 
     override fun onViewChanged(view: View) {
         super.onViewChanged(view)
+        // 文本不显示
+        val textGone = textView?.text.isNullOrEmpty()
+        textView?.let {
+            // 显示或隐藏
+            it.visibility = if (textGone) View.GONE else View.VISIBLE
+            // 间隔大小
+            val params = it.layoutParams as ViewGroup.MarginLayoutParams
+            val margin = (imageSize[1] / 4 + it.textSize) / 2
+            params.topMargin = margin.toInt()
+            it.requestLayout()
+        }
+
         val width = imageSize[0]
         val height = imageSize[1]
         val params = imageView?.layoutParams
         // 改变图片大小
-        if (width != Int.MIN_VALUE && width != params?.width) params?.width = width
-        if (height != Int.MIN_VALUE && height != params?.height) params?.height = width
+        if (width != params?.width) params?.width = width
+        if (height != params?.height) params?.height = width
 
         // 设置图片
         when (image) {
@@ -70,7 +83,27 @@ class GetEmptyAdapter : GetStateAdapter<GetEmptyAdapter>(R.layout.get_layout_sta
      */
     fun setImage(bitmap: Bitmap?) = also { this.image = bitmap }
 
+    /**
+     * 设置图片宽度
+     * @param width 宽度
+     */
     fun setImageWidth(width: Number) = also { this.imageSize[0] = Sizes.dp2px(width.toFloat()) }
 
+    /**
+     * 设置图片宽度
+     * @param width 宽度
+     */
+    fun setImageWidth(width: Number, unit: Int) = also { this.imageSize[0] = Sizes.any2px(width, unit) }
+
+    /**
+     * 设置图片高度
+     * @param height 高度
+     */
     fun setImageHeight(height: Number) = also { this.imageSize[1] = Sizes.dp2px(height.toFloat()) }
+
+    /**
+     * 设置图片宽度
+     * @param height 高度
+     */
+    fun setImageHeight(height: Number, unit: Int) = also { this.imageSize[1] = Sizes.any2px(height, unit) }
 }

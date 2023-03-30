@@ -5,7 +5,6 @@ import androidx.annotation.ColorInt
 import androidx.annotation.StringRes
 import cn.cqray.android.util.Colors
 import cn.cqray.android.util.ContextUtils
-import cn.cqray.android.util.GetCompat
 import cn.cqray.android.util.Sizes
 
 /**
@@ -27,7 +26,7 @@ class GetTextLineItem internal constructor(text: CharSequence?) : GetIconLineIte
     var endTextColor = Colors.text()
 
     /** 右端文本大小 **/
-    var endTextSize: Float = Sizes.spH3()
+    var endTextSize = Sizes.pxfH3()
 
     /** 右端文本样式 **/
     var endTextStyle = 0
@@ -45,19 +44,19 @@ class GetTextLineItem internal constructor(text: CharSequence?) : GetIconLineIte
 
     fun endText(text: CharSequence?) = also { this.endText = text }
 
+    fun endTextColor(@ColorInt color: Int) = also { endTextColor = color }
+
     @JvmOverloads
-    fun endTextColor(any: Int, notId: Boolean = false) = also { endTextColor = GetCompat.getColor(any, notId) }
+    fun endTextSize(
+        size: Number,
+        unit: Int = TypedValue.COMPLEX_UNIT_DIP
+    ) = also { endTextSize = Sizes.any2px(size, unit).toFloat() }
 
-    fun endTextSize(size: Float) = endTextSize(size, TypedValue.COMPLEX_UNIT_DIP)
-
-    fun endTextSize(size: Float, unit: Int) = also { endTextSize = Sizes.any2sp(size, unit) }
-
-    fun endTextStyle(textStyle: Int) = also { this.textStyle = textStyle }
+    fun endTextStyle(style: Int) = also { this.textStyle = style }
 
     fun endHint(@StringRes id: Int) = also { this.endHint = ContextUtils.getString(id) }
 
     fun endHint(text: CharSequence?) = also { this.endHint = text }
 
-    @JvmOverloads
-    fun endHintColor(any: Int, notId: Boolean = false) = also { endHintColor = GetCompat.getColor(any, notId) }
+    fun endHintColor(@ColorInt color: Int) = also { endHintColor = color }
 }

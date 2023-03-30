@@ -2,7 +2,6 @@ package cn.cqray.android.state
 
 import android.graphics.drawable.Drawable
 import android.util.TypedValue
-
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
@@ -82,6 +81,7 @@ open class GetStateAdapter<T : GetStateAdapter<T>>(@LayoutRes private val layout
             // 设置文本大小
             it.setTextSize(TypedValue.COMPLEX_UNIT_PX, textSize)
         }
+
         // 背景变化
         when (background) {
             is Int -> view.background = ContextCompat.getDrawable(view.context, background as Int)

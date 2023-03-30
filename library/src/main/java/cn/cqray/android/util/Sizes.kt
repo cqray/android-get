@@ -20,7 +20,7 @@ import com.blankj.utilcode.util.Utils
 )
 object Sizes {
 
-    private val context: Context get() = ActivityUtils.getTopActivity() ?: Utils.getApp().applicationContext
+    private val context: Context get() = ContextUtils.get()
 
     private val dm: DisplayMetrics get() = context.resources.displayMetrics
 

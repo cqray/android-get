@@ -57,7 +57,7 @@ open class GetLineAdapter : BaseMultiItemQuickAdapter<GetLineItem<*>, BaseViewHo
         val btn = holder.getView<TextView>(R.id.get_item_button)
         btn.text = item.text
         btn.setTextColor(item.textColor)
-        btn.setTextSize(TypedValue.COMPLEX_UNIT_PX, item.textSize.toFloat())
+        btn.setTextSize(TypedValue.COMPLEX_UNIT_PX, item.textSize)
     }
 
     /**
@@ -88,11 +88,11 @@ open class GetLineAdapter : BaseMultiItemQuickAdapter<GetLineItem<*>, BaseViewHo
         if (item.icon == null) {
             icon.setImageDrawable(null)
             ivParams.leftMargin = 0
-            tvParams.leftMargin = item.paddings[0].toInt()
+            tvParams.leftMargin = item.paddings[0]
         } else {
-            icon.setImageResource(item.icon!!)
-            ivParams.leftMargin = item.paddings[0].toInt()
-            tvParams.leftMargin = item.paddings[0].toInt() / 2
+            icon.setImageDrawable(item.icon!!)
+            ivParams.leftMargin = item.paddings[0]
+            tvParams.leftMargin = item.paddings[0] / 2
         }
         icon.requestLayout()
         start.requestLayout()
@@ -102,11 +102,11 @@ open class GetLineAdapter : BaseMultiItemQuickAdapter<GetLineItem<*>, BaseViewHo
         if (item.next == null) {
             next.setImageDrawable(null)
             ivParams.rightMargin = 0
-            tvParams.rightMargin = item.paddings[2].toInt()
+            tvParams.rightMargin = item.paddings[2]
         } else {
-            next.setImageResource(item.next!!)
-            ivParams.rightMargin = item.paddings[2].toInt()
-            tvParams.rightMargin = item.paddings[2].toInt() / 2
+            next.setImageDrawable(item.next!!)
+            ivParams.rightMargin = item.paddings[2]
+            tvParams.rightMargin = item.paddings[2] / 2
         }
         next.requestLayout()
         end.requestLayout()
@@ -123,23 +123,23 @@ open class GetLineAdapter : BaseMultiItemQuickAdapter<GetLineItem<*>, BaseViewHo
         // 设置外间隔
         var params: MarginLayoutParams = holder.itemView.layoutParams as MarginLayoutParams
         // 设置行高
-        params.height = item.height.toInt()
+        params.height = item.height
         // 设置外间隔
-        params.marginStart = item.margins[0].toInt()
-        params.marginEnd = item.margins[2].toInt()
-        params.topMargin = item.margins[1].toInt()
-        params.bottomMargin = item.margins[3].toInt()
+        params.marginStart = item.margins[0]
+        params.marginEnd = item.margins[2]
+        params.topMargin = item.margins[1]
+        params.bottomMargin = item.margins[3]
         // 设置分割线
         val divider = holder.getView<View>(R.id.get_item_divider)
         // 设置分割线颜色
         divider.setBackgroundColor(item.dividerColor)
         params = divider.layoutParams as MarginLayoutParams
         // 设置分割高
-        params.height = item.dividerHeight.toInt()
+        params.height = item.dividerHeight
         // 设置外间隔
-        params.marginStart = item.dividerMargins[0].toInt()
-        params.marginEnd = item.dividerMargins[2].toInt()
-        params.topMargin = item.dividerMargins[1].toInt()
-        params.bottomMargin = item.dividerMargins[3].toInt()
+        params.marginStart = item.dividerMargins[0]
+        params.marginEnd = item.dividerMargins[2]
+        params.topMargin = item.dividerMargins[1]
+        params.bottomMargin = item.dividerMargins[3]
     }
 }

@@ -12,18 +12,18 @@ import android.view.ViewGroup
 import androidx.annotation.*
 import androidx.core.content.ContextCompat
 import cn.cqray.android.Get
+import com.blankj.utilcode.util.ActivityUtils
+import com.blankj.utilcode.util.Utils
 
 /**
+ * 上下文工具类
  * @author Cqray
- * @date 2022/5/19
  */
 object ContextUtils {
 
+    /** 上下文 **/
     @JvmStatic
-    fun get(): Context {
-        val act = Get.topActivity
-        return act ?: Get.context
-    }
+    fun get(): Context = ActivityUtils.getTopActivity() ?: Utils.getApp().applicationContext
 
     @JvmStatic
     val resources: Resources
@@ -33,16 +33,12 @@ object ContextUtils {
 
     val layoutInflater get() = LayoutInflater.from(get())
 
-    fun getDrawable(@DrawableRes resId: Int): Drawable? {
-        //Resources.getSystem().getValueForDensity()
-        return ContextCompat.getDrawable(get(), resId)
-    }
-
-
-//    fun getDrawable(@ColorInt @DrawableRes any: Int, forceColor: Boolean = false): Drawable? {
-//
-//
-//    }
+    /**
+     * 获取[Drawable]实例
+     * @param id 资源ID
+     */
+    @JvmStatic
+    fun getDrawable(@DrawableRes id: Int) = ContextCompat.getDrawable(get(), id)
 
     @JvmStatic
     fun getColor(@ColorRes id: Int): Int = ContextCompat.getColor(get(), id)

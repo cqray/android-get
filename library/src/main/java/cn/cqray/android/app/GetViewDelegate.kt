@@ -4,7 +4,6 @@ import android.app.Activity
 import android.content.Context
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
-import android.util.Log
 
 import android.view.View
 import android.view.ViewGroup
@@ -301,12 +300,6 @@ class GetViewDelegate internal constructor(provider: GetViewProvider) : GetDeleg
     fun setBackgroundColor(@ColorInt color: Int) = setBackground(ColorDrawable(color))
 
     /**
-     * 设置背景资源ID或颜色
-     * @param any 资源ID或颜色
-     */
-    fun setBackground(any: Int) = setBackground(GetCompat.getDrawable(any))
-
-    /**
      * 设置背景
      * @param drawable 图像
      */
@@ -361,7 +354,6 @@ class GetViewDelegate internal constructor(provider: GetViewProvider) : GetDeleg
         // 初始化标题栏监听事件
         if (provider is GetNavProvider) {
             toolbar.setBackListener {
-                Log.e("数据", "我点解了")
                 val delegate = (provider as GetNavProvider).navDelegate
                 delegate.back()
             }

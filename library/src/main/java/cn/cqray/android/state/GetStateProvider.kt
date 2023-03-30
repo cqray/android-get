@@ -15,7 +15,7 @@ interface GetStateProvider {
     /**
      * 设置忙碌状态
      */
-    fun setBusy() = stateDelegate.setBusy(null)
+    fun setBusy() = stateDelegate.setBusy()
 
     /**
      * 设置忙碌状态
@@ -26,7 +26,7 @@ interface GetStateProvider {
     /**
      * 设置空状态
      */
-    fun setEmpty() = stateDelegate.setEmpty(null)
+    fun setEmpty() = stateDelegate.setEmpty()
 
     /**
      * 设置空状态
@@ -37,7 +37,7 @@ interface GetStateProvider {
     /**
      * 设置异常状态
      */
-    fun setError() = stateDelegate.setError(null)
+    fun setError() = stateDelegate.setError()
 
     /**
      * 设置异常状态
@@ -51,9 +51,15 @@ interface GetStateProvider {
     fun setIdle() = stateDelegate.setIdle()
 
     /**
-     * 设置忙碌状态
+     * 设置界面状态
+     * @param state 视图状态
+     */
+    fun setState(state: GetViewState) = stateDelegate.setState(state)
+
+    /**
+     * 设置界面状态
      * @param state 视图状态
      * @param text 文本信息
      */
-    fun setState(state: GetViewState, text: String?) = stateDelegate.setState(state, text)
+    fun setState(state: GetViewState, text: String) = stateDelegate.setState(state, text)
 }

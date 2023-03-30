@@ -20,6 +20,8 @@ import androidx.recyclerview.widget.SimpleItemAnimator
 import androidx.viewbinding.ViewBinding
 import androidx.viewpager2.widget.ViewPager2
 import cn.cqray.android.Get
+import com.blankj.utilcode.util.ActivityUtils
+import com.blankj.utilcode.util.Utils
 import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.shape.MaterialShapeUtils
 import java.util.concurrent.atomic.AtomicReference
@@ -28,6 +30,9 @@ import java.util.concurrent.atomic.AtomicReference
     "Unchecked_cast"
 )
 object ViewUtils {
+
+    private val context: Context get() = ActivityUtils.getTopActivity() ?: Utils.getApp().applicationContext
+
 
     @JvmStatic
     fun <VB : ViewBinding> binding(bindingClass: Class<VB>): VB {

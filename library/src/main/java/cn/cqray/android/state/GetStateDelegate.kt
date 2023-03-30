@@ -4,12 +4,9 @@ import android.app.Activity
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import androidx.fragment.app.Fragment
-
 import cn.cqray.android.R
 import cn.cqray.android.app.GetViewProvider
-
 import cn.cqray.android.util.ContextUtils
-
 import com.scwang.smart.refresh.layout.SmartRefreshLayout
 import com.scwang.smart.refresh.layout.api.RefreshFooter
 import com.scwang.smart.refresh.layout.api.RefreshHeader
@@ -161,19 +158,22 @@ class GetStateDelegate {
      * 设置为忙碌状态
      * @param text 文本信息
      */
-    fun setBusy(text: String?) = setState(GetViewState.BUSY, text)
+    @JvmOverloads
+    fun setBusy(text: String? = null) = setState(GetViewState.BUSY, text)
 
     /**
      * 设置为空状态
      * @param text 文本信息
      */
-    fun setEmpty(text: String?) = setState(GetViewState.EMPTY, text)
+    @JvmOverloads
+    fun setEmpty(text: String? = null) = setState(GetViewState.EMPTY, text)
 
     /**
      * 设置为异常状态
      * @param text 文本信息
      */
-    fun setError(text: String?) = setState(GetViewState.ERROR, text)
+    @JvmOverloads
+    fun setError(text: String? = null) = setState(GetViewState.ERROR, text)
 
     /**
      * 设置为空闲状态
@@ -185,25 +185,24 @@ class GetStateDelegate {
      * @param state 指定状态
      * @param text 文本信息
      */
-    fun setState(state: GetViewState?, text: String?) {
-        // 新状态
-        val newState = state ?: GetViewState.IDLE
+    @JvmOverloads
+    fun setState(state: GetViewState, text: String? = null) {
         // 保存刷新控件空闲状态时的相关属性
         saveRefreshStates(stateLayout.currentState)
         // 设置状态
-        stateLayout.setState(newState, text)
+        stateLayout.setState(state, text)
         // 恢复刷新控件状态
-        restoreRefreshStates(newState)
+        restoreRefreshStates(state)
     }
 
     /**
      * 保存刷新控件空闲状态时的相关属性
      */
-    private fun saveRefreshStates(state: GetViewState?) {
+    private fun saveRefreshStates(state: GetViewState) {
         if (attachedLayout !is SmartRefreshLayout) return
         runCatching {
             val layout = attachedLayout as SmartRefreshLayout
-            if (state == null || state == GetViewState.IDLE) {
+            if (state == GetViewState.IDLE) {
                 (0..2).forEach { i -> refreshStates[i] = refreshFields[i]!!.getBoolean(layout) }
             }
         }
@@ -212,11 +211,11 @@ class GetStateDelegate {
     /**
      * 恢复刷新控件启用状态
      */
-    private fun restoreRefreshStates(state: GetViewState?) {
+    private fun restoreRefreshStates(state: GetViewState) {
         if (attachedLayout !is SmartRefreshLayout) return
         runCatching {
             val layout = attachedLayout as SmartRefreshLayout
-            if (state == null || state == GetViewState.IDLE) {
+            if (state == GetViewState.IDLE) {
                 (0..2).forEach { int ->
                     refreshFields[int]?.setBoolean(layout, refreshStates[int]!!)
                 }

@@ -1,6 +1,5 @@
 package cn.cqray.android.ui.page
 
-import android.util.Log
 import androidx.lifecycle.LifecycleOwner
 import cn.cqray.android.Get
 import cn.cqray.android.`object`.ResponseData

@@ -10,7 +10,7 @@ import com.blankj.utilcode.util.Utils
 
 object Colors {
 
-    private val context: Context get() = ActivityUtils.getTopActivity() ?: Utils.getApp().applicationContext
+    private val context: Context get() = ContextUtils.get()
 
     fun get(@ColorRes id: Int) = ContextCompat.getColor(context, id)
 

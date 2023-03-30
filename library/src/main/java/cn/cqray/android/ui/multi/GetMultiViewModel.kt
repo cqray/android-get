@@ -1,6 +1,6 @@
 package cn.cqray.android.ui.multi
 
-import android.util.TypedValue
+import android.util.TypedValue.COMPLEX_UNIT_DIP
 import android.view.View
 import android.widget.FrameLayout
 import androidx.fragment.app.Fragment
@@ -146,16 +146,11 @@ class GetMultiViewModel(lifecycleOwner: LifecycleOwner) : GetViewModel(lifecycle
     /**
      * 设置TabLayout阴影高度
      * @param elevation 阴影高度
-     */
-    fun setTabElevation(elevation: Float) = setTabElevation(elevation, TypedValue.COMPLEX_UNIT_DIP)
-
-    /**
-     * 设置TabLayout阴影高度
-     * @param elevation 阴影高度
      * @param unit 单位
      */
-    fun setTabElevation(elevation: Float, unit: Int) {
-        val size = Sizes.applyDimension(elevation, unit)
+    @JvmOverloads
+    fun setTabElevation(elevation: Number, unit: Int = COMPLEX_UNIT_DIP) {
+        val size = Sizes.any2px(elevation, unit).toFloat()
         binding.multiTopNav.elevation = size
         binding.multiBottomNav.elevation = size
     }
@@ -163,16 +158,11 @@ class GetMultiViewModel(lifecycleOwner: LifecycleOwner) : GetViewModel(lifecycle
     /**
      * 设置TabLayout高度
      * @param height 高度
-     */
-    fun setTabHeight(height: Float) = setTabHeight(height, TypedValue.COMPLEX_UNIT_DIP)
-
-    /**
-     * 设置TabLayout高度
-     * @param height 高度
      * @param unit 单位
      */
-    fun setTabHeight(height: Float, unit: Int) {
-        val size = Sizes.applyDimension(height, unit)
+    @JvmOverloads
+    fun setTabHeight(height: Number, unit: Int = COMPLEX_UNIT_DIP) {
+        val size = Sizes.any2px(height, unit).toFloat()
         multiTab.layoutParams.height = size.toInt()
     }
 
@@ -242,7 +232,8 @@ class GetMultiViewModel(lifecycleOwner: LifecycleOwner) : GetViewModel(lifecycle
      * @param item 添加项
      * @param index 位置
      */
-    fun addFragment(item: GetMultiItem, index: Int?) {
+    @JvmOverloads
+    fun addFragment(item: GetMultiItem, index: Int? = null) {
         // 生成新的Fragment
         val newIndex = (index ?: fragments.size).let {
             when {
