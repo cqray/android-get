@@ -4,7 +4,6 @@ import android.content.Context
 import android.util.DisplayMetrics
 import android.util.TypedValue
 import androidx.annotation.DimenRes
-import cn.cqray.android.Get
 import cn.cqray.android.R
 import com.blankj.utilcode.util.ActivityUtils
 import com.blankj.utilcode.util.SizeUtils
@@ -39,11 +38,11 @@ object Sizes {
     fun applyDimension(value: Float, unit: Int) = SizeUtils.applyDimension(value, unit)
 
     @JvmStatic
-    fun any2sp(value: Float, unit: Int) = px2sp(TypedValue.applyDimension(unit, value, dm))
+    fun any2sp(value: Number, unit: Int) = px2sp(TypedValue.applyDimension(unit, value.toFloat(), dm))
 
     @JvmStatic
-    fun any2px(value: Float, unit: Int) = run {
-        val dimen = TypedValue.applyDimension(unit, value, dm)
+    fun any2px(value: Number, unit: Int) = run {
+        val dimen = TypedValue.applyDimension(unit, value.toFloat(), dm)
         if (dimen > 0) (dimen + 0.5).toInt()
         else if (dimen < 0) (dimen - 0.5).toInt()
         else 0
@@ -54,10 +53,10 @@ object Sizes {
     //===================================================
 
     @JvmStatic
-    fun px2dp(pxValue: Float) = pxValue / dpScale
+    fun px2dp(pxValue: Number) = pxValue.toFloat() / dpScale
 
     @JvmStatic
-    fun px2sp(pxValue: Float) = pxValue / spScale
+    fun px2sp(pxValue: Number) = pxValue.toFloat() / spScale
 
     @JvmStatic
     fun px(@DimenRes id: Int): Int = context.resources.getDimensionPixelSize(id)
@@ -148,7 +147,7 @@ object Sizes {
     //===================================================
 
     @JvmStatic
-    fun dp2px(dpValue: Float) = SizeUtils.dp2px(dpValue)
+    fun dp2px(dpValue: Number) = SizeUtils.dp2px(dpValue.toFloat())
 
     @JvmStatic
     fun dp(@DimenRes id: Int): Float = context.resources.getDimension(id) / dpScale
@@ -179,7 +178,7 @@ object Sizes {
     //===================================================
 
     @JvmStatic
-    fun sp2px(spValue: Float) = SizeUtils.sp2px(spValue)
+    fun sp2px(spValue: Number) = SizeUtils.sp2px(spValue.toFloat())
 
     @JvmStatic
     fun sp(@DimenRes id: Int): Float = context.resources.getDimension(id) / spScale

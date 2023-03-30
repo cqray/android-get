@@ -4,10 +4,11 @@ import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.view.View
 import androidx.activity.ComponentActivity
+import androidx.annotation.ColorInt
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import cn.cqray.android.R
-import cn.cqray.android.util.GetCompat
+import cn.cqray.android.util.Colors
 import cn.cqray.android.util.Sizes
 import cn.cqray.android.util.ViewUtils
 import com.github.ybq.android.spinkit.SpinKitView
@@ -27,17 +28,21 @@ class GetBusyAdapter : GetStateAdapter<GetBusyAdapter>(R.layout.get_layout_state
     /** 忙碌控件  */
     private var spinKitView: SpinKitView? = null
 
+    /** 控件大小  */
+    private var spinSize = Sizes.dp2px(36)
+
     /** 控件颜色  */
-    private var spinColor: Int = R.color.foreground
+    private var spinColor = Colors.foreground()
 
     /** 忙碌样式  */
     private var spinStyle = Style.CIRCLE
 
     /** 忙碌框颜色 **/
-    private var frameColor: Int = Color.BLACK
+    private var frameColor = Color.BLACK
 
     init {
         setBackground(null)
+        setTextColor(Colors.foreground())
     }
 
     override fun onViewCreated(view: View) {
@@ -58,7 +63,7 @@ class GetBusyAdapter : GetStateAdapter<GetBusyAdapter>(R.layout.get_layout_state
     override fun onViewChanged(view: View) {
         super.onViewChanged(view)
         val cp = Sizes.pxContent()
-        val lp  = Sizes.pxLarge()
+        val lp = Sizes.pxLarge()
         val frameView = spinKitView?.parent as View
         if (textView?.text.isNullOrEmpty()) {
             // 设置相应的间隔
@@ -70,19 +75,19 @@ class GetBusyAdapter : GetStateAdapter<GetBusyAdapter>(R.layout.get_layout_state
             frameView.setPadding(lp, cp, lp, cp)
         }
         // 设置SpinKitView样式
-        spinKitView?.setColor(GetCompat.getColor(spinColor))
+        spinKitView?.setColor(spinColor)
         spinKitView?.setIndeterminateDrawable(SpriteFactory.create(spinStyle))
         frameView.background = GradientDrawable().also {
-            it.setColor(GetCompat.getColor(frameColor))
+            it.setColor(frameColor)
             it.cornerRadius = Sizes.pxfSmall()
         }
     }
 
     /**
      * 设置忙碌控件颜色
-     * @param any 颜色资源ID或色值
+     * @param color 色值
      */
-    fun setSpinColor(any: Int) = also { spinColor = any }
+    fun setSpinColor(@ColorInt color: Int) = also { spinColor = color }
 
     /**
      * 设置忙碌组件样式
@@ -91,8 +96,21 @@ class GetBusyAdapter : GetStateAdapter<GetBusyAdapter>(R.layout.get_layout_state
     fun setSpinStyle(style: Style) = also { spinStyle = style }
 
     /**
-     * 设置加载框颜色
-     * @param any 颜色资源ID或色值
+     * 设置忙碌组件大小，单位DP
+     * @param size 大小
      */
-    fun setFrameColor(any: Int) = also { spinColor = any }
+    fun setSpinSize(size: Number) = also { spinSize = Sizes.dp2px(size) }
+
+    /**
+     * 设置忙碌组件大小
+     * @param size 大小
+     * @param unit 尺寸
+     */
+    fun setSpinSize(size: Number, unit: Int) = also { spinSize = Sizes.any2px(size, unit) }
+
+    /**
+     * 设置加载框颜色
+     * @param color 色值
+     */
+    fun setFrameColor(@ColorInt color: Int) = also { frameColor = color }
 }

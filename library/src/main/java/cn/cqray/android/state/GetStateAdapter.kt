@@ -1,18 +1,15 @@
 package cn.cqray.android.state
 
-import android.annotation.SuppressLint
 import android.graphics.drawable.Drawable
 import android.util.TypedValue
 
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import androidx.annotation.ColorInt
-import androidx.annotation.ColorRes
-import androidx.annotation.DimenRes
-import androidx.annotation.LayoutRes
+import androidx.annotation.*
+import androidx.core.content.ContextCompat
 import cn.cqray.android.R
-import cn.cqray.android.util.GetCompat
+import cn.cqray.android.util.Colors
 import cn.cqray.android.util.Sizes
 import cn.cqray.android.util.ViewUtils
 
@@ -33,10 +30,10 @@ open class GetStateAdapter<T : GetStateAdapter<T>>(@LayoutRes private val layout
     private val texts = arrayOfNulls<String>(2)
 
     /** 文本颜色 **/
-    private var textColor: Int = R.color.hint
+    private var textColor = Colors.text()
 
-    /** 文本颜色 **/
-    private var textSize: Any = R.dimen.body
+    /** 文本大小 **/
+    private var textSize = Sizes.pxfBody()
 
     /** 文本样式 **/
     private var textStyle: Int = 0
@@ -81,16 +78,13 @@ open class GetStateAdapter<T : GetStateAdapter<T>>(@LayoutRes private val layout
             // 设置文本
             it.text = texts[1]?.ifEmpty { texts[0] } ?: texts[0]
             // 设置文本颜色
-            it.setTextColor(GetCompat.getColor(textColor))
+            it.setTextColor(textColor)
             // 设置文本大小
-            when (textSize) {
-                is Int -> it.setTextSize(TypedValue.COMPLEX_UNIT_PX, Sizes.px(textSize as Int).toFloat())
-                is Float -> it.setTextSize(TypedValue.COMPLEX_UNIT_PX, textSize as Float)
-            }
+            it.setTextSize(TypedValue.COMPLEX_UNIT_PX, textSize)
         }
         // 背景变化
         when (background) {
-            is Int -> view.background = GetCompat.getDrawable(background as Int)
+            is Int -> view.background = ContextCompat.getDrawable(view.context, background as Int)
             is Drawable -> view.background = background as Drawable
             else -> view.background = null
         }
@@ -135,29 +129,22 @@ open class GetStateAdapter<T : GetStateAdapter<T>>(@LayoutRes private val layout
 
     /**
      * 设置文本颜色
-     * @param any 颜色资源或色值
+     * @param color 色值
      */
-    @SuppressLint("ResourceAsColor")
-    fun setTextColor(@ColorRes @ColorInt any: Int) = also { textColor = any } as T
-
-    /**
-     * 设置文本大小
-     * @param id 尺寸ID
-     */
-    fun setTextSize(@DimenRes id: Int) = also { textSize = id } as T
+    fun setTextColor(@ColorInt color: Int) = also { textColor = color } as T
 
     /**
      * 设置文本大小
      * @param size 大小
      */
-    fun setTextSize(size: Float) = setTextSize(size, TypedValue.COMPLEX_UNIT_DIP)
+    fun setTextSize(size: Number) = setTextSize(size, TypedValue.COMPLEX_UNIT_DIP)
 
     /**
      * 设置文本大小
      * @param size 大小
      * @param unit 尺寸
      */
-    fun setTextSize(size: Float, unit: Int) = also { textSize = Sizes.applyDimension(size, unit) } as T
+    fun setTextSize(size: Number, unit: Int) = also { textSize = Sizes.any2sp(size, unit) } as T
 
     /**
      * 设置文本样式
@@ -172,9 +159,15 @@ open class GetStateAdapter<T : GetStateAdapter<T>>(@LayoutRes private val layout
     fun setBackground(background: Drawable?) = also { this.background = background } as T
 
     /**
-     * 设置背景
-     * @param any 资源ID或色值
+     * 设置背景颜色
+     * @param color [ColorInt]
      */
-    fun setBackground(any: Int) = also { this.background = any } as T
+    fun setBackgroundColor(@ColorInt color: Int) = also { this.background = color } as T
 
+    /**
+     * 设置背景资源ID
+     * @param id 资源ID
+     */
+    fun setBackgroundResource(@DrawableRes id: Int) = also { this.background = id } as T
+    
 }
