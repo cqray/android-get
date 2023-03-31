@@ -5,10 +5,10 @@ import android.app.Application
 import android.content.Context
 import android.os.Bundle
 import androidx.fragment.app.Fragment
-
 import cn.cqray.android.app.GetInit
 import cn.cqray.android.app.GetIntent
 import cn.cqray.android.app.GetNavProvider
+import cn.cqray.android.tip.Tip
 import com.blankj.utilcode.util.ActivityUtils
 
 /**
@@ -16,7 +16,8 @@ import com.blankj.utilcode.util.ActivityUtils
  * @author Cqray
  */
 @Suppress(
-    "MemberVisibilityCanBePrivate"
+    "MemberVisibilityCanBePrivate",
+    "Unused"
 )
 object Get {
 
@@ -50,6 +51,8 @@ object Get {
         // 初始化配置
         this.init = getInit ?: this.init
         _Get.init(application)
+        // 初始化提示
+        Tip.init(application)
     }
 
     @JvmStatic

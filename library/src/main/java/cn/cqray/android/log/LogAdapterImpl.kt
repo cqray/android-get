@@ -3,12 +3,11 @@ package cn.cqray.android.log
 import cn.cqray.android.Get
 import com.blankj.utilcode.util.LogUtils
 
-
 /**
  * [GetLog]日志打印适配器默认实现
  * @author Cqray
  */
-internal class GetLogAdapterImpl : GetLogAdapter {
+internal class LogAdapterImpl : LogAdapter {
 
     override fun print(@GetLog.Level level: Int, tag: String?, vararg contents: Any?) {
         initLogConfig()
@@ -74,8 +73,8 @@ internal class GetLogAdapterImpl : GetLogAdapter {
             .setFileExtension(init.fileExtension)
             // 设置日志可保留天数，默认为 -1 表示无限时长
             .setSaveDays(init.fileSaveDays)
-            // 日志文件头部
-            .addFileExtraHead(init.fileExtraHead)
+//            // 日志文件头部
+//            .addFileExtraHead(init.fileExtraHead)
 //            // 新增 ArrayList 格式化器，默认已支持 Array, Throwable, Bundle, Intent 的格式化输出
 //            .addFormatter(object : LogUtils.IFormatter<ArrayList>() {
 //                override fun format(arrayList: ArrayList): String {

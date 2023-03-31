@@ -2,21 +2,17 @@ package cn.cqray.demo.android;
 
 import android.graphics.Color;
 import android.os.Bundle;
-import android.os.Handler;
 import android.util.Log;
-import android.widget.ImageView;
-import android.widget.TextView;
 
-import androidx.annotation.Nullable;
-
-import com.blankj.utilcode.util.KeyboardUtils;
-
+import cn.cqray.android.Get;
 import cn.cqray.android.app.GetFragment;
-import cn.cqray.android.app.GetIntent;
 import cn.cqray.android.log.GetLog;
 import cn.cqray.android.util.Sizes;
+import cn.cqray.android.widget.ToolbarInit;
 
 public class MainFragment extends GetFragment {
+
+    private int s =0;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -24,15 +20,20 @@ public class MainFragment extends GetFragment {
 
         setGetContentView(R.layout.activity_main);
 
-        findViewById(R.id.tv).setOnClickListener(v  -> {
+        findViewById(R.id.tv).setOnClickListener(v -> {
 
-            this.to(new GetIntent(MainFragment2.class));
-            this.to(new GetIntent(MainFragment2.class).setLaunchMode(GetIntent.SINGLE_TASK));
+//            ToolbarInit init = Get.getInit().getToolbarInit();
+//            assert init != null;
+//            init.setBackgroundColor(Color.GRAY);
+//            init.saveToLocal();
+
+//            this.to(new GetIntent(MainFragment2.class));
+//            this.to(new GetIntent(MainFragment2.class).setLaunchMode(GetIntent.SINGLE_TASK));
 //            new Handler().postDelayed(() -> {
 //                this.to(new GetIntent(MainFragment2.class).setLaunchMode(GetIntent.SINGLE_TASK));
 //
 //            }, 0);
-
+            showTip("666666666");
         });
 
 //        showSoftInput();
@@ -48,6 +49,7 @@ public class MainFragment extends GetFragment {
         Log.e("数据", "大小：" + Sizes.dpSmall());
 
 
+
     }
 
     @Override
@@ -55,7 +57,6 @@ public class MainFragment extends GetFragment {
         super.onStop();
         GetLog.d("onStop");
     }
-
 
 
 //    @Override

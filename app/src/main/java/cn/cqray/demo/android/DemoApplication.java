@@ -1,24 +1,18 @@
 package cn.cqray.demo.android;
 
 import android.app.Application;
-import android.content.Context;
 import android.util.Log;
 
-import androidx.annotation.NonNull;
 import androidx.multidex.MultiDexApplication;
 
 import com.blankj.utilcode.util.Utils;
 import com.scwang.smart.refresh.footer.ClassicsFooter;
 import com.scwang.smart.refresh.header.ClassicsHeader;
 import com.scwang.smart.refresh.layout.SmartRefreshLayout;
-import com.scwang.smart.refresh.layout.api.RefreshHeader;
-import com.scwang.smart.refresh.layout.api.RefreshLayout;
-import com.scwang.smart.refresh.layout.listener.DefaultRefreshFooterCreator;
-import com.scwang.smart.refresh.layout.listener.DefaultRefreshHeaderCreator;
 
 import cn.cqray.android.Get;
 import cn.cqray.android.app.GetInit;
-import cn.cqray.android.widget.GetToolbarInit;
+import cn.cqray.android.widget.ToolbarInit;
 
 public class DemoApplication extends MultiDexApplication {
     
@@ -45,7 +39,7 @@ public class DemoApplication extends MultiDexApplication {
 
         Log.e("数据", "APPlication是否相同：" + (app == this));
 
-        GetToolbarInit toolbarInit = new GetToolbarInit();
+        ToolbarInit toolbarInit = new ToolbarInit();
         toolbarInit.setElevation(100F);
         toolbarInit.setBackIcon(R.drawable.def_back_common_dark);
         toolbarInit.setBackText("返回");

@@ -7,7 +7,7 @@ import cn.cqray.android.R
  * @author Cqray
  */
 @Suppress("unused")
-class GetNoAnimator : GetFragmentAnimator(
+class NoAnimator : FragmentAnimator(
     R.anim._starter_no_anim,
     R.anim._starter_no_anim,
     R.anim._starter_no_anim,

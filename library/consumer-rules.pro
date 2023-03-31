@@ -85,3 +85,5 @@
 ##    protected boolean mEnableOverScrollDrag;
 ##    protected boolean mManualLoadMore;
 #}
+
+-keep class * extends cn.cqray.android.init.BaseInit

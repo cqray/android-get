@@ -2,24 +2,28 @@ package cn.cqray.android.handle
 
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
-import cn.cqray.android.log.GetLog
 import kotlin.collections.HashMap
 
-class GetRxDelegate(val provider: GetRxProvider? = null) {
+/**
+ * RxJava委托实现
+ * @author Cqray
+ */
+class RxDelegate @JvmOverloads constructor(
+    /** RxJava Disposable相关方法提供器 **/
+    owner: LifecycleOwner? = null
+) {
 
     /** Disposable集合 **/
     private val disposableMap = HashMap<Any?, MutableList<Any>>()
 
     init {
-        if (provider is LifecycleOwner) {
-            // 自动销毁
-            provider.lifecycle.addObserver(object : DefaultLifecycleObserver {
-                override fun onDestroy(owner: LifecycleOwner) {
-                    super.onDestroy(owner)
-                    clearDisposables()
-                }
-            })
-        }
+        // 自定管理生命周期
+        owner?.lifecycle?.addObserver(object : DefaultLifecycleObserver {
+            override fun onDestroy(owner: LifecycleOwner) {
+                super.onDestroy(owner)
+                clearDisposables()
+            }
+        })
     }
 
     /**

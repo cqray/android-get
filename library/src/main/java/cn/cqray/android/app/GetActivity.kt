@@ -9,10 +9,10 @@ import androidx.annotation.LayoutRes
 import androidx.annotation.NonNull
 import androidx.appcompat.app.AppCompatActivity
 import cn.cqray.android.Get
-import cn.cqray.android.handle.GetRxDelegate
-import cn.cqray.android.handle.GetRxProvider
-import cn.cqray.android.tip.GetTipProvider
-import cn.cqray.android.widget.GetToolbar
+import cn.cqray.android.handle.RxDelegate
+import cn.cqray.android.handle.RxProvider
+import cn.cqray.android.tip.TipProvider
+import cn.cqray.android.widget.Toolbar
 import com.scwang.smart.refresh.layout.SmartRefreshLayout
 
 /**
@@ -23,8 +23,8 @@ import com.scwang.smart.refresh.layout.SmartRefreshLayout
 open class GetActivity : AppCompatActivity(),
     GetViewProvider,
     GetNavProvider,
-    GetTipProvider,
-    GetRxProvider,
+    TipProvider,
+    RxProvider,
     GetKeyboardProvider {
 
     /** 标题栏 **/
@@ -32,7 +32,7 @@ open class GetActivity : AppCompatActivity(),
     @NonNull
     @JvmField
     @Suppress("KotlinNullnessAnnotation")
-    val toolbar: GetToolbar? = null
+    val toolbar: Toolbar? = null
 
     /** 刷新容器 **/
     @Keep
@@ -41,7 +41,7 @@ open class GetActivity : AppCompatActivity(),
     @Suppress("KotlinNullnessAnnotation")
     val refreshLayout: SmartRefreshLayout? = null
 
-    override val rxDelegate by lazy { GetRxDelegate(this) }
+    override val rxDelegate by lazy { RxDelegate(this) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

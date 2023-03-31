@@ -1,21 +1,10 @@
 package cn.cqray.android.log
 
-import com.blankj.utilcode.util.LogUtils
-
 /**
  * [GetLog]日志打印适配器
  * @author Cqray
  */
-interface GetLogAdapter {
-
-//    /**
-//     * 打印日志
-//     * @param level 日志等级[GetLog.Level]
-//     * @param tag 日志标识
-//     * @param message 日志内容
-//     * @param exc 异常信息
-//     */
-//    fun print(@GetLog.Level level: Int, tag: String, message: String, exc: Throwable?)
+interface LogAdapter {
 
     /**
      * 打印文件日志

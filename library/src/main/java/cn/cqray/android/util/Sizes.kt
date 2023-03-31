@@ -5,9 +5,7 @@ import android.util.DisplayMetrics
 import android.util.TypedValue
 import androidx.annotation.DimenRes
 import cn.cqray.android.R
-import com.blankj.utilcode.util.ActivityUtils
 import com.blankj.utilcode.util.SizeUtils
-import com.blankj.utilcode.util.Utils
 
 /**
  * 尺寸工具类
@@ -35,10 +33,13 @@ object Sizes {
     val mmScale: Float get() = context.resources.displayMetrics.xdpi * (1.0f / 25.4f)
 
     @JvmStatic
-    fun applyDimension(value: Float, unit: Int) = SizeUtils.applyDimension(value, unit)
+    fun applyDimension(value: Number, unit: Int) = SizeUtils.applyDimension(value.toFloat(), unit)
 
     @JvmStatic
     fun any2sp(value: Number, unit: Int) = px2sp(TypedValue.applyDimension(unit, value.toFloat(), dm))
+
+    @JvmStatic
+    fun any2dp(value: Number, unit: Int) = px2dp(TypedValue.applyDimension(unit, value.toFloat(), dm))
 
     @JvmStatic
     fun any2px(value: Number, unit: Int) = run {

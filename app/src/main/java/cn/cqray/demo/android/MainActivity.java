@@ -22,8 +22,7 @@ public class MainActivity extends GetNavActivity {
         loadRootFragment(MainFragment.class);
 
         GetLineItem.button("6666")
-                .height(10F)
-                .background(Color.BLACK);
+                .height(10F);
 //
 //        new GetIntent(MainFragment2.class)
 //                .setLaunchMode(10)

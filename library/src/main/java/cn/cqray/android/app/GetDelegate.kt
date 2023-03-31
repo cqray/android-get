@@ -6,8 +6,7 @@ import cn.cqray.android.Get
 import cn.cqray.android.log.GetLog
 import cn.cqray.android.ui.multi.GetMultiDelegate
 import cn.cqray.android.ui.multi.GetMultiProvider
-import cn.cqray.android.tip.GetTipDelegate
-import cn.cqray.android.tip.GetTipProvider
+import cn.cqray.android.tip.TipProvider
 import java.util.HashMap
 import java.util.concurrent.atomic.AtomicReference
 
@@ -72,8 +71,8 @@ open class GetDelegate<P : GetProvider>(val provider: P) {
                 GetMultiProvider::class.java -> GetMultiDelegate(provider as GetMultiProvider)
                 // 导航界面提供器
                 GetNavProvider::class.java -> GetNavDelegate(provider as GetNavProvider)
-                // 提示提供器
-                GetTipProvider::class.java -> GetTipDelegate(provider as GetTipProvider)
+//                // 提示提供器
+//                TipProvider::class.java -> GetTipDelegate(provider as TipProvider)
                 // 界面提供器
                 GetViewProvider::class.java -> GetViewDelegate(provider as GetViewProvider)
                 else -> throw RuntimeException()

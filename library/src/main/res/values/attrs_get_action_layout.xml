@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- Action布局控件 -->
-    <declare-styleable name="GetActionLayout">
+    <declare-styleable name="ActionLayout">
         <attr name="defaultRipple" format="boolean" />
         <attr name="defaultVisible" format="boolean" />
         <attr name="defaultSpace" format="dimension" />

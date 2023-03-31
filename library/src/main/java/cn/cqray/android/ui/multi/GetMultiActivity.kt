@@ -1,6 +1,7 @@
 package cn.cqray.android.ui.multi
 
 import android.os.Bundle
+import android.util.TypedValue.COMPLEX_UNIT_DIP
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.widget.ViewPager2
 import cn.cqray.android.app.GetActivity
@@ -47,13 +48,11 @@ open class GetMultiActivity : GetActivity(), GetMultiProvider {
 
     fun setTabAtTop(tabAtTop: Boolean) = viewModel.setTabAtTop(tabAtTop)
 
-    fun setTabElevation(elevation: Float) = viewModel.setTabElevation(elevation)
+    @JvmOverloads
+    fun setTabElevation(elevation: Number, unit: Int = COMPLEX_UNIT_DIP) = viewModel.setTabElevation(elevation, unit)
 
-    fun setTabElevation(elevation: Float, unit: Int) = viewModel.setTabElevation(elevation, unit)
-
-    fun setTabHeight(height: Float) = viewModel.setTabHeight(height)
-
-    fun setTabHeight(height: Float, unit: Int) = viewModel.setTabHeight(height, unit)
+    @JvmOverloads
+    fun setTabHeight(height: Number, unit: Int = COMPLEX_UNIT_DIP) = viewModel.setTabHeight(height, unit)
 
     fun setFragmentDragEnable(enable: Boolean) = viewModel.setFragmentDragEnable(enable)
 

@@ -6,7 +6,7 @@ import android.os.Bundle
 import android.os.Parcelable
 import androidx.annotation.IntDef
 import androidx.fragment.app.Fragment
-import cn.cqray.android.anim.GetFragmentAnimator
+import cn.cqray.android.anim.FragmentAnimator
 import java.io.Serializable
 import java.util.*
 
@@ -28,7 +28,7 @@ class GetIntent(
 
     /** Fragment动画  */
     @JvmField
-    internal var fragmentAnimator: GetFragmentAnimator? = null
+    internal var fragmentAnimator: FragmentAnimator? = null
 
     /** 启动模式 **/
     @LaunchMode
@@ -37,7 +37,7 @@ class GetIntent(
 
     fun setLaunchMode(@LaunchMode mode: Int): GetIntent = also { this.launchMode = mode }
 
-    fun setFragmentAnimator(animator: GetFragmentAnimator?) = also { fragmentAnimator = animator }
+    fun setFragmentAnimator(animator: FragmentAnimator?) = also { fragmentAnimator = animator }
 
     fun put(key: String?, value: Boolean?) = put(key, value as Any?)
 

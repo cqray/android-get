@@ -9,6 +9,8 @@ import android.graphics.drawable.Drawable
 import android.text.TextUtils
 import android.util.AttributeSet
 import android.util.TypedValue
+import android.util.TypedValue.COMPLEX_UNIT_DIP
+import android.util.TypedValue.COMPLEX_UNIT_SP
 import android.view.Gravity
 import android.view.View
 import android.widget.LinearLayout
@@ -29,7 +31,7 @@ import cn.cqray.android.util.ViewUtils
     "MemberVisibilityCanBePrivate",
     "UNUSED",
 )
-class GetBackView @JvmOverloads constructor(
+class BackView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
@@ -57,16 +59,16 @@ class GetBackView @JvmOverloads constructor(
     private val spaceView: Space by lazy { Space(context).also { it.layoutParams = LayoutParams(-2, -2) } }
 
     init {
-        val ta = context.obtainStyledAttributes(attrs, R.styleable.GetBackView)
-        val text = ta.getString(R.styleable.GetBackView_text) ?: ""
-        val drawable = ta.getDrawable(R.styleable.GetBackView_iconSrc)
-        val tintColor = ta.getColor(R.styleable.GetBackView_iconTint, -1)
+        val ta = context.obtainStyledAttributes(attrs, R.styleable.BackView)
+        val text = ta.getString(R.styleable.BackView_text) ?: ""
+        val drawable = ta.getDrawable(R.styleable.BackView_iconSrc)
+        val tintColor = ta.getColor(R.styleable.BackView_iconTint, -1)
         // 初始化默认属性
-        val ripple = ta.getBoolean(R.styleable.GetBackView_ripple, true)
-        val iconSpace = ta.getDimension(R.styleable.GetBackView_iconSpace, Sizes.px(R.dimen.small).toFloat())
-        val textColor = ta.getColor(R.styleable.GetBackView_textColor, Color.WHITE)
-        val textSize = ta.getDimension(R.styleable.GetBackView_textSize, Sizes.px(R.dimen.body).toFloat())
-        val textStyle = ta.getInt(R.styleable.GetBackView_textStyle, 0)
+        val ripple = ta.getBoolean(R.styleable.BackView_ripple, true)
+        val iconSpace = ta.getDimension(R.styleable.BackView_iconSpace, Sizes.px(R.dimen.small).toFloat())
+        val textColor = ta.getColor(R.styleable.BackView_textColor, Color.WHITE)
+        val textSize = ta.getDimension(R.styleable.BackView_textSize, Sizes.px(R.dimen.body).toFloat())
+        val textStyle = ta.getInt(R.styleable.BackView_textStyle, 0)
         // 释放资源
         ta.recycle()
         // 设置图标属性
@@ -109,21 +111,21 @@ class GetBackView @JvmOverloads constructor(
         ViewUtils.setRippleBackground(textView, ripple)
     }
 
-    fun setIconDrawable(drawable: Drawable?) = also {
+    fun setIcon(drawable: Drawable?) = also {
         // 更新图片
         iconView.setImageDrawable(drawable)
         // 更新间隔控件状态
         changeSpaceVisibility()
     }
 
-    fun setIconBitmap(bitmap: Bitmap?) = also {
+    fun setIcon(bitmap: Bitmap?) = also {
         // 更新图片
         iconView.setImageBitmap(bitmap)
         // 更新间隔控件状态
         changeSpaceVisibility()
     }
 
-    fun setIconResource(@DrawableRes id: Int) = also {
+    fun setIcon(@DrawableRes id: Int) = also {
         iconView.setImageResource(id)
         // 更新间隔控件状态
         changeSpaceVisibility()
@@ -136,9 +138,8 @@ class GetBackView @JvmOverloads constructor(
         else ImageViewCompat.setImageTintList(iconView, ColorStateList.valueOf(color))
     }
 
-    fun setIconSpace(space: Float) = also { setIconSpace(space, TypedValue.COMPLEX_UNIT_DIP) }
-
-    fun setIconSpace(space: Float, unit: Int) = also {
+    @JvmOverloads
+    fun setIconSpace(space: Number, unit: Int = COMPLEX_UNIT_DIP) = also {
         spaceView.layoutParams.width = Sizes.applyDimension(space, unit).toInt()
         spaceView.requestLayout()
     }
@@ -152,13 +153,12 @@ class GetBackView @JvmOverloads constructor(
         changeSpaceVisibility()
     }
 
-    fun setTextColor(color: Int) = also { textView.setTextColor(color) }
+    fun setTextColor(@ColorInt color: Int) = also { textView.setTextColor(color) }
 
-    fun setTextSize(size: Float) = also { setTextSize(size, TypedValue.COMPLEX_UNIT_SP) }
+    @JvmOverloads
+    fun setTextSize(size: Number, unit: Int = COMPLEX_UNIT_SP) = also { textView.setTextSize(unit, size.toFloat()) }
 
-    fun setTextSize(size: Float, unit: Int) = also { textView.setTextSize(unit, size) }
-
-    fun setTextStyle(textStyle: Int) = also { textView.typeface = Typeface.defaultFromStyle(textStyle) }
+    fun setTextStyle(style: Int) = also { textView.typeface = Typeface.defaultFromStyle(style) }
 
     override fun setOnClickListener(l: OnClickListener?) {
         iconView.setOnClickListener(l)

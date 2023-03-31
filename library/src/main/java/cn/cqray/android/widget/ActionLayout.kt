@@ -6,6 +6,7 @@ import android.graphics.Color
 import android.graphics.Typeface
 import android.graphics.drawable.Drawable
 import android.util.*
+import android.util.TypedValue.COMPLEX_UNIT_SP
 import android.view.Gravity
 import android.view.View
 import android.widget.ImageView
@@ -32,7 +33,7 @@ import cn.cqray.android.util.ViewUtils
     "Unchecked_cast",
     "Unused",
 )
-class GetActionLayout @JvmOverloads constructor(
+class ActionLayout @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
@@ -77,19 +78,19 @@ class GetActionLayout @JvmOverloads constructor(
 
     init {
         // 初始化属性
-        val ta = context.obtainStyledAttributes(attrs, R.styleable.GetActionLayout)
+        val ta = context.obtainStyledAttributes(attrs, R.styleable.ActionLayout)
         // 默认是否启用水波纹
-        defaultRipple = ta.getBoolean(R.styleable.GetActionLayout_defaultRipple, true)
+        defaultRipple = ta.getBoolean(R.styleable.ActionLayout_defaultRipple, true)
         // 默认是否显示Action组件
-        defaultVisible = ta.getBoolean(R.styleable.GetActionLayout_defaultVisible, true)
+        defaultVisible = ta.getBoolean(R.styleable.ActionLayout_defaultVisible, true)
         // 默认组件间隔
-        defaultSpace = ta.getDimension(R.styleable.GetActionLayout_defaultSpace, Sizes.px(R.dimen.content).toFloat())
+        defaultSpace = ta.getDimension(R.styleable.ActionLayout_defaultSpace, Sizes.px(R.dimen.content).toFloat())
         // 默认文本颜色
-        defaultTextColor = ta.getColor(R.styleable.GetActionLayout_defaultTextColor, Color.WHITE)
+        defaultTextColor = ta.getColor(R.styleable.ActionLayout_defaultTextColor, Color.WHITE)
         // 默认文本大小
-        defaultTextSize = ta.getDimension(R.styleable.GetActionLayout_defaultTextSize, Sizes.px(R.dimen.body).toFloat())
+        defaultTextSize = ta.getDimension(R.styleable.ActionLayout_defaultTextSize, Sizes.px(R.dimen.body).toFloat())
         // 默认文本样式
-        defaultTextStyle = ta.getInt(R.styleable.GetActionLayout_defaultTextStyle, 0)
+        defaultTextStyle = ta.getInt(R.styleable.ActionLayout_defaultTextStyle, 0)
         // 释放资源
         ta.recycle()
         // 天剑间隔容器
@@ -115,7 +116,7 @@ class GetActionLayout @JvmOverloads constructor(
 
     fun setDefaultSpace(space: Float) = also { setDefaultSpace(space, TypedValue.COMPLEX_UNIT_DIP) }
 
-    fun setDefaultSpace(space: Float, unit: Int) = also {
+    fun setDefaultSpace(space: Number, unit: Int) = also {
         // 获取新的间隔值
         val newSpace = Sizes.applyDimension(space, unit)
         // 更新所有控件的间隔
@@ -139,9 +140,8 @@ class GetActionLayout @JvmOverloads constructor(
         defaultTextColor = color
     }
 
-    fun setDefaultTextSize(size: Float) = also { setDefaultTextSize(size, TypedValue.COMPLEX_UNIT_SP) }
-
-    fun setDefaultTextSize(size: Float, unit: Int) {
+    @JvmOverloads
+    fun setDefaultTextSize(size: Number, unit: Int = COMPLEX_UNIT_SP) {
         // 获取新的文本大小
         val newSize = Sizes.applyDimension(size, unit)
         // 更新组件属性
@@ -153,14 +153,14 @@ class GetActionLayout @JvmOverloads constructor(
         defaultTextSize = newSize
     }
 
-    fun setDefaultTextStyle(textStyle: Int) {
+    fun setDefaultTextStyle(style: Int) {
         // 更新组件属性
         actionViews.forEach { entry ->
             val view = entry.value
-            if (view is TextView) view.typeface = Typeface.defaultFromStyle(textStyle)
+            if (view is TextView) view.typeface = Typeface.defaultFromStyle(style)
         }
         // 设置默认属性
-        defaultTextStyle = textStyle
+        defaultTextStyle = style
     }
 
     fun setDefaultIconTintColor(@ColorInt color: Int?) {
@@ -246,9 +246,8 @@ class GetActionLayout @JvmOverloads constructor(
         }
     }
 
-    fun setTextSize(key: Int?, size: Float) = also { setTextSize(key, size, TypedValue.COMPLEX_UNIT_SP) }
-
-    fun setTextSize(key: Int?, size: Float, unit: Int) = also {
+    @JvmOverloads
+    fun setTextSize(key: Int?, size: Number, unit: Int = COMPLEX_UNIT_SP) = also {
         // 获取新的文本大小
         val newSize = Sizes.applyDimension(size, unit)
         // 设置新的文本大小
@@ -259,23 +258,21 @@ class GetActionLayout @JvmOverloads constructor(
         }
     }
 
-    fun setTextStyle(key: Int?, textStyle: Int) = also {
+    fun setTextStyle(key: Int?, style: Int) = also {
         actionViews[key]?.let {
             if (it is TextView) {
-                it.typeface = Typeface.defaultFromStyle(textStyle)
+                it.typeface = Typeface.defaultFromStyle(style)
             }
         }
     }
 
-    fun setIcon(key: Int?, @DrawableRes id: Int) = setIcon(key, id, null)
-
-    fun setIcon(key: Int?, @DrawableRes id: Int, @ColorInt tintColor: Int?) = also {
+    @JvmOverloads
+    fun setIcon(key: Int?, @DrawableRes id: Int, @ColorInt tintColor: Int? = null) = also {
         setIcon(key, ContextCompat.getDrawable(context, id), tintColor)
     }
 
-    fun setIcon(key: Int?, drawable: Drawable?) = setIcon(key, drawable, null)
-
-    fun setIcon(key: Int?, drawable: Drawable?, @ColorInt tintColor: Int?) = also {
+    @JvmOverloads
+    fun setIcon(key: Int?, drawable: Drawable?, @ColorInt tintColor: Int? = null) = also {
         // 初始化图片控件
         val iv: ImageView = AppCompatImageView(context).also {
             // 设置图片

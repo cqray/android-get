@@ -11,6 +11,7 @@ import cn.cqray.android.app.GetDelegate
 import cn.cqray.android.log.GetLog
 import cn.cqray.android.util.ContextUtils
 import cn.cqray.android.util.ViewUtils
+
 /**
  * 多Fragment委托
  * @author Cqray

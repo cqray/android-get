@@ -7,7 +7,7 @@ import cn.cqray.android.R
  * @author Cqray
  */
 @Suppress("unused")
-class GetVerticalAnimator : GetFragmentAnimator(
+class VerticalAnimator : FragmentAnimator(
     R.anim._starter_vertical_to_top,
     R.anim._starter_vertical_from_top,
     R.anim._starter_vertical_to_top,

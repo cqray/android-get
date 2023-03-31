@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- 标题栏 -->
-    <declare-styleable name="GetToolbar">
+    <declare-styleable name="Toolbar">
         <!-- 一般属性 -->
         <attr name="ripple" />
         <attr name="elevation" />

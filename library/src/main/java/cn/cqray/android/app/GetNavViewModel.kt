@@ -12,7 +12,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import cn.cqray.android.Get
 import cn.cqray.android.anim.AnimUtils
-import cn.cqray.android.anim.GetFragmentAnimator
+import cn.cqray.android.anim.FragmentAnimator
 import cn.cqray.android.lifecycle.GetViewModel
 import cn.cqray.android.log.GetLog
 import com.blankj.utilcode.util.ActivityUtils
@@ -310,7 +310,7 @@ internal class GetNavViewModel(owner: LifecycleOwner) : GetViewModel(owner) {
      * @param fragment 动画作用的Fragment
      * @param intent 启动传参
      */
-    private fun getFragmentAnimator(fragment: Fragment, intent: GetIntent): GetFragmentAnimator {
+    private fun getFragmentAnimator(fragment: Fragment, intent: GetIntent): FragmentAnimator {
         // 从下至上，一级级获取优先级高的动画设置
         return intent.fragmentAnimator
         // 意图中无动画，则使用当前Fragment的动画

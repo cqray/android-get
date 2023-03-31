@@ -12,7 +12,7 @@ import kotlin.math.max
  * 动画工具类
  * @author Cqray
  */
-object AnimUtils {
+internal object AnimUtils {
 
     /**
      * 获取Activity进入动画资源ID

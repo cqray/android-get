@@ -24,7 +24,7 @@ import com.github.ybq.android.spinkit.Style
     "MemberVisibilityCanBePrivate",
     "Unused"
 )
-class GetBusyAdapter : GetStateAdapter<GetBusyAdapter>(R.layout.get_layout_state_busy) {
+class BusyAdapter : StateAdapter<BusyAdapter>(R.layout.get_layout_state_busy) {
 
     /** 忙碌控件  */
     private var spinKitView: SpinKitView? = null

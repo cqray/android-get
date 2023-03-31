@@ -14,7 +14,7 @@ import cn.cqray.android.util.Sizes
  * @author Cqray
  */
 @Suppress("Unused")
-class GetEmptyAdapter : GetStateAdapter<GetEmptyAdapter>(R.layout.get_layout_state_empty) {
+class EmptyAdapter : StateAdapter<EmptyAdapter>(R.layout.get_layout_state_empty) {
 
     /** 图片控件  */
     private var imageView: ImageView? = null

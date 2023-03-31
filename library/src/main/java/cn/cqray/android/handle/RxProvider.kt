@@ -9,12 +9,12 @@ package cn.cqray.android.handle
     "Unused"
 )
 @JvmDefaultWithoutCompatibility
-interface GetRxProvider {
+interface RxProvider {
 
     /**
      *  获取并初始化[GetHandleProvider]
      */
-    val rxDelegate: GetRxDelegate
+    val rxDelegate: RxDelegate
 
     /**
      * 添加Disposable

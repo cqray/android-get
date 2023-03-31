@@ -27,10 +27,10 @@ object GetLog {
 
     /** 日志适配器缓存 **/
     @Suppress("ObjectPropertyName")
-    private var _logAdapter: GetLogAdapter? = null
+    private var _logAdapter: LogAdapter? = null
 
     /** 日志适配器 **/
-    private val logAdapter: GetLogAdapter
+    private val logAdapter: LogAdapter
         get() {
             val adapter = Get.init.logInit!!.logAdapter
             if (_logAdapter != adapter) _logAdapter = adapter
