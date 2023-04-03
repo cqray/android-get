@@ -6,7 +6,11 @@ import com.hjq.toast.Toaster
 import com.hjq.toast.config.IToastInterceptor
 import java.lang.reflect.Modifier
 
-class TipLogInterceptor : IToastInterceptor {
+/**
+ * [Tip]日志拦截器
+ * @author Cqray
+ */
+internal class TipLogInterceptor : IToastInterceptor {
 
     override fun intercept(params: ToastParams): Boolean {
         printToast(params.text)

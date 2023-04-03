@@ -3,18 +3,26 @@ package cn.cqray.android.tip
 import android.content.Context
 import android.graphics.Typeface
 import android.graphics.drawable.GradientDrawable
-import android.util.Log
 import android.util.TypedValue
 import android.view.View
 import android.widget.TextView
 import androidx.core.view.ViewCompat
 import cn.cqray.android.Get
 import cn.cqray.android.util.Sizes
+import com.blankj.utilcode.util.CloneUtils
 import com.hjq.toast.config.IToastStyle
 
+/**
+ * [Tip]样式
+ * @author Cqray
+ */
 class TipStyle : IToastStyle<View> {
 
-    private val tipInit get() = Get.init.tipInit
+    private val tipInit: TipInit by lazy {
+        val init = Get.init.tipInit
+        init.loadFromLocal()
+        CloneUtils.deepClone(init, TipInit::class.java)
+    }
 
     override fun createView(context: Context?): View {
         val view = TextView(context ?: Get.context)
@@ -50,13 +58,13 @@ class TipStyle : IToastStyle<View> {
         ViewCompat.setBackground(view, background)
     }
 
-    override fun getGravity(): Int {
-        Log.e("Tip", "获取位置")
-        return tipInit.gravity
-    }
+    override fun getGravity() = tipInit.gravity
 
-    override fun getYOffset(): Int {
-        return 500;
-//        return super.getYOffset()
-    }
+    override fun getYOffset() = Sizes.dp2px(tipInit.offsetY)
+
+    override fun getXOffset() = Sizes.dp2px(tipInit.offsetX)
+
+    override fun getHorizontalMargin() = Sizes.dp2px(tipInit.marginH).toFloat()
+
+    override fun getVerticalMargin() = Sizes.dp2px(tipInit.marginV).toFloat()
 }

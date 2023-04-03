@@ -7,7 +7,6 @@ import cn.cqray.android.Get
 import cn.cqray.android.log.GetLog
 import cn.cqray.android.ui.multi.GetMultiDelegate
 import cn.cqray.android.ui.multi.GetMultiProvider
-import cn.cqray.android.tip.TipProvider
 import java.util.HashMap
 import java.util.concurrent.atomic.AtomicReference
 

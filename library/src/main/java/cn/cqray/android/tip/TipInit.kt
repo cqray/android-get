@@ -21,11 +21,13 @@ class TipInit : BaseInit() {
     var offsetX: Number = 0
 
     /** Y值偏移量 **/
-    var offsetY: Number = 0
+    var offsetY: Number = 120
 
-    var marginX: Number = 0
+    /** 横向间隔值 **/
+    var marginH: Number = 0
 
-    var marginY: Number = 0
+    /** 纵向间隔值 **/
+    var marginV: Number = 0
 
     /** Tip最小宽度，单位DP  */
     var minWidth: Number = 120
