@@ -31,13 +31,14 @@ object Get {
     val topActivity: Activity? get() = ActivityUtils.getTopActivity()
 
     /** 获取顶部实现了[GetNavProvider]的[Activity] **/
-    val topGetActivity: GetNavProvider? get() {
-        val activities = ActivityUtils.getActivityList()
-        for (act in activities.reversed()) {
-            if (act is GetNavProvider) return act
+    val topGetActivity: GetNavProvider?
+        get() {
+            val activities = ActivityUtils.getActivityList()
+            for (act in activities.reversed()) {
+                if (act is GetNavProvider) return act
+            }
+            return null
         }
-        return null
-    }
 
     /** 获取[Application]实例 **/
     @JvmStatic
@@ -118,5 +119,7 @@ object Get {
     fun backTo(back: Class<*>, inclusive: Boolean) = topGetActivity?.backTo(back, inclusive)
 
     @JvmStatic
-    fun showTip(text: CharSequence?) {}
+    fun showTip(text: CharSequence?) {
+        Tip.show(text)
+    }
 }

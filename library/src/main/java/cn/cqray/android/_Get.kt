@@ -89,6 +89,7 @@ internal object _Get {
             override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
                 // 应用首次创建
                 if (ActivityUtils.getActivityList().isEmpty()) onCreated()
+
                 // 修复Android 8.0 固定竖屏的问题
                 fixOrientation(activity)
                 // 监管GetNavProvider
