@@ -116,4 +116,7 @@ object Get {
      */
     @JvmStatic
     fun backTo(back: Class<*>, inclusive: Boolean) = topGetActivity?.backTo(back, inclusive)
+
+    @JvmStatic
+    fun showTip(text: CharSequence?) {}
 }
