@@ -365,12 +365,12 @@ class GetViewDelegate internal constructor(provider: GetViewProvider) : GetDeleg
             setToolbarInit(Get.init.toolbarInit!!)
             //TODO 这里有个未确定原因的BUG，从RecyclerView项启动的Fragment，标题栏无法点击
             //无法知道为什么，暂时没有精力去研究，暂时通过以下方式可处理BUG
-            post {
+            postDelayed( {
                 dividerView.bringToFront()
                 titleView.bringToFront()
                 backView.bringToFront()
                 actionLayout.bringToFront()
-            }
+            }, 10)
         }
 
     }
