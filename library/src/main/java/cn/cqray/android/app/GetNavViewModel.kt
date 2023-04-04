@@ -10,10 +10,10 @@ import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.ViewModel
 import cn.cqray.android.Get
 import cn.cqray.android.anim.AnimUtils
 import cn.cqray.android.anim.FragmentAnimator
-import cn.cqray.android.lifecycle.GetViewModel
 import cn.cqray.android.log.GetLog
 import com.blankj.utilcode.util.ActivityUtils
 import java.util.*
@@ -24,34 +24,33 @@ import java.util.*
  */
 @Suppress(
     "MemberVisibilityCanBePrivate",
+    "StaticFieldLeak",
     "Unchecked_cast",
     "Unused"
 )
-internal class GetNavViewModel(owner: LifecycleOwner) : GetViewModel(owner) {
+internal class GetNavViewModel : ViewModel() {
 
-    init {
-        if (owner !is FragmentActivity || owner !is GetNavProvider) {
-            throw IllegalArgumentException(
-                String.format(
-                    "%s can only get by FragmentActivity which implements %s.",
-                    javaClass.simpleName,
-                    GetNavProvider::class.java.simpleName
-                )
-            )
+    /** 绑定的Activity **/
+    var activity: FragmentActivity? = null
+        set(value) {
+            // 因为涉及到内存泄漏的问题，所以需要自定销毁资源
+            value?.lifecycle?.addObserver(object : DefaultLifecycleObserver {
+                override fun onDestroy(owner: LifecycleOwner) {
+                    super.onDestroy(owner)
+                    activity = null
+                }
+            })
+            field = value
         }
-    }
+
+    /** 容器Id  */
+    private var containerId = View.NO_ID
 
     /** [Fragment]记录 **/
     private val backStack = Stack<Fragment>()
 
-    /** 持有的Activity **/
-    private val activity get() = lifecycleOwner as FragmentActivity
-
     /** Fragment管理器 **/
-    private val fragmentManager get() = activity.supportFragmentManager
-
-    /** 容器Id  */
-    private var containerId = View.NO_ID
+    val fragmentManager get() = activity!!.supportFragmentManager
 
     /** 栈顶的Fragment **/
     val topFragment get() = backStack.lastOrNull()
@@ -70,40 +69,6 @@ internal class GetNavViewModel(owner: LifecycleOwner) : GetViewModel(owner) {
                 else if (!(activity as GetNavProvider).onBackPress()) back()
             }
         } else if (!(activity as GetNavProvider).onBackPress()) back()
-    }
-
-    /**
-     * 根据Intent生成相应的Fragment
-     * @param intent intent对象
-     */
-    fun generateFragment(intent: GetIntent): Fragment {
-        // 生成UUID
-        val uuid = UUID.randomUUID().toString().replace("-", "")
-        // Fragment工厂
-        val factory = fragmentManager.fragmentFactory
-        // 创建Fragment
-        val fragment = factory.instantiate(activity.classLoader, intent.toClass.name)
-        // 销毁时移除Fragment
-        fragment.lifecycle.addObserver(object : DefaultLifecycleObserver {
-            override fun onDestroy(owner: LifecycleOwner) {
-                super.onDestroy(owner)
-                backStack.remove(owner as Fragment)
-            }
-        })
-        // 设置参数
-        fragment.arguments = intent.arguments.also { it.putString(FRAGMENT_ID_TAG, uuid) }
-        // 返回Fragment
-        return fragment
-    }
-
-    /**
-     * 获取Fragment对应的标识，结构为[类名-UUID]
-     * @param fragment fragment对象
-     */
-    fun getFragmentTag(fragment: Fragment): String {
-        val className = fragment::class.java.name
-        val arguments = fragment.arguments
-        return "$className-" + arguments?.getString(FRAGMENT_ID_TAG)
     }
 
     /**
@@ -192,7 +157,7 @@ internal class GetNavViewModel(owner: LifecycleOwner) : GetViewModel(owner) {
     /** 回退 **/
     fun back() {
         // 只剩根Fragment，则直接结束Activity
-        if (backStack.size <= 1) activity.finish()
+        if (backStack.size <= 1) activity?.finish()
         // 否则回退当前Fragment
         else popBackStack(backStack.lastOrNull())
     }
@@ -210,7 +175,7 @@ internal class GetNavViewModel(owner: LifecycleOwner) : GetViewModel(owner) {
         }
         // 回退至根Fragment（包含），不启动新的Fragment，则销毁Activity
         if (isRootFragment(back) && inclusive) {
-            activity.finish()
+            activity?.finish()
             return
         }
         // 查找回退Class在的Fragment在记录中的对应的位置（最后一个匹配的位置）
@@ -230,10 +195,14 @@ internal class GetNavViewModel(owner: LifecycleOwner) : GetViewModel(owner) {
      */
     private fun popBackStack(fragment: Fragment?) {
         fragment?.let {
+            // FragmentManager处理无效状态
             if (fragmentManager.isStateSaved) return
             runCatching {
                 // 处理回退
-                fragmentManager.popBackStackImmediate(getFragmentTag(it), FragmentManager.POP_BACK_STACK_INCLUSIVE)
+                fragmentManager.popBackStackImmediate(
+                    getFragmentTag(it),
+                    FragmentManager.POP_BACK_STACK_INCLUSIVE
+                )
                 // 从回退栈中手动移除
                 for (i in backStack.indices.reversed()) {
                     // 倒序移除，直到指定的Fragment
@@ -276,7 +245,7 @@ internal class GetNavViewModel(owner: LifecycleOwner) : GetViewModel(owner) {
      * @param intent 意图
      */
     private fun checkFragment(intent: GetIntent): Boolean {
-        when(intent.launchMode) {
+        when (intent.launchMode) {
             GetIntent.SINGLE_TOP -> {
                 // 匹配到相同的Fragment
                 if (topFragment?.javaClass == intent.toClass) {
@@ -316,9 +285,43 @@ internal class GetNavViewModel(owner: LifecycleOwner) : GetViewModel(owner) {
         // 意图中无动画，则使用当前Fragment的动画
             ?: (fragment as? GetNavProvider)?.onCreateFragmentAnimator()
             // Fragment无动画，则使用Activity的动画
-            ?: (lifecycleOwner as? GetNavProvider)?.onCreateFragmentAnimator()
+            ?: (activity as? GetNavProvider)?.onCreateFragmentAnimator()
             // Activity无动画，则使用全局动画
             ?: Get.init.fragmentAnimator
+    }
+
+    /**
+     * 根据Intent生成相应的Fragment
+     * @param intent intent对象
+     */
+    private fun generateFragment(intent: GetIntent): Fragment {
+        // 生成UUID
+        val uuid = UUID.randomUUID().toString().replace("-", "")
+        // Fragment工厂
+        val factory = fragmentManager.fragmentFactory
+        // 创建Fragment
+        val fragment = factory.instantiate(activity!!.classLoader, intent.toClass.name)
+        // 销毁时移除Fragment
+        fragment.lifecycle.addObserver(object : DefaultLifecycleObserver {
+            override fun onDestroy(owner: LifecycleOwner) {
+                super.onDestroy(owner)
+                backStack.remove(owner as Fragment)
+            }
+        })
+        // 设置参数
+        fragment.arguments = intent.arguments.also { it.putString(FRAGMENT_ID_TAG, uuid) }
+        // 返回Fragment
+        return fragment
+    }
+
+    /**
+     * 获取Fragment对应的标识，结构为[类名-UUID]
+     * @param fragment fragment对象
+     */
+    private fun getFragmentTag(fragment: Fragment): String {
+        val className = fragment::class.java.name
+        val arguments = fragment.arguments
+        return "$className-" + arguments?.getString(FRAGMENT_ID_TAG)
     }
 
     /**
@@ -330,7 +333,7 @@ internal class GetNavViewModel(owner: LifecycleOwner) : GetViewModel(owner) {
         val tag = GetNavDelegate::class.java.simpleName
         // 日志内容
         val message = " \n" +
-                "       Owner Class: ${lifecycleOwner::class.java.name}\n" +
+                "       Owner Class: ${activity?.javaClass?.name}\n" +
                 "       Used Method: $method\n" + "" +
                 "       Content: $text"
         // 打印日志

@@ -2,12 +2,14 @@ package cn.cqray.android.app
 
 import android.app.Activity
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.OnBackPressedCallback
 import androidx.annotation.IdRes
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.ViewModelProvider
 import cn.cqray.android.Get
 import cn.cqray.android.anim.AnimUtils
 import cn.cqray.android.lifecycle.GetViewModelProvider
@@ -31,7 +33,12 @@ class GetNavDelegate(provider: GetNavProvider) : GetDelegate<GetNavProvider>(pro
     val lifecycleOwner by lazy { provider as LifecycleOwner }
 
     /** 导航[GetViewModel] **/
-    private val viewModel by lazy { GetViewModelProvider(activity).get(GetNavViewModel::class.java) }
+    private val viewModel by lazy {
+        Log.e("数据", "获取ViewModel|" + activity.hashCode())
+        val vm = ViewModelProvider(activity).get(GetNavViewModel::class.java)
+        vm.activity = activity
+        vm
+    }
 
     /** [FragmentActivity]实例 **/
     val activity by lazy {
@@ -44,6 +51,11 @@ class GetNavDelegate(provider: GetNavProvider) : GetDelegate<GetNavProvider>(pro
 
     /** 回退栈Fragments **/
     val fragments get() = viewModel.fragments
+
+    init {
+
+        Log.e("数据", "GetNavDelegate|初始化|"+ activity.hashCode())
+    }
 
     /**
      * 主要是初始化[GetNavViewModel]以及管理[Activity.onBackPressed]事件

@@ -14,9 +14,15 @@ public class MainFragment extends GetFragment {
 
     private int s =0;
 
+    public MainFragment() {
+        super();
+        Log.e("数据", "MainFragmnet初始化了");
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.e("数据", "MainFragment-" + "onCreate-" + requireActivity().hashCode());
 
         setGetContentView(R.layout.activity_main);
 

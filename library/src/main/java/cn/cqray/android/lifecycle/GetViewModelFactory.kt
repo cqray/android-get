@@ -1,6 +1,7 @@
 package cn.cqray.android.lifecycle
 
 import android.app.Application
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ViewModel
@@ -19,6 +20,7 @@ class GetViewModelFactory(owner: ViewModelStoreOwner) : NewInstanceFactory() {
      * 生命周期管理对象
      */
     private val lifecycleOwner: LifecycleOwner = if (owner is LifecycleOwner) {
+        Log.e("数据", "GetViewModelFactory->" + owner.viewModelStore.hashCode())
         owner
     } else {
         throw IllegalArgumentException("The owner must implements LifecycleOwner.")
