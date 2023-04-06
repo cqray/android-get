@@ -1,5 +1,8 @@
 package cn.cqray.android.tip
 
+import androidx.annotation.StringRes
+import cn.cqray.android.util.ContextUtils
+
 /**
  * Tip提供者
  * @author Cqray
@@ -13,36 +16,23 @@ interface TipProvider {
      */
     fun showTip(text: CharSequence?) = Tip.show(text, null)
 
-//    /**
-//     * 显示Tip
-//     * @param text 文本内容 [CharSequence]
-//     * @param hideCallback 隐藏回调
-//     */
-//    fun showTip(text: CharSequence?, hideCallback: Function0<Unit>?) = showTip(text, null, hideCallback, null)
-//
-//    /**
-//     * 显示Tip
-//     * @param text 文本内容 [CharSequence]
-//     * @param hideCallback 隐藏回调
-//     * @param showCallback 显示回调
-//     */
-//    fun showTip(
-//        text: CharSequence?,
-//        hideCallback: Function0<Unit>? = null,
-//        showCallback: Function0<Unit>? = null,
-//    ) = showTip(text, null, hideCallback, showCallback)
-//
-//    /**
-//     * 显示Tip
-//     * @param text 文本内容 [CharSequence]
-//     * @param init 配置属性 [TipInit]
-//     * @param hideCallback 隐藏回调
-//     * @param showCallback 显示回调
-//     */
-//    fun showTip(
-//        text: CharSequence?,
-//        init: TipInit?,
-//        hideCallback: Function0<Unit>?,
-//        showCallback: Function0<Unit>?,
-//    ) = tipDelegate.showTip(text, init, hideCallback, showCallback)
+    /**
+     * 显示Tip
+     * @param id 文本资源ID
+     */
+    fun showTip(@StringRes id: Int) = Tip.show(ContextUtils.getString(id), null)
+
+    /**
+     * 显示Tip
+     * @param text 文本内容 [CharSequence]
+     * @param init 配置参数 [TipInit]
+     */
+    fun showTip(text: CharSequence?, init: TipInit?) = Tip.show(text, init)
+
+    /**
+     * 显示Tip
+     * @param id 文本资源ID
+     * @param init 配置参数 [TipInit]
+     */
+    fun showTip(@StringRes id: Int, init: TipInit?) = Tip.show(ContextUtils.getString(id), init)
 }
