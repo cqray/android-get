@@ -19,14 +19,14 @@ internal class TipLogInterceptor : IToastInterceptor {
         if (!logcatEnable) return false
         // 获取调用的堆栈信息
         val stackTraces = Throwable().stackTrace
-        var findTipClass = false
+        // 遍历堆栈
         for (stackTrace in stackTraces) {
             // 获取代码行数
             val lineNumber = stackTrace.lineNumber
             if (lineNumber <= 0) continue
             // 获取类的全路径
             val className = stackTrace.className
-
+            // 打印日志
             runCatching {
                 if (isPrintClass(Class.forName(className))) {
                     // 这里解释一下，为什么不用 Log.d，而用 Log.i，因为 Log.d 在魅族 16th 手机上面无法输出日志
