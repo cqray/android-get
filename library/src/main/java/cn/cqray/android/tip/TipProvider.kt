@@ -10,29 +10,59 @@ import cn.cqray.android.util.ContextUtils
 @JvmDefaultWithoutCompatibility
 interface TipProvider {
 
-    /**
-     * 显示Tip
-     * @param text 文本内容 [CharSequence]
-     */
-    fun showTip(text: CharSequence?) = Tip.show(text, null)
+    fun showTip(text: CharSequence?) = Tip.show(text)
 
-    /**
-     * 显示Tip
-     * @param id 文本资源ID
-     */
-    fun showTip(@StringRes id: Int) = Tip.show(ContextUtils.getString(id), null)
-
-    /**
-     * 显示Tip
-     * @param text 文本内容 [CharSequence]
-     * @param init 配置参数 [TipInit]
-     */
     fun showTip(text: CharSequence?, init: TipInit?) = Tip.show(text, init)
 
-    /**
-     * 显示Tip
-     * @param id 文本资源ID
-     * @param init 配置参数 [TipInit]
-     */
-    fun showTip(@StringRes id: Int, init: TipInit?) = Tip.show(ContextUtils.getString(id), init)
+    fun showTip(
+        text: CharSequence?,
+        hideCallback: Function0<Unit>?
+    ) = Tip.show(text, hideCallback)
+
+    fun showTip(
+        text: CharSequence?,
+        hideCallback: Function0<Unit>?,
+        showCallback: Function0<Unit>?
+    ) = Tip.show(text, hideCallback, showCallback)
+
+    fun showTip(
+        text: CharSequence?,
+        init: TipInit?,
+        hideCallback: Function0<Unit>?
+    ) = Tip.show(text, init, hideCallback)
+
+    fun showTip(
+        text: CharSequence?,
+        init: TipInit?,
+        hideCallback: Function0<Unit>?,
+        showCallback: Function0<Unit>?
+    ) = Tip.show(text, init, hideCallback, showCallback)
+
+    fun showTip(@StringRes id: Int) = showTip(id, null, null, null)
+
+    fun showTip(@StringRes id: Int, init: TipInit?) = showTip(id, init, null, null)
+
+    fun showTip(
+        @StringRes id: Int,
+        hideCallback: Function0<Unit>?
+    ) = showTip(id, null, hideCallback, null)
+
+    fun showTip(
+        @StringRes id: Int,
+        hideCallback: Function0<Unit>?,
+        showCallback: Function0<Unit>?
+    ) = showTip(id, null, hideCallback, showCallback)
+
+    fun showTip(
+        @StringRes id: Int,
+        init: TipInit?,
+        hideCallback: Function0<Unit>?
+    ) = showTip(id, init, hideCallback, null)
+
+    fun showTip(
+        @StringRes id: Int,
+        init: TipInit?,
+        hideCallback: Function0<Unit>?,
+        showCallback: Function0<Unit>?
+    ) = Tip.show(ContextUtils.getString(id), init, hideCallback, showCallback)
 }

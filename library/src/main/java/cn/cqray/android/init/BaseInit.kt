@@ -39,17 +39,18 @@ open class BaseInit : Serializable {
                     it.addAll(javaClass.fields)
                     it.addAll(javaClass.declaredFields)
                 }
+
                 // 遍历所有属性
                 fields.forEach {
                     runCatching {
-                        if (it.getAnnotation(Transient::class.java) == null) {
+                        if (it.getAnnotation(Transient::class.java) != null) {
                             // 不执行的类型
                             return@runCatching
                         }
                         val value = gson.fromJson(body.get(it.name), it.type)
                         it.isAccessible = true
                         it.set(this, value)
-                    }
+                    }.onFailure { it.printStackTrace() }
                 }
             }
             // 标记为不需要重新加载

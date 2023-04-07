@@ -4,8 +4,8 @@ import android.app.Application
 import android.os.Handler
 import android.os.Looper
 import cn.cqray.android.Get
+import com.blankj.utilcode.util.CloneUtils
 import com.hjq.toast.Toaster
-import java.util.*
 import java.util.concurrent.atomic.AtomicReference
 
 /**
@@ -47,26 +47,47 @@ internal object Tip {
         }
     }
 
+    /**
+     * 显示提示
+     * @param text 文本
+     * @param hideCallback 隐藏回调
+     * @param showCallback 显示回调
+     */
     @JvmOverloads
     fun show(
         text: CharSequence?,
-        init: TipInit? = null,
+        hideCallback: Function0<Unit>? = null,
+        showCallback: Function0<Unit>? = null,
+    ) = show(text, null, hideCallback, showCallback)
+
+    /**
+     * 显示提示
+     * @param text 文本
+     * @param init 配置
+     * @param hideCallback 隐藏回调
+     * @param showCallback 显示回调
+     */
+    @JvmOverloads
+    fun show(
+        text: CharSequence?,
+        init: TipInit?,
         hideCallback: Function0<Unit>? = null,
         showCallback: Function0<Unit>? = null,
     ) {
         // 取消历史弹窗
-        tipHandler.removeMessages(0)
-        Toaster.cancel()
+        cancelTip()
+        // 新的配置信息
+        val tipInit = init?.mergeDefault()
+            ?: CloneUtils.deepClone(Get.init.tipInit, TipInit::class.java).also {
+                // 加载缓存
+                it.loadFromLocal()
+            }
         // 显示新的弹窗
-        val tipTask = TipTask()
-        tipTask.text = text
-        tipTask.init = init ?: Get.init.tipInit
-        tipTask.hideCallback = hideCallback
-        tipTask.showCallback = showCallback
-        tipTask.hasShown = true
+        val tipTask = TipTask(text ?: "", tipInit, hideCallback, showCallback)
         Toaster.show(tipTask)
         tipTaskRef.set(tipTask)
         // 弹窗结束回调
-        tipHandler.sendEmptyMessageDelayed(TIP_MESSAGE_WHAT, tipTask.init.duration.toLong())
+        val duration = tipTask.init.duration ?: 1500
+        tipHandler.sendEmptyMessageDelayed(TIP_MESSAGE_WHAT, duration.toLong())
     }
 }

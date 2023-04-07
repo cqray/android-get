@@ -1,5 +1,6 @@
 package cn.cqray.demo.android
 
+import cn.cqray.android.Get
 import cn.cqray.android.app.GetFragment
 import cn.cqray.android.app.GetIntent
 import cn.cqray.android.app.GetViewProvider
@@ -11,11 +12,13 @@ class TestFragment : GetFragment(), GetViewProvider, GetMultiProvider {
     fun ss() {
 
 //        KeyboardUtils.SS
-        GetIntent()
+//        GetIntent()
 
 
-        showTip("") {
+//        showTip("666", null, ) {
+//
+//        }
 
-        }
+        Get.showTip("6666")
     }
 }

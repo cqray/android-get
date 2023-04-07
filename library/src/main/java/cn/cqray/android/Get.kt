@@ -4,11 +4,14 @@ import android.app.Activity
 import android.app.Application
 import android.content.Context
 import android.os.Bundle
+import androidx.annotation.StringRes
 import androidx.fragment.app.Fragment
 import cn.cqray.android.app.GetInit
 import cn.cqray.android.app.GetIntent
 import cn.cqray.android.app.GetNavProvider
 import cn.cqray.android.tip.Tip
+import cn.cqray.android.tip.TipInit
+import cn.cqray.android.util.ContextUtils
 import com.blankj.utilcode.util.ActivityUtils
 
 /**
@@ -69,25 +72,12 @@ object Get {
 
     /**
      * 启动界面
-     * @param to 目标界面[Class]
-     */
-    @JvmStatic
-    fun to(to: Class<*>) = topGetActivity?.to(GetIntent(to))
-
-    /**
-     * 启动界面
-     * @param intent [GetIntent]
-     */
-    @JvmStatic
-    fun to(intent: GetIntent) = topGetActivity?.to(intent)
-
-    /**
-     * 启动界面
      * @param to 目标界面
      * @param callback 回调
      */
     @JvmStatic
-    fun to(to: Class<*>, callback: Function1<Bundle, Unit>?) = topGetActivity?.to(GetIntent(to), callback)
+    @JvmOverloads
+    fun to(to: Class<*>, callback: Function1<Bundle, Unit>? = null) = topGetActivity?.to(GetIntent(to), callback)
 
     /**
      * 启动界面
@@ -95,7 +85,8 @@ object Get {
      * @param callback 回调
      */
     @JvmStatic
-    fun to(intent: GetIntent, callback: Function1<Bundle, Unit>?) = topGetActivity?.to(intent, callback)
+    @JvmOverloads
+    fun to(intent: GetIntent, callback: Function1<Bundle, Unit>? = null) = topGetActivity?.to(intent, callback)
 
     /**
      * 回退
@@ -106,20 +97,69 @@ object Get {
     /**
      * 回退到指定的界面
      * @param back 目标界面[Class]，仅支持实现[GetNavProvider]的[Fragment]以及[Activity]
-     */
-    @JvmStatic
-    fun backTo(back: Class<*>) = topGetActivity?.backTo(back, true)
-
-    /**
-     * 回退到指定的界面
-     * @param back 目标界面[Class]，仅支持实现[GetNavProvider]的[Fragment]以及[Activity]
      * @param inclusive 是否包含指定回退的界面
      */
     @JvmStatic
-    fun backTo(back: Class<*>, inclusive: Boolean) = topGetActivity?.backTo(back, inclusive)
+    @JvmOverloads
+    fun backTo(back: Class<*>, inclusive: Boolean = true) = topGetActivity?.backTo(back, inclusive)
 
+    /**
+     * 显示提示
+     * @param text 文本
+     * @param hideCallback 隐藏回调
+     * @param showCallback 显示回调
+     */
     @JvmStatic
-    fun showTip(text: CharSequence?) {
-        Tip.show(text)
-    }
+    @JvmOverloads
+    fun showTip(
+        text: CharSequence?,
+        hideCallback: Function0<Unit>? = null,
+        showCallback: Function0<Unit>? = null,
+    ) = Tip.show(text, null, hideCallback, showCallback)
+
+    /**
+     * 显示提示
+     * @param text 文本
+     * @param init 配置
+     * @param hideCallback 隐藏回调
+     * @param showCallback 显示回调
+     */
+    @JvmStatic
+    @JvmOverloads
+    fun showTip(
+        text: CharSequence?,
+        init: TipInit?,
+        hideCallback: Function0<Unit>? = null,
+        showCallback: Function0<Unit>? = null,
+    ) = Tip.show(text, init, hideCallback, showCallback)
+
+    /**
+     * 显示提示
+     * @param id 文本资源ID
+     * @param hideCallback 隐藏回调
+     * @param showCallback 显示回调
+     */
+    @JvmStatic
+    @JvmOverloads
+    fun showTip(
+        @StringRes id: Int,
+        hideCallback: Function0<Unit>? = null,
+        showCallback: Function0<Unit>? = null,
+    ) = Tip.show(ContextUtils.getString(id), null, hideCallback, showCallback)
+
+    /**
+     * 显示提示
+     * @param id 文本资源ID
+     * @param init 配置
+     * @param hideCallback 隐藏回调
+     * @param showCallback 显示回调
+     */
+    @JvmStatic
+    @JvmOverloads
+    fun showTip(
+        @StringRes id: Int,
+        init: TipInit?,
+        hideCallback: Function0<Unit>? = null,
+        showCallback: Function0<Unit>? = null,
+    ) = Tip.show(ContextUtils.getString(id), init, hideCallback, showCallback)
 }

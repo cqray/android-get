@@ -1,18 +1,16 @@
 package cn.cqray.demo.android;
 
-import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 
 import cn.cqray.android.Get;
 import cn.cqray.android.app.GetFragment;
 import cn.cqray.android.log.GetLog;
-import cn.cqray.android.util.Sizes;
-import cn.cqray.android.widget.ToolbarInit;
+import cn.cqray.android.tip.TipInit;
 
 public class MainFragment extends GetFragment {
 
-    private int s =0;
+    private int s = 0;
 
     public MainFragment() {
         super();
@@ -39,7 +37,21 @@ public class MainFragment extends GetFragment {
 //                this.to(new GetIntent(MainFragment2.class).setLaunchMode(GetIntent.SINGLE_TASK));
 //
 //            }, 0);
-            showTip("666666666");
+
+//            TipInit tip = Get.getInit().getTipInit();
+////            tip.clearLocal();
+//            tip.setBackgroundColor(Color.BLUE);
+//            tip.setTextSize(30);
+//            tip.saveToLocal();
+//
+            TipInit tipInit = new TipInit();
+            tipInit.setTextSize(15);
+
+            Get.showTip("666666666", (TipInit) tipInit, () -> {
+
+                Log.e("数据", "弹窗消失了");
+                return null;
+            });
         });
 
 //        showSoftInput();
@@ -52,8 +64,7 @@ public class MainFragment extends GetFragment {
 //            Log.e("数据", "导读变化：" + h);
 //        });
 
-        Log.e("数据", "大小：" + Sizes.dpSmall());
-
+//        Log.e("数据", "大小：" + Sizes.dpSmall());
 
 
     }
