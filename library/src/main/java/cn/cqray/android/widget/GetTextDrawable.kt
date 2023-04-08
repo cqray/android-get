@@ -53,9 +53,6 @@ class GetTextDrawable(
     /** 文本样式 **/
     var textStyle: Int = 0
 
-    /** 文本边框大小 **/
-    var textBorderSize: Number = 0
-
     /** 背景颜色 **/
     @ColorInt
     var color: Int = Colors.primary()
@@ -64,12 +61,7 @@ class GetTextDrawable(
     var radius: Number? = null
         set(value) {
             // 设置背景圆角
-            value?.let {
-                val radii = this.radii ?: Array<Number>(8) { 0 }
-                for (i in 0 until 8) {
-                    radii[i] = value
-                }
-            }
+            value?.let { radii = Array(8) { value } }
             field = null
         }
 
@@ -95,24 +87,21 @@ class GetTextDrawable(
         // 初始化画笔
         initPaints()
 
+        // 边框大小
+        val bSize = Sizes.dp2px(borderSize).toFloat()
         // 设置圆角矩形Path
         val radii = FloatArray(8) {
             val size = this.radii?.getOrNull(it) ?: 0
             Sizes.dp2px(size).toFloat()
         }
         val path = Path()
-        path.addRoundRect(RectF(bounds), radii, Path.Direction.CW)
-
-        // 绘制边框
-        val borderSize = Sizes.dp2px(this.borderSize).toFloat()
-        if (borderSize > 0) {
-            val rectF = RectF(bounds)
-            rectF.inset(borderSize, borderSize)
-            canvas.drawPath(path, borderPaint)
-        }
-
+        val rectF = RectF(bounds).also { it.inset(bSize / 2, bSize / 2) }
+        path.addRoundRect(rectF, radii, Path.Direction.CW)
         // 绘制背景
         canvas.drawPath(path, paint)
+        // 绘制边框
+        canvas.drawPath(path, borderPaint)
+
         // 保存并移动画布
         val count = canvas.save()
         // 获取界限
@@ -153,7 +142,6 @@ class GetTextDrawable(
         textPaint.isAntiAlias = true
         textPaint.color = textColor
         textPaint.typeface = Typeface.defaultFromStyle(textStyle)
-        textPaint.strokeWidth = Sizes.dp2px(textBorderSize).toFloat()
         textPaint.textAlign = Paint.Align.CENTER
         textPaint.style = Paint.Style.FILL
     }

@@ -1,12 +1,15 @@
 package cn.cqray.demo.android;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.ImageView;
 
 import cn.cqray.android.Get;
 import cn.cqray.android.app.GetFragment;
 import cn.cqray.android.log.GetLog;
 import cn.cqray.android.tip.GetTipInit;
+import cn.cqray.android.widget.GetTextDrawable;
 
 public class MainFragment extends GetFragment {
 

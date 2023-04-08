@@ -28,7 +28,7 @@ open class GetButtonLineItem<T : GetButtonLineItem<T>> internal constructor(
     var textSize: Number = Sizes.spH3()
 
     /** 文本样式 **/
-    var textStyle = 0
+    var textStyle: Int = 0
 
     fun text(@StringRes id: Int) = also { this.text = ContextUtils.getString(id) } as T
 

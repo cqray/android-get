@@ -2,7 +2,7 @@
 <resources>
     <!-- 默认横向动画 -->
     <!-- 从名为A的activity跳转到B，B也可以跳转到C，其中转场动画设置在B上。 -->
-    <style name="DefaultHorizontalAnim">
+    <style name="GetHorizontalAnim">
         <!-- A跳转B时，B的动画 -->
         <item name="android:activityOpenEnterAnimation">@anim/_starter_horizontal_from_right</item>
         <!-- A跳转B时，A的动画 -->
@@ -15,7 +15,7 @@
 
     <!-- 默认纵向动画 -->
     <!-- 从名为A的activity跳转到B，B也可以跳转到C，其中转场动画设置在B上。 -->
-    <style name="DefaultVerticalAnim">
+    <style name="GetVerticalAnim">
         <!-- A跳转B时，B的动画 -->
         <item name="android:activityOpenEnterAnimation">@anim/_starter_vertical_to_top</item>
         <!-- A跳转B时，A的动画 -->
@@ -31,7 +31,7 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
-        <item name="android:windowAnimationStyle">@style/DefaultVerticalAnim</item>
+        <item name="android:windowAnimationStyle">@style/GetVerticalAnim</item>
         <item name="android:windowIsTranslucent">false</item>
         <item name="android:windowBackground">@color/background</item>
         <item name="android:windowDisablePreview">true</item>

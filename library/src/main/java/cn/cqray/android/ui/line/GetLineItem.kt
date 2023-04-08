@@ -1,15 +1,14 @@
 package cn.cqray.android.ui.line
 
-import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import android.util.TypedValue.*
 import androidx.annotation.ColorInt
 import androidx.annotation.DrawableRes
-import androidx.core.content.ContextCompat
 import cn.cqray.android.util.Colors
+import cn.cqray.android.util.Contexts
 import cn.cqray.android.util.Sizes
 import com.blankj.utilcode.util.CloneUtils
-import com.blankj.utilcode.util.Utils
+import com.blankj.utilcode.util.ImageUtils
 import com.chad.library.adapter.base.entity.MultiItemEntity
 import java.io.*
 
@@ -33,10 +32,10 @@ open class GetLineItem<T : GetLineItem<T>>(
     var height: Number = Sizes.dpLine()
 
     /** 外部间隔，左上右下 **/
-    val margins = arrayOf<Number>(0, 0, 0, 0)
+    val margins = Array<Number>(4) { 0 }
 
     /** 内部间隔，左上右下 **/
-    val paddings = arrayOf<Number>(0, 0, 0, 0)
+    val paddings = Array<Number>(4) { 0 }
 
     /** 分割线高度 **/
     var dividerHeight: Number = 0
@@ -46,10 +45,13 @@ open class GetLineItem<T : GetLineItem<T>>(
     var dividerColor: Int = Colors.divider()
 
     /** 分割线间隔，左上右下 **/
-    val dividerMargins = arrayOf<Number>(0, 0, 0, 0)
+    val dividerMargins = Array<Number>(4) { 0 }
 
     /** 背景 **/
-    var background: Drawable? = null
+    val background: Drawable? get() = ImageUtils.bytes2Drawable(bgBytes)
+
+    /** 背景字节数据 **/
+    private var bgBytes: ByteArray? = null
 
     init {
         // 初始化间隔信息
@@ -215,26 +217,23 @@ open class GetLineItem<T : GetLineItem<T>>(
      * 设置背景
      * @param drawable 背景
      */
-    fun background(drawable: Drawable?) = also { background = drawable } as T
+    fun background(drawable: Drawable?) = also { bgBytes = ImageUtils.drawable2Bytes(drawable) } as T
 
     /**
-     * 设置背景颜色
-     * @param color 背景颜色
+     * 设置背景，[DrawableRes]资源ID或[ColorInt]色值
+     * @param any [DrawableRes]资源ID或[ColorInt]色值
+     * @param forceColor 是否确定为ColorInt
      */
-    fun backgroundColor(@ColorInt color: Int) = also { background = ColorDrawable(color) } as T
-
-    /**
-     * 设置背景，[DrawableRes]资源ID
-     * @param id [DrawableRes]资源ID
-     */
-    fun backgroundResource(@DrawableRes id: Int) = also {
-        background = ContextCompat.getDrawable(Utils.getApp(), id)
-    } as T
+    @JvmOverloads
+    fun background(
+        @ColorInt @DrawableRes any: Int,
+        forceColor: Boolean = false
+    ) = also { bgBytes = Contexts.getDrawableBytes(any, forceColor) } as T
 
     /**
      * 复制当前项
      */
-    fun copy() = CloneUtils.deepClone(this, this.javaClass) as T
+    fun copy() = CloneUtils.deepClone(this, javaClass) as T
 
     @Suppress("UPPER_BOUND_VIOLATED_WARNING")
     companion object {

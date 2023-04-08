@@ -40,8 +40,8 @@ public class DemoApplication extends MultiDexApplication {
         Log.e("数据", "APPlication是否相同：" + (app == this));
 
         GetToolbarInit toolbarInit = new GetToolbarInit();
-        toolbarInit.setElevation(100F);
-        toolbarInit.setBackIcon(R.drawable.def_back_common_dark);
+        toolbarInit.setElevation(7F);
+//        toolbarInit.setBackIcon(R.drawable.def_back_common_dark);
         toolbarInit.setBackText("返回");
         GetInit getInit = new GetInit();
         getInit.setToolbarInit(toolbarInit);

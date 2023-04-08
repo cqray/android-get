@@ -1,44 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <item name="fixed_footer" type="id" />
-    <item name="fixed_header" type="id" />
-    <item name="translation_footer" type="id" />
-    <item name="translation_header" type="id" />
-
-    <item name="toolbar" type="id" />
-    <item name="footer_layout" type="id" />
-    <item name="header_layout" type="id" />
-    <item name="refresh_layout" type="id" />
-    <item name="nav_layout" type="id" />
-
-
-
 
     <item name="get_toolbar_title" type="id" />
     <item name="get_toolbar_back_view" type="id" />
     <item name="get_toolbar_action_layout" type="id" />
-
-
     <!-- 默认布局相关ID -->
     <item name="get_toolbar" type="id" />
     <item name="get_content" type="id" />
     <item name="get_refresh" type="id" />
     <item name="get_header" type="id" />
     <item name="get_footer" type="id" />
-
     <!-- 导航相关ID -->
     <item name="get_nav_content" type="id" />
-<!--    <item name="get_nav_pager" type="id" />-->
-<!--    <item name="get_nav_tab" type="id" />-->
-<!--    <item name="get_top_nav" type="id" />-->
-<!--    <item name="get_bottom_nav" type="id" />-->
-
-<!--    &lt;!&ndash; ViewState相关ID &ndash;&gt;-->
-<!--    <item name="get_state_img" type="id" />-->
-<!--    <item name="get_state_text" type="id" />-->
-<!--    <item name="get_state_retry" type="id" />-->
-<!--    <item name="get_state_spin_kit" type="id" />-->
-
-<!--    <item name="get_tip_text" type="id" />-->
 
 </resources>

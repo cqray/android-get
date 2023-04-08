@@ -14,6 +14,12 @@
         android:layout_height="wrap_content"
         android:text="6666666666"/>
 
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/iv"/>
+
+
     <EditText
         android:id="@+id/et"
         android:layout_width="match_parent"

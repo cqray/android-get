@@ -25,7 +25,6 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LifecycleRegistry
 import androidx.lifecycle.MutableLiveData
 import cn.cqray.android.R
-import cn.cqray.android.util.ContextUtils
 import cn.cqray.android.util.Sizes
 import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.shape.MaterialShapeUtils
@@ -144,7 +143,7 @@ class GetToolbar @JvmOverloads constructor(
         val elevation = ta.getDimension(R.styleable.GetToolbar_elevation, elev)
         val editable = ta.getBoolean(R.styleable.GetToolbar_titleEditable, false)
         // 默认属性
-        val paddingSE = ta.getDimension(R.styleable.GetToolbar_paddingSE, Sizes.px(R.dimen.content).toFloat())
+        val paddingH = ta.getDimension(R.styleable.GetToolbar_paddingH, Sizes.px(R.dimen.content).toFloat())
         val titleSpace = ta.getDimension(R.styleable.GetToolbar_titleSpace, Sizes.px(R.dimen.content).toFloat())
         val titleCenter = ta.getBoolean(R.styleable.GetToolbar_titleCenter, false)
         ta.recycle()
@@ -157,7 +156,7 @@ class GetToolbar @JvmOverloads constructor(
         titleCenterLd.value = titleCenter
         titleEditableLd.value = editable
         // 再更新标题左右间隔，因为它涉及的计算单一
-        paddingHLd.value = IntArray(2) { paddingSE.toInt() }
+        paddingHLd.value = IntArray(2) { paddingH.toInt() }
         // 最后更新标题内容左右空间，因为它涉及的计算最复杂
         titleSpaceLd.postValue(titleSpace.toInt())
         // 设置阴影大小
@@ -389,15 +388,15 @@ class GetToolbar @JvmOverloads constructor(
 
     @JvmOverloads
     fun setPaddingH(padding: Number, unit: Int = COMPLEX_UNIT_DIP) = also {
-        val newPadding = Sizes.applyDimension(padding, unit)
-        paddingHLd.setValue(IntArray(2) { newPadding.toInt() })
+        val newPadding = Sizes.any2px(padding, unit)
+        paddingHLd.setValue(IntArray(2) { newPadding })
     }
 
     @JvmOverloads
     fun setPaddingH(start: Number, end: Number, unit: Int = COMPLEX_UNIT_DIP) = also {
-        val newStart = Sizes.applyDimension(start, unit)
-        val newEnd = Sizes.applyDimension(end, unit)
-        paddingHLd.setValue(intArrayOf(newStart.toInt(), newEnd.toInt()))
+        val newStart = Sizes.any2px(start, unit)
+        val newEnd = Sizes.any2px(end, unit)
+        paddingHLd.setValue(intArrayOf(newStart, newEnd))
     }
 
     //============================================================//
@@ -542,8 +541,6 @@ class GetToolbar @JvmOverloads constructor(
     //===================DIVIDER部分 START=========================//
     //============================================================//
 
-    fun setDividerColor(@ColorInt color: Int) = also { dividerView.setBackgroundColor(color) }
-
     fun setDividerDrawable(drawable: Drawable?) = also { dividerView.background = drawable }
 
     @JvmOverloads
@@ -574,8 +571,7 @@ class GetToolbar @JvmOverloads constructor(
         layoutParams.height = Sizes.any2px(init.height, COMPLEX_UNIT_DIP)
         elevation = init.elevation.toFloat()
         // 背景
-        if (init.backgroundResource != null) setBackgroundResource(init.backgroundResource!!)
-        else if (init.backgroundColor != null) setBackgroundColor(init.backgroundColor!!)
+        background = init.background
         // 回退按钮部分
         init.backIcon?.let { setBackIcon(it) }
         setBackRipple(init.backRipple)
@@ -602,9 +598,7 @@ class GetToolbar @JvmOverloads constructor(
         setDividerMargin(init.dividerMarginH)
         setDividerVisible(init.dividerVisible)
         // 分割线背景
-        if (init.dividerResource != null) setDividerDrawable(ContextUtils.getDrawable(init.dividerResource!!))
-        else if (init.dividerColor != null) setDividerColor(init.dividerColor!!)
-        else setDividerDrawable(null)
+        setDividerDrawable(init.dividerDrawable)
     }
 
     private fun createMaterialShapeDrawableBackground(background: Drawable): Drawable {

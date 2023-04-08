@@ -4,7 +4,8 @@ import androidx.annotation.ColorInt
 import androidx.annotation.IntRange
 import cn.cqray.android.Get
 import cn.cqray.android.init.BaseInit
-import java.lang.reflect.Field
+import kotlin.reflect.full.declaredMemberProperties
+import kotlin.reflect.jvm.javaField
 
 /**
  * Tip配置属性
@@ -60,18 +61,26 @@ class GetTipInit : BaseInit() {
     fun mergeDefault() = also {
         // 默认配置
         val default = Get.init.tipInit.also { it.loadFromLocal() }
-        // 获取所有属性
-        val fields = mutableListOf<Field>().also {
-            it.addAll(GetTipInit::class.java.fields)
-            it.addAll(GetTipInit::class.java.declaredFields)
-        }
-        // 遍历所有属性，取出不为null的值并重新赋值
-        fields.forEach { field ->
+        // 遍历属性
+        javaClass.kotlin.declaredMemberProperties.forEach {
             runCatching {
-                field.isAccessible = true
-                val cur = field.get(this)
-                // 空值，则赋予默认值
-                if (cur == null) field.set(this, field.get(default))
+                if (it.javaClass.getAnnotation(Transient::class.java) != null) {
+                    // 不执行的类型
+                    return@runCatching
+                }
+                val type = it.returnType
+                it.javaField?.let {
+                    it.isAccessible = true
+                    val cur = it.get(this)
+                    val def = it.get(default)
+                    // 空值，则赋予默认值
+                    if (cur == null) {
+                        // 值不为NULL，直接赋值
+                        if (def != null) it.set(this, def)
+                        // 为NULL则需要判定是否可以为NULL才赋值
+                        else if (type.isMarkedNullable) it.set(this, null)
+                    }
+                }
             }
         }
     }

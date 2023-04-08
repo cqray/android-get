@@ -1,9 +1,11 @@
 package cn.cqray.android.widget
 
+import android.graphics.Bitmap
 import android.graphics.Color
+import android.graphics.drawable.Drawable
 import androidx.annotation.ColorInt
-import androidx.annotation.DrawableRes
 import cn.cqray.android.R
+import cn.cqray.android.graphics.DrawablePlus
 import cn.cqray.android.init.BaseInit
 import cn.cqray.android.util.Sizes
 
@@ -11,23 +13,29 @@ import cn.cqray.android.util.Sizes
  * 标题初始化配置
  * @author Cqray
  */
+@Suppress("Unused")
 class GetToolbarInit : BaseInit() {
 
-    /** 背景资源 **/
-    @DrawableRes
-    var backgroundResource: Int? = R.color.colorPrimary
-        get() {
-            if (field != null) backgroundColor = null
-            return field
-        }
+    //===============================
+    //============背景部分============
+    //===============================
 
-    /** 背景颜色 **/
-    @ColorInt
-    var backgroundColor: Int? = null
-        set(value) {
-            field = value
-            backgroundResource = null
-        }
+    /** 背景 **/
+    private val bgDrawablePlus = DrawablePlus().also { it.set(R.color.colorPrimary) }
+
+    /** 背景 **/
+    val background: Drawable? get() = bgDrawablePlus.get()
+
+    fun setBackground(drawable: Drawable?) = bgDrawablePlus.set(drawable)
+
+    fun setBackground(bitmap: Bitmap?) = bgDrawablePlus.set(bitmap)
+
+    @JvmOverloads
+    fun setBackground(any: Int, forceColor: Boolean = false) = bgDrawablePlus.set(any, forceColor)
+
+    //===============================
+    //============常规属性============
+    //===============================
 
     /** 是否启用水波纹 **/
     var ripple: Boolean = true
@@ -41,12 +49,24 @@ class GetToolbarInit : BaseInit() {
     /** 左右内容间隔，单位DP **/
     var paddingH: Number = Sizes.dpContent()
 
+    //===============================
+    //============回退部分============
+    //===============================
+
+    /** 回退图片资源 **/
+    private val backDrawablePlus = DrawablePlus().also { it.set(R.drawable.def_back_material_light) }
+
+    val backIcon: Drawable? get() = backDrawablePlus.get()
+
+    fun setBackIcon(drawable: Drawable?) = backDrawablePlus.set(drawable)
+
+    fun setBackIcon(bitmap: Bitmap?) = backDrawablePlus.set(bitmap)
+
+    @JvmOverloads
+    fun setBackIcon(any: Int, forceColor: Boolean = false) = backDrawablePlus.set(any, forceColor)
+
     /** 回退是否使用水波纹 **/
     var backRipple: Boolean = true
-
-    /** 回退按钮图片资源 **/
-    @DrawableRes
-    var backIcon: Int? = R.drawable.def_back_material_light
 
     /** 回退图片与文本间的间隔，单位DP **/
     var backIconSpace: Number = Sizes.dpSmall()
@@ -68,6 +88,10 @@ class GetToolbarInit : BaseInit() {
     /** 回退文本样式 **/
     var backTextStyle: Int = 0
 
+    //===============================
+    //===========标题部分============
+    //===============================
+
     /** 标题是否居中 **/
     var titleCenter: Boolean = false
 
@@ -83,6 +107,10 @@ class GetToolbarInit : BaseInit() {
 
     /** 标题文本样式 **/
     var titleTextStyle: Int = 0
+
+    //===============================
+    //===========行为部分=============
+    //===============================
 
     /** 行为控件是否使用水波纹 **/
     var actionRipple: Boolean = true
@@ -100,21 +128,9 @@ class GetToolbarInit : BaseInit() {
     /** 行为控件间文本样式 **/
     var actionTextStyle: Int = 0
 
-    /** 分割线图片 **/
-    @DrawableRes
-    var dividerResource: Int? = R.color.divider
-        get() {
-            if (field != null) dividerColor = null
-            return field
-        }
-
-    /** 分割线颜色 **/
-    @ColorInt
-    var dividerColor: Int? = null
-        set(value) {
-            field = value
-            dividerResource = null
-        }
+    //===============================
+    //===========分割线部分===========
+    //===============================
 
     /** 分割线高度，单位DP **/
     var dividerHeight: Number = Sizes.dpDivider()
@@ -124,4 +140,15 @@ class GetToolbarInit : BaseInit() {
 
     /** 分割线是否显示 **/
     var dividerVisible: Boolean = false
+
+    /** 分割线背景字节数据 **/
+    private val dividerDrawablePlus = DrawablePlus()
+
+    /** 分割线背景 **/
+    val dividerDrawable: Drawable? get() = dividerDrawablePlus.get()
+
+    fun setDividerDrawable(drawable: Drawable?) = dividerDrawablePlus.set(drawable)
+
+    @JvmOverloads
+    fun setDividerDrawable(any: Int, forceColor: Boolean = false) = dividerDrawablePlus.set(any, forceColor)
 }

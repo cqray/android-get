@@ -5,7 +5,8 @@ import com.blankj.utilcode.util.SPUtils
 import com.google.gson.Gson
 import com.google.gson.JsonParser
 import java.io.Serializable
-import java.lang.reflect.Field
+import kotlin.reflect.full.declaredMemberProperties
+import kotlin.reflect.jvm.javaField
 
 /**
  * 基础初始配置，主要是可以将配置保存到本地
@@ -34,23 +35,24 @@ open class BaseInit : Serializable {
                 // 读取缓存并复制
                 val body = element.asJsonObject
                 val gson = Gson()
-                // 获取所有属性
-                val fields = mutableListOf<Field>().also {
-                    it.addAll(javaClass.fields)
-                    it.addAll(javaClass.declaredFields)
-                }
-
-                // 遍历所有属性
-                fields.forEach {
+                // 遍历属性
+                javaClass.kotlin.declaredMemberProperties.forEach {
                     runCatching {
-                        if (it.getAnnotation(Transient::class.java) != null) {
+                        if (it.javaClass.getAnnotation(Transient::class.java) != null) {
                             // 不执行的类型
                             return@runCatching
                         }
-                        val value = gson.fromJson(body.get(it.name), it.type)
-                        it.isAccessible = true
-                        it.set(this, value)
-                    }.onFailure { it.printStackTrace() }
+                        val type = it.returnType
+                        val value = gson.fromJson(body.get(it.name), it.javaClass)
+                        // 字段赋值
+                        it.javaField?.let {
+                            it.isAccessible = true
+                            // 值不为NULL，直接赋值
+                            if (value != null) it.set(this, value)
+                            // 为NULL则需要判定是否可以为NULL才赋值
+                            else if (type.isMarkedNullable) it.set(this, null)
+                        }
+                    }
                 }
             }
             // 标记为不需要重新加载

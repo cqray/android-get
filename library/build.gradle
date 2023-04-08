@@ -75,55 +75,33 @@ dependencies {
     //JetPack Lifecycle、LiveData、ViewModel扩展
     api "androidx.lifecycle:lifecycle-common-java8:2.5.1"
 
-//    api 'com.github.getActivity:TitleBar:10.0'
-
-//    //Java工具
-//    api 'com.gitee.cqray:jtool:0.0.3'
-
+    // Json格式化工具
+    api "com.google.code.gson:gson:2.8.9"
     // 常用工具类
     api "com.blankj:utilcodex:1.31.1"
     // 加载动画
     api "com.github.ybq:Android-SpinKit:1.4.0"
+    // Toast弹窗
+    api 'com.github.getActivity:Toaster:12.0'
     // 刷新框架
     api "com.scwang.smart:refresh-layout-kernel:2.0.3"
+    // TabLayout框架
+    api 'io.github.h07000223:flycoTabLayout:3.0.0'
+    // ButterKnife快速布局工具
+    compileOnly "com.jakewharton:butterknife:10.2.3"
 
-    // 3.0.4之后版本需要Kotlin，暂不适配Kotlin。
     // noinspection GradleDependency
     api "com.github.CymChad:BaseRecyclerViewAdapterHelper:3.0.11"
 
-//    api "io.github.cymchad:BaseRecyclerViewAdapterHelper:4.0.0-beta04"
-
-    compileOnly 'io.reactivex.rxjava2:rxjava:2.2.21'
-
-
     // RxJava
+    compileOnly 'io.reactivex.rxjava2:rxjava:2.2.21'
     api "io.reactivex.rxjava3:rxjava:3.1.5"
     api "io.reactivex.rxjava3:rxandroid:3.0.0"
-    // Json格式化
-    api "com.google.code.gson:gson:2.8.9"
-    // ButterKnife工具
-    compileOnly "com.jakewharton:butterknife:10.2.3"
 
-    api 'com.github.getActivity:Toaster:12.0'
-
+    // Kotlin相关框架
     //noinspection GradleDependency
     api "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-
-//    compileOnly 'com.orhanobut:logger:2.2.0'
-
-//    // 协程 支持包   ------   AndroidX 扩展包
-//    //引入协程包,里面包了core核心包
-//    api 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.5.2'
-//    api 'androidx.lifecycle:lifecycle-runtime-ktx:2.2.0'
-//    api 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.2.0'
-
-//    api 'androidx.multidex:multidex:2.0.1'
-//不需要核心 包
-//implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.3"
-//java版本的（我们一般不用）
-//    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-java:1.3.2'
-
-    api 'io.github.h07000223:flycoTabLayout:3.0.0'
+    api "org.jetbrains.kotlin:kotlin-reflect:1.6.21"
 
 }
 

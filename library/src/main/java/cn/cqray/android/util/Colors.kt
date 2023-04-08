@@ -1,6 +1,7 @@
 package cn.cqray.android.util
 
 import android.content.Context
+import android.util.TypedValue
 import androidx.annotation.ColorRes
 import androidx.core.content.ContextCompat
 import cn.cqray.android.R
@@ -39,4 +40,9 @@ object Colors {
     @JvmStatic
     fun accent() = get(R.color.colorAccent)
 
+    /** 是否是颜色资源ID **/
+    fun isColorRes(any: Int): Boolean {
+        val resources = Contexts.get().resources
+        return resources.getResourceTypeName(any) == "color"
+    }
 }
