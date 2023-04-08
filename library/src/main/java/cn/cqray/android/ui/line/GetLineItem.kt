@@ -18,7 +18,9 @@ import java.io.*
  * @author Cqray
  */
 @Suppress(
-    "MemberVisibilityCanBePrivate", "Unchecked_cast", "Unused"
+    "MemberVisibilityCanBePrivate",
+    "Unchecked_cast",
+    "Unused"
 )
 open class GetLineItem<T : GetLineItem<T>>(
     override val itemType: Int
@@ -27,31 +29,31 @@ open class GetLineItem<T : GetLineItem<T>>(
     /** 标识 **/
     var tag: Any? = null
 
-    /** 行高  */
-    var height = Sizes.pxLine()
+    /** 行高，单位DP  **/
+    var height: Number = Sizes.dpLine()
 
     /** 外部间隔，左上右下 **/
-    val margins = IntArray(4)
+    val margins = arrayOf<Number>(0, 0, 0, 0)
 
     /** 内部间隔，左上右下 **/
-    val paddings = IntArray(4)
+    val paddings = arrayOf<Number>(0, 0, 0, 0)
 
     /** 分割线高度 **/
-    var dividerHeight: Int = 0
+    var dividerHeight: Number = 0
 
     /** 分割线颜色 **/
     @ColorInt
     var dividerColor: Int = Colors.divider()
 
     /** 分割线间隔，左上右下 **/
-    val dividerMargins = IntArray(4)
+    val dividerMargins = arrayOf<Number>(0, 0, 0, 0)
 
     /** 背景 **/
     var background: Drawable? = null
 
     init {
         // 初始化间隔信息
-        Sizes.pxContent().let {
+        Sizes.dpContent().let {
             paddings[0] = it
             paddings[2] = it
             dividerMargins[0] = it
@@ -74,7 +76,7 @@ open class GetLineItem<T : GetLineItem<T>>(
     fun height(
         height: Number,
         unit: Int = COMPLEX_UNIT_DIP
-    ) = also { this.height = Sizes.any2px(height, unit) } as T
+    ) = also { this.height = Sizes.any2dp(height, unit) } as T
 
     /**
      * 设置外部间隔，默认单位DP
@@ -85,7 +87,7 @@ open class GetLineItem<T : GetLineItem<T>>(
     fun margin(
         margin: Number,
         unit: Int = COMPLEX_UNIT_DIP
-    ) = also { margins.forEachIndexed { i, _ -> margins[i] = Sizes.any2px(margin, unit) } } as T
+    ) = also { margins.forEachIndexed { i, _ -> margins[i] = Sizes.any2dp(margin, unit) } } as T
 
     /**
      * 设置外部左右间隔
@@ -94,13 +96,13 @@ open class GetLineItem<T : GetLineItem<T>>(
      * @param unit 单位
      */
     @JvmOverloads
-    fun marginSe(
+    fun marginH(
         start: Number,
         end: Number,
         unit: Int = COMPLEX_UNIT_DIP
     ) = also {
-        margins[0] = Sizes.any2px(start, unit)
-        margins[2] = Sizes.any2px(end, unit)
+        margins[0] = Sizes.any2dp(start, unit)
+        margins[2] = Sizes.any2dp(end, unit)
     } as T
 
     /**
@@ -110,13 +112,13 @@ open class GetLineItem<T : GetLineItem<T>>(
      * @param unit 单位
      */
     @JvmOverloads
-    fun marginTb(
+    fun marginV(
         top: Number,
         bottom: Number,
         unit: Int = COMPLEX_UNIT_DIP
     ) = also {
-        margins[1] = Sizes.any2px(top, unit)
-        margins[3] = Sizes.any2px(bottom, unit)
+        margins[1] = Sizes.any2dp(top, unit)
+        margins[3] = Sizes.any2dp(bottom, unit)
     } as T
 
     /**
@@ -128,7 +130,7 @@ open class GetLineItem<T : GetLineItem<T>>(
     fun padding(
         padding: Number,
         unit: Int = COMPLEX_UNIT_DIP
-    ) = also { paddings.forEachIndexed { i, _ -> paddings[i] = Sizes.any2px(padding, unit) } } as T
+    ) = also { paddings.forEachIndexed { i, _ -> paddings[i] = Sizes.any2dp(padding, unit) } } as T
 
     /**
      * 设置内部左右间隔
@@ -136,13 +138,13 @@ open class GetLineItem<T : GetLineItem<T>>(
      * @param end 右间隔
      * @param unit 单位
      */
-    fun paddingSe(
+    fun paddingH(
         start: Number,
         end: Number,
         unit: Int = COMPLEX_UNIT_DIP
     ) = also {
-        paddings[0] = Sizes.any2px(start, unit)
-        paddings[2] = Sizes.any2px(end, unit)
+        paddings[0] = Sizes.any2dp(start, unit)
+        paddings[2] = Sizes.any2dp(end, unit)
     } as T
 
     /**
@@ -151,13 +153,13 @@ open class GetLineItem<T : GetLineItem<T>>(
      * @param bottom 下间隔
      * @param unit 单位
      */
-    fun paddingTb(
+    fun paddingV(
         top: Number,
         bottom: Number,
         unit: Int = COMPLEX_UNIT_DIP
     ) = also {
-        paddings[1] = Sizes.any2px(top, unit)
-        paddings[3] = Sizes.any2px(bottom, unit)
+        paddings[1] = Sizes.any2dp(top, unit)
+        paddings[3] = Sizes.any2dp(bottom, unit)
     } as T
 
     /**
@@ -169,7 +171,7 @@ open class GetLineItem<T : GetLineItem<T>>(
     fun dividerHeight(
         height: Number,
         unit: Int = COMPLEX_UNIT_DIP
-    ) = also { dividerHeight = Sizes.any2px(height, unit) } as T
+    ) = also { dividerHeight = Sizes.any2dp(height, unit) } as T
 
     /**
      * 设置分割线颜色
@@ -184,13 +186,13 @@ open class GetLineItem<T : GetLineItem<T>>(
      * @param unit 单位
      */
     @JvmOverloads
-    fun dividerMarginSE(
+    fun dividerMarginH(
         start: Number,
         end: Number,
         unit: Int = COMPLEX_UNIT_DIP
     ) = also {
-        dividerMargins[0] = Sizes.any2px(start, unit)
-        dividerMargins[2] = Sizes.any2px(end, unit)
+        dividerMargins[0] = Sizes.any2dp(start, unit)
+        dividerMargins[2] = Sizes.any2dp(end, unit)
     } as T
 
     /**
@@ -200,13 +202,13 @@ open class GetLineItem<T : GetLineItem<T>>(
      * @param unit 单位
      */
     @JvmOverloads
-    fun dividerMarginTB(
+    fun dividerMarginV(
         top: Number,
         bottom: Number,
         unit: Int = COMPLEX_UNIT_DIP
     ) = also {
-        dividerMargins[1] = Sizes.any2px(top, unit)
-        dividerMargins[3] = Sizes.any2px(bottom, unit)
+        dividerMargins[1] = Sizes.any2dp(top, unit)
+        dividerMargins[3] = Sizes.any2dp(bottom, unit)
     } as T
 
     /**
@@ -225,7 +227,9 @@ open class GetLineItem<T : GetLineItem<T>>(
      * 设置背景，[DrawableRes]资源ID
      * @param id [DrawableRes]资源ID
      */
-    fun backgroundResource(@DrawableRes id: Int) = also { background = ContextCompat.getDrawable(Utils.getApp(), id) } as T
+    fun backgroundResource(@DrawableRes id: Int) = also {
+        background = ContextCompat.getDrawable(Utils.getApp(), id)
+    } as T
 
     /**
      * 复制当前项

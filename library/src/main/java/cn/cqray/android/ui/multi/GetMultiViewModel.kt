@@ -4,10 +4,9 @@ import android.util.TypedValue.COMPLEX_UNIT_DIP
 import android.view.View
 import android.widget.FrameLayout
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.ViewModel
 import androidx.viewpager2.widget.ViewPager2
 import cn.cqray.android.databinding.GetMultiLayoutBinding
-import cn.cqray.android.lifecycle.GetViewModel
 import cn.cqray.android.util.ContextUtils
 import cn.cqray.android.util.Sizes
 import com.flyco.tablayout.CommonTabLayout
@@ -24,20 +23,7 @@ import java.util.concurrent.atomic.AtomicBoolean
     "MemberVisibilityCanBePrivate",
     "Unchecked_cast"
 )
-class GetMultiViewModel(lifecycleOwner: LifecycleOwner) : GetViewModel(lifecycleOwner) {
-
-    init {
-        if (lifecycleOwner !is GetMultiProvider) {
-            throw IllegalArgumentException(
-                String.format(
-                    "%s must implement %s.",
-                    javaClass.simpleName,
-                    GetMultiProvider::class.java.simpleName
-                )
-            )
-        }
-
-    }
+class GetMultiViewModel : ViewModel() {
 
     /** ViewBinding **/
     val binding by lazy { GetMultiLayoutBinding.inflate(ContextUtils.layoutInflater) }
@@ -71,7 +57,7 @@ class GetMultiViewModel(lifecycleOwner: LifecycleOwner) : GetViewModel(lifecycle
         binding.multiTab.also {
             it.setOnTabSelectListener(object : OnTabSelectListener {
                 override fun onTabSelect(position: Int) {
-                    delegate.showFragment(multiPager, position)
+                    delegate?.showFragment(multiPager, position)
                 }
 
                 override fun onTabReselect(position: Int) {}
@@ -82,14 +68,17 @@ class GetMultiViewModel(lifecycleOwner: LifecycleOwner) : GetViewModel(lifecycle
     /** TabLayout是否在顶部 **/
     private var tabAtTop = AtomicBoolean(false)
 
-    /** 多界面管理实例 **/
-    private val delegate: GetMultiDelegate by lazy { (lifecycleOwner as GetMultiProvider).multiDelegate }
+    /** [GetMultiDelegate]管理实例 **/
+    private var delegate: GetMultiDelegate? = null
 
     /** Tab数据 **/
     private val tabData = ArrayList<CustomTabEntity>()
 
     /** Fragment列表 **/
-    val fragments get() = delegate.getFragments(multiPager)
+    val fragments get() = delegate?.getFragments(multiPager) ?: mutableListOf()
+
+    /** 初始化 **/
+    fun init(delegate: GetMultiDelegate) = run { this.delegate = delegate }
 
     /**
      * 改变TabLayout位置
@@ -100,7 +89,7 @@ class GetMultiViewModel(lifecycleOwner: LifecycleOwner) : GetViewModel(lifecycle
         multiBottomNav.removeView(multiTab)
         // 顶部容器
         with(multiTopNav) {
-            visibility = when(tabAtTop.get()) {
+            visibility = when (tabAtTop.get()) {
                 true -> {
                     addView(multiTab)
                     View.VISIBLE
@@ -110,7 +99,7 @@ class GetMultiViewModel(lifecycleOwner: LifecycleOwner) : GetViewModel(lifecycle
         }
         // 底部容器
         with(multiBottomNav) {
-            visibility = when(tabAtTop.get()) {
+            visibility = when (tabAtTop.get()) {
                 false -> {
                     addView(multiTab)
                     View.VISIBLE
@@ -197,11 +186,10 @@ class GetMultiViewModel(lifecycleOwner: LifecycleOwner) : GetViewModel(lifecycle
         // 设置页面缓存量为Fragment数量，避免切换的时候被回收
         multiPager.offscreenPageLimit = if (items.isEmpty()) 5 else items.size
         // 加载Fragment
-        delegate.loadMultiFragments(multiPager, Array(items.size) {
+        delegate?.loadMultiFragments(multiPager, Array(items.size) {
             val item = items[it]
-            delegate.instantiateFragment(item.targetClass, item.arguments)
+            delegate!!.instantiateFragment(item.targetClass, item.arguments)
         })
-
     }
 
     /**
@@ -209,7 +197,7 @@ class GetMultiViewModel(lifecycleOwner: LifecycleOwner) : GetViewModel(lifecycle
      * @param index 指定位置
      */
     fun showFragment(index: Int) {
-        delegate.showFragment(multiPager, index)
+        delegate?.showFragment(multiPager, index)
         if (fragments.indices.contains(index)) {
             multiTab.currentTab = index
         }
@@ -221,7 +209,7 @@ class GetMultiViewModel(lifecycleOwner: LifecycleOwner) : GetViewModel(lifecycle
      */
     fun showFragment(fragment: Fragment) {
         val index = fragments.indexOf(fragment)
-        delegate.showFragment(multiPager, fragment)
+        delegate?.showFragment(multiPager, fragment)
         if (fragments.indices.contains(index)) {
             multiTab.currentTab = index
         }
@@ -252,11 +240,13 @@ class GetMultiViewModel(lifecycleOwner: LifecycleOwner) : GetViewModel(lifecycle
         }
         tabData.add(newIndex, entry)
         changeTabData()
-        // 添加新的Fragment
-        val fragment = delegate.instantiateFragment(item.targetClass, item.arguments)
-        delegate.addFragment(multiPager, fragment, newIndex)
-        // 设置multiPager2最大缓存数
-        multiPager.offscreenPageLimit = fragments.size
+        delegate?.let {
+            // 添加新的Fragment
+            val fragment = it.instantiateFragment(item.targetClass, item.arguments)
+            it.addFragment(multiPager, fragment, newIndex)
+            // 设置multiPager2最大缓存数
+            multiPager.offscreenPageLimit = fragments.size
+        }
     }
 
     /**
@@ -271,7 +261,7 @@ class GetMultiViewModel(lifecycleOwner: LifecycleOwner) : GetViewModel(lifecycle
      */
     fun removeFragment(index: Int) {
         // 移除Fragment
-        delegate.removeFragment(multiPager, index)
+        delegate?.removeFragment(multiPager, index)
         // 有效index，则操作TabLayout
         if (index in tabData.indices) {
             runCatching {
@@ -288,6 +278,6 @@ class GetMultiViewModel(lifecycleOwner: LifecycleOwner) : GetViewModel(lifecycle
     fun removeFragments() {
         tabData.clear()
         changeTabData()
-        delegate.removeFragments(multiPager)
+        delegate?.removeFragments(multiPager)
     }
 }

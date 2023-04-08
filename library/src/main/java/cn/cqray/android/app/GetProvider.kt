@@ -2,8 +2,8 @@ package cn.cqray.android.app
 
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelStoreOwner
-import cn.cqray.android.lifecycle.GetViewModelProvider
 import java.lang.UnsupportedOperationException
 
 @Suppress(
@@ -23,8 +23,8 @@ interface GetProvider {
     fun <T : ViewModel> getViewModel(clazz: Class<out ViewModel>): T {
         val owner = getLifecycleOwner()
         if (owner is ViewModelStoreOwner) {
-            return GetViewModelProvider(owner).get(clazz) as T
+            return ViewModelProvider(owner).get(clazz) as T
         }
-        throw UnsupportedOperationException("${owner.javaClass.simpleName} can't supported ${GetViewModelProvider::class.java.simpleName}")
+        throw UnsupportedOperationException("${owner.javaClass.simpleName} can't supported ${ViewModelProvider::class.java.simpleName}")
     }
 }

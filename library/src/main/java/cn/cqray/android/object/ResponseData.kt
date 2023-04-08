@@ -22,20 +22,20 @@ class ResponseData<T> : Serializable {
     var data: T? = null
 
     /** [code]整型值 **/
-    val codeAsInt: Int get() {
-        val regex = "\\D"
-        val pattern = Pattern.compile(regex)
-        val matcher = pattern.matcher(code!!)
-        val number = matcher.replaceAll("").trim()
-        return number.toInt()
-    }
+    val codeAsInt: Int
+        get() {
+            val regex = "\\D"
+            val pattern = Pattern.compile(regex)
+            val matcher = pattern.matcher(code!!)
+            val number = matcher.replaceAll("").trim()
+            return number.toInt()
+        }
 
     //        return Starter.getInstance()
 //                .getStarterStrategy()
 //                .getResponseDataSucceedCode()
 //                .contains(code);
-    val isSucceed: Boolean
-        get() = true
+    val isSucceed: Boolean get() = true
 
     //        return Starter.getInstance()
 //                .getStarterStrategy()

@@ -14,15 +14,16 @@ import com.chad.library.adapter.base.viewholder.BaseViewHolder
  */
 @Suppress(
     "MemberVisibilityCanBePrivate",
+    "NotifyDataSetChanged",
     "Unused"
 )
 class SelectAdapterDelegate<T>(val adapter: BaseQuickAdapter<T, out BaseViewHolder>) {
 
     /** 选中数据监听 **/
-    private val selectedDataLD = MutableLiveData(mutableListOf<T>())
+    private val selectedDataLd = MutableLiveData(mutableListOf<T>())
 
     /** 超出选中数量限制 **/
-    private val countLimitLD = MutableLiveData<Int>()
+    private val countLimitLd = MutableLiveData<Int>()
 
     /** 选中数据项 **/
     private val selectedItems = SparseArray<T>()
@@ -34,7 +35,7 @@ class SelectAdapterDelegate<T>(val adapter: BaseQuickAdapter<T, out BaseViewHold
     var alwaysSelectEnable = false
 
     /** 选中数据 **/
-    val selectedData: List<T> get() = selectedDataLD.value!!
+    val selectedData: List<T> get() = selectedDataLd.value!!
 
     /**
      * 订阅选中数据变化
@@ -42,7 +43,7 @@ class SelectAdapterDelegate<T>(val adapter: BaseQuickAdapter<T, out BaseViewHold
      * @param observer 观察者
      */
     fun observeSelectedData(owner: LifecycleOwner, observer: Observer<MutableList<T>>) {
-        selectedDataLD.observe(owner, observer)
+        selectedDataLd.observe(owner, observer)
     }
 
     /**
@@ -51,14 +52,13 @@ class SelectAdapterDelegate<T>(val adapter: BaseQuickAdapter<T, out BaseViewHold
      * @param observer 观察者
      */
     fun observeCountLimit(owner: LifecycleOwner, observer: Observer<Int>) {
-        countLimitLD.observe(owner, observer)
+        countLimitLd.observe(owner, observer)
     }
 
     /**
      * 全部选中或全不选
      * @param selectAll true全选 false全不选
      */
-    @SuppressLint("NotifyDataSetChanged")
     fun selectAll(selectAll: Boolean) {
         selectedItems.clear()
         if (selectAll) {
@@ -86,7 +86,7 @@ class SelectAdapterDelegate<T>(val adapter: BaseQuickAdapter<T, out BaseViewHold
         val size = selectedItems.size()
         // 超出数量且不允许继续选择，则不继续
         if ((maxCount > 0) and (size > maxCount) and !alwaysSelectEnable) {
-            countLimitLD.value = maxCount
+            countLimitLd.value = maxCount
             return
         }
         if (select) {
@@ -143,12 +143,12 @@ class SelectAdapterDelegate<T>(val adapter: BaseQuickAdapter<T, out BaseViewHold
         // 清空无效选中项
         clearInvalidSelectedItem()
         // 获取数据
-        val list = selectedDataLD.value!!.also { it.clear() }
+        val list = selectedDataLd.value!!.also { it.clear() }
         for (i in 0 until selectedItems.size()) {
             val item = selectedItems.valueAt(i)
             list.add(item)
         }
-        selectedDataLD.value = list
+        selectedDataLd.value = list
     }
 
     /**

@@ -6,6 +6,7 @@ import android.graphics.Color
 import android.graphics.Typeface
 import android.graphics.drawable.Drawable
 import android.util.*
+import android.util.TypedValue.COMPLEX_UNIT_DIP
 import android.util.TypedValue.COMPLEX_UNIT_SP
 import android.view.Gravity
 import android.view.View
@@ -46,13 +47,13 @@ class ActionLayout @JvmOverloads constructor(
     private val endSpaceView: Space by lazy { Space(context) }
 
     /** 控件缓存 **/
-    private val actionViews = HashMap<Int?, View>()
+    private val actionViews = HashMap<Int, View>()
 
     /** 控件是否显示水波纹缓存 **/
-    private val actionRipple = HashMap<Int?, Boolean>()
+    private val actionRipple = HashMap<Int, Boolean>()
 
     /** 控件是否显示缓存 **/
-    private val actionVisible = HashMap<Int?, Boolean>()
+    private val actionVisible = HashMap<Int, Boolean>()
 
     /** 默认是否显示水波纹 **/
     private var defaultRipple = true
@@ -113,10 +114,9 @@ class ActionLayout @JvmOverloads constructor(
         // 设置默认属性
         defaultVisible = visible
     }
-
-    fun setDefaultSpace(space: Float) = also { setDefaultSpace(space, TypedValue.COMPLEX_UNIT_DIP) }
-
-    fun setDefaultSpace(space: Number, unit: Int) = also {
+    
+    @JvmOverloads
+    fun setDefaultSpace(space: Number, unit: Int = COMPLEX_UNIT_DIP) = also {
         // 获取新的间隔值
         val newSpace = Sizes.applyDimension(space, unit)
         // 更新所有控件的间隔
@@ -176,21 +176,21 @@ class ActionLayout @JvmOverloads constructor(
         defaultTintColor = color
     }
 
-    fun setRipple(key: Int?, ripple: Boolean) = also {
+    fun setRipple(key: Int, ripple: Boolean) = also {
         // 缓存数据
         actionRipple[key] = ripple
         // 更改对应控件属性
         actionViews[key]?.let { ViewUtils.setRippleBackground(it, ripple) }
     }
 
-    fun setVisible(key: Int?, visible: Boolean) = also {
+    fun setVisible(key: Int, visible: Boolean) = also {
         // 缓存数据
         actionVisible[key] = visible
         // 更改对应控件属性
         actionViews[key]?.let { it.visibility = if (visible) VISIBLE else GONE }
     }
 
-    fun setView(key: Int?, view: View) = also {
+    fun setView(key: Int, view: View) = also {
         // 获取相关属性
         val old = actionViews[key]
         val visible = actionVisible[key] ?: defaultVisible
@@ -224,9 +224,9 @@ class ActionLayout @JvmOverloads constructor(
         addView(view, index)
     }
 
-    fun setText(key: Int?, @StringRes id: Int) = setText(key, resources.getString(id))
+    fun setText(key: Int, @StringRes id: Int) = setText(key, resources.getString(id))
 
-    fun setText(key: Int?, text: CharSequence?) = also {
+    fun setText(key: Int, text: CharSequence?) = also {
         // 初始化文本属性
         val tv = AppCompatTextView(context)
         tv.text = text
@@ -238,7 +238,7 @@ class ActionLayout @JvmOverloads constructor(
         setView(key, tv)
     }
 
-    fun setTextColor(key: Int?, @ColorInt color: Int) = also {
+    fun setTextColor(key: Int, @ColorInt color: Int) = also {
         actionViews[key]?.let {
             if (it is TextView) {
                 it.setTextColor(color)
@@ -247,7 +247,7 @@ class ActionLayout @JvmOverloads constructor(
     }
 
     @JvmOverloads
-    fun setTextSize(key: Int?, size: Number, unit: Int = COMPLEX_UNIT_SP) = also {
+    fun setTextSize(key: Int, size: Number, unit: Int = COMPLEX_UNIT_SP) = also {
         // 获取新的文本大小
         val newSize = Sizes.applyDimension(size, unit)
         // 设置新的文本大小
@@ -258,7 +258,7 @@ class ActionLayout @JvmOverloads constructor(
         }
     }
 
-    fun setTextStyle(key: Int?, style: Int) = also {
+    fun setTextStyle(key: Int, style: Int) = also {
         actionViews[key]?.let {
             if (it is TextView) {
                 it.typeface = Typeface.defaultFromStyle(style)
@@ -267,12 +267,12 @@ class ActionLayout @JvmOverloads constructor(
     }
 
     @JvmOverloads
-    fun setIcon(key: Int?, @DrawableRes id: Int, @ColorInt tintColor: Int? = null) = also {
+    fun setIcon(key: Int, @DrawableRes id: Int, @ColorInt tintColor: Int? = null) = also {
         setIcon(key, ContextCompat.getDrawable(context, id), tintColor)
     }
 
     @JvmOverloads
-    fun setIcon(key: Int?, drawable: Drawable?, @ColorInt tintColor: Int? = null) = also {
+    fun setIcon(key: Int, drawable: Drawable?, @ColorInt tintColor: Int? = null) = also {
         // 初始化图片控件
         val iv: ImageView = AppCompatImageView(context).also {
             // 设置图片
@@ -285,7 +285,7 @@ class ActionLayout @JvmOverloads constructor(
         setView(key, iv)
     }
 
-    fun setIconTintColor(key: Int?, @ColorInt color: Int?) = also {
+    fun setIconTintColor(key: Int, @ColorInt color: Int?) = also {
         actionViews[key]?.let {
             if (it is ImageView) {
                 // 获取属性
@@ -297,9 +297,9 @@ class ActionLayout @JvmOverloads constructor(
         }
     }
 
-    fun setListener(key: Int?, listener: OnClickListener?) = also { actionViews[key]?.setOnClickListener(listener) }
+    fun setListener(key: Int, listener: OnClickListener?) = also { actionViews[key]?.setOnClickListener(listener) }
 
-    fun <T : View> getActionView(key: Int?) = actionViews[key] as T?
+    fun <T : View> getActionView(key: Int) = actionViews[key] as T?
 
     private fun changeViewMargin(view: View, space: Float) {
         // 获取横纵向间隔值

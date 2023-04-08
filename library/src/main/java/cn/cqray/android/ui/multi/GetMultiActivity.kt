@@ -3,6 +3,7 @@ package cn.cqray.android.ui.multi
 import android.os.Bundle
 import android.util.TypedValue.COMPLEX_UNIT_DIP
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import androidx.viewpager2.widget.ViewPager2
 import cn.cqray.android.app.GetActivity
 import com.flyco.tablayout.CommonTabLayout
@@ -18,7 +19,11 @@ import com.flyco.tablayout.CommonTabLayout
 open class GetMultiActivity : GetActivity(), GetMultiProvider {
 
     /** [GetMultiViewModel]实例 **/
-    private val viewModel: GetMultiViewModel by lazy { getViewModel(GetMultiViewModel::class.java) }
+    private val viewModel: GetMultiViewModel by lazy {
+        val viewModel = ViewModelProvider(this).get(GetMultiViewModel::class.java)
+        viewModel.init(multiDelegate)
+        viewModel
+    }
 
     /** 根布局 **/
     val multiView get() = viewModel.multiView

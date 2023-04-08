@@ -1,14 +1,10 @@
 package cn.cqray.demo.android;
 
-import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 
-import com.blankj.utilcode.util.KeyboardUtils;
-
 import org.jetbrains.annotations.Nullable;
 
-import cn.cqray.android.app.GetIntent;
 import cn.cqray.android.app.GetNavActivity;
 import cn.cqray.android.ui.line.GetLineItem;
 

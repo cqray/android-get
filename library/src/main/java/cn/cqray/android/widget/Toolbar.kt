@@ -78,16 +78,16 @@ class Toolbar @JvmOverloads constructor(
     }
 
     /** 内容间隔 **/
-    private val paddingSeLD = MutableLiveData<IntArray>()
+    private val paddingHLd = MutableLiveData<IntArray>()
 
     /** 标题居中 **/
-    private val titleCenterLD = MutableLiveData<Boolean>()
+    private val titleCenterLd = MutableLiveData<Boolean>()
 
     /** 标题可编辑 **/
-    private val titleEditableLD = MutableLiveData<Boolean>()
+    private val titleEditableLd = MutableLiveData<Boolean>()
 
     /** 标题左右间隔 **/
-    private val titleSpaceLD = MutableLiveData<Int>()
+    private val titleSpaceLd = MutableLiveData<Int>()
 
     /** 生命周期注册器 **/
     private val lifecycleRegistry: LifecycleRegistry by lazy {
@@ -113,10 +113,10 @@ class Toolbar @JvmOverloads constructor(
         // 初始化分割线
         initToolbarDivider(attrs)
         // 初始化LiveData
-        initTitleSpaceLD()
-        initTitleCenterLD()
-        initTitleEditableLD()
-        initPaddingSeLD()
+        initTitleSpaceLd()
+        initTitleCenterLd()
+        initTitleEditableLd()
+        initpaddingHLd()
         setTitleCenter(false)
         // 设置内部间隔为 0
         super.setPadding(0, 0, 0, 0)
@@ -154,12 +154,12 @@ class Toolbar @JvmOverloads constructor(
         ViewCompat.setBackground(this, createMaterialShapeDrawableBackground(background))
         // 其他属性
         // 最先更新是否使用水波纹、标题位置及是否可编辑，因为它们不涉及数值计算
-        titleCenterLD.value = titleCenter
-        titleEditableLD.value = editable
+        titleCenterLd.value = titleCenter
+        titleEditableLd.value = editable
         // 再更新标题左右间隔，因为它涉及的计算单一
-        paddingSeLD.value = IntArray(2) { paddingSE.toInt() }
+        paddingHLd.value = IntArray(2) { paddingSE.toInt() }
         // 最后更新标题内容左右空间，因为它涉及的计算最复杂
-        titleSpaceLD.postValue(titleSpace.toInt())
+        titleSpaceLd.postValue(titleSpace.toInt())
         // 设置阴影大小
         setElevation(elevation)
     }
@@ -260,10 +260,10 @@ class Toolbar @JvmOverloads constructor(
     //==================LiveData初始化部分 START===================//
     //============================================================//
 
-    private fun initTitleSpaceLD() {
-        titleSpaceLD.observe(lifecycleOwner) { space ->
+    private fun initTitleSpaceLd() {
+        titleSpaceLd.observe(lifecycleOwner) { space ->
             // 标题位置
-            val center = titleCenterLD.value ?: false
+            val center = titleCenterLd.value ?: false
             // 更新标题间隔参数
             val tParams = titleView.layoutParams as LayoutParams
             // Action偏移量
@@ -304,9 +304,9 @@ class Toolbar @JvmOverloads constructor(
         }
     }
 
-    private fun initTitleCenterLD() {
+    private fun initTitleCenterLd() {
         // 标题居中监听
-        titleCenterLD.observe(lifecycleOwner) {
+        titleCenterLd.observe(lifecycleOwner) {
             val params = titleView.layoutParams as LayoutParams
             if (it) {
                 params.addRule(START_OF, -1)
@@ -322,9 +322,9 @@ class Toolbar @JvmOverloads constructor(
         }
     }
 
-    private fun initTitleEditableLD() {
+    private fun initTitleEditableLd() {
         // 监听设置标题栏是否可编辑
-        titleEditableLD.observe(lifecycleOwner) {
+        titleEditableLd.observe(lifecycleOwner) {
             titleView.isFocusableInTouchMode = it
             titleView.isClickable = it
             titleView.isFocusable = it
@@ -341,9 +341,9 @@ class Toolbar @JvmOverloads constructor(
         }
     }
 
-    private fun initPaddingSeLD() {
+    private fun initpaddingHLd() {
         // 间隔大小监听
-        paddingSeLD.observe(lifecycleOwner) {
+        paddingHLd.observe(lifecycleOwner) {
             val start = it[0]
             val end = it[1]
             // 设置BackLayout内部间隔
@@ -380,24 +380,24 @@ class Toolbar @JvmOverloads constructor(
     ) = also { setElevation(Sizes.any2dp(elevation, unit)) }
 
     override fun setPadding(left: Int, top: Int, right: Int, bottom: Int) {
-        paddingSeLD.value = intArrayOf(left, right)
+        paddingHLd.value = intArrayOf(left, right)
     }
 
     override fun setPaddingRelative(start: Int, top: Int, end: Int, bottom: Int) {
-        paddingSeLD.value = intArrayOf(start, end)
+        paddingHLd.value = intArrayOf(start, end)
     }
 
     @JvmOverloads
-    fun setPaddingSE(padding: Number, unit: Int = COMPLEX_UNIT_DIP) = also {
+    fun setPaddingH(padding: Number, unit: Int = COMPLEX_UNIT_DIP) = also {
         val newPadding = Sizes.applyDimension(padding, unit)
-        paddingSeLD.setValue(IntArray(2) { newPadding.toInt() })
+        paddingHLd.setValue(IntArray(2) { newPadding.toInt() })
     }
 
     @JvmOverloads
-    fun setPaddingSE(start: Number, end: Number, unit: Int = COMPLEX_UNIT_DIP) = also {
+    fun setPaddingH(start: Number, end: Number, unit: Int = COMPLEX_UNIT_DIP) = also {
         val newStart = Sizes.applyDimension(start, unit)
         val newEnd = Sizes.applyDimension(end, unit)
-        paddingSeLD.setValue(intArrayOf(newStart.toInt(), newEnd.toInt()))
+        paddingHLd.setValue(intArrayOf(newStart.toInt(), newEnd.toInt()))
     }
 
     //============================================================//
@@ -408,7 +408,7 @@ class Toolbar @JvmOverloads constructor(
     fun setBackVisible(visible: Boolean) = also {
         if (visible != (backView.visibility == VISIBLE)) {
             backView.visibility = if (visible) VISIBLE else GONE
-            paddingSeLD.value = paddingSeLD.value!!
+            paddingHLd.value = paddingHLd.value!!
         }
     }
 
@@ -462,14 +462,14 @@ class Toolbar @JvmOverloads constructor(
 
     fun setTitleTextStyle(style: Int) = also { titleView.typeface = Typeface.defaultFromStyle(style) }
 
-    fun setTitleCenter(center: Boolean) = also { titleCenterLD.value = center }
+    fun setTitleCenter(center: Boolean) = also { titleCenterLd.value = center }
 
-    fun setTitleEditable(editable: Boolean) = also { titleEditableLD.value = editable }
+    fun setTitleEditable(editable: Boolean) = also { titleEditableLd.value = editable }
 
     @JvmOverloads
     fun setTitleSpace(space: Number, unit: Int = COMPLEX_UNIT_DIP) = also {
         val newSpace = Sizes.applyDimension(space, unit)
-        titleSpaceLD.postValue(newSpace.toInt())
+        titleSpaceLd.postValue(newSpace.toInt())
     }
 
     //============================================================//
@@ -479,28 +479,26 @@ class Toolbar @JvmOverloads constructor(
 
     fun setActionRipple(ripple: Boolean) = also { actionLayout.setDefaultRipple(ripple) }
 
-    fun setActionRipple(key: Int?, ripple: Boolean) = also { actionLayout.setRipple(key, ripple) }
+    fun setActionRipple(key: Int, ripple: Boolean) = also { actionLayout.setRipple(key, ripple) }
 
     fun setActionVisible(visible: Boolean) = also { actionLayout.setDefaultVisible(visible) }
 
-    fun setActionVisible(key: Int?, visible: Boolean) = also { actionLayout.setVisible(key, visible) }
-
-    fun setActionSpace(space: Float) = also { setActionSpace(space, COMPLEX_UNIT_DIP) }
+    fun setActionVisible(key: Int, visible: Boolean) = also { actionLayout.setVisible(key, visible) }
 
     @JvmOverloads
     fun setActionSpace(space: Number, unit: Int = COMPLEX_UNIT_DIP) = also {
         actionLayout.setDefaultSpace(space, unit)
-        paddingSeLD.value = paddingSeLD.value!!
-        actionLayout.post { titleSpaceLD.value = titleSpaceLD.value!! }
+        paddingHLd.value = paddingHLd.value!!
+        actionLayout.post { titleSpaceLd.value = titleSpaceLd.value!! }
     }
 
-    fun setActionText(key: Int?, @StringRes id: Int) = also { actionLayout.setText(key, id) }
+    fun setActionText(key: Int, @StringRes id: Int) = also { actionLayout.setText(key, id) }
 
-    fun setActionText(key: Int?, text: CharSequence?) = also { actionLayout.setText(key, text) }
+    fun setActionText(key: Int, text: CharSequence?) = also { actionLayout.setText(key, text) }
 
     fun setActionTextColor(@ColorInt color: Int) = also { actionLayout.setDefaultTextColor(color) }
 
-    fun setActionTextColor(key: Int?, @ColorInt color: Int) = also { actionLayout.setTextColor(key, color) }
+    fun setActionTextColor(key: Int, @ColorInt color: Int) = also { actionLayout.setTextColor(key, color) }
 
     @JvmOverloads
     fun setActionTextSize(
@@ -510,34 +508,34 @@ class Toolbar @JvmOverloads constructor(
 
     @JvmOverloads
     fun setActionTextSize(
-        key: Int?,
+        key: Int,
         size: Number,
         unit: Int = COMPLEX_UNIT_DIP
     ) = also { actionLayout.setTextSize(key, size, unit) }
 
     fun setActionTextStyle(style: Int) = also { actionLayout.setDefaultTextStyle(style) }
 
-    fun setActionTextStyle(key: Int?, style: Int) = also { actionLayout.setTextStyle(key, style) }
+    fun setActionTextStyle(key: Int, style: Int) = also { actionLayout.setTextStyle(key, style) }
 
     @JvmOverloads
     fun setActionIcon(
-        key: Int?,
+        key: Int,
         @DrawableRes id: Int,
         @ColorInt tintColor: Int? = null
     ) = also { actionLayout.setIcon(key, id, tintColor) }
 
     @JvmOverloads
     fun setActionIcon(
-        key: Int?,
+        key: Int,
         drawable: Drawable?,
         @ColorInt tintColor: Int? = null
     ) = also { actionLayout.setIcon(key, drawable, tintColor) }
 
     fun setActionIconTintColor(@ColorInt color: Int?) = also { actionLayout.setDefaultIconTintColor(color) }
 
-    fun setActionIconTintColor(key: Int?, @ColorInt color: Int?) = also { actionLayout.setIconTintColor(key, color) }
+    fun setActionIconTintColor(key: Int, @ColorInt color: Int?) = also { actionLayout.setIconTintColor(key, color) }
 
-    fun setActionListener(key: Int?, listener: OnClickListener?) = also { actionLayout.setListener(key, listener) }
+    fun setActionListener(key: Int, listener: OnClickListener?) = also { actionLayout.setListener(key, listener) }
 
     //============================================================//
     //=====================ACTION部分 END=========================//
@@ -572,7 +570,7 @@ class Toolbar @JvmOverloads constructor(
         // 加载本地缓存数据
         init.loadFromLocal()
         // 基础属性
-        setPaddingSE(init.paddingSE)
+        setPaddingH(init.paddingH)
         layoutParams.height = Sizes.any2px(init.height, COMPLEX_UNIT_DIP)
         elevation = init.elevation.toFloat()
         // 背景
@@ -601,7 +599,7 @@ class Toolbar @JvmOverloads constructor(
         setActionTextStyle(init.actionTextStyle)
         // 分割线部分
         setDividerHeight(init.dividerHeight)
-        setDividerMargin(init.dividerMargin)
+        setDividerMargin(init.dividerMarginH)
         setDividerVisible(init.dividerVisible)
         // 分割线背景
         if (init.dividerResource != null) setDividerDrawable(ContextUtils.getDrawable(init.dividerResource!!))

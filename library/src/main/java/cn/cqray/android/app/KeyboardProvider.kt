@@ -14,7 +14,7 @@ import com.blankj.utilcode.util.KeyboardUtils
  * @author Cqray
  */
 @JvmDefaultWithoutCompatibility
-interface GetKeyboardProvider {
+interface KeyboardProvider {
 
     /**
      * 显示软键盘

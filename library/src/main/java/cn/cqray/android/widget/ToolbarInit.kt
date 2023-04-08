@@ -39,7 +39,7 @@ class ToolbarInit : BaseInit() {
     val height: Number = Sizes.dp(R.dimen.toolbar)
 
     /** 左右内容间隔，单位DP **/
-    var paddingSE: Number = Sizes.dpContent()
+    var paddingH: Number = Sizes.dpContent()
 
     /** 回退是否使用水波纹 **/
     var backRipple: Boolean = true
@@ -120,7 +120,7 @@ class ToolbarInit : BaseInit() {
     var dividerHeight: Number = Sizes.dpDivider()
 
     /** 分割线左右间隔，单位DP **/
-    var dividerMargin: Number = 0
+    var dividerMarginH: Number = 0
 
     /** 分割线是否显示 **/
     var dividerVisible: Boolean = false

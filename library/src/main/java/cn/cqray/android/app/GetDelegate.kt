@@ -1,6 +1,5 @@
 package cn.cqray.android.app
 
-import android.util.Log
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import cn.cqray.android.Get
@@ -30,12 +29,9 @@ open class GetDelegate<P : GetProvider>(val provider: P) {
             override fun onDestroy(owner: LifecycleOwner) {
                 super.onDestroy(owner)
                 // 延时回收资源
-                //Get.runOnUiThreadDelayed({
-                    val key = "${provider.hashCode()}-${providerRef.get()}"
-                    cacheDelegates[key]?.onCleared()
-                    cacheDelegates.remove(key)
-                //})
-                Log.e("数据", "${javaClass.name}我销户了")
+                val key = "${provider.hashCode()}-${providerRef.get()}"
+                cacheDelegates[key]?.onCleared()
+                cacheDelegates.remove(key)
             }
         })
     }
@@ -71,12 +67,7 @@ open class GetDelegate<P : GetProvider>(val provider: P) {
                 // 多界面提供器
                 GetMultiProvider::class.java -> GetMultiDelegate(provider as GetMultiProvider)
                 // 导航界面提供器
-                GetNavProvider::class.java -> {
-                    Log.e("数据", "${provider.javaClass.name}|${clazz.name}我创建了")
-                    GetNavDelegate(provider as GetNavProvider)
-                }
-//                // 提示提供器
-//                TipProvider::class.java -> GetTipDelegate(provider as TipProvider)
+                GetNavProvider::class.java -> GetNavDelegate(provider as GetNavProvider)
                 // 界面提供器
                 GetViewProvider::class.java -> GetViewDelegate(provider as GetViewProvider)
                 else -> throw RuntimeException()

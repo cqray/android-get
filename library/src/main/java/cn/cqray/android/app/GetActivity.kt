@@ -25,7 +25,7 @@ open class GetActivity : AppCompatActivity(),
     GetNavProvider,
     TipProvider,
     RxProvider,
-    GetKeyboardProvider {
+    KeyboardProvider {
 
     /** 标题栏 **/
     @Keep

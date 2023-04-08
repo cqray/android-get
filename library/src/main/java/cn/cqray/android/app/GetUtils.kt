@@ -27,7 +27,6 @@ internal object GetUtils {
      */
     fun isActivityClass(clazz: Class<*>?) = clazz != null && Activity::class.java.isAssignableFrom(clazz)
 
-
     /**
      * 是否是实现了[GetNavProvider]接口的Fragment
      * @param clazz 类型

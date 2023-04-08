@@ -6,6 +6,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import cn.cqray.android.app.GetActivity
+import cn.cqray.android.util.ViewUtils
 
 /**
  * 列型UI界面
@@ -13,6 +14,7 @@ import cn.cqray.android.app.GetActivity
  */
 @Suppress(
     "MemberVisibilityCanBePrivate",
+    "NotifyDataSetChanged",
     "Unused",
 )
 open class GetLineActivity : GetActivity() {
@@ -31,6 +33,7 @@ open class GetLineActivity : GetActivity() {
             it.adapter = lineAdapter
             it.overScrollMode = View.OVER_SCROLL_NEVER
         })
+        ViewUtils.closeRvAnimator(recyclerView)
     }
 
     fun addLineItem(item: GetLineItem<*>) = lineAdapter.addData(item)

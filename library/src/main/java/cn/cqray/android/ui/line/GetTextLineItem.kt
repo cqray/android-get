@@ -23,10 +23,10 @@ class GetTextLineItem internal constructor(text: CharSequence?) : GetIconLineIte
 
     /** 右端文本颜色 **/
     @ColorInt
-    var endTextColor = Colors.text()
+    var endTextColor: Int = Colors.text()
 
     /** 右端文本大小 **/
-    var endTextSize = Sizes.pxfH3()
+    var endTextSize: Number = Sizes.spH3()
 
     /** 右端文本样式 **/
     var endTextStyle = 0
@@ -36,7 +36,7 @@ class GetTextLineItem internal constructor(text: CharSequence?) : GetIconLineIte
 
     /** 右端文本颜色 **/
     @ColorInt
-    var endHintColor = Colors.hint()
+    var endHintColor: Int = Colors.hint()
 
     override val itemType: Int get() = TEXT
 
@@ -50,7 +50,7 @@ class GetTextLineItem internal constructor(text: CharSequence?) : GetIconLineIte
     fun endTextSize(
         size: Number,
         unit: Int = TypedValue.COMPLEX_UNIT_DIP
-    ) = also { endTextSize = Sizes.any2px(size, unit).toFloat() }
+    ) = also { endTextSize = Sizes.any2sp(size, unit) }
 
     fun endTextStyle(style: Int) = also { this.textStyle = style }
 

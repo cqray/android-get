@@ -21,10 +21,11 @@ open class GetButtonLineItem<T : GetButtonLineItem<T>> internal constructor(
 ) : GetLineItem<GetButtonLineItem<T>>(BUTTON) {
 
     /** 文本颜色 **/
-    var textColor = Colors.text()
+    @ColorInt
+    var textColor: Int = Colors.text()
 
     /** 文本大小 **/
-    var textSize = Sizes.pxfH3()
+    var textSize: Number = Sizes.spH3()
 
     /** 文本样式 **/
     var textStyle = 0
@@ -39,7 +40,7 @@ open class GetButtonLineItem<T : GetButtonLineItem<T>> internal constructor(
     fun textSize(
         size: Number,
         unit: Int = TypedValue.COMPLEX_UNIT_DIP
-    ) = also { textSize = Sizes.any2px(size, unit).toFloat() } as T
+    ) = also { textSize = Sizes.any2sp(size, unit) } as T
 
     fun textStyle(style: Int) = also { this.textStyle = style } as T
 }

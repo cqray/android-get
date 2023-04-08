@@ -1,6 +1,5 @@
 package cn.cqray.android.util
 
-import android.R
 import android.app.Activity
 import android.content.Context
 import android.content.ContextWrapper
@@ -20,19 +19,12 @@ import androidx.recyclerview.widget.SimpleItemAnimator
 import androidx.viewbinding.ViewBinding
 import androidx.viewpager2.widget.ViewPager2
 import cn.cqray.android.Get
-import com.blankj.utilcode.util.ActivityUtils
-import com.blankj.utilcode.util.Utils
 import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.shape.MaterialShapeUtils
 import java.util.concurrent.atomic.AtomicReference
 
-@Suppress(
-    "Unchecked_cast"
-)
+@Suppress("Unchecked_cast")
 object ViewUtils {
-
-    private val context: Context get() = ActivityUtils.getTopActivity() ?: Utils.getApp().applicationContext
-
 
     @JvmStatic
     fun <VB : ViewBinding> binding(bindingClass: Class<VB>): VB {
@@ -58,36 +50,12 @@ object ViewUtils {
             val parent = it.findViewById<ViewGroup>(android.R.id.content)
             return LayoutInflater.from(it).inflate(id, parent, false)
         }
-        var parent = FrameLayout(Get.context).also {
-            it.layoutParams = ViewGroup.LayoutParams(-1, -1)
-        }
-        val view = LayoutInflater.from(Get.context).inflate(id, parent, false)
+        val context = Get.context
+        val parent = FrameLayout(context).also { it.layoutParams = ViewGroup.LayoutParams(-1, -1) }
+        val view = LayoutInflater.from(context).inflate(id, parent, false)
         System.gc()
         return view
     }
-
-    //    /** 设置Margin，默认单位DP **/
-    //    public static void setMargin(View view, float margin) {
-    //        setMargin(view, margin, TypedValue.COMPLEX_UNIT_DIP);
-    //    }
-    //
-    //    public static void setMargin(View view, float margin, int unit) {
-    //        setMargin(view, margin, margin, margin, margin, unit);
-    //    }
-    //    /** 设置Margin，默认单位DP **/
-    //    public static void setMargin(View view, float left, float top, float right, float bottom) {
-    //        setMargin(view, left, top, right, bottom, TypedValue.COMPLEX_UNIT_DIP);
-    //    }
-    //    public static void setMargin(View view, float left, float top, float right, float bottom, int unit) {
-    //        if (view != null) {
-    //            ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) view.getLayoutParams();
-    //            params.leftMargin = (int) Sizes.applyDimension(left, unit);
-    //            params.topMargin = (int) Sizes.applyDimension(top, unit);
-    //            params.rightMargin = (int) Sizes.applyDimension(right, unit);
-    //            params.bottomMargin = (int) Sizes.applyDimension(bottom, unit);
-    //            view.requestLayout();
-    //        }
-    //    }
 
     @JvmStatic
     fun setEditTextEnable(editText: EditText, enable: Boolean) {
@@ -103,11 +71,7 @@ object ViewUtils {
         if (ripple) {
             var drawable: Drawable? = null
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                val ta = context.obtainStyledAttributes(
-                    intArrayOf(
-                        R.attr.actionBarItemBackground
-                    )
-                )
+                val ta = context.obtainStyledAttributes(intArrayOf(android.R.attr.actionBarItemBackground))
                 drawable = ta.getDrawable(0)
                 ta.recycle()
             }
@@ -130,10 +94,17 @@ object ViewUtils {
         MaterialShapeUtils.setElevation(view, elevation)
     }
 
+    /**
+     * 设置控件的越界属性
+     * @param view 控件
+     * @param overScrollMode 越界属性
+     */
     fun setOverScrollMode(view: View?, overScrollMode: Int) {
-        runCatching {
-            if (view !is ViewPager2) view?.overScrollMode = overScrollMode
-            else view.getChildAt(0)?.overScrollMode = overScrollMode
+        view?.let {
+            when(it) {
+                is ViewPager2 -> it.getChildAt(0).overScrollMode = overScrollMode
+                else -> it.overScrollMode = overScrollMode
+            }
         }
     }
 
@@ -146,10 +117,14 @@ object ViewUtils {
         return materialShapeDrawable
     }
 
-    fun closeRvAnimator(rv: RecyclerView?) {
-        if (rv != null) {
-            val animator = rv.itemAnimator
-            if (animator != null) {
+    /**
+     * 关闭[RecyclerView]自带动画
+     * @param recyclerView [RecyclerView]控件
+     */
+    fun closeRvAnimator(recyclerView: RecyclerView?) {
+        recyclerView?.let {
+            val animator = it.itemAnimator
+            animator?.let {
                 animator.addDuration = 0
                 animator.changeDuration = 0
                 animator.moveDuration = 0
@@ -177,16 +152,4 @@ object ViewUtils {
             null
         }
     }
-
-//    /**
-//     * View转Bitmap
-//     * @param view 视图
-//     */
-//    @JvmStatic
-//    fun view2Bitmap(view: View?) = ImageUtils.view2Bitmap(view)
-//
-////    /** 渲染界面  */
-////    fun inflate(@LayoutRes resId: Int): View {
-////        return ContextUtils.inflate(resId)
-////    }
 }
