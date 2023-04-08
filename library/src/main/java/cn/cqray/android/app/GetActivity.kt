@@ -11,8 +11,8 @@ import androidx.appcompat.app.AppCompatActivity
 import cn.cqray.android.Get
 import cn.cqray.android.handle.RxDelegate
 import cn.cqray.android.handle.RxProvider
-import cn.cqray.android.tip.TipProvider
-import cn.cqray.android.widget.Toolbar
+import cn.cqray.android.tip.GetTipProvider
+import cn.cqray.android.widget.GetToolbar
 import com.scwang.smart.refresh.layout.SmartRefreshLayout
 
 /**
@@ -23,7 +23,7 @@ import com.scwang.smart.refresh.layout.SmartRefreshLayout
 open class GetActivity : AppCompatActivity(),
     GetViewProvider,
     GetNavProvider,
-    TipProvider,
+    GetTipProvider,
     RxProvider,
     KeyboardProvider {
 
@@ -32,7 +32,7 @@ open class GetActivity : AppCompatActivity(),
     @NonNull
     @JvmField
     @Suppress("KotlinNullnessAnnotation")
-    val toolbar: Toolbar? = null
+    val toolbar: GetToolbar? = null
 
     /** 刷新容器 **/
     @Keep

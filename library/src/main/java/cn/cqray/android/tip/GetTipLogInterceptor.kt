@@ -7,13 +7,13 @@ import com.hjq.toast.config.IToastInterceptor
 import java.lang.reflect.Modifier
 
 /**
- * [Tip]日志拦截器
+ * [GetTip]日志拦截器
  * @author Cqray
  */
-internal class TipLogInterceptor : IToastInterceptor {
+internal class GetTipLogInterceptor : IToastInterceptor {
 
     override fun intercept(params: ToastParams): Boolean {
-        val task = params as? TipTask
+        val task = params as? GetTipTask
         // 是否在Logcat显示
         val logcatEnable = task?.init?.logcatEnable ?: false
         // 是否打印日志
@@ -52,7 +52,7 @@ internal class TipLogInterceptor : IToastInterceptor {
         // 4. 排除抽象类
         val needFilter = (this.javaClass == clazz) or
                 (Toaster::class.java == clazz) or
-                (Tip::class.java == clazz) or
+                (GetTip::class.java == clazz) or
                 (clazz.isInterface) or
                 (Modifier.isAbstract(clazz.modifiers))
         // 不需要过滤，则说明是打印的类

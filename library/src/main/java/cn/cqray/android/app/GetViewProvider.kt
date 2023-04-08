@@ -5,14 +5,14 @@ import android.view.View
 import androidx.annotation.DrawableRes
 import androidx.annotation.IdRes
 import androidx.annotation.LayoutRes
-import cn.cqray.android.state.StateProvider
+import cn.cqray.android.state.GetStateProvider
 
 /**
  * [GetViewDelegate]功能提供者
  * @author Cqray
  */
 @JvmDefaultWithoutCompatibility
-interface GetViewProvider : StateProvider, GetProvider {
+interface GetViewProvider : GetStateProvider, GetProvider {
 
     /**
      * 获取并初始化[GetViewDelegate]

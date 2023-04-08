@@ -15,10 +15,10 @@ import com.blankj.utilcode.util.ScreenUtils
 import com.hjq.toast.config.IToastStyle
 
 /**
- * [Tip]样式
+ * [GetTip]样式
  * @author Cqray
  */
-internal class TipStyle(private val tipInit: TipInit) : IToastStyle<View> {
+internal class GetTipStyle(private val tipInit: GetTipInit) : IToastStyle<View> {
 
     override fun createView(context: Context?): View {
         val view = TextView(context ?: Get.context)

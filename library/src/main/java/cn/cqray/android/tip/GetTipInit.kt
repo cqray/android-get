@@ -10,7 +10,7 @@ import java.lang.reflect.Field
  * Tip配置属性
  * @author Cqray
  **/
-class TipInit : BaseInit() {
+class GetTipInit : BaseInit() {
 
     /** 是否支持在Logcat中显示 **/
     var logcatEnable: Boolean? = null
@@ -62,8 +62,8 @@ class TipInit : BaseInit() {
         val default = Get.init.tipInit.also { it.loadFromLocal() }
         // 获取所有属性
         val fields = mutableListOf<Field>().also {
-            it.addAll(TipInit::class.java.fields)
-            it.addAll(TipInit::class.java.declaredFields)
+            it.addAll(GetTipInit::class.java.fields)
+            it.addAll(GetTipInit::class.java.declaredFields)
         }
         // 遍历所有属性，取出不为null的值并重新赋值
         fields.forEach { field ->

@@ -12,7 +12,7 @@ import com.scwang.smart.refresh.layout.SmartRefreshLayout;
 
 import cn.cqray.android.Get;
 import cn.cqray.android.app.GetInit;
-import cn.cqray.android.widget.ToolbarInit;
+import cn.cqray.android.widget.GetToolbarInit;
 
 public class DemoApplication extends MultiDexApplication {
     
@@ -39,7 +39,7 @@ public class DemoApplication extends MultiDexApplication {
 
         Log.e("数据", "APPlication是否相同：" + (app == this));
 
-        ToolbarInit toolbarInit = new ToolbarInit();
+        GetToolbarInit toolbarInit = new GetToolbarInit();
         toolbarInit.setElevation(100F);
         toolbarInit.setBackIcon(R.drawable.def_back_common_dark);
         toolbarInit.setBackText("返回");

@@ -22,7 +22,7 @@ object ReflectUtil {
     fun getActualTypeArgument(clazz:   Class<*>): Class<*>? {
         val type = clazz.genericSuperclass
         if (type is ParameterizedType) {
-            return type.actualTypeArguments?.getOrNull(0) as Class<*>
+            return type.actualTypeArguments.getOrNull(0) as Class<*>
         }
         return null
     }

@@ -20,7 +20,7 @@ import cn.cqray.android.util.ViewUtils
     "MemberVisibilityCanBePrivate",
     "Unchecked_cast"
 )
-open class StateAdapter<T : StateAdapter<T>>(@LayoutRes private val layoutResId: Int) {
+open class GetStateAdapter<T : GetStateAdapter<T>>(@LayoutRes private val layoutResId: Int) {
 
     /** 关联的容器和布局的内容 **/
     private val views = arrayOfNulls<View>(2)
@@ -46,7 +46,7 @@ open class StateAdapter<T : StateAdapter<T>>(@LayoutRes private val layoutResId:
     /** 视图 **/
     val view get() = views[1]
 
-    internal fun onAttach(layout: StateLayout) {
+    internal fun onAttach(layout: GetStateLayout) {
         views[0] = layout
         views[1] = onCreateView(layout)
         views[1]?.let {

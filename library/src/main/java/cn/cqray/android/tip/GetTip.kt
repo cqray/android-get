@@ -12,13 +12,13 @@ import java.util.concurrent.atomic.AtomicReference
  * 提示
  * @author Cqray
  */
-internal object Tip {
+internal object GetTip {
 
     /** TIP **/
     private const val TIP_MESSAGE_WHAT = 0
 
     /**  **/
-    private val tipTaskRef = AtomicReference<TipTask>()
+    private val tipTaskRef = AtomicReference<GetTipTask>()
 
     /** 提示处理[Handler] **/
     private val tipHandler: Handler = Handler(Looper.getMainLooper()) {
@@ -70,7 +70,7 @@ internal object Tip {
     @JvmOverloads
     fun show(
         text: CharSequence?,
-        init: TipInit?,
+        init: GetTipInit?,
         hideCallback: Function0<Unit>? = null,
         showCallback: Function0<Unit>? = null,
     ) {
@@ -78,12 +78,12 @@ internal object Tip {
         cancelTip()
         // 新的配置信息
         val tipInit = init?.mergeDefault()
-            ?: CloneUtils.deepClone(Get.init.tipInit, TipInit::class.java).also {
+            ?: CloneUtils.deepClone(Get.init.tipInit, GetTipInit::class.java).also {
                 // 加载缓存
                 it.loadFromLocal()
             }
         // 显示新的弹窗
-        val tipTask = TipTask(text ?: "", tipInit, hideCallback, showCallback)
+        val tipTask = GetTipTask(text ?: "", tipInit, hideCallback, showCallback)
         Toaster.show(tipTask)
         tipTaskRef.set(tipTask)
         // 弹窗结束回调

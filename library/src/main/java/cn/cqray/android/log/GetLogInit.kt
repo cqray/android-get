@@ -8,7 +8,7 @@ import java.io.Serializable
  * [GetLog]配置
  * @author Cqray
  */
-class LogInit : Serializable {
+class GetLogInit : Serializable {
 
     /** 启用[Activity]生命周期日志 **/
     var activityLifecycleLogEnable: Boolean = true
@@ -17,7 +17,7 @@ class LogInit : Serializable {
     var fragmentLifecycleLogEnable: Boolean = true
 
     /** 日志适配器 **/
-    var logAdapter: LogAdapter = LogAdapterImpl()
+    var logAdapter: GetLogAdapter = GetLogAdapterImpl()
 
     //===========================================
     //===============Log打印相关配置===============

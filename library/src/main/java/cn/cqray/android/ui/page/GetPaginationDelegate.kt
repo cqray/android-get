@@ -5,9 +5,9 @@ import cn.cqray.android.Get
 import cn.cqray.android.`object`.ResponseData
 import cn.cqray.android.app.GetViewProvider
 import cn.cqray.android.lifecycle.GetLiveData
-import cn.cqray.android.state.StateDelegate
-import cn.cqray.android.state.StateProvider
-import cn.cqray.android.tip.Tip
+import cn.cqray.android.state.GetStateDelegate
+import cn.cqray.android.state.GetStateProvider
+import cn.cqray.android.tip.GetTip
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.viewholder.BaseViewHolder
 import com.scwang.smart.refresh.layout.SmartRefreshLayout
@@ -22,7 +22,7 @@ import com.scwang.smart.refresh.layout.listener.OnRefreshLoadMoreListener
     "MemberVisibilityCanBePrivate",
     "Unused"
 )
-class GetPaginationDelegate<T>(val owner: LifecycleOwner) : StateProvider {
+class GetPaginationDelegate<T>(val owner: LifecycleOwner) : GetStateProvider {
 
     /** 起始页码，默认为1 **/
     var defaultPageNum = 1
@@ -56,9 +56,9 @@ class GetPaginationDelegate<T>(val owner: LifecycleOwner) : StateProvider {
     private var refreshLayout: SmartRefreshLayout? = null
 
     /** 状态委托 **/
-    override val stateDelegate: StateDelegate by lazy {
+    override val stateDelegate: GetStateDelegate by lazy {
         if (owner is GetViewProvider) owner.stateDelegate
-        else StateDelegate()
+        else GetStateDelegate()
     }
 
     /** 主要是为了不让数据在界面不可见时加载，造成APP卡顿  */
@@ -204,7 +204,7 @@ class GetPaginationDelegate<T>(val owner: LifecycleOwner) : StateProvider {
         this.data.setValue(data?.data)
         data?.let {
             // 请求失败，显示异常信息
-            if (!it.isSucceed) Tip.show(it.message)
+            if (!it.isSucceed) GetTip.show(it.message)
         }
     }
 

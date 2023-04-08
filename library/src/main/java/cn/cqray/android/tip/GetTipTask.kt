@@ -4,14 +4,14 @@ import android.widget.Toast
 import com.hjq.toast.ToastParams
 
 /**
- * [Tip]任务
+ * [GetTip]任务
  * @author Cqray
  */
-internal class TipTask @JvmOverloads constructor(
+internal class GetTipTask @JvmOverloads constructor(
     /** 文本 **/
     text: CharSequence,
     /** Tip属性 **/
-    val init: TipInit,
+    val init: GetTipInit,
     /** 隐藏回调 **/
     var hideCallback: Function0<Unit>? = null,
     /** 显示回调 **/
@@ -21,7 +21,7 @@ internal class TipTask @JvmOverloads constructor(
     init {
         this.text = text
         duration = Toast.LENGTH_LONG
-        interceptor = TipLogInterceptor()
-        style = TipStyle(init)
+        interceptor = GetTipLogInterceptor()
+        style = GetTipStyle(init)
     }
 }

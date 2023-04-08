@@ -31,7 +31,7 @@ import cn.cqray.android.util.ViewUtils
     "MemberVisibilityCanBePrivate",
     "UNUSED",
 )
-class BackView @JvmOverloads constructor(
+class GetBackView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
@@ -59,16 +59,16 @@ class BackView @JvmOverloads constructor(
     private val spaceView: Space by lazy { Space(context).also { it.layoutParams = LayoutParams(-2, -2) } }
 
     init {
-        val ta = context.obtainStyledAttributes(attrs, R.styleable.BackView)
-        val text = ta.getString(R.styleable.BackView_text) ?: ""
-        val drawable = ta.getDrawable(R.styleable.BackView_iconSrc)
-        val tintColor = ta.getColor(R.styleable.BackView_iconTint, -1)
+        val ta = context.obtainStyledAttributes(attrs, R.styleable.GetBackView)
+        val text = ta.getString(R.styleable.GetBackView_text) ?: ""
+        val drawable = ta.getDrawable(R.styleable.GetBackView_iconSrc)
+        val tintColor = ta.getColor(R.styleable.GetBackView_iconTint, -1)
         // 初始化默认属性
-        val ripple = ta.getBoolean(R.styleable.BackView_ripple, true)
-        val iconSpace = ta.getDimension(R.styleable.BackView_iconSpace, Sizes.px(R.dimen.small).toFloat())
-        val textColor = ta.getColor(R.styleable.BackView_textColor, Color.WHITE)
-        val textSize = ta.getDimension(R.styleable.BackView_textSize, Sizes.px(R.dimen.body).toFloat())
-        val textStyle = ta.getInt(R.styleable.BackView_textStyle, 0)
+        val ripple = ta.getBoolean(R.styleable.GetBackView_ripple, true)
+        val iconSpace = ta.getDimension(R.styleable.GetBackView_iconSpace, Sizes.px(R.dimen.small).toFloat())
+        val textColor = ta.getColor(R.styleable.GetBackView_textColor, Color.WHITE)
+        val textSize = ta.getDimension(R.styleable.GetBackView_textSize, Sizes.px(R.dimen.body).toFloat())
+        val textStyle = ta.getInt(R.styleable.GetBackView_textStyle, 0)
         // 释放资源
         ta.recycle()
         // 设置图标属性

@@ -11,7 +11,7 @@ import cn.cqray.android.util.Sizes
  * 标题初始化配置
  * @author Cqray
  */
-class ToolbarInit : BaseInit() {
+class GetToolbarInit : BaseInit() {
 
     /** 背景资源 **/
     @DrawableRes

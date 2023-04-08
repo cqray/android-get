@@ -6,7 +6,7 @@ import android.util.Log;
 import cn.cqray.android.Get;
 import cn.cqray.android.app.GetFragment;
 import cn.cqray.android.log.GetLog;
-import cn.cqray.android.tip.TipInit;
+import cn.cqray.android.tip.GetTipInit;
 
 public class MainFragment extends GetFragment {
 
@@ -44,10 +44,10 @@ public class MainFragment extends GetFragment {
 //            tip.setTextSize(30);
 //            tip.saveToLocal();
 //
-            TipInit tipInit = new TipInit();
+            GetTipInit tipInit = new GetTipInit();
             tipInit.setTextSize(15);
 
-            Get.showTip("666666666", (TipInit) tipInit, () -> {
+            Get.showTip("666666666", (GetTipInit) tipInit, () -> {
 
                 Log.e("数据", "弹窗消失了");
                 return null;

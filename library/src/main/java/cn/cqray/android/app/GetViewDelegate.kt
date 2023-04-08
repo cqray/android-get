@@ -24,11 +24,11 @@ import cn.cqray.android.Get
 import cn.cqray.android.R
 import cn.cqray.android._Get
 import cn.cqray.android.databinding.GetViewDefaultLayoutBinding
-import cn.cqray.android.state.StateDelegate
-import cn.cqray.android.state.StateLayout
+import cn.cqray.android.state.GetStateDelegate
+import cn.cqray.android.state.GetStateLayout
 import cn.cqray.android.util.*
 import cn.cqray.android.util.ContextUtils.inflate
-import cn.cqray.android.widget.Toolbar
+import cn.cqray.android.widget.GetToolbar
 import com.scwang.smart.refresh.layout.SmartRefreshLayout
 
 /**
@@ -51,13 +51,13 @@ class GetViewDelegate internal constructor(provider: GetViewProvider) : GetDeleg
     private val binding by lazy { GetViewDefaultLayoutBinding.inflate(ContextUtils.layoutInflater) }
 
     /** 状态委托 **/
-    val stateDelegate by lazy { StateDelegate() }
+    val stateDelegate by lazy { GetStateDelegate() }
 
     /** 根控件 */
     val root: View by lazy { binding.root }
 
     /** 标题 */
-    val toolbar: Toolbar by lazy { binding.getToolbar }
+    val toolbar: GetToolbar by lazy { binding.getToolbar }
 
     /** 头部容器 */
     val headerLayout: FrameLayout by lazy { binding.getHeader }
@@ -172,12 +172,12 @@ class GetViewDelegate internal constructor(provider: GetViewProvider) : GetDeleg
      */
     fun removeContentView() {
         val layout = binding.getContent.getChildAt(0)
-        if (layout is StateLayout) {
+        if (layout is GetStateLayout) {
             layout.removeAllViews()
         } else if (layout is SmartRefreshLayout) {
             for (i in 0 until layout.childCount) {
                 val child = layout.getChildAt(i)
-                if (child is StateLayout) {
+                if (child is GetStateLayout) {
                     child.removeAllViews()
                 }
             }
@@ -189,12 +189,12 @@ class GetViewDelegate internal constructor(provider: GetViewProvider) : GetDeleg
      */
     fun addContentView(view: View) {
         val layout = binding.getContent.getChildAt(0)
-        if (layout is StateLayout) {
+        if (layout is GetStateLayout) {
             layout.addView(view)
         } else if (layout is SmartRefreshLayout) {
             for (i in 0 until layout.childCount) {
                 val child = layout.getChildAt(i)
-                if (child is StateLayout) {
+                if (child is GetStateLayout) {
                     child.addView(view)
                 }
             }

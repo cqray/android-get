@@ -17,7 +17,7 @@ import java.lang.reflect.Field
  * @author Cqray
  */
 @Suppress("unused")
-class StateDelegate {
+class GetStateDelegate {
 
     /** 状态缓存  */
     private val refreshStates: Array<Boolean?> = arrayOfNulls(3)
@@ -26,17 +26,17 @@ class StateDelegate {
     private var attachedLayout: ViewGroup? = null
 
     /** 忙碌视图适配器 **/
-    val busyAdapter: StateAdapter<*> get() = stateLayout.busyAdapter
+    val busyAdapter: GetStateAdapter<*> get() = stateLayout.busyAdapter
 
     /** 空白视图适配器 **/
-    val emptyAdapter: StateAdapter<*> get() = stateLayout.emptyAdapter
+    val emptyAdapter: GetStateAdapter<*> get() = stateLayout.emptyAdapter
 
     /** 异常视图适配器 **/
-    val errorAdapter: StateAdapter<*> get() = stateLayout.errorAdapter
+    val errorAdapter: GetStateAdapter<*> get() = stateLayout.errorAdapter
 
     /** 状态控件 **/
     private val stateLayout by lazy {
-        StateLayout(ContextUtils.get()).also {
+        GetStateLayout(ContextUtils.get()).also {
             it.isClickable = true
             it.isFocusable = true
             it.layoutParams = ViewGroup.MarginLayoutParams(-1, -1)
@@ -140,45 +140,45 @@ class StateDelegate {
      * 设置忙碌状态适配器
      * @param adapter 适配器
      */
-    fun setBusyAdapter(adapter: StateAdapter<*>?) = stateLayout.setBusyAdapter(adapter)
+    fun setBusyAdapter(adapter: GetStateAdapter<*>?) = stateLayout.setBusyAdapter(adapter)
 
     /**
      * 设置空状态适配器
      * @param adapter 适配器
      */
-    fun setEmptyAdapter(adapter: StateAdapter<*>?) = stateLayout.setEmptyAdapter(adapter)
+    fun setEmptyAdapter(adapter: GetStateAdapter<*>?) = stateLayout.setEmptyAdapter(adapter)
 
     /**
      * 设置异常状态适配器
      * @param adapter 适配器
      */
-    fun setErrorAdapter(adapter: StateAdapter<*>?) = stateLayout.setErrorAdapter(adapter)
+    fun setErrorAdapter(adapter: GetStateAdapter<*>?) = stateLayout.setErrorAdapter(adapter)
 
     /**
      * 设置为忙碌状态
      * @param text 文本信息
      */
     @JvmOverloads
-    fun setBusy(text: String? = null) = setState(ViewState.BUSY, text)
+    fun setBusy(text: String? = null) = setState(GetViewState.BUSY, text)
 
     /**
      * 设置为空状态
      * @param text 文本信息
      */
     @JvmOverloads
-    fun setEmpty(text: String? = null) = setState(ViewState.EMPTY, text)
+    fun setEmpty(text: String? = null) = setState(GetViewState.EMPTY, text)
 
     /**
      * 设置为异常状态
      * @param text 文本信息
      */
     @JvmOverloads
-    fun setError(text: String? = null) = setState(ViewState.ERROR, text)
+    fun setError(text: String? = null) = setState(GetViewState.ERROR, text)
 
     /**
      * 设置为空闲状态
      */
-    fun setIdle() = setState(ViewState.IDLE, null)
+    fun setIdle() = setState(GetViewState.IDLE, null)
 
     /**
      * 设置为指定的状态
@@ -186,7 +186,7 @@ class StateDelegate {
      * @param text 文本信息
      */
     @JvmOverloads
-    fun setState(state: ViewState, text: String? = null) {
+    fun setState(state: GetViewState, text: String? = null) {
         // 保存刷新控件空闲状态时的相关属性
         saveRefreshStates(stateLayout.currentState)
         // 设置状态
@@ -198,11 +198,11 @@ class StateDelegate {
     /**
      * 保存刷新控件空闲状态时的相关属性
      */
-    private fun saveRefreshStates(state: ViewState) {
+    private fun saveRefreshStates(state: GetViewState) {
         if (attachedLayout !is SmartRefreshLayout) return
         runCatching {
             val layout = attachedLayout as SmartRefreshLayout
-            if (state == ViewState.IDLE) {
+            if (state == GetViewState.IDLE) {
                 (0..2).forEach { i -> refreshStates[i] = refreshFields[i]!!.getBoolean(layout) }
             }
         }
@@ -211,16 +211,16 @@ class StateDelegate {
     /**
      * 恢复刷新控件启用状态
      */
-    private fun restoreRefreshStates(state: ViewState) {
+    private fun restoreRefreshStates(state: GetViewState) {
         if (attachedLayout !is SmartRefreshLayout) return
         runCatching {
             val layout = attachedLayout as SmartRefreshLayout
-            if (state == ViewState.IDLE) {
+            if (state == GetViewState.IDLE) {
                 (0..2).forEach { int ->
                     refreshFields[int]?.setBoolean(layout, refreshStates[int]!!)
                 }
             } else {
-                val busy = state == ViewState.BUSY
+                val busy = state == GetViewState.BUSY
                 refreshFields[0]?.setBoolean(layout, !busy && refreshStates[0]!!)
                 refreshFields[1]?.setBoolean(layout, false)
                 refreshFields[2]?.setBoolean(layout, !busy)

@@ -16,7 +16,7 @@ import cn.cqray.android.util.Sizes
  * @author Cqray
  */
 @Suppress("Unused")
-class ErrorAdapter : StateAdapter<ErrorAdapter>(R.layout.get_layout_state_error) {
+class GetErrorAdapter : GetStateAdapter<GetErrorAdapter>(R.layout.get_layout_state_error) {
 
     /** 图片控件  */
     private var imageView: ImageView? = null

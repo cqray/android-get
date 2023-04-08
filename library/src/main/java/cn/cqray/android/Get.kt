@@ -9,8 +9,8 @@ import androidx.fragment.app.Fragment
 import cn.cqray.android.app.GetInit
 import cn.cqray.android.app.GetIntent
 import cn.cqray.android.app.GetNavProvider
-import cn.cqray.android.tip.Tip
-import cn.cqray.android.tip.TipInit
+import cn.cqray.android.tip.GetTip
+import cn.cqray.android.tip.GetTipInit
 import cn.cqray.android.util.ContextUtils
 import com.blankj.utilcode.util.ActivityUtils
 
@@ -56,7 +56,7 @@ object Get {
         this.init = getInit ?: this.init
         _Get.init(application)
         // 初始化提示
-        Tip.init(application)
+        GetTip.init(application)
     }
 
     @JvmStatic
@@ -115,7 +115,7 @@ object Get {
         text: CharSequence?,
         hideCallback: Function0<Unit>? = null,
         showCallback: Function0<Unit>? = null,
-    ) = Tip.show(text, null, hideCallback, showCallback)
+    ) = GetTip.show(text, null, hideCallback, showCallback)
 
     /**
      * 显示提示
@@ -128,10 +128,10 @@ object Get {
     @JvmOverloads
     fun showTip(
         text: CharSequence?,
-        init: TipInit?,
+        init: GetTipInit?,
         hideCallback: Function0<Unit>? = null,
         showCallback: Function0<Unit>? = null,
-    ) = Tip.show(text, init, hideCallback, showCallback)
+    ) = GetTip.show(text, init, hideCallback, showCallback)
 
     /**
      * 显示提示
@@ -145,7 +145,7 @@ object Get {
         @StringRes id: Int,
         hideCallback: Function0<Unit>? = null,
         showCallback: Function0<Unit>? = null,
-    ) = Tip.show(ContextUtils.getString(id), null, hideCallback, showCallback)
+    ) = GetTip.show(ContextUtils.getString(id), null, hideCallback, showCallback)
 
     /**
      * 显示提示
@@ -158,8 +158,8 @@ object Get {
     @JvmOverloads
     fun showTip(
         @StringRes id: Int,
-        init: TipInit?,
+        init: GetTipInit?,
         hideCallback: Function0<Unit>? = null,
         showCallback: Function0<Unit>? = null,
-    ) = Tip.show(ContextUtils.getString(id), init, hideCallback, showCallback)
+    ) = GetTip.show(ContextUtils.getString(id), init, hideCallback, showCallback)
 }

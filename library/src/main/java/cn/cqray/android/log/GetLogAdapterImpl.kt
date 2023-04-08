@@ -7,7 +7,7 @@ import com.blankj.utilcode.util.LogUtils
  * [GetLog]日志打印适配器默认实现
  * @author Cqray
  */
-internal class LogAdapterImpl : LogAdapter {
+internal class GetLogAdapterImpl : GetLogAdapter {
 
     override fun print(@GetLog.Level level: Int, tag: String?, vararg contents: Any?) {
         initLogConfig()

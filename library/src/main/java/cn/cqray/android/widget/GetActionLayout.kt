@@ -34,7 +34,7 @@ import cn.cqray.android.util.ViewUtils
     "Unchecked_cast",
     "Unused",
 )
-class ActionLayout @JvmOverloads constructor(
+class GetActionLayout @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
@@ -79,19 +79,19 @@ class ActionLayout @JvmOverloads constructor(
 
     init {
         // 初始化属性
-        val ta = context.obtainStyledAttributes(attrs, R.styleable.ActionLayout)
+        val ta = context.obtainStyledAttributes(attrs, R.styleable.GetActionLayout)
         // 默认是否启用水波纹
-        defaultRipple = ta.getBoolean(R.styleable.ActionLayout_defaultRipple, true)
+        defaultRipple = ta.getBoolean(R.styleable.GetActionLayout_defaultRipple, true)
         // 默认是否显示Action组件
-        defaultVisible = ta.getBoolean(R.styleable.ActionLayout_defaultVisible, true)
+        defaultVisible = ta.getBoolean(R.styleable.GetActionLayout_defaultVisible, true)
         // 默认组件间隔
-        defaultSpace = ta.getDimension(R.styleable.ActionLayout_defaultSpace, Sizes.px(R.dimen.content).toFloat())
+        defaultSpace = ta.getDimension(R.styleable.GetActionLayout_defaultSpace, Sizes.px(R.dimen.content).toFloat())
         // 默认文本颜色
-        defaultTextColor = ta.getColor(R.styleable.ActionLayout_defaultTextColor, Color.WHITE)
+        defaultTextColor = ta.getColor(R.styleable.GetActionLayout_defaultTextColor, Color.WHITE)
         // 默认文本大小
-        defaultTextSize = ta.getDimension(R.styleable.ActionLayout_defaultTextSize, Sizes.px(R.dimen.body).toFloat())
+        defaultTextSize = ta.getDimension(R.styleable.GetActionLayout_defaultTextSize, Sizes.px(R.dimen.body).toFloat())
         // 默认文本样式
-        defaultTextStyle = ta.getInt(R.styleable.ActionLayout_defaultTextStyle, 0)
+        defaultTextStyle = ta.getInt(R.styleable.GetActionLayout_defaultTextStyle, 0)
         // 释放资源
         ta.recycle()
         // 天剑间隔容器
