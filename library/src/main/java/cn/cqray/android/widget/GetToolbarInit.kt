@@ -147,8 +147,7 @@ class GetToolbarInit : BaseInit() {
     /** 分割线背景 **/
     val dividerDrawable: Drawable? get() = dividerDrawablePlus.get()
 
-    fun setDivider(drawable: Drawable?) = dividerDrawablePlus.set(drawable)
+    fun setDividerDrawable(drawable: Drawable?) = dividerDrawablePlus.set(drawable)
 
-    @JvmOverloads
-    fun setDivider(any: Int, forceColor: Boolean = false) = dividerDrawablePlus.set(any, forceColor)
+    fun setDividerColor(any: Int) = dividerDrawablePlus.set(any)
 }

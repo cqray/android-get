@@ -25,6 +25,7 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LifecycleRegistry
 import androidx.lifecycle.MutableLiveData
 import cn.cqray.android.R
+import cn.cqray.android.util.ContextUtils
 import cn.cqray.android.util.Sizes
 import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.shape.MaterialShapeUtils
@@ -540,6 +541,8 @@ class GetToolbar @JvmOverloads constructor(
     //=====================ACTION部分 END=========================//
     //===================DIVIDER部分 START=========================//
     //============================================================//
+
+    fun setDividerColor(color: Int) = also { dividerView.background = ColorDrawable(color) }
 
     fun setDividerDrawable(drawable: Drawable?) = also { dividerView.background = drawable }
 
