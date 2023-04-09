@@ -175,8 +175,6 @@ internal object _Get {
         GetLog.d(this, "Application is terminated.")
     }
 
-//    private fun fix
-
     /**
      * java.lang.IllegalStateException: Only fullscreen opaque activities can request orientation
      * 修复android 8.0存在的问题

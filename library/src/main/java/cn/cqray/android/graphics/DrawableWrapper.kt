@@ -8,7 +8,12 @@ import cn.cqray.android.util.Colors
 import cn.cqray.android.util.Contexts
 import com.blankj.utilcode.util.ImageUtils
 
-class DrawablePlus : java.io.Serializable {
+/**
+ * 存储[ColorDrawable]和常规[Drawable]
+ * 可被序列化和Gson转换
+ * @author Cqray
+ */
+class DrawableWrapper : java.io.Serializable {
 
     /** 颜色值 **/
     private var color: Int? = null

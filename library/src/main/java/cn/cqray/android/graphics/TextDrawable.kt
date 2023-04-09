@@ -1,4 +1,4 @@
-package cn.cqray.android.widget
+package cn.cqray.android.graphics
 
 import android.graphics.*
 import android.graphics.drawable.ShapeDrawable
@@ -17,7 +17,7 @@ import kotlin.math.min
     "MemberVisibilityCanBePrivate",
     "Unused"
 )
-class GetTextDrawable(
+class TextDrawable(
     /** 宽度 **/
     val width: Number,
     /** 高度 **/
