@@ -46,14 +46,8 @@ class GetViewDelegate internal constructor(provider: GetViewProvider) : GetDeleg
     /** 是否设置Get扩展界面 **/
     private var setGetContentView: Boolean = true
 
-    /** 布局生成器 **/
-    private val layoutInflater by lazy {
-        if (provider is Activity) provider.layoutInflater
-        else (provider as FragmentActivity).layoutInflater
-    }
-
     /** [ViewBinding]实例 **/
-    private val binding by lazy { GetViewDefaultLayoutBinding.inflate(layoutInflater) }
+    private val binding by lazy { GetViewDefaultLayoutBinding.inflate(Contexts.layoutInflater) }
 
     /** 状态委托 **/
     val stateDelegate by lazy { GetStateDelegate() }

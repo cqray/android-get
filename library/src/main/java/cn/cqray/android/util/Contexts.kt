@@ -30,8 +30,8 @@ object Contexts {
 
     @JvmStatic
     val assets: AssetManager get() = get().assets
-
-//    val layoutInflater get() = LayoutInflater.from(get())
+    
+    val layoutInflater: LayoutInflater get() = LayoutInflater.from(get())
 
     /**
      * 获取[Drawable]实例
