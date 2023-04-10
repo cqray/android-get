@@ -27,7 +27,6 @@ import cn.cqray.android.databinding.GetViewDefaultLayoutBinding
 import cn.cqray.android.state.GetStateDelegate
 import cn.cqray.android.state.GetStateLayout
 import cn.cqray.android.util.*
-import cn.cqray.android.util.ContextUtils.inflate
 import cn.cqray.android.widget.GetToolbar
 import com.scwang.smart.refresh.layout.SmartRefreshLayout
 
@@ -47,8 +46,14 @@ class GetViewDelegate internal constructor(provider: GetViewProvider) : GetDeleg
     /** 是否设置Get扩展界面 **/
     private var setGetContentView: Boolean = true
 
+    /** 布局生成器 **/
+    private val layoutInflater by lazy {
+        if (provider is Activity) provider.layoutInflater
+        else (provider as FragmentActivity).layoutInflater
+    }
+
     /** [ViewBinding]实例 **/
-    private val binding by lazy { GetViewDefaultLayoutBinding.inflate(ContextUtils.layoutInflater) }
+    private val binding by lazy { GetViewDefaultLayoutBinding.inflate(layoutInflater) }
 
     /** 状态委托 **/
     val stateDelegate by lazy { GetStateDelegate() }
@@ -128,7 +133,7 @@ class GetViewDelegate internal constructor(provider: GetViewProvider) : GetDeleg
      * 设置默认布局
      * @param id 布局Id
      */
-    fun setGetContentView(@LayoutRes id: Int) = setGetContentView(inflate(id))
+    fun setGetContentView(@LayoutRes id: Int) = setGetContentView(Views.inflate(id))
 
     /**
      * 设置默认布局
@@ -151,7 +156,7 @@ class GetViewDelegate internal constructor(provider: GetViewProvider) : GetDeleg
      * 设置原生布局
      * @param id 布局Id
      */
-    fun setNativeContentView(@LayoutRes id: Int) = setNativeContentView(inflate(id))
+    fun setNativeContentView(@LayoutRes id: Int) = setNativeContentView(Views.inflate(id))
 
     /**
      * 设置原生布局
@@ -212,7 +217,7 @@ class GetViewDelegate internal constructor(provider: GetViewProvider) : GetDeleg
      * @param id 视图资源ID
      * @param floating 是否悬浮
      */
-    fun setHeaderView(@LayoutRes id: Int, floating: Boolean?) = setHeaderView(inflate(id), floating)
+    fun setHeaderView(@LayoutRes id: Int, floating: Boolean?) = setHeaderView(Views.inflate(id), floating)
 
     /**
      * 设置顶部视图
@@ -249,7 +254,7 @@ class GetViewDelegate internal constructor(provider: GetViewProvider) : GetDeleg
      * @param id 视图资源ID
      * @param floating 是否悬浮
      */
-    fun setFooterView(@LayoutRes id: Int, floating: Boolean?) = setFooterView(inflate(id), floating)
+    fun setFooterView(@LayoutRes id: Int, floating: Boolean?) = setFooterView(Views.inflate(id), floating)
 
     /**
      * 设置底部视图
@@ -365,12 +370,12 @@ class GetViewDelegate internal constructor(provider: GetViewProvider) : GetDeleg
             setToolbarInit(Get.init.toolbarInit!!)
             //TODO 这里有个未确定原因的BUG，从RecyclerView项启动的Fragment，标题栏无法点击
             //无法知道为什么，暂时没有精力去研究，暂时通过以下方式可处理BUG
-            postDelayed( {
+            postDelayed({
                 dividerView.bringToFront()
                 titleView.bringToFront()
                 backView.bringToFront()
                 actionLayout.bringToFront()
-            }, 10)
+            }, 120)
         }
 
     }

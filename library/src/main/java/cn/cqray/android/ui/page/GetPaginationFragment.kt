@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import cn.cqray.android.app.GetFragment
 import cn.cqray.android.`object`.ResponseData
-import cn.cqray.android.util.ViewUtils
+import cn.cqray.android.util.Views
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.viewholder.BaseViewHolder
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
@@ -47,7 +47,7 @@ abstract class GetPaginationFragment<T> : GetFragment(), GetPaginationProvider<T
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
         recyclerView.adapter = adapter
         recyclerView.requestLayout()
-        ViewUtils.closeRvAnimator(recyclerView)
+        Views.closeRvAnimator(recyclerView)
         // 初始化分页委托
         paginationDelegate.setRefreshLayout(refreshLayout)
         paginationDelegate.adapter = adapter

@@ -25,7 +25,6 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LifecycleRegistry
 import androidx.lifecycle.MutableLiveData
 import cn.cqray.android.R
-import cn.cqray.android.util.ContextUtils
 import cn.cqray.android.util.Sizes
 import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.shape.MaterialShapeUtils

@@ -4,7 +4,7 @@ import android.app.Activity
 import android.text.TextUtils
 import androidx.annotation.AnimRes
 import androidx.annotation.AnimatorRes
-import cn.cqray.android.util.ContextUtils
+import cn.cqray.android.util.Contexts
 import org.xmlpull.v1.XmlPullParser
 import kotlin.math.max
 
@@ -41,7 +41,7 @@ internal object AnimUtils {
     fun getAnimDurationFromResource(@AnimatorRes @AnimRes id: Int): Int {
         var duration = 0
         runCatching {
-            val parser = ContextUtils.resources.getAnimation(id)
+            val parser = Contexts.resources.getAnimation(id)
             // 循环直到文档结束
             while (parser.next() != XmlPullParser.END_DOCUMENT) {
                 val value = parser.getAttributeValue("http://schemas.android.com/apk/res/android", "duration")

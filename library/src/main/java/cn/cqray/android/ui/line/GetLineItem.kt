@@ -3,12 +3,12 @@ package cn.cqray.android.ui.line
 import android.graphics.drawable.Drawable
 import android.util.TypedValue.*
 import androidx.annotation.ColorInt
+import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
+import cn.cqray.android.graphics.CompatDrawable
 import cn.cqray.android.util.Colors
-import cn.cqray.android.util.Contexts
 import cn.cqray.android.util.Sizes
 import com.blankj.utilcode.util.CloneUtils
-import com.blankj.utilcode.util.ImageUtils
 import com.chad.library.adapter.base.entity.MultiItemEntity
 import java.io.*
 
@@ -48,10 +48,10 @@ open class GetLineItem<T : GetLineItem<T>>(
     val dividerMargins = Array<Number>(4) { 0 }
 
     /** 背景 **/
-    val background: Drawable? get() = ImageUtils.bytes2Drawable(bgBytes)
+    val background: Drawable? get() = _background.get()
 
-    /** 背景字节数据 **/
-    private var bgBytes: ByteArray? = null
+    /** 背景 **/
+    private var _background: CompatDrawable = CompatDrawable()
 
     init {
         // 初始化间隔信息
@@ -217,18 +217,15 @@ open class GetLineItem<T : GetLineItem<T>>(
      * 设置背景
      * @param drawable 背景
      */
-    fun background(drawable: Drawable?) = also { bgBytes = ImageUtils.drawable2Bytes(drawable) } as T
+    fun background(drawable: Drawable?) = also { _background.set(drawable) } as T
 
     /**
-     * 设置背景，[DrawableRes]资源ID或[ColorInt]色值
-     * @param any [DrawableRes]资源ID或[ColorInt]色值
+     * 设置背景，[DrawableRes]资源ID或[ColorRes]或[ColorInt]色值
+     * @param any [DrawableRes]资源ID或[ColorRes]或[ColorInt]色值
      * @param forceColor 是否确定为ColorInt
      */
     @JvmOverloads
-    fun background(
-        @ColorInt @DrawableRes any: Int,
-        forceColor: Boolean = false
-    ) = also { bgBytes = Contexts.getDrawableBytes(any, forceColor) } as T
+    fun background(any: Int, forceColor: Boolean = false) = also { _background.set(any, forceColor) } as T
 
     /**
      * 复制当前项

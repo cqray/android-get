@@ -11,7 +11,7 @@ import cn.cqray.android.app.GetIntent
 import cn.cqray.android.app.GetNavProvider
 import cn.cqray.android.tip.GetTip
 import cn.cqray.android.tip.GetTipInit
-import cn.cqray.android.util.ContextUtils
+import cn.cqray.android.util.Contexts
 import com.blankj.utilcode.util.ActivityUtils
 
 /**
@@ -77,7 +77,8 @@ object Get {
      */
     @JvmStatic
     @JvmOverloads
-    fun to(to: Class<*>, callback: Function1<Bundle, Unit>? = null) = topGetActivity?.to(GetIntent(to), callback)
+    fun to(to: Class<*>, callback: Function1<Bundle, Unit>? = null): Unit =
+        run { topGetActivity?.to(GetIntent(to), callback) }
 
     /**
      * 启动界面
@@ -86,13 +87,14 @@ object Get {
      */
     @JvmStatic
     @JvmOverloads
-    fun to(intent: GetIntent, callback: Function1<Bundle, Unit>? = null) = topGetActivity?.to(intent, callback)
+    fun to(intent: GetIntent, callback: Function1<Bundle, Unit>? = null): Unit =
+        run { topGetActivity?.to(intent, callback) }
 
     /**
      * 回退
      */
     @JvmStatic
-    fun back() = topGetActivity?.back()
+    fun back(): Unit = run { topGetActivity?.back() }
 
     /**
      * 回退到指定的界面
@@ -145,7 +147,7 @@ object Get {
         @StringRes id: Int,
         hideCallback: Function0<Unit>? = null,
         showCallback: Function0<Unit>? = null,
-    ) = GetTip.show(ContextUtils.getString(id), null, hideCallback, showCallback)
+    ) = GetTip.show(Contexts.getString(id), null, hideCallback, showCallback)
 
     /**
      * 显示提示
@@ -161,5 +163,5 @@ object Get {
         init: GetTipInit?,
         hideCallback: Function0<Unit>? = null,
         showCallback: Function0<Unit>? = null,
-    ) = GetTip.show(ContextUtils.getString(id), init, hideCallback, showCallback)
+    ) = GetTip.show(Contexts.getString(id), init, hideCallback, showCallback)
 }

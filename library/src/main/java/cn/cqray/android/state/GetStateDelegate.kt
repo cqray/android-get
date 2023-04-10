@@ -6,7 +6,7 @@ import android.widget.FrameLayout
 import androidx.fragment.app.Fragment
 import cn.cqray.android.R
 import cn.cqray.android.app.GetViewProvider
-import cn.cqray.android.util.ContextUtils
+import cn.cqray.android.util.Contexts
 import com.scwang.smart.refresh.layout.SmartRefreshLayout
 import com.scwang.smart.refresh.layout.api.RefreshFooter
 import com.scwang.smart.refresh.layout.api.RefreshHeader
@@ -36,7 +36,7 @@ class GetStateDelegate {
 
     /** 状态控件 **/
     private val stateLayout by lazy {
-        GetStateLayout(ContextUtils.get()).also {
+        GetStateLayout(Contexts.get()).also {
             it.isClickable = true
             it.isFocusable = true
             it.layoutParams = ViewGroup.MarginLayoutParams(-1, -1)

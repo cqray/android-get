@@ -21,7 +21,7 @@ import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.widget.ImageViewCompat
 import cn.cqray.android.R
 import cn.cqray.android.util.Sizes
-import cn.cqray.android.util.ViewUtils
+import cn.cqray.android.util.Views
 
 /**
  * 图标文本控件
@@ -100,15 +100,15 @@ class GetBackView @JvmOverloads constructor(
         addView(spaceView)
         addView(if (ltr) textView else iconView)
         // 设置背景
-        ViewUtils.setRippleBackground(iconView, ripple)
-        ViewUtils.setRippleBackground(textView, ripple)
+        Views.setRippleBackground(iconView, ripple)
+        Views.setRippleBackground(textView, ripple)
         // 设置点击事件
         setOnClickListener(null)
     }
 
     fun setRipple(ripple: Boolean) = also {
-        ViewUtils.setRippleBackground(iconView, ripple)
-        ViewUtils.setRippleBackground(textView, ripple)
+        Views.setRippleBackground(iconView, ripple)
+        Views.setRippleBackground(textView, ripple)
     }
 
     fun setIcon(drawable: Drawable?) = also {

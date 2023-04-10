@@ -9,8 +9,8 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import cn.cqray.android.app.GetDelegate
 import cn.cqray.android.log.GetLog
-import cn.cqray.android.util.ContextUtils
-import cn.cqray.android.util.ViewUtils
+import cn.cqray.android.util.Contexts
+import cn.cqray.android.util.Views
 
 /**
  * 多Fragment委托
@@ -49,7 +49,7 @@ class GetMultiDelegate(
      * @param vp [ViewPager2]
      */
     private fun getContainerName(vp: ViewPager2) = vp.let {
-        val name = ContextUtils.getIdName(vp.id)
+        val name = Contexts.getIdName(vp.id)
         if (name.isEmpty()) "ViewPager2"
         else "ViewPager2[$name]"
     }
@@ -123,7 +123,7 @@ class GetMultiDelegate(
         // 关闭水波纹
         recyclerView?.overScrollMode = View.OVER_SCROLL_NEVER
         // 关闭动画
-        ViewUtils.closeRvAnimator(recyclerView)
+        Views.closeRvAnimator(recyclerView)
     }
 
     /**

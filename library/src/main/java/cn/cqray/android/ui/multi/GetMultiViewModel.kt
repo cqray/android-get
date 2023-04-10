@@ -7,7 +7,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModel
 import androidx.viewpager2.widget.ViewPager2
 import cn.cqray.android.databinding.GetMultiLayoutBinding
-import cn.cqray.android.util.ContextUtils
+import cn.cqray.android.util.Contexts
 import cn.cqray.android.util.Sizes
 import com.flyco.tablayout.CommonTabLayout
 import com.flyco.tablayout.listener.CustomTabEntity
@@ -26,7 +26,7 @@ import java.util.concurrent.atomic.AtomicBoolean
 class GetMultiViewModel : ViewModel() {
 
     /** ViewBinding **/
-    val binding by lazy { GetMultiLayoutBinding.inflate(ContextUtils.layoutInflater) }
+    val binding by lazy { GetMultiLayoutBinding.inflate(Contexts.layoutInflater) }
 
     /** 根控件 **/
     val multiView by lazy { binding.root }

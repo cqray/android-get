@@ -4,7 +4,7 @@ import android.util.TypedValue
 import androidx.annotation.ColorInt
 import androidx.annotation.StringRes
 import cn.cqray.android.util.Colors
-import cn.cqray.android.util.ContextUtils
+import cn.cqray.android.util.Contexts
 import cn.cqray.android.util.Sizes
 
 /**
@@ -30,7 +30,7 @@ open class GetButtonLineItem<T : GetButtonLineItem<T>> internal constructor(
     /** 文本样式 **/
     var textStyle: Int = 0
 
-    fun text(@StringRes id: Int) = also { this.text = ContextUtils.getString(id) } as T
+    fun text(@StringRes id: Int) = also { this.text = Contexts.getString(id) } as T
 
     fun text(text: CharSequence?) = also { this.text = text } as T
 

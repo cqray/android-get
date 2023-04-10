@@ -4,7 +4,7 @@ import android.util.TypedValue
 import androidx.annotation.ColorInt
 import androidx.annotation.StringRes
 import cn.cqray.android.util.Colors
-import cn.cqray.android.util.ContextUtils
+import cn.cqray.android.util.Contexts
 import cn.cqray.android.util.Sizes
 
 /**
@@ -40,7 +40,7 @@ class GetTextLineItem internal constructor(text: CharSequence?) : GetIconLineIte
 
     override val itemType: Int get() = TEXT
 
-    fun endText(@StringRes id: Int) = also { this.endText = ContextUtils.getString(id) }
+    fun endText(@StringRes id: Int) = also { this.endText = Contexts.getString(id) }
 
     fun endText(text: CharSequence?) = also { this.endText = text }
 
@@ -54,7 +54,7 @@ class GetTextLineItem internal constructor(text: CharSequence?) : GetIconLineIte
 
     fun endTextStyle(style: Int) = also { this.textStyle = style }
 
-    fun endHint(@StringRes id: Int) = also { this.endHint = ContextUtils.getString(id) }
+    fun endHint(@StringRes id: Int) = also { this.endHint = Contexts.getString(id) }
 
     fun endHint(text: CharSequence?) = also { this.endHint = text }
 

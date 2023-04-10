@@ -4,8 +4,7 @@ import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
 import androidx.annotation.DrawableRes
 import cn.cqray.android.R
-import cn.cqray.android.util.ContextUtils
-import com.blankj.utilcode.util.ImageUtils
+import cn.cqray.android.graphics.CompatDrawable
 
 /**
  * 带图标行
@@ -21,28 +20,28 @@ open class GetIconLineItem<T : GetIconLineItem<T>> internal constructor(
 ) : GetButtonLineItem<T>(text) {
 
     /** 左图标字节数据 **/
-    private var iconBytes: ByteArray? = null
+    private var _icon: CompatDrawable = CompatDrawable()
 
     /** 右图标字节数据 **/
-    private var nextBytes: ByteArray? = ImageUtils.drawable2Bytes(ContextUtils.getDrawable(R.drawable.def_line_next))
+    private var _next: CompatDrawable = CompatDrawable().also { it.set(R.drawable.def_line_next) }
 
     /** 左图标 **/
-    val icon: Drawable? get() = ImageUtils.bytes2Drawable(iconBytes)
+    val icon: Drawable? get() = _icon.get()
 
     /** 右图标 **/
-    val next: Drawable? get() = ImageUtils.bytes2Drawable(nextBytes)
+    val next: Drawable? get() = _next.get()
 
     override val itemType: Int get() = ICON
 
-    fun icon(@DrawableRes id: Int) = also { iconBytes = ImageUtils.drawable2Bytes(ContextUtils.getDrawable(id)) }
+    fun icon(@DrawableRes id: Int) = also { _icon.set(id) }
 
-    fun icon(drawable: Drawable?) = also { iconBytes = ImageUtils.drawable2Bytes(drawable) }
+    fun icon(drawable: Drawable?) = also { _icon.set(drawable) }
 
-    fun icon(bitmap: Bitmap?) = also { iconBytes = ImageUtils.bitmap2Bytes(bitmap) }
+    fun icon(bitmap: Bitmap?) = also { _icon.set(bitmap) }
 
-    fun next(@DrawableRes id: Int) = also { nextBytes = ImageUtils.drawable2Bytes(ContextUtils.getDrawable(id)) }
+    fun next(@DrawableRes id: Int) = also { _next.set(id) }
 
-    fun next(drawable: Drawable?) = also { nextBytes = ImageUtils.drawable2Bytes(drawable) }
+    fun next(drawable: Drawable?) = also { _next.set(drawable) }
 
-    fun next(bitmap: Bitmap?) = also { nextBytes = ImageUtils.bitmap2Bytes(bitmap) }
+    fun next(bitmap: Bitmap?) = also { _next.set(bitmap) }
 }

@@ -23,7 +23,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.widget.ImageViewCompat
 import cn.cqray.android.R
 import cn.cqray.android.util.Sizes
-import cn.cqray.android.util.ViewUtils
+import cn.cqray.android.util.Views
 
 /**
  * Action布局控件
@@ -103,7 +103,7 @@ class GetActionLayout @JvmOverloads constructor(
 
     fun setDefaultRipple(ripple: Boolean) = also {
         // 更新组件属性
-        actionViews.forEach { e -> ViewUtils.setRippleBackground(e.value, ripple) }
+        actionViews.forEach { e -> Views.setRippleBackground(e.value, ripple) }
         // 设置默认属性
         defaultRipple = ripple
     }
@@ -180,7 +180,7 @@ class GetActionLayout @JvmOverloads constructor(
         // 缓存数据
         actionRipple[key] = ripple
         // 更改对应控件属性
-        actionViews[key]?.let { ViewUtils.setRippleBackground(it, ripple) }
+        actionViews[key]?.let { Views.setRippleBackground(it, ripple) }
     }
 
     fun setVisible(key: Int, visible: Boolean) = also {
@@ -219,7 +219,7 @@ class GetActionLayout @JvmOverloads constructor(
         // 缓存控件
         actionViews[key] = view
         // 设置水波纹背景
-        ViewUtils.setRippleBackground(view, defaultRipple)
+        Views.setRippleBackground(view, defaultRipple)
         // 添加至容器
         addView(view, index)
     }

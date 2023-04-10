@@ -21,10 +21,9 @@ import androidx.viewpager2.widget.ViewPager2
 import cn.cqray.android.Get
 import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.shape.MaterialShapeUtils
-import java.util.concurrent.atomic.AtomicReference
 
 @Suppress("Unchecked_cast")
-object ViewUtils {
+object Views {
 
     @JvmStatic
     fun <VB : ViewBinding> binding(bindingClass: Class<VB>): VB {
@@ -108,15 +107,6 @@ object ViewUtils {
         }
     }
 
-    private fun createMaterialShapeDrawableBackground(context: Context, background: Drawable): MaterialShapeDrawable {
-        val materialShapeDrawable = MaterialShapeDrawable()
-        if (background is ColorDrawable) {
-            materialShapeDrawable.fillColor = ColorStateList.valueOf(background.color)
-        }
-        materialShapeDrawable.initializeElevationOverlay(context)
-        return materialShapeDrawable
-    }
-
     /**
      * 关闭[RecyclerView]自带动画
      * @param recyclerView [RecyclerView]控件
@@ -136,6 +126,17 @@ object ViewUtils {
         }
     }
 
+    private fun createMaterialShapeDrawableBackground(context: Context, background: Drawable): MaterialShapeDrawable {
+        val materialShapeDrawable = MaterialShapeDrawable()
+        if (background is ColorDrawable) {
+            materialShapeDrawable.fillColor = ColorStateList.valueOf(background.color)
+        }
+        materialShapeDrawable.initializeElevationOverlay(context)
+        return materialShapeDrawable
+    }
+
+
+
     /**
      * View转化为Activity
      * @param view 视图
@@ -143,11 +144,10 @@ object ViewUtils {
     @JvmStatic
     fun view2Activity(view: View?): Activity? {
         return view?.let {
-            val context = AtomicReference(view.context)
-            while (context.get() is ContextWrapper) {
-                val tmp = context.get() as ContextWrapper
-                if (tmp is Activity) return tmp
-                else context.set(tmp.baseContext)
+            var context = view.context
+            while (context is ContextWrapper) {
+                if (context is Activity) return context
+                else context = context.baseContext
             }
             null
         }

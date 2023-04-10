@@ -10,7 +10,7 @@ import androidx.core.content.ContextCompat
 import cn.cqray.android.R
 import cn.cqray.android.util.Colors
 import cn.cqray.android.util.Sizes
-import cn.cqray.android.util.ViewUtils
+import cn.cqray.android.util.Views
 
 /**
  * 状态适配器
@@ -60,7 +60,7 @@ open class GetStateAdapter<T : GetStateAdapter<T>>(@LayoutRes private val layout
      * 创建内容视图
      * @param parent 父视图
      */
-    protected open fun onCreateView(parent: ViewGroup): View = ViewUtils.inflate(layoutResId)
+    protected open fun onCreateView(parent: ViewGroup): View = Views.inflate(layoutResId)
 
     /**
      * 控件被创建，仅调用一次

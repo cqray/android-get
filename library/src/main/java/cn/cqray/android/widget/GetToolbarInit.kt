@@ -5,7 +5,7 @@ import android.graphics.Color
 import android.graphics.drawable.Drawable
 import androidx.annotation.ColorInt
 import cn.cqray.android.R
-import cn.cqray.android.graphics.DrawableWrapper
+import cn.cqray.android.graphics.CompatDrawable
 import cn.cqray.android.init.BaseInit
 import cn.cqray.android.util.Sizes
 
@@ -21,17 +21,17 @@ class GetToolbarInit : BaseInit() {
     //===============================
 
     /** 背景 **/
-    private val bgDrawablePlus = DrawableWrapper().also { it.set(R.color.colorPrimary) }
+    private val _background = CompatDrawable().also { it.set(R.color.colorPrimary) }
 
     /** 背景 **/
-    val background: Drawable? get() = bgDrawablePlus.get()
+    val background: Drawable? get() = _background.get()
 
-    fun setBackground(drawable: Drawable?) = bgDrawablePlus.set(drawable)
+    fun setBackground(drawable: Drawable?) = _background.set(drawable)
 
-    fun setBackground(bitmap: Bitmap?) = bgDrawablePlus.set(bitmap)
+    fun setBackground(bitmap: Bitmap?) = _background.set(bitmap)
 
     @JvmOverloads
-    fun setBackground(any: Int, forceColor: Boolean = false) = bgDrawablePlus.set(any, forceColor)
+    fun setBackground(any: Int, forceColor: Boolean = false) = _background.set(any, forceColor)
 
     //===============================
     //============常规属性============
@@ -54,7 +54,7 @@ class GetToolbarInit : BaseInit() {
     //===============================
 
     /** 回退图片资源 **/
-    private val backDrawablePlus = DrawableWrapper().also { it.set(R.drawable.def_back_material_light) }
+    private val backDrawablePlus = CompatDrawable().also { it.set(R.drawable.def_back_material_light) }
 
     val backIcon: Drawable? get() = backDrawablePlus.get()
 
@@ -142,12 +142,12 @@ class GetToolbarInit : BaseInit() {
     var dividerVisible: Boolean = false
 
     /** 分割线背景字节数据 **/
-    private val dividerDrawablePlus = DrawableWrapper()
+    private val _divider = CompatDrawable()
 
     /** 分割线背景 **/
-    val dividerDrawable: Drawable? get() = dividerDrawablePlus.get()
+    val dividerDrawable: Drawable? get() = _divider.get()
 
-    fun setDividerDrawable(drawable: Drawable?) = dividerDrawablePlus.set(drawable)
+    fun setDividerDrawable(drawable: Drawable?) = _divider.set(drawable)
 
-    fun setDividerColor(any: Int) = dividerDrawablePlus.set(any)
+    fun setDividerColor(@ColorInt color: Int) = _divider.set(color, true)
 }

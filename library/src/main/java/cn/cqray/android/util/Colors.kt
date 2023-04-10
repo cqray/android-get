@@ -1,14 +1,13 @@
 package cn.cqray.android.util
 
 import android.content.Context
-import android.util.TypedValue
 import androidx.annotation.ColorRes
 import androidx.core.content.ContextCompat
 import cn.cqray.android.R
 
 object Colors {
 
-    private val context: Context get() = ContextUtils.get()
+    private val context: Context get() = Contexts.get()
 
     @JvmStatic
     fun get(@ColorRes id: Int) = ContextCompat.getColor(context, id)
@@ -43,6 +42,8 @@ object Colors {
     /** 是否是颜色资源ID **/
     fun isColorRes(any: Int): Boolean {
         val resources = Contexts.get().resources
-        return resources.getResourceTypeName(any) == "color"
+        var typeName: String? = null
+        runCatching { typeName = resources.getResourceTypeName(any) }
+        return typeName == "color"
     }
 }

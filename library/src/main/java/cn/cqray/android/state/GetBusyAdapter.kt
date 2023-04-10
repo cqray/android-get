@@ -11,7 +11,7 @@ import androidx.lifecycle.LifecycleOwner
 import cn.cqray.android.R
 import cn.cqray.android.util.Colors
 import cn.cqray.android.util.Sizes
-import cn.cqray.android.util.ViewUtils
+import cn.cqray.android.util.Views
 import com.github.ybq.android.spinkit.SpinKitView
 import com.github.ybq.android.spinkit.SpriteFactory
 import com.github.ybq.android.spinkit.Style
@@ -52,7 +52,7 @@ class GetBusyAdapter : GetStateAdapter<GetBusyAdapter>(R.layout.get_layout_state
         textView = view.findViewById(R.id.get_state_text)
         spinKitView = view.findViewById(R.id.get_state_spin_kit)
         // 注册忙碌控件唤醒
-        val activity = ViewUtils.view2Activity(view) as? ComponentActivity
+        val activity = Views.view2Activity(view) as? ComponentActivity
         activity?.lifecycle?.addObserver(object : DefaultLifecycleObserver {
             override fun onResume(owner: LifecycleOwner) {
                 super.onResume(owner)

@@ -18,7 +18,7 @@ import com.blankj.utilcode.util.SizeUtils
 )
 object Sizes {
 
-    private val context: Context get() = ContextUtils.get()
+    private val context: Context get() = Contexts.get()
 
     private val dm: DisplayMetrics get() = context.resources.displayMetrics
 

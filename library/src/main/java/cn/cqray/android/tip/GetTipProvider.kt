@@ -1,7 +1,7 @@
 package cn.cqray.android.tip
 
 import androidx.annotation.StringRes
-import cn.cqray.android.util.ContextUtils
+import cn.cqray.android.util.Contexts
 
 /**
  * Tip提供者
@@ -64,5 +64,5 @@ interface GetTipProvider {
         init: GetTipInit?,
         hideCallback: Function0<Unit>?,
         showCallback: Function0<Unit>?
-    ) = GetTip.show(ContextUtils.getString(id), init, hideCallback, showCallback)
+    ) = GetTip.show(Contexts.getString(id), init, hideCallback, showCallback)
 }
