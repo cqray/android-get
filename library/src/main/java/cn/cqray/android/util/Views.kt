@@ -26,17 +26,18 @@ import com.google.android.material.shape.MaterialShapeUtils
 object Views {
 
     @JvmStatic
-    fun <VB : ViewBinding> binding(bindingClass: Class<VB>): VB {
-        val activity = Get.topActivity
-        val context = activity ?: Get.context
-        val content = activity?.findViewById<ViewGroup>(android.R.id.content)
+    @JvmOverloads
+    fun <VB : ViewBinding> getBinding(bindingClass: Class<VB>, parent: ViewGroup? = null): VB {
+        val context = parent?.context ?: Get.context
+        val content = parent ?: Get.topActivity?.findViewById(android.R.id.content)
         val method = bindingClass.getMethod(
             "inflate",
             LayoutInflater::class.java,
             ViewGroup::class.java,
             Boolean::class.java
         )
-        return method.invoke(null, LayoutInflater.from(context), content, false) as VB
+        val inflater = LayoutInflater.from(context)
+        return method.invoke(null, inflater, content, false) as VB
     }
 
     /**
@@ -100,7 +101,7 @@ object Views {
      */
     fun setOverScrollMode(view: View?, overScrollMode: Int) {
         view?.let {
-            when(it) {
+            when (it) {
                 is ViewPager2 -> it.getChildAt(0).overScrollMode = overScrollMode
                 else -> it.overScrollMode = overScrollMode
             }
@@ -134,7 +135,6 @@ object Views {
         materialShapeDrawable.initializeElevationOverlay(context)
         return materialShapeDrawable
     }
-
 
 
     /**

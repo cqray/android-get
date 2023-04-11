@@ -329,9 +329,9 @@ class GetViewDelegate internal constructor(provider: GetViewProvider) : GetDeleg
     private fun initGetView() {
         if (provider is GetActivity || provider is GetFragment) {
             // Toolbar赋值
-            ReflectUtil.setField(provider, "toolbar", toolbar)
+            ReflectUtils.setField(provider, "toolbar", toolbar)
             // 使用了SmartRefreshLayout才赋值
-            if (setGetContentView) ReflectUtil.setField(provider, "refreshLayout", refreshLayout)
+            if (setGetContentView) ReflectUtils.setField(provider, "refreshLayout", refreshLayout)
         }
         // 状态委托连接界面
         if (provider is Activity) {

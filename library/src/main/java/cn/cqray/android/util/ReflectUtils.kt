@@ -2,7 +2,7 @@ package cn.cqray.android.util
 
 import java.lang.reflect.ParameterizedType
 
-object ReflectUtil {
+object ReflectUtils {
 
     fun setField(src: Any, name: String, value: Any?) {
         val cls = src.javaClass
@@ -19,10 +19,11 @@ object ReflectUtil {
         }
     }
 
-    fun getActualTypeArgument(clazz:   Class<*>): Class<*>? {
+    @JvmOverloads
+    fun getActualTypeArgument(clazz: Class<*>, index: Int = 0): Class<*>? {
         val type = clazz.genericSuperclass
         if (type is ParameterizedType) {
-            return type.actualTypeArguments.getOrNull(0) as Class<*>
+            return type.actualTypeArguments.getOrNull(index) as? Class<*>
         }
         return null
     }

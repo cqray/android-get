@@ -3,7 +3,7 @@ package cn.cqray.android.app
 import android.os.Bundle
 import android.view.LayoutInflater
 import androidx.viewbinding.ViewBinding
-import cn.cqray.android.util.ReflectUtil
+import cn.cqray.android.util.ReflectUtils
 
 @Suppress(
     "MemberVisibilityCanBePrivate",
@@ -19,7 +19,7 @@ abstract class GetBindingFragment<VB : ViewBinding> : GetFragment() {
     }
 
     private fun generateViewBinding(): VB {
-        val bindingClass = ReflectUtil.getActualTypeArgument(this.javaClass)
+        val bindingClass = ReflectUtils.getActualTypeArgument(this.javaClass)
         val method = bindingClass!!.getMethod("inflate", LayoutInflater::class.java,)
         return method.invoke(null, layoutInflater) as VB
     }
