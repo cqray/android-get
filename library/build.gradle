@@ -92,12 +92,12 @@ dependencies {
 
     // ButterKnife快速布局工具
     compileOnly "com.jakewharton:butterknife:10.2.3"
-    // RxJava
+    // RxJava2
     compileOnly 'io.reactivex.rxjava2:rxjava:2.2.21'
     compileOnly 'io.reactivex.rxjava2:rxandroid:2.1.1'
-
-    api "io.reactivex.rxjava3:rxjava:3.1.5"
-    api "io.reactivex.rxjava3:rxandroid:3.0.0"
+    // RxJava3
+    compileOnly "io.reactivex.rxjava3:rxjava:3.1.5"
+    compileOnly "io.reactivex.rxjava3:rxandroid:3.0.0"
 
     // Kotlin相关框架
     //noinspection GradleDependency
