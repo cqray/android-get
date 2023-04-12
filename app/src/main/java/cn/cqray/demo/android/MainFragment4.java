@@ -1,8 +1,6 @@
 package cn.cqray.demo.android;
 
 import android.os.Bundle;
-import android.util.Log;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
@@ -30,9 +28,7 @@ public class MainFragment4 extends GetPaginationFragment<Integer> {
     @Override
     protected void onRefresh(int pageNum, int pageSize) {
 
-        Log.e("数据", "12a1sd3fa");
         finish(Arrays.asList(1, 2, 3, 4));
-
     }
 
     @Override

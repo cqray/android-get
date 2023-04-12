@@ -8,6 +8,7 @@ import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
 import cn.cqray.android.Get
+import io.reactivex.rxjava3.disposables.Disposable
 import java.util.*
 import java.util.concurrent.TimeUnit
 
@@ -196,7 +197,7 @@ class GetHandleDelegate constructor(provider: GetHandleProvider? = null) {
      * 添加Disposable
      * @param disposable Disposable
      */
-    fun addDisposable(disposable: Any) = rxDelegate.addDisposable(null, disposable)
+    fun addDisposable(disposable: Disposable) = rxDelegate.addDisposable(disposable)
 
     /**
      * 添加Disposable
@@ -204,13 +205,13 @@ class GetHandleDelegate constructor(provider: GetHandleProvider? = null) {
      * @param disposable Disposable
      */
     @Synchronized
-    fun addDisposable(tag: Any?, disposable: Any) = rxDelegate.addDisposable(tag, disposable)
+    fun addDisposable(tag: Any?, disposable: Disposable) = rxDelegate.addDisposable(tag, disposable)
 
     /**
      * 添加Disposable
      * @param disposables Disposable数组
      */
-    fun addDisposables(vararg disposables: Any) = rxDelegate.addDisposables(null, disposables)
+    fun addDisposables(vararg disposables: Disposable) = rxDelegate.addDisposables(disposables)
 
     /**
      * 添加Disposable
@@ -218,13 +219,13 @@ class GetHandleDelegate constructor(provider: GetHandleProvider? = null) {
      * @param disposables Disposable数组
      */
     @Synchronized
-    fun addDisposables(tag: Any?, vararg disposables: Any) = rxDelegate.addDisposable(tag, disposables)
+    fun addDisposables(tag: Any?, vararg disposables: Disposable) = rxDelegate.addDisposables(tag, *disposables)
 
     /**
      * 添加Disposable
      * @param disposables Disposable列表
      */
-    fun addDisposables(disposables: MutableList<Any>) = rxDelegate.addDisposables(null, disposables)
+    fun addDisposables(disposables: MutableList<Disposable>) = rxDelegate.addDisposables(disposables)
 
     /**
      * 添加Disposable
@@ -232,7 +233,7 @@ class GetHandleDelegate constructor(provider: GetHandleProvider? = null) {
      * @param disposables Disposable列表
      */
     @Synchronized
-    fun addDisposables(tag: Any?, disposables: MutableList<Any>) = rxDelegate.addDisposables(tag, disposables)
+    fun addDisposables(tag: Any?, disposables: MutableList<Disposable>) = rxDelegate.addDisposables(tag, disposables)
 
     /**
      * 根据标识获取对应的列表

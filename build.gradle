@@ -2,8 +2,6 @@
 buildscript {
     ext {
         kotlin_version = '1.5.31'
-//        kotlin_version = '1.4.21'
-//        kotlin_version = '1.6.10'
     }
     repositories {
         google()
@@ -12,12 +10,10 @@ buildscript {
         maven { url 'https://jitpack.io' }
     }
     dependencies {
+        //noinspection AndroidGradlePluginVersion
         classpath "com.android.tools.build:gradle:4.2.1"
-//        classpath "com.android.tools.build:gradle:4.0.2"
+        //noinspection GradleDependency
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-
-        // NOTE: Do not place your application dependencies here; they belong
-        // in the individual module build.gradle files
     }
 }
 
