@@ -1,6 +1,5 @@
 package cn.cqray.android.adapter
 
-import android.annotation.SuppressLint
 import android.util.SparseArray
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.MutableLiveData

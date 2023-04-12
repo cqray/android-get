@@ -2,13 +2,15 @@ package cn.cqray.android.handle
 
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
+import io.reactivex.rxjava3.disposables.Disposable
 import kotlin.collections.HashMap
 
 /**
  * RxJava委托实现
  * @author Cqray
  */
-class RxDelegate @JvmOverloads constructor(
+@Suppress("MemberVisibilityCanBePrivate")
+class GetRxDelegate @JvmOverloads constructor(
     /** RxJava Disposable相关方法提供器 **/
     owner: LifecycleOwner? = null
 ) {
@@ -24,6 +26,9 @@ class RxDelegate @JvmOverloads constructor(
                 clearDisposables()
             }
         })
+        // 检查Rx或Rx3是否可用
+        disposeRx2(null)
+        disposeRx3(null)
     }
 
     /**
@@ -76,6 +81,13 @@ class RxDelegate @JvmOverloads constructor(
      */
     @Synchronized
     fun addDisposables(tag: Any?, disposables: MutableList<Any>) = obtain(tag).addAll(disposables)
+
+    /**
+     * 根据标识获取对应的列表
+     * @param tag 标识
+     */
+    @Synchronized
+    fun getDisposables(tag: Any? = null) = obtain(tag)
 
     /**
      * 清除指定Tag下所有Disposable
@@ -135,7 +147,7 @@ class RxDelegate @JvmOverloads constructor(
      */
     private fun disposeRx3(disposable: Any?) {
         if (rx3Supported) try {
-            if (disposable is io.reactivex.rxjava3.disposables.Disposable) {
+            if (disposable is Disposable) {
                 disposable.dispose()
             }
         } catch (ignore: NoClassDefFoundError) {
@@ -144,12 +156,10 @@ class RxDelegate @JvmOverloads constructor(
     }
 
     companion object {
-
         /** 是否支持RxJava2 **/
         private var rx2Supported = true
 
-        /** 是否支持RxJava2 **/
+        /** 是否支持RxJava3 **/
         private var rx3Supported = true
-
     }
 }

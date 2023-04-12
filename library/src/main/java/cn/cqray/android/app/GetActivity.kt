@@ -9,8 +9,8 @@ import androidx.annotation.LayoutRes
 import androidx.annotation.NonNull
 import androidx.appcompat.app.AppCompatActivity
 import cn.cqray.android.Get
-import cn.cqray.android.handle.RxDelegate
-import cn.cqray.android.handle.RxProvider
+import cn.cqray.android.handle.GetHandleDelegate
+import cn.cqray.android.handle.GetHandleProvider
 import cn.cqray.android.tip.GetTipProvider
 import cn.cqray.android.widget.GetToolbar
 import com.scwang.smart.refresh.layout.SmartRefreshLayout
@@ -24,7 +24,7 @@ open class GetActivity : AppCompatActivity(),
     GetViewProvider,
     GetNavProvider,
     GetTipProvider,
-    RxProvider,
+    GetHandleProvider,
     KeyboardProvider {
 
     /** 标题栏 **/
@@ -41,7 +41,7 @@ open class GetActivity : AppCompatActivity(),
     @Suppress("KotlinNullnessAnnotation")
     val refreshLayout: SmartRefreshLayout? = null
 
-    override val rxDelegate by lazy { RxDelegate(this) }
+    override val handleDelegate by lazy { GetHandleDelegate(this) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

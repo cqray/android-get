@@ -1,8 +1,6 @@
 package cn.cqray.android.cache
 
-import android.content.Context
-import android.content.SharedPreferences
-import cn.cqray.android.Get
+import com.blankj.utilcode.util.SPUtils
 import com.google.gson.Gson
 import java.lang.reflect.Type
 
@@ -17,11 +15,8 @@ import java.lang.reflect.Type
 )
 open class GetCache {
 
-    /** [SharedPreferences]实例 **/
-    private val sp: SharedPreferences = Get.context.getSharedPreferences(
-        this.javaClass.name,
-        Context.MODE_PRIVATE
-    )
+    /** [SPUtils]实例 **/
+    private val spUtils = SPUtils.getInstance(this.javaClass.name)
 
     /**[Gson]Json格式化实例 **/
     private val gson = Gson()
@@ -32,8 +27,8 @@ open class GetCache {
      * @param value 值
      */
     fun put(key: String, value: Any?) {
-        if (value == null) sp.edit().remove(key).commit()
-        else sp.edit().putString(key, gson.toJson(value)).commit()
+        if (value == null) spUtils.remove(key, true)
+        else spUtils.put(key, gson.toJson(value), true)
     }
 
     /**
@@ -42,8 +37,8 @@ open class GetCache {
      * @param value 值
      */
     fun putAsync(key: String, value: Any?) {
-        if (value == null) sp.edit().remove(key).apply()
-        else sp.edit().putString(key, gson.toJson(value)).apply()
+        if (value == null) spUtils.remove(key, false)
+        else spUtils.put(key, gson.toJson(value), false)
     }
 
     fun getBoolean(key: String) = getBoolean(key, false)
@@ -68,16 +63,16 @@ open class GetCache {
 
     fun <T> getObject(key: String, clazz: Class<T>): T? {
         runCatching {
-            val value = sp.getString(key, null)
-            return gson.fromJson(value, clazz)
+            val json = spUtils.getString(key, null)
+            return gson.fromJson(json, clazz)
         }
         return null
     }
 
     fun <T> getObject(key: String, type: Type): T? {
         runCatching {
-            val value = sp.getString(key, null)
-            return gson.fromJson(value, type)
+            val json = spUtils.getString(key, null)
+            return gson.fromJson(json, type)
         }
         return null
     }

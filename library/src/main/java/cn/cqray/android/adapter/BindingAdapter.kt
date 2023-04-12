@@ -17,4 +17,5 @@ abstract class BindingAdapter<T, VB : ViewBinding> : BaseQuickAdapter<T, Binding
         val binding = Views.getBinding(clazz, parent)
         return BindingViewHolder(binding)
     }
+
 }

@@ -18,7 +18,18 @@ class TestFragment : GetFragment(), GetViewProvider, GetMultiProvider {
 //        showTip("666", null, ) {
 //
 //        }
+//        timer {
+//
+//        }
 
         Get.showTip("6666")
+
+        sss {
+
+        }
+    }
+
+    fun sss(function: Function<Unit>) {
+
     }
 }
