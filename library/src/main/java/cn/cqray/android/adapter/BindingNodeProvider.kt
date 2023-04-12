@@ -18,7 +18,7 @@ abstract class BindingNodeProvider<VB : ViewBinding> : BaseNodeProvider() {
     override val layoutId: Int = 0
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseViewHolder {
-        val clazz = ReflectUtils.getActualTypeArgument(javaClass, 1) as Class<VB>
+        val clazz = ReflectUtils.getActualTypeArgument(javaClass, 0) as Class<VB>
         val binding = Views.getBinding(clazz, parent)
         return BindingViewHolder(binding)
     }
