@@ -4,7 +4,7 @@ import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
 import androidx.annotation.DrawableRes
 import cn.cqray.android.R
-import cn.cqray.android.graphics.CompatDrawable
+import cn.cqray.android.graphics.GetDrawable
 
 /**
  * 带图标行
@@ -20,10 +20,10 @@ open class GetIconLineItem<T : GetIconLineItem<T>> internal constructor(
 ) : GetButtonLineItem<T>(text) {
 
     /** 左图标字节数据 **/
-    private var _icon: CompatDrawable = CompatDrawable()
+    private var _icon: GetDrawable = GetDrawable()
 
     /** 右图标字节数据 **/
-    private var _next: CompatDrawable = CompatDrawable().also { it.set(R.drawable.def_line_next) }
+    private var _next: GetDrawable = GetDrawable().also { it.set(R.drawable.def_line_next) }
 
     /** 左图标 **/
     val icon: Drawable? get() = _icon.get()

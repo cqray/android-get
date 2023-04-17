@@ -5,7 +5,7 @@ import android.graphics.Color
 import android.graphics.drawable.Drawable
 import androidx.annotation.ColorInt
 import cn.cqray.android.R
-import cn.cqray.android.graphics.CompatDrawable
+import cn.cqray.android.graphics.GetDrawable
 import cn.cqray.android.init.BaseInit
 import cn.cqray.android.util.Sizes
 
@@ -21,7 +21,7 @@ class GetToolbarInit : BaseInit() {
     //===============================
 
     /** 背景 **/
-    private val _background = CompatDrawable().also { it.set(R.color.colorPrimary) }
+    private val _background = GetDrawable().also { it.set(R.color.colorPrimary) }
 
     /** 背景 **/
     val background: Drawable? get() = _background.get()
@@ -54,7 +54,7 @@ class GetToolbarInit : BaseInit() {
     //===============================
 
     /** 回退图片资源 **/
-    private val backDrawablePlus = CompatDrawable().also { it.set(R.drawable.def_back_material_light) }
+    private val backDrawablePlus = GetDrawable().also { it.set(R.drawable.def_back_material_light) }
 
     val backIcon: Drawable? get() = backDrawablePlus.get()
 
@@ -142,7 +142,7 @@ class GetToolbarInit : BaseInit() {
     var dividerVisible: Boolean = false
 
     /** 分割线背景字节数据 **/
-    private val _divider = CompatDrawable()
+    private val _divider = GetDrawable()
 
     /** 分割线背景 **/
     val dividerDrawable: Drawable? get() = _divider.get()

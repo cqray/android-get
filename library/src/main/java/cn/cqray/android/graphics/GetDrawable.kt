@@ -3,17 +3,18 @@ package cn.cqray.android.graphics
 import android.graphics.Bitmap
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
+import cn.cqray.android.Get
 import cn.cqray.android.util.Colors
 import cn.cqray.android.util.Contexts
 import com.blankj.utilcode.util.ImageUtils
 
 /**
- * 兼容的[Drawable]
+ * [Get]兼容的[Drawable]
  * 存储[ColorDrawable]和常规[Drawable]
  * 可被序列化和Gson转换
  * @author Cqray
  */
-class CompatDrawable : java.io.Serializable {
+class GetDrawable : java.io.Serializable {
 
     /** 颜色值 **/
     private var color: Int? = null

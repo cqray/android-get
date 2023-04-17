@@ -143,7 +143,7 @@ class GetToolbar @JvmOverloads constructor(
         val elevation = ta.getDimension(R.styleable.GetToolbar_elevation, elev)
         val editable = ta.getBoolean(R.styleable.GetToolbar_titleEditable, false)
         // 默认属性
-        val paddingH = ta.getDimension(R.styleable.GetToolbar_paddingH, Sizes.px(R.dimen.content).toFloat())
+        val paddingH = ta.getDimension(R.styleable.GetToolbar_paddingContent, Sizes.px(R.dimen.content).toFloat())
         val titleSpace = ta.getDimension(R.styleable.GetToolbar_titleSpace, Sizes.px(R.dimen.content).toFloat())
         val titleCenter = ta.getBoolean(R.styleable.GetToolbar_titleCenter, false)
         ta.recycle()

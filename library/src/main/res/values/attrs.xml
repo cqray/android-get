@@ -13,7 +13,7 @@
             <enum name="normal" value="0" />
             <enum name="bold" value="1" />
             <enum name="italic" value="2" />
-            <enum name="boldItalic" value="3"/>
+            <enum name="boldItalic" value="3" />
         </attr>
     </declare-styleable>
 
@@ -39,7 +39,8 @@
         <!-- 一般属性 -->
         <attr name="ripple" />
         <attr name="elevation" />
-        <attr name="paddingH" format="dimension"/>
+        <attr name="paddingH" format="dimension" />
+        <attr name="paddingContent" format="dimension" />
         <!-- 标题属性 -->
         <attr name="titleText" format="string" localization="suggested" />
         <attr name="titleTextColor" format="color" />
@@ -71,7 +72,7 @@
             <enum name="normal" value="0" />
             <enum name="bold" value="1" />
             <enum name="italic" value="2" />
-            <enum name="boldItalic" value="3"/>
+            <enum name="boldItalic" value="3" />
         </attr>
         <!-- 分割线相关属性 -->
         <attr name="dividerColor" format="color" />

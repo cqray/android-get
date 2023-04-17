@@ -5,7 +5,7 @@ import android.util.TypedValue.*
 import androidx.annotation.ColorInt
 import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
-import cn.cqray.android.graphics.CompatDrawable
+import cn.cqray.android.graphics.GetDrawable
 import cn.cqray.android.util.Colors
 import cn.cqray.android.util.Sizes
 import com.blankj.utilcode.util.CloneUtils
@@ -51,7 +51,7 @@ open class GetLineItem<T : GetLineItem<T>>(
     val background: Drawable? get() = _background.get()
 
     /** 背景 **/
-    private var _background: CompatDrawable = CompatDrawable()
+    private var _background: GetDrawable = GetDrawable()
 
     init {
         // 初始化间隔信息
