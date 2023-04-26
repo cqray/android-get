@@ -84,7 +84,7 @@ dependencies {
     // Toast弹窗
     api 'com.github.getActivity:Toaster:12.0'
     // 刷新框架
-    api "com.scwang.smart:refresh-layout-kernel:2.0.3"
+    api "io.github.scwang90:refresh-layout-kernel:2.0.5"
     // TabLayout框架
     api 'io.github.h07000223:flycoTabLayout:3.0.0'
     // noinspection GradleDependency
