@@ -181,7 +181,9 @@ internal object _Get {
      * 在Activity中onCreate()中super之前调用
      */
     @SuppressLint(
-        "DiscouragedPrivateApi", "SoonBlockedPrivateApi", "PrivateApi"
+        "DiscouragedPrivateApi",
+        "SoonBlockedPrivateApi",
+        "PrivateApi"
     )
     private fun fixOrientation(activity: Activity) {
         // 目标版本8.0及其以上
