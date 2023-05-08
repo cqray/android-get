@@ -39,6 +39,7 @@ android {
         jvmTarget = "1.8"
         freeCompilerArgs += [
                 "-Xjvm-default=all",
+                "-Xopt-in=kotlin.RequiresOptIn",
                 '-module-name',
                 "cn.cqray.android",
         ]
@@ -102,6 +103,7 @@ dependencies {
     //noinspection GradleDependency
     api "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
 
+    api "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.5.1"
 }
 
 afterEvaluate {

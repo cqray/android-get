@@ -3,8 +3,12 @@ package cn.cqray.android
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.Application
+import android.content.ContentProvider
+import android.content.ContentValues
 import android.content.pm.ActivityInfo
 import android.content.res.TypedArray
+import android.database.Cursor
+import android.net.Uri
 import android.os.*
 import androidx.fragment.app.FragmentActivity
 import cn.cqray.android.app.GetNavProvider
@@ -12,65 +16,59 @@ import cn.cqray.android.lifecycle.GetActivityLifecycleCallbacks
 import cn.cqray.android.lifecycle.GetAppLifecycleCallbacks
 import cn.cqray.android.lifecycle.GetFragmentLifecycleCallbacks
 import cn.cqray.android.log.GetLog
+import cn.cqray.android.tip.GetTip
 import com.blankj.utilcode.util.ActivityUtils
 import com.blankj.utilcode.util.AppUtils
 import com.blankj.utilcode.util.Utils
+import kotlinx.coroutines.*
+import java.lang.Runnable
 import java.util.*
-import java.util.concurrent.atomic.AtomicReference
 
 /**
  * [Get]影子实现，不暴露给外部
  * @author Cqray
  */
 @Suppress("ClassName")
-internal object _Get {
+internal class _Get : ContentProvider() {
 
-    /** [Application]实例持有 **/
-    private val applicationRef = AtomicReference<Application>()
+    //========================================================
+    //=================ContentProvider相关部分=================
+    //========================================================
+
+    override fun onCreate(): Boolean {
+        // 初始化Application
+        application = context!!.applicationContext as Application
+        // 初始化[utilcodex]工具类
+        Utils.init(application)
+        // 初始化提示
+        GetTip.init(application)
+        // 注册生命周期管理
+        registerActivityLifecycleCallbacks()
+        return false
+    }
+
+    override fun query(
+        uri: Uri,
+        projection: Array<out String>?,
+        selection: String?,
+        selectionArgs: Array<out String>?,
+        sortOrder: String?
+    ): Cursor? = null
+
+    override fun getType(uri: Uri): String? = null
+
+    override fun insert(uri: Uri, values: ContentValues?): Uri? = null
+
+    override fun delete(uri: Uri, selection: String?, selectionArgs: Array<out String>?) = 0
+
+    override fun update(uri: Uri, values: ContentValues?, selection: String?, selectionArgs: Array<out String>?) = 0
+
+    //========================================================
+    //=====================Get框架初始化部分====================
+    //========================================================
 
     /** [Application]生命周期回调 **/
     private val appLifecycleCallbacks = mutableListOf<GetAppLifecycleCallbacks>()
-
-    /** [Handler]控制 **/
-    private val handler = Handler(Looper.getMainLooper()) {
-        val runnable = it.obj as Runnable
-        runnable.run()
-        true
-    }
-
-    /** 获取[Application]实例 **/
-    @JvmStatic
-    @get:Synchronized
-    val application: Application
-        get() {
-            if (applicationRef.get() == null) {
-                throw RuntimeException("Did you forget call Get.init?")
-            }
-            return applicationRef.get()
-        }
-
-    /**
-     * 初始化
-     * @param application 应用实例
-     */
-    fun init(application: Application) {
-        // 初始化配置
-        applicationRef.set(application)
-        Utils.init(application)
-        registerActivityLifecycleCallbacks()
-    }
-
-    /**
-     * 在UI线程上延时执行程序
-     * @param runnable  需要执行的内容
-     * @param delayed   延时时长(ms)
-     */
-    fun runOnUiThreadDelayed(runnable: Runnable, delayed: Int? = null) {
-        val message = Message.obtain()
-        message.what = 0
-        message.obj = runnable
-        handler.sendMessageDelayed(message, (delayed ?: 0).toLong())
-    }
 
     /**
      * 注册[Activity]生命周期
@@ -79,10 +77,10 @@ internal object _Get {
         // 前后台状态监听
         AppUtils.registerAppStatusChangedListener(object : Utils.OnAppStatusChangedListener {
             // 进入前台
-            override fun onForeground(activity: Activity) = _Get.onForeground(activity)
+            override fun onForeground(activity: Activity) = this@_Get.onForeground(activity)
 
             // 进入后台
-            override fun onBackground(activity: Activity) = _Get.onBackground(activity)
+            override fun onBackground(activity: Activity) = this@_Get.onBackground(activity)
         })
         // Activity生命周期监听
         Utils.getApp().registerActivityLifecycleCallbacks(object : GetActivityLifecycleCallbacks {
@@ -117,7 +115,7 @@ internal object _Get {
                 runOnUiThreadDelayed({
                     // 应用程序生命周期结束
                     if (ActivityUtils.getActivityList().isEmpty()) onTerminated()
-                }, 10)
+                }, 15)
             }
         })
     }
@@ -200,28 +198,73 @@ internal object _Get {
         }
     }
 
-    /**
-     * 检查[Activity]横竖屏或者锁定就是固定
-     */
-    @SuppressLint(
-        "DiscouragedPrivateApi",
-        "SoonBlockedPrivateApi",
-        "PrivateApi"
-    )
-    fun isTranslucentOrFloating(activity: Activity): Boolean {
-        var isTranslucentOrFloating = false
-        runCatching {
-            val styleableClass = Class.forName("com.android.internal.R\$styleable")
-            val windowField = styleableClass.getDeclaredField("Window").also { it.isAccessible = true }
-            val styleableRes = (windowField[null] as IntArray)
-            val typedArray = activity.obtainStyledAttributes(styleableRes)
-            val activityInfoClass: Class<*> = ActivityInfo::class.java
-            // 调用检查是否屏幕旋转
-            val isTranslucentOrFloatingMethod = activityInfoClass.getDeclaredMethod(
-                "isTranslucentOrFloating", TypedArray::class.java
-            ).also { it.isAccessible = true }
-            isTranslucentOrFloating = isTranslucentOrFloatingMethod.invoke(null, typedArray) as Boolean
+    companion object {
+        /** [Application]实例 **/
+        lateinit var application: Application
+            private set
+
+        /** [Handler]控制 **/
+        private val handler = Handler(Looper.getMainLooper()) {
+            val runnable = it.obj as Runnable
+            runnable.run()
+            true
         }
-        return isTranslucentOrFloating
+
+        /** 任务集合 **/
+        private val jobs = Collections.synchronizedList(mutableListOf<Job>())
+
+        /**
+         * 在UI线程上延时执行程序
+         * @param runnable  需要执行的内容
+         * @param delayed   延时时长(ms)
+         */
+        @OptIn(DelicateCoroutinesApi::class)
+        fun runOnUiThreadDelayed(runnable: Runnable, delayed: Int? = null) {
+            val delay = delayed ?: 0
+            // 在主线程，且延时小于等于0，直接运行
+            if (Looper.myLooper() == Looper.getMainLooper() && delay <= 0) {
+                runnable.run()
+                return
+            }
+            // 执行协程延时任务
+            var job: Job? = null
+            job = GlobalScope.launch(Dispatchers.IO) {
+                withContext(Dispatchers.Main) {
+                    runnable.run()
+                    job?.let { jobs.remove(job) }
+                }
+            }
+            jobs.add(job)
+//
+//            val message = Message.obtain()
+//            message.what = 0
+//            message.obj = runnable
+//            handler.sendMessageDelayed(message, (delayed ?: 0).toLong())
+        }
+
+        /**
+         * 检查[Activity]横竖屏或者锁定就是固定
+         */
+        @SuppressLint(
+            "DiscouragedPrivateApi",
+            "SoonBlockedPrivateApi",
+            "PrivateApi"
+        )
+        fun isTranslucentOrFloating(activity: Activity): Boolean {
+            var isTranslucentOrFloating = false
+            runCatching {
+                val styleableClass = Class.forName("com.android.internal.R\$styleable")
+                val windowField = styleableClass.getDeclaredField("Window").also { it.isAccessible = true }
+                val styleableRes = (windowField[null] as IntArray)
+                val typedArray = activity.obtainStyledAttributes(styleableRes)
+                val activityInfoClass: Class<*> = ActivityInfo::class.java
+                // 调用检查是否屏幕旋转
+                val isTranslucentOrFloatingMethod = activityInfoClass.getDeclaredMethod(
+                    "isTranslucentOrFloating", TypedArray::class.java
+                ).also { it.isAccessible = true }
+                isTranslucentOrFloating = isTranslucentOrFloatingMethod.invoke(null, typedArray) as Boolean
+            }
+            return isTranslucentOrFloating
+        }
     }
 }

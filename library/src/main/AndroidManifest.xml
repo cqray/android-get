@@ -2,6 +2,10 @@
     package="cn.cqray.android">
 
     <application>
-
+        <!-- 无痛初始化 -->
+        <provider
+            android:name="._Get"
+            android:authorities="${applicationId}.get"
+            android:exported="false" />
     </application>
 </manifest>

@@ -4,12 +4,15 @@ import cn.cqray.android.Get
 import cn.cqray.android.app.GetFragment
 import cn.cqray.android.app.GetIntent
 import cn.cqray.android.app.GetViewProvider
+//import cn.cqray.android.function.showTip22
 import cn.cqray.android.ui.multi.GetMultiProvider
 import com.blankj.utilcode.util.KeyboardUtils
 
 class TestFragment : GetFragment(), GetViewProvider, GetMultiProvider {
 
     fun ss() {
+
+//        showTip()
 
 //        KeyboardUtils.SS
 //        GetIntent()

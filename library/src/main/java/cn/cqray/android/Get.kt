@@ -54,9 +54,6 @@ object Get {
     fun init(application: Application, getInit: GetInit?) {
         // 初始化配置
         this.init = getInit ?: this.init
-        _Get.init(application)
-        // 初始化提示
-        GetTip.init(application)
     }
 
     @JvmStatic

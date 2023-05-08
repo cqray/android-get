@@ -6,6 +6,7 @@ import android.util.Log;
 import org.jetbrains.annotations.Nullable;
 
 import cn.cqray.android.app.GetNavActivity;
+import cn.cqray.android.function.TipFunctionsKt;
 import cn.cqray.android.ui.line.GetLineItem;
 import kotlin.Function;
 import kotlin.Unit;
@@ -27,6 +28,7 @@ public class MainActivity extends GetNavActivity {
         GetLineItem.button("6666")
                 .height(10F);
 
+//        TipFunctionsKt.showTip();
 
     }
 
