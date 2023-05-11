@@ -37,7 +37,7 @@ class TextDrawable(
 
     /** 文本颜色 **/
     @ColorInt
-    var textColor = 0
+    var textColor = Colors.text()
 
     /** 文本大小 **/
     var textSize: Number = 0
@@ -156,6 +156,7 @@ class TextDrawable(
         textPaint.colorFilter = cf
     }
 
+    @Deprecated("Deprecated in Java", ReplaceWith("PixelFormat.TRANSLUCENT", "android.graphics.PixelFormat"))
     override fun getOpacity(): Int {
         return PixelFormat.TRANSLUCENT
     }

@@ -1,15 +1,13 @@
-package cn.cqray.android.handle
+package cn.cqray.android.handle.task
 
 import android.os.SystemClock
 import androidx.lifecycle.Observer
 
 /**
- * [GetHandleDelegate]任务
+ * 任务
  * @author Cqray
  */
-internal class GetHandleTask : java.io.Serializable {
-    /** 任务标识 **/
-    var tag: Any? = null
+class GetTask : java.io.Serializable {
 
     /** 任务what值 **/
     var what: Int = 0
@@ -27,7 +25,7 @@ internal class GetHandleTask : java.io.Serializable {
     var uptime: Long = SystemClock.uptimeMillis()
 
     /** 任务回调 **/
-    var observer: Observer<Long>? = null
+    lateinit var observer: Observer<Long>
 
     /** 终止条件 **/
     var condition: Function1<Int, Boolean>? = null

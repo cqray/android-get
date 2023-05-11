@@ -2,7 +2,8 @@ package cn.cqray.android.handle
 
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
-import io.reactivex.rxjava3.disposables.Disposable
+import cn.cqray.android.util.Check3rdUtils
+import java.util.*
 import kotlin.collections.HashMap
 
 /**
@@ -14,9 +15,8 @@ class GetRxDelegate @JvmOverloads constructor(
     /** RxJava Disposable相关方法提供器 **/
     owner: LifecycleOwner? = null
 ) {
-
     /** Disposable集合 **/
-    private val disposableMap = HashMap<Any?, MutableList<Disposable>>()
+    private val disposables = Collections.synchronizedMap(HashMap<Any?, MutableList<Any>>())
 
     init {
         // 自定管理生命周期
@@ -32,16 +32,18 @@ class GetRxDelegate @JvmOverloads constructor(
      * 提取对应标识的Disposable列表
      * @param tag 标识
      */
-    private fun obtain(tag: Any?): MutableList<Disposable> {
+    private fun obtain(tag: Any?): MutableList<Any> {
         // 获取Disposable列表，没有则创建新的
-        return disposableMap[tag] ?: mutableListOf<Disposable>().also { disposableMap[tag] = it }
+        return disposables[tag] ?: Collections.synchronizedList(
+            mutableListOf<Any>()
+        ).also { disposables[tag] = it }
     }
 
     /**
      * 添加Disposable
      * @param disposable Disposable
      */
-    fun addDisposable(disposable: Disposable) = addDisposable(null, disposable)
+    fun addDisposable(disposable: Any) = addDisposable(null, disposable)
 
     /**
      * 添加Disposable
@@ -49,13 +51,13 @@ class GetRxDelegate @JvmOverloads constructor(
      * @param disposable Disposable
      */
     @Synchronized
-    fun addDisposable(tag: Any?, disposable: Disposable) = obtain(tag).add(disposable)
+    fun addDisposable(tag: Any?, disposable: Any) = obtain(tag).add(disposable)
 
     /**
      * 添加Disposable
      * @param disposables Disposable数组
      */
-    fun addDisposables(vararg disposables: Disposable) = addDisposables(null, *disposables)
+    fun addDisposables(vararg disposables: Any) = addDisposables(null, *disposables)
 
     /**
      * 添加Disposable
@@ -63,13 +65,13 @@ class GetRxDelegate @JvmOverloads constructor(
      * @param disposables Disposable数组
      */
     @Synchronized
-    fun addDisposables(tag: Any?, vararg disposables: Disposable) = obtain(tag).addAll(disposables.toMutableList())
+    fun addDisposables(tag: Any?, vararg disposables: Any) = obtain(tag).addAll(disposables.toMutableList())
 
     /**
      * 添加Disposable
      * @param disposables Disposable列表
      */
-    fun addDisposables(disposables: MutableList<Disposable>) = addDisposables(null, disposables)
+    fun addDisposables(disposables: MutableList<Any>) = addDisposables(null, disposables)
 
     /**
      * 添加Disposable
@@ -77,7 +79,7 @@ class GetRxDelegate @JvmOverloads constructor(
      * @param disposables Disposable列表
      */
     @Synchronized
-    fun addDisposables(tag: Any?, disposables: MutableList<Disposable>) = obtain(tag).addAll(disposables)
+    fun addDisposables(tag: Any?, disposables: MutableList<Any>) = obtain(tag).addAll(disposables)
 
     /**
      * 根据标识获取对应的列表
@@ -93,13 +95,13 @@ class GetRxDelegate @JvmOverloads constructor(
     @Synchronized
     fun clearDisposables(tag: Any?) {
         // 遍历匹配Tag
-        for (entry in disposableMap.entries) {
+        for (entry in disposables.entries) {
             // 匹配Tag成功
             if (tag === entry.key) {
                 // 处理所有Disposable
-                entry.value.forEach { d -> d.dispose() }
+                entry.value.forEach { d -> dispose(d) }
                 // 从缓存中清除
-                disposableMap.remove(entry.key)
+                disposables.remove(entry.key)
                 return
             }
         }
@@ -110,11 +112,22 @@ class GetRxDelegate @JvmOverloads constructor(
      */
     @Synchronized
     fun clearDisposables() {
-        disposableMap.forEach { entry ->
+        disposables.forEach { entry ->
             val list = entry.value
-            list.forEach { d -> d.dispose() }
+            list.forEach { d -> dispose(d) }
         }
-        disposableMap.clear()
+        disposables.clear()
     }
 
+
+    /**
+     * 释放RxJava任务实例
+     * @param disposable 任务实例
+     */
+    private fun dispose(disposable: Any) {
+        // 释放RxJava2
+        if (Check3rdUtils.isRxJava2Support) if (disposable is io.reactivex.disposables.Disposable) disposable.dispose()
+        // 释放RxJava3
+        if (Check3rdUtils.isRxJava3Support) if (disposable is io.reactivex.rxjava3.disposables.Disposable) disposable.dispose()
+    }
 }

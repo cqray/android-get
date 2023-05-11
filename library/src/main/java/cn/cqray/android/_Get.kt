@@ -17,6 +17,7 @@ import cn.cqray.android.lifecycle.GetAppLifecycleCallbacks
 import cn.cqray.android.lifecycle.GetFragmentLifecycleCallbacks
 import cn.cqray.android.log.GetLog
 import cn.cqray.android.tip.GetTip
+import cn.cqray.android.util.Check3rdUtils
 import com.blankj.utilcode.util.ActivityUtils
 import com.blankj.utilcode.util.AppUtils
 import com.blankj.utilcode.util.Utils
@@ -42,6 +43,8 @@ internal class _Get : ContentProvider() {
         Utils.init(application)
         // 初始化提示
         GetTip.init(application)
+        // 检查第三方框架是否可用
+        Check3rdUtils.check()
         // 注册生命周期管理
         registerActivityLifecycleCallbacks()
         return false

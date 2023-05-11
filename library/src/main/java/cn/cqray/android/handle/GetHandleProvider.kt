@@ -1,7 +1,6 @@
 package cn.cqray.android.handle
 
 import androidx.lifecycle.Observer
-import io.reactivex.rxjava3.disposables.Disposable
 import java.util.concurrent.TimeUnit
 
 /**
@@ -112,40 +111,40 @@ interface GetHandleProvider {
      * 添加Disposable
      * @param disposable Disposable
      */
-    fun addDisposable(disposable: Disposable) = handleDelegate.addDisposable(disposable)
+    fun addDisposable(disposable: Any) = handleDelegate.addDisposable(disposable)
 
     /**
      * 添加Disposable
      * @param tag 标识
      * @param disposable Disposable
      */
-    fun addDisposable(tag: Any?, disposable: Disposable) = handleDelegate.addDisposable(tag, disposable)
+    fun addDisposable(tag: Any?, disposable: Any) = handleDelegate.addDisposable(tag, disposable)
 
     /**
      * 添加Disposable
      * @param disposables Disposable数组
      */
-    fun addDisposables(vararg disposables: Disposable) = handleDelegate.addDisposables(disposables)
+    fun addDisposables(vararg disposables: Any) = handleDelegate.addDisposables(*disposables)
 
     /**
      * 添加Disposable
      * @param tag 标识
      * @param disposables Disposable数组
      */
-    fun addDisposables(tag: Any?, vararg disposables: Disposable) = handleDelegate.addDisposables(tag, *disposables)
+    fun addDisposables(tag: Any?, vararg disposables: Any) = handleDelegate.addDisposables(tag, *disposables)
 
     /**
      * 添加Disposable
      * @param disposables Disposable列表
      */
-    fun addDisposables(disposables: MutableList<Disposable>) = handleDelegate.addDisposables(disposables)
+    fun addDisposables(disposables: MutableList<Any>) = handleDelegate.addDisposables(disposables)
 
     /**
      * 添加Disposable
      * @param tag 标识
      * @param disposables Disposable列表
      */
-    fun addDisposables(tag: Any?, disposables: MutableList<Disposable>) = handleDelegate.addDisposables(tag, disposables)
+    fun addDisposables(tag: Any?, disposables: MutableList<Any>) = handleDelegate.addDisposables(tag, disposables)
 
     /**
      * 根据标识获取对应的列表

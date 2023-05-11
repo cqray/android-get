@@ -5,12 +5,10 @@ import android.util.Log;
 
 import org.jetbrains.annotations.Nullable;
 
+import java.util.concurrent.TimeUnit;
+
 import cn.cqray.android.app.GetNavActivity;
-import cn.cqray.android.function.TipFunctionsKt;
 import cn.cqray.android.ui.line.GetLineItem;
-import kotlin.Function;
-import kotlin.Unit;
-import kotlin.jvm.functions.Function0;
 
 public class MainActivity extends GetNavActivity {
 
@@ -29,6 +27,11 @@ public class MainActivity extends GetNavActivity {
                 .height(10F);
 
 //        TipFunctionsKt.showTip();
+        periodicTask(aLong -> {
+
+                    Log.e("数据", "任务执行" + aLong);
+
+                }, 2000, 2000, a -> a == 10, TimeUnit.MILLISECONDS);
 
     }
 
