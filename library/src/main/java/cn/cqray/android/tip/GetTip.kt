@@ -7,6 +7,9 @@ import cn.cqray.android.Get
 import com.blankj.utilcode.util.CloneUtils
 import com.hjq.toast.Toaster
 import java.util.concurrent.atomic.AtomicReference
+import kotlin.math.abs
+import kotlin.math.max
+import kotlin.math.min
 
 /**
  * 提示
@@ -89,6 +92,7 @@ internal object GetTip {
         Get.runOnUiThreadDelayed({ showCallback?.invoke() })
         // 弹窗结束回调
         val duration = tipTask.init.duration ?: 1500
-        tipHandler.sendEmptyMessageDelayed(TIP_MESSAGE_WHAT, duration.toLong())
+        val validDuration = max(0, min(abs(duration), 3500))
+        tipHandler.sendEmptyMessageDelayed(TIP_MESSAGE_WHAT, validDuration.toLong())
     }
 }

@@ -48,7 +48,6 @@ class GetTipInit : GetBaseInit() {
     var textSize: Number? = null
 
     /** 显示时长 **/
-    @IntRange(from = 0, to = 3500)
     var duration: Int? = null
 
     /** 背景圆角 **/
