@@ -25,17 +25,8 @@ object GetLog {
     @Retention(AnnotationRetention.SOURCE)
     annotation class Level
 
-    /** 日志适配器缓存 **/
-    @Suppress("ObjectPropertyName")
-    private var _logAdapter: GetLogAdapter? = null
-
     /** 日志适配器 **/
-    private val logAdapter: GetLogAdapter
-        get() {
-            val adapter = Get.init.logInit!!.logAdapter
-            if (_logAdapter != adapter) _logAdapter = adapter
-            return adapter
-        }
+    private val logAdapter by lazy { Get.init.logInit.adapterGet() }
 
     @JvmStatic
     fun v(vararg contents: Any?) = logAdapter.print(V, null, contents)
@@ -51,7 +42,7 @@ object GetLog {
 
     @JvmStatic
     fun i(vararg contents: Any?) = logAdapter.print(I, null, contents)
-    
+
     @JvmStatic
     fun iTag(tag: String?, vararg contents: Any?) = logAdapter.print(I, tag, contents)
 

@@ -70,6 +70,9 @@ class GetPaginationDelegate<T>(val owner: LifecycleOwner) : GetStateProvider {
     /** 页面刷新回调 **/
     private val callbacks = mutableListOf<Function2<Int, Int, Unit>>()
 
+    /** 首次加载使用setBusy **/
+    var paginationBusyFirst = true
+
     /**
      * 设置是否开启分页功能。
      * 设置true，表示可以下拉加载更多。
@@ -88,11 +91,12 @@ class GetPaginationDelegate<T>(val owner: LifecycleOwner) : GetStateProvider {
      * 初始化分页数据
      */
     private fun initPageInfo(owner: LifecycleOwner) {
-        val init = Get.init.paginationInit!!
+        val init = Get.init.paginationInit.also { it.loadFromLocal() }
         defaultPageNum = init.pageNum
         lastPageNum = defaultPageNum
         currentPageNum = defaultPageNum
         defaultPageSize = init.pageSize
+        paginationBusyFirst = init.busyFirst
         // 分页设置
         paginationEnable.observe(owner) { refreshLayout?.setEnableLoadMore(it) }
     }
@@ -200,7 +204,7 @@ class GetPaginationDelegate<T>(val owner: LifecycleOwner) : GetStateProvider {
      * 结束更新，并传入数据
      * @param data 数据
      */
-    fun finishWithResponse(data: ResponseData<List<T>?>?) {
+    fun finishWithResponse(data: ResponseData<List<T>>?) {
         this.data.setValue(data?.data)
         data?.let {
             // 请求失败，显示异常信息

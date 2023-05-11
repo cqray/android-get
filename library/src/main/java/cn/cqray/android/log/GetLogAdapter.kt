@@ -4,7 +4,7 @@ package cn.cqray.android.log
  * [GetLog]日志打印适配器
  * @author Cqray
  */
-interface GetLogAdapter {
+interface GetLogAdapter : java.io.Serializable {
 
     /**
      * 打印文件日志

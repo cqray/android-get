@@ -12,4 +12,4 @@ class VerticalAnimator : FragmentAnimator(
     R.anim._starter_vertical_from_top,
     R.anim._starter_vertical_to_top,
     R.anim._starter_vertical_from_top
-)
+), java.io.Serializable

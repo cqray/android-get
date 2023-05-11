@@ -4,16 +4,12 @@ import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.IdRes
-import androidx.annotation.Keep
 import androidx.annotation.LayoutRes
-import androidx.annotation.NonNull
 import androidx.appcompat.app.AppCompatActivity
 import cn.cqray.android.Get
 import cn.cqray.android.handle.GetHandleDelegate
 import cn.cqray.android.handle.GetHandleProvider
 import cn.cqray.android.tip.GetTipProvider
-import cn.cqray.android.widget.GetToolbar
-import com.scwang.smart.refresh.layout.SmartRefreshLayout
 
 /**
  * [Get]基础Activity
@@ -28,18 +24,10 @@ open class GetActivity : AppCompatActivity(),
     KeyboardProvider {
 
     /** 标题栏 **/
-    @Keep
-    @NonNull
-    @JvmField
-    @Suppress("KotlinNullnessAnnotation")
-    val toolbar: GetToolbar? = null
+    val toolbar get() = viewDelegate.toolbar
 
     /** 刷新容器 **/
-    @Keep
-    @NonNull
-    @JvmField
-    @Suppress("KotlinNullnessAnnotation")
-    val refreshLayout: SmartRefreshLayout? = null
+    val refreshLayout get() = viewDelegate.refreshLayout
 
     override val handleDelegate by lazy { GetHandleDelegate(this) }
 

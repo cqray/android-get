@@ -19,6 +19,7 @@ import com.blankj.utilcode.util.Utils
  * 上下文工具类
  * @author Cqray
  */
+@Suppress("Unused")
 object Contexts {
 
     /** 上下文 **/

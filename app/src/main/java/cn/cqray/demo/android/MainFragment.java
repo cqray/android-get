@@ -3,12 +3,17 @@ package cn.cqray.demo.android;
 import android.os.Bundle;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+
+import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.chad.library.adapter.base.viewholder.BaseViewHolder;
+
 import cn.cqray.android.Get;
-import cn.cqray.android.app.GetFragment;
 import cn.cqray.android.log.GetLog;
 import cn.cqray.android.tip.GetTipInit;
+import cn.cqray.android.ui.page.GetPaginationFragment;
 
-public class MainFragment extends GetFragment {
+public class MainFragment extends GetPaginationFragment<Object> {
 
     private int s = 0;
 
@@ -64,10 +69,8 @@ public class MainFragment extends GetFragment {
 //            Log.e("数据", "导读变化：" + h);
 //        });
 
-//        Log.e("数据", "大小：" + Sizes.dpSmall());
-
-
     }
+
 
     @Override
     public void onStop() {
@@ -90,4 +93,14 @@ public class MainFragment extends GetFragment {
         GetLog.d("onDestroy");
     }
 
+    @NonNull
+    @Override
+    protected BaseQuickAdapter<Object, ? extends BaseViewHolder> onCreateAdapter() {
+        return new BaseQuickAdapter<Object, BaseViewHolder>(0) {
+            @Override
+            protected void convert(@NonNull BaseViewHolder holder, Object o) {
+
+            }
+        };
+    }
 }

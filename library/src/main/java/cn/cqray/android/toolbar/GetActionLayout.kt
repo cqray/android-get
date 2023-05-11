@@ -1,4 +1,4 @@
-package cn.cqray.android.widget
+package cn.cqray.android.toolbar
 
 import android.content.Context
 import android.content.res.ColorStateList

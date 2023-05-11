@@ -18,6 +18,12 @@ internal object Check3rdUtils {
     var isCoroutinesSupport = true
 
     fun check() {
+        // 检测协程
+        runCatching {
+            Dispatchers.IO
+            HandlerDispatcher::class.java
+            isCoroutinesSupport = true
+        }.onFailure { isCoroutinesSupport = false }
         // 检测RxJava2
         runCatching {
             io.reactivex.schedulers.Schedulers.io()
@@ -30,11 +36,5 @@ internal object Check3rdUtils {
             io.reactivex.rxjava3.android.schedulers.AndroidSchedulers.mainThread()
             isRxJava3Support = true
         }.onFailure { isRxJava3Support = false }
-        // 检测协程
-        runCatching {
-            Dispatchers.IO
-            HandlerDispatcher::class.java
-            isCoroutinesSupport = true
-        }.onFailure { isCoroutinesSupport = false }
     }
 }

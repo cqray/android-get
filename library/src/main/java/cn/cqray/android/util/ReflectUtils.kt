@@ -2,22 +2,7 @@ package cn.cqray.android.util
 
 import java.lang.reflect.ParameterizedType
 
-object ReflectUtils {
-
-    fun setField(src: Any, name: String, value: Any?) {
-        val cls = src.javaClass
-        kotlin.runCatching {
-            val field = cls.getField(name)
-            field.isAccessible = true
-            field.set(src, value)
-        }.onFailure {
-            kotlin.runCatching {
-                val field = cls.getDeclaredField(name)
-                field.isAccessible = true
-                field.set(src, value)
-            }
-        }
-    }
+internal object ReflectUtils {
 
     @JvmOverloads
     fun getActualTypeArgument(clazz: Class<*>, index: Int = 0): Class<*>? {

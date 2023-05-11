@@ -148,11 +148,10 @@ class GetStateLayout @JvmOverloads constructor(
         var adapter = adapters[state.ordinal]
         if (adapter == null) {
             // 获取全局配置
-            val init = Get.init.stateInit!!
             adapter = when (state) {
-                GetViewState.BUSY -> init.busyAdapterCreator()
-                GetViewState.EMPTY -> init.emptyAdapterCreator()
-                GetViewState.ERROR -> init.errorAdapterCreator()
+                GetViewState.BUSY -> Get.init.stateInit.busyGet()
+                GetViewState.EMPTY -> Get.init.stateInit.emptyGet()
+                GetViewState.ERROR -> Get.init.stateInit.errorGet()
                 else -> null
             }
             adapter?.hide()

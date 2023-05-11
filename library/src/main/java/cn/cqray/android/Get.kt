@@ -26,8 +26,7 @@ object Get {
 
     /** [GetInit]配置 **/
     @JvmStatic
-    var init = GetInit()
-        private set
+    val init = GetInit()
 
     /** 获取顶部[Activity] **/
     @JvmStatic
@@ -47,14 +46,14 @@ object Get {
     @JvmStatic
     val application get() = _Get.application
 
-    @JvmStatic
-    fun init(application: Application) = init(application, null)
-
-    @JvmStatic
-    fun init(application: Application, getInit: GetInit?) {
-        // 初始化配置
-        this.init = getInit ?: this.init
-    }
+//    @JvmStatic
+//    fun init(application: Application) = init(application, null)
+//
+//    @JvmStatic
+//    fun init(application: Application, getInit: GetInit?) {
+//        // 初始化配置
+//        this.init = getInit ?: this.init
+//    }
 
     @JvmStatic
     val context: Context get() = topActivity ?: application.applicationContext

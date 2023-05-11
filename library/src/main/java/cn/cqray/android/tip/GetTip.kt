@@ -83,9 +83,10 @@ internal object GetTip {
                 it.loadFromLocal()
             }
         // 显示新的弹窗
-        val tipTask = GetTipTask(text ?: "", tipInit, hideCallback, showCallback)
+        val tipTask = GetTipTask(text ?: "", tipInit, hideCallback)
         Toaster.show(tipTask)
         tipTaskRef.set(tipTask)
+        Get.runOnUiThreadDelayed({ showCallback?.invoke() })
         // 弹窗结束回调
         val duration = tipTask.init.duration ?: 1500
         tipHandler.sendEmptyMessageDelayed(TIP_MESSAGE_WHAT, duration.toLong())

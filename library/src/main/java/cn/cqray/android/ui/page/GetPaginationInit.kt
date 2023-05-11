@@ -1,6 +1,8 @@
 package cn.cqray.android.ui.page
 
-class GetPaginationInit {
+import cn.cqray.android.app.GetBaseInit
+
+class GetPaginationInit : GetBaseInit() {
 
     /** 默认页码起始值 **/
     var pageNum = 1

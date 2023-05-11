@@ -3,7 +3,7 @@ package cn.cqray.android.tip
 import androidx.annotation.ColorInt
 import androidx.annotation.IntRange
 import cn.cqray.android.Get
-import cn.cqray.android.init.BaseInit
+import cn.cqray.android.app.GetBaseInit
 import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.jvm.javaField
 
@@ -11,7 +11,7 @@ import kotlin.reflect.jvm.javaField
  * Tip配置属性
  * @author Cqray
  **/
-class GetTipInit : BaseInit() {
+class GetTipInit : GetBaseInit() {
 
     /** 是否支持在Logcat中显示 **/
     var logcatEnable: Boolean? = null

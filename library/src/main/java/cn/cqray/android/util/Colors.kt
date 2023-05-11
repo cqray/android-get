@@ -5,6 +5,7 @@ import androidx.annotation.ColorRes
 import androidx.core.content.ContextCompat
 import cn.cqray.android.R
 
+@Suppress("Unused")
 object Colors {
 
     private val context: Context get() = Contexts.get()

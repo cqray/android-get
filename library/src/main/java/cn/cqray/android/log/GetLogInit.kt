@@ -1,23 +1,15 @@
 package cn.cqray.android.log
 
-import android.app.Activity
-import androidx.fragment.app.Fragment
-import java.io.Serializable
+import cn.cqray.android.app.GetBaseInit
 
 /**
  * [GetLog]配置
  * @author Cqray
  */
-class GetLogInit : Serializable {
-
-    /** 启用[Activity]生命周期日志 **/
-    var activityLifecycleLogEnable: Boolean = true
-
-    /** 启用[Fragment]生命周期日志 **/
-    var fragmentLifecycleLogEnable: Boolean = true
+class GetLogInit : GetBaseInit() {
 
     /** 日志适配器 **/
-    var logAdapter: GetLogAdapter = GetLogAdapterImpl()
+    var adapterGet: Function0<GetLogAdapter> = { GetLogAdapterImpl() }
 
     //===========================================
     //===============Log打印相关配置===============

@@ -1,4 +1,4 @@
-package cn.cqray.android.widget
+package cn.cqray.android.toolbar
 
 import android.graphics.Bitmap
 import android.graphics.Color
@@ -6,7 +6,7 @@ import android.graphics.drawable.Drawable
 import androidx.annotation.ColorInt
 import cn.cqray.android.R
 import cn.cqray.android.graphics.GetDrawable
-import cn.cqray.android.init.BaseInit
+import cn.cqray.android.app.GetBaseInit
 import cn.cqray.android.util.Sizes
 
 /**
@@ -14,7 +14,7 @@ import cn.cqray.android.util.Sizes
  * @author Cqray
  */
 @Suppress("Unused")
-class GetToolbarInit : BaseInit() {
+class GetToolbarInit : GetBaseInit() {
 
     //===============================
     //============背景部分============

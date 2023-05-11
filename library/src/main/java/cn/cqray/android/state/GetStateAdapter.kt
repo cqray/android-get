@@ -169,5 +169,4 @@ open class GetStateAdapter<T : GetStateAdapter<T>>(@LayoutRes private val layout
      * @param id 资源ID
      */
     fun setBackgroundResource(@DrawableRes id: Int) = also { this.background = id } as T
-    
 }

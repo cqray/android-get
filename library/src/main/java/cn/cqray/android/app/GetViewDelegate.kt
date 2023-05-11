@@ -27,7 +27,7 @@ import cn.cqray.android.databinding.GetViewDefaultLayoutBinding
 import cn.cqray.android.state.GetStateDelegate
 import cn.cqray.android.state.GetStateLayout
 import cn.cqray.android.util.*
-import cn.cqray.android.widget.GetToolbar
+import cn.cqray.android.toolbar.GetToolbar
 import com.scwang.smart.refresh.layout.SmartRefreshLayout
 
 /**
@@ -327,18 +327,12 @@ class GetViewDelegate internal constructor(provider: GetViewProvider) : GetDeleg
      * 初始化界面相关控件
      */
     private fun initGetView() {
-        if (provider is GetActivity || provider is GetFragment) {
-            // Toolbar赋值
-            ReflectUtils.setField(provider, "toolbar", toolbar)
-            // 使用了SmartRefreshLayout才赋值
-            if (setGetContentView) ReflectUtils.setField(provider, "refreshLayout", refreshLayout)
-        }
         // 状态委托连接界面
         if (provider is Activity) {
             stateDelegate.attachActivity(provider)
         } else if (provider is Fragment) {
             stateDelegate.attachFragment(provider)
-            background.value = Get.init.fragmentBackgroundGet()
+            background.value = Get.init.setFragmentBackground(Colors.background())
         }
         // 初始化标题
         initToolbar()
@@ -361,7 +355,7 @@ class GetViewDelegate internal constructor(provider: GetViewProvider) : GetDeleg
         with(toolbar) {
             // 原始界面默认不显示标题
             visibility = if (setGetContentView) View.VISIBLE else View.GONE
-            setToolbarInit(Get.init.toolbarInit!!)
+            setToolbarInit(Get.init.toolbarInit)
             //TODO 这里有个未确定原因的BUG，从RecyclerView项启动的Fragment，标题栏无法点击
             //无法知道为什么，暂时没有精力去研究，暂时通过以下方式可处理BUG
             postDelayed({

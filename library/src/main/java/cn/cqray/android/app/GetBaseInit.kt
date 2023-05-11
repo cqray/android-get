@@ -1,4 +1,4 @@
-package cn.cqray.android.init
+package cn.cqray.android.app
 
 import com.blankj.utilcode.util.GsonUtils
 import com.blankj.utilcode.util.SPUtils
@@ -12,7 +12,7 @@ import kotlin.reflect.jvm.javaField
  * 基础初始配置，主要是可以将配置保存到本地
  * @author Cqray
  */
-open class BaseInit : Serializable {
+open class GetBaseInit : Serializable {
 
     /** 是否需要加载本地数据 **/
     @Transient
@@ -27,7 +27,7 @@ open class BaseInit : Serializable {
     /**
      * 从本地缓存中加载数据
      */
-    internal fun loadFromLocal() = synchronized(BaseInit::class.java) {
+    internal fun loadFromLocal() = synchronized(GetBaseInit::class.java) {
         if (isNeedLoad) {
             val json = SPUtils.getInstance(name).getString(key)
             val element = JsonParser.parseString(json)
@@ -64,7 +64,7 @@ open class BaseInit : Serializable {
     fun clearLocal() = SPUtils.getInstance(name).remove(key)
 
     /** 保存到本地 **/
-    fun saveToLocal() = synchronized(BaseInit::class.java) {
+    fun saveToLocal() = synchronized(GetBaseInit::class.java) {
         // 标记为需要重新加载
         isNeedLoad = true
         // 缓存到本地

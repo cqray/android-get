@@ -12,7 +12,7 @@ import com.scwang.smart.refresh.layout.SmartRefreshLayout;
 
 import cn.cqray.android.Get;
 import cn.cqray.android.app.GetInit;
-import cn.cqray.android.widget.GetToolbarInit;
+import cn.cqray.android.toolbar.GetToolbarInit;
 
 public class DemoApplication extends MultiDexApplication {
     
@@ -46,7 +46,7 @@ public class DemoApplication extends MultiDexApplication {
         GetInit getInit = new GetInit();
         getInit.setToolbarInit(toolbarInit);
 
-        Get.init(this, getInit);
+//        Get.init(this, getInit);
 
     }
 }

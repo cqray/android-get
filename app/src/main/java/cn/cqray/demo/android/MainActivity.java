@@ -21,17 +21,6 @@ public class MainActivity extends GetNavActivity {
 
         loadRootFragment(MainFragment.class);
 
-        Log.e("数据", "MainFragment.Loaded");
-
-        GetLineItem.button("6666")
-                .height(10F);
-
-//        TipFunctionsKt.showTip();
-        periodicTask(aLong -> {
-
-                    Log.e("数据", "任务执行" + aLong);
-
-                }, 2000, 2000, a -> a == 10, TimeUnit.MILLISECONDS);
 
     }
 

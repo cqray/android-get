@@ -13,9 +13,7 @@ internal class GetTipTask @JvmOverloads constructor(
     /** Tip属性 **/
     val init: GetTipInit,
     /** 隐藏回调 **/
-    var hideCallback: Function0<Unit>? = null,
-    /** 显示回调 **/
-    var showCallback: Function0<Unit>? = null,
+    val hideCallback: Function0<Unit>? = null
 ) : ToastParams() {
 
     init {

@@ -30,9 +30,9 @@ public class MainFragment2 extends GetMultiFragment {
 //                new GetMultiItem(MainFragment3.class, "你的")
 //
 //        );
-        toolbar.setVisibility(View.VISIBLE);
-        toolbar.setActionIcon(0, R.drawable.def_back_common_dark);
-        toolbar.setActionText(1, "123132");
+        getToolbar().setVisibility(View.VISIBLE);
+        getToolbar().setActionIcon(0, R.drawable.def_back_common_dark);
+        getToolbar().setActionText(1, "123132");
 //        addFragment(new GetMultiItem(MainFragment.class,"我的").put("index", 0), 0);
 //        addFragment(new GetMultiItem(MainFragment.class,"ta").put("index", 1), 0);
 //        addFragment(new GetMultiItem(MainFragment.class,"tata").put("index", 2), 1);

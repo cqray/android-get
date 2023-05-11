@@ -12,6 +12,7 @@ import android.net.Uri
 import android.os.*
 import androidx.fragment.app.FragmentActivity
 import cn.cqray.android.app.GetNavProvider
+import cn.cqray.android.handle.GetTaskDelegate
 import cn.cqray.android.lifecycle.GetActivityLifecycleCallbacks
 import cn.cqray.android.lifecycle.GetAppLifecycleCallbacks
 import cn.cqray.android.lifecycle.GetFragmentLifecycleCallbacks
@@ -99,21 +100,9 @@ internal class _Get : ContentProvider() {
                     activity.navDelegate.onCreated()
                     GetFragmentLifecycleCallbacks((activity as FragmentActivity))
                 }
-                // 打印日志
-                printActivityStateLog(activity, "onActivityCreated")
             }
 
-            override fun onActivityStarted(activity: Activity) = printActivityStateLog(activity, "onActivityStarted")
-
-            override fun onActivityResumed(activity: Activity) = printActivityStateLog(activity, "onActivityResumed")
-
-            override fun onActivityPaused(activity: Activity) = printActivityStateLog(activity, "onActivityPaused")
-
-            override fun onActivityStopped(activity: Activity) = printActivityStateLog(activity, "onActivityStopped")
-
             override fun onActivityDestroyed(activity: Activity) {
-                // 打印日志
-                printActivityStateLog(activity, "onActivityDestroyed")
                 // 延时验证，确保该启动的Activity已启动
                 runOnUiThreadDelayed({
                     // 应用程序生命周期结束
@@ -121,24 +110,6 @@ internal class _Get : ContentProvider() {
                 }, 15)
             }
         })
-    }
-
-    /**
-     * 打印Activity状态日志
-     * @param activity [Activity]
-     * @param state 状态信息
-     */
-    private fun printActivityStateLog(activity: Activity, state: String) {
-        // 获取日志初始化配置
-        val logInit = Get.init.logInit!!
-        // 未启用则不继续
-        if (!logInit.activityLifecycleLogEnable) return
-        // 打印日志
-        GetLog.d(
-            Get::class.java, String.format(
-                "%s [%d] -> %s", activity.javaClass.name, activity.hashCode(), state
-            )
-        )
     }
 
     /**
@@ -172,7 +143,7 @@ internal class _Get : ContentProvider() {
      */
     private fun onTerminated() {
         appLifecycleCallbacks.forEach { it.onTerminated() }
-        handler.removeMessages(0)
+        taskDelegate.onCleared()
         GetLog.d(this, "Application is terminated.")
     }
 
@@ -206,22 +177,14 @@ internal class _Get : ContentProvider() {
         lateinit var application: Application
             private set
 
-        /** [Handler]控制 **/
-        private val handler = Handler(Looper.getMainLooper()) {
-            val runnable = it.obj as Runnable
-            runnable.run()
-            true
-        }
-
-        /** 任务集合 **/
-        private val jobs = Collections.synchronizedList(mutableListOf<Job>())
+        /** 任务委托 **/
+        private val taskDelegate by lazy { GetTaskDelegate() }
 
         /**
          * 在UI线程上延时执行程序
          * @param runnable  需要执行的内容
          * @param delayed   延时时长(ms)
          */
-        @OptIn(DelicateCoroutinesApi::class)
         fun runOnUiThreadDelayed(runnable: Runnable, delayed: Int? = null) {
             val delay = delayed ?: 0
             // 在主线程，且延时小于等于0，直接运行
@@ -229,20 +192,8 @@ internal class _Get : ContentProvider() {
                 runnable.run()
                 return
             }
-            // 执行协程延时任务
-            var job: Job? = null
-            job = GlobalScope.launch(Dispatchers.IO) {
-                withContext(Dispatchers.Main) {
-                    runnable.run()
-                    job?.let { jobs.remove(job) }
-                }
-            }
-            jobs.add(job)
-//
-//            val message = Message.obtain()
-//            message.what = 0
-//            message.obj = runnable
-//            handler.sendMessageDelayed(message, (delayed ?: 0).toLong())
+            // 定时任务
+            taskDelegate.timerTask({ runnable.run() }, delay)
         }
 
         /**

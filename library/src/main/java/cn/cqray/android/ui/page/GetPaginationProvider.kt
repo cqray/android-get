@@ -25,6 +25,9 @@ interface GetPaginationProvider<T> {
     /** 设置是否可以分页 **/
     fun setPaginationEnable(enable: Boolean) = run { paginationDelegate.isPaginationEnable = enable }
 
+    /** 首次刷新时使用setBusy **/
+    fun setPaginationBusyFirst(busyFirst: Boolean) = run { paginationDelegate.paginationBusyFirst = busyFirst }
+
     /** 设置空布局文本 **/
     fun setEmptyText(text: String) = run { paginationDelegate.emptyText = text }
 
@@ -41,7 +44,7 @@ interface GetPaginationProvider<T> {
      * 结束更新，并传入数据
      * @param data 数据
      */
-    fun finishWithResponse(data: ResponseData<List<T>?>?) = paginationDelegate.finishWithResponse(data)
+    fun finishWithResponse(data: ResponseData<List<T>>?) = paginationDelegate.finishWithResponse(data)
 
     /**
      * 结束更新，并传入异常信息

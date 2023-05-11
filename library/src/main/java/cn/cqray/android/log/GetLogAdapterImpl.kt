@@ -33,7 +33,7 @@ internal class GetLogAdapterImpl : GetLogAdapter {
     }
 
     private fun initLogConfig() {
-        val init = Get.init.logInit!!
+        val init = Get.init.logInit.also { it.loadFromLocal() }
         LogUtils.getConfig()
             // 设置 log 总开关，包括输出到控制台和文件，默认开
             .setLogSwitch(init.isLogEnable)
