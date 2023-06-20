@@ -332,7 +332,7 @@ class GetViewDelegate internal constructor(provider: GetViewProvider) : GetDeleg
             stateDelegate.attachActivity(provider)
         } else if (provider is Fragment) {
             stateDelegate.attachFragment(provider)
-            background.value = Get.init.setFragmentBackground(Colors.background())
+            background.value = Get.init.fragmentBackground
         }
         // 初始化标题
         initToolbar()
