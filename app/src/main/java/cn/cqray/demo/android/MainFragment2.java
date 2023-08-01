@@ -1,19 +1,14 @@
 package cn.cqray.demo.android;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 
 import cn.cqray.android.Get;
-import cn.cqray.android.app.GetFragment;
 import cn.cqray.android.log.GetLog;
 import cn.cqray.android.ui.multi.GetMultiFragment;
-import cn.cqray.android.ui.multi.GetMultiItem;
 
 public class MainFragment2 extends GetMultiFragment {
 

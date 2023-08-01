@@ -5,7 +5,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import cn.cqray.android.app.GetFragment
+import cn.cqray.android.app2.GetFragment
 import cn.cqray.android.`object`.ResponseData
 import cn.cqray.android.util.Check3rdUtils
 import cn.cqray.android.util.Views

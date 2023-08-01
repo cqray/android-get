@@ -6,7 +6,7 @@ import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
-import cn.cqray.android.app.GetNavProvider
+import cn.cqray.android.app2.GetNavProvider
 
 /**
  * Get Fragment生命周期回调

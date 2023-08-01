@@ -11,7 +11,7 @@ import android.database.Cursor
 import android.net.Uri
 import android.os.*
 import androidx.fragment.app.FragmentActivity
-import cn.cqray.android.app.GetNavProvider
+import cn.cqray.android.app2.GetNavProvider
 import cn.cqray.android.handle.GetTaskDelegate
 import cn.cqray.android.lifecycle.GetActivityLifecycleCallbacks
 import cn.cqray.android.lifecycle.GetAppLifecycleCallbacks

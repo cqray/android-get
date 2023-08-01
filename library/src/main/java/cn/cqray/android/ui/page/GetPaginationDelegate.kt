@@ -3,7 +3,7 @@ package cn.cqray.android.ui.page
 import androidx.lifecycle.LifecycleOwner
 import cn.cqray.android.Get
 import cn.cqray.android.`object`.ResponseData
-import cn.cqray.android.app.GetViewProvider
+import cn.cqray.android.app2.GetViewProvider
 import cn.cqray.android.lifecycle.GetLiveData
 import cn.cqray.android.state.GetStateDelegate
 import cn.cqray.android.state.GetStateProvider

@@ -1,19 +1,15 @@
-package cn.cqray.android.app
+package cn.cqray.android.app2
 
 import android.os.Bundle
 import android.view.LayoutInflater
 import androidx.viewbinding.ViewBinding
 import cn.cqray.android.util.ReflectUtils
 
-/**
- * 支持[ViewBinding]的[GetActivity]
- * @author Cqray
- */
 @Suppress(
     "MemberVisibilityCanBePrivate",
     "Unchecked_cast"
 )
-abstract class GetBindingActivity<VB : ViewBinding> : GetActivity() {
+abstract class GetBindingFragment<VB : ViewBinding> : GetFragment() {
 
     val binding: VB by lazy { generateViewBinding() }
 

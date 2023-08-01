@@ -26,7 +26,7 @@ android {
         }
 
         android.libraryVariants.all { variant ->
-            variant.outputs.all {outputFileName = "android-get.aar"}
+            variant.outputs.all { outputFileName = "android-get.aar" }
         }
     }
 
@@ -81,8 +81,14 @@ dependencies {
     api "com.blankj:utilcodex:1.31.1"
     // 加载动画
     api "com.github.ybq:Android-SpinKit:1.4.0"
-    // Toast弹窗
-    api 'com.github.getActivity:Toaster:12.0'
+
+
+    // Toast弹窗：https://github.com/getActivity/Toaster
+    api 'com.github.getActivity:Toaster:12.3'
+    // 标题栏：https://github.com/getActivity/TitleBar
+    api 'com.github.getActivity:TitleBar:10.5'
+
+
     // 刷新框架
     api "io.github.scwang90:refresh-layout-kernel:2.0.5"
     // TabLayout框架
@@ -108,9 +114,9 @@ dependencies {
 }
 
 afterEvaluate {
-    
+
     generateReleaseBuildConfig.enabled = false
-    generateDebugBuildConfig.enabled =false
+    generateDebugBuildConfig.enabled = false
 
     publishing {
         publications {

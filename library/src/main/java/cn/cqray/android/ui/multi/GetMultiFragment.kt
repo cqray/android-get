@@ -1,12 +1,11 @@
 package cn.cqray.android.ui.multi
 
 import android.os.Bundle
-import android.util.TypedValue
 import android.util.TypedValue.COMPLEX_UNIT_DIP
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.viewpager2.widget.ViewPager2
-import cn.cqray.android.app.GetFragment
+import cn.cqray.android.app2.GetFragment
 import com.flyco.tablayout.CommonTabLayout
 
 /**

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:clickable="true"
+    android:focusable="true">
+
+<!--    <cn.cqray.android.toolbar.GetToolbar-->
+<!--        android:id="@id/get_toolbar"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="@dimen/toolbar"-->
+<!--        android:visibility="gone" />-->
+
+    <FrameLayout
+        android:id="@id/get_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <com.hjq.bar.TitleBar
+            android:id="@id/get_title"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/toolbar"
+            android:visibility="gone" />
+    </FrameLayout>
+
+    <FrameLayout
+        android:id="@id/get_content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@id/get_footer"
+        android:layout_below="@id/get_header">
+
+    </FrameLayout>
+
+    <!-- 头部容器 -->
+    <FrameLayout
+        android:id="@id/get_header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/get_toolbar" />
+
+    <!-- 底部容器 -->
+    <FrameLayout
+        android:id="@id/get_footer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true" />
+
+</RelativeLayout>

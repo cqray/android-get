@@ -5,10 +5,7 @@ import android.util.Log;
 
 import org.jetbrains.annotations.Nullable;
 
-import java.util.concurrent.TimeUnit;
-
-import cn.cqray.android.app.GetNavActivity;
-import cn.cqray.android.ui.line.GetLineItem;
+import cn.cqray.android.app2.GetNavActivity;
 
 public class MainActivity extends GetNavActivity {
 

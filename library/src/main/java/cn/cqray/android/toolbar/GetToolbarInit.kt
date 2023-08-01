@@ -6,7 +6,7 @@ import android.graphics.drawable.Drawable
 import androidx.annotation.ColorInt
 import cn.cqray.android.R
 import cn.cqray.android.graphics.GetDrawable
-import cn.cqray.android.app.GetBaseInit
+import cn.cqray.android.app2.GetBaseInit
 import cn.cqray.android.util.Sizes
 
 /**
