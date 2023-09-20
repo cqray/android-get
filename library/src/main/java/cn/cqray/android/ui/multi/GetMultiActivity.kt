@@ -5,7 +5,7 @@ import android.util.TypedValue.COMPLEX_UNIT_DIP
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.viewpager2.widget.ViewPager2
-import cn.cqray.android.app2.GetActivity
+import cn.cqray.android.app.GetActivity
 import com.flyco.tablayout.CommonTabLayout
 
 /**

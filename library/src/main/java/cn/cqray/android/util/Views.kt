@@ -113,13 +113,13 @@ object Views {
      * @param recyclerView [RecyclerView]控件
      */
     fun closeRvAnimator(recyclerView: RecyclerView?) {
-        recyclerView?.let {
-            val animator = it.itemAnimator
+        recyclerView?.let { rv ->
+            val animator = rv.itemAnimator
             animator?.let {
-                animator.addDuration = 0
-                animator.changeDuration = 0
-                animator.moveDuration = 0
-                animator.removeDuration = 0
+                it.addDuration = 0
+                it.changeDuration = 0
+                it.moveDuration = 0
+                it.removeDuration = 0
             }
             if (animator is SimpleItemAnimator) {
                 animator.supportsChangeAnimations = false

@@ -1,4 +1,4 @@
-package cn.cqray.android.app2
+package cn.cqray.android.app
 
 import com.blankj.utilcode.util.GsonUtils
 import com.blankj.utilcode.util.SPUtils

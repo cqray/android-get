@@ -1,4 +1,4 @@
-package cn.cqray.android.app2
+package cn.cqray.android.app
 
 import android.content.Context
 import android.graphics.drawable.ColorDrawable

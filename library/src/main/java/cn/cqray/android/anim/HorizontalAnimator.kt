@@ -8,8 +8,8 @@ import cn.cqray.android.R
  */
 @Suppress("unused")
 class HorizontalAnimator : FragmentAnimator(
-    R.anim._starter_horizontal_from_right,
-    R.anim._starter_horizontal_to_left,
-    R.anim._starter_horizontal_from_left,
-    R.anim._starter_horizontal_to_right
+    R.anim.get_horizontal_from_right,
+    R.anim.get_horizontal_to_left,
+    R.anim.get_horizontal_from_left,
+    R.anim.get_horizontal_to_right
 )

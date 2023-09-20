@@ -7,7 +7,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
-import cn.cqray.android.app2.GetDelegate
+import cn.cqray.android.app.GetDelegate
 import cn.cqray.android.log.GetLog
 import cn.cqray.android.util.Contexts
 import cn.cqray.android.util.Views

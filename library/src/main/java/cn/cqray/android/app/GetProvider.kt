@@ -1,4 +1,4 @@
-package cn.cqray.android.app2
+package cn.cqray.android.app
 
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ViewModel

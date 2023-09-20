@@ -2,7 +2,7 @@ package cn.cqray.android.tip
 
 import androidx.annotation.ColorInt
 import cn.cqray.android.Get
-import cn.cqray.android.app2.GetBaseInit
+import cn.cqray.android.app.GetBaseInit
 import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.jvm.javaField
 

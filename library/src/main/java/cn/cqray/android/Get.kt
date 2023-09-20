@@ -6,9 +6,9 @@ import android.content.Context
 import android.os.Bundle
 import androidx.annotation.StringRes
 import androidx.fragment.app.Fragment
-import cn.cqray.android.app2.GetInit
-import cn.cqray.android.app2.GetIntent
-import cn.cqray.android.app2.GetNavProvider
+import cn.cqray.android.app.GetInit
+import cn.cqray.android.app.GetIntent
+import cn.cqray.android.app.GetNavProvider
 import cn.cqray.android.tip.GetTip
 import cn.cqray.android.tip.GetTipInit
 import cn.cqray.android.util.Contexts

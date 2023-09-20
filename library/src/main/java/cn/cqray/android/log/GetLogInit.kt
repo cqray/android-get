@@ -1,6 +1,6 @@
 package cn.cqray.android.log
 
-import cn.cqray.android.app2.GetBaseInit
+import cn.cqray.android.app.GetBaseInit
 
 /**
  * [GetLog]配置

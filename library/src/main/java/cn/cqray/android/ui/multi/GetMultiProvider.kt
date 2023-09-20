@@ -3,8 +3,8 @@ package cn.cqray.android.ui.multi
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.widget.ViewPager2
-import cn.cqray.android.app2.GetDelegate
-import cn.cqray.android.app2.GetProvider
+import cn.cqray.android.app.GetDelegate
+import cn.cqray.android.app.GetProvider
 
 /**
  * 多[Fragment]显示提供器

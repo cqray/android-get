@@ -5,7 +5,7 @@ import android.util.Log;
 
 import org.jetbrains.annotations.Nullable;
 
-import cn.cqray.android.app2.GetNavActivity;
+import cn.cqray.android.app.GetNavActivity;
 
 public class MainActivity extends GetNavActivity {
 

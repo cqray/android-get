@@ -5,7 +5,7 @@ import android.view.ViewGroup
 import android.widget.FrameLayout
 import androidx.fragment.app.Fragment
 import cn.cqray.android.R
-import cn.cqray.android.app2.GetViewProvider
+import cn.cqray.android.app.GetViewProvider
 import cn.cqray.android.util.Contexts
 import com.scwang.smart.refresh.layout.SmartRefreshLayout
 import com.scwang.smart.refresh.layout.api.RefreshFooter

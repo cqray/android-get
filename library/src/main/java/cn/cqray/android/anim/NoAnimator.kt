@@ -8,8 +8,8 @@ import cn.cqray.android.R
  */
 @Suppress("unused")
 class NoAnimator : FragmentAnimator(
-    R.anim._starter_no_anim,
-    R.anim._starter_no_anim,
-    R.anim._starter_no_anim,
-    R.anim._starter_no_anim
+    R.anim.get_no_anim,
+    R.anim.get_no_anim,
+    R.anim.get_no_anim,
+    R.anim.get_no_anim
 )

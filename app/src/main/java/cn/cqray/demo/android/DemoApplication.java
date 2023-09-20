@@ -10,7 +10,7 @@ import com.scwang.smart.refresh.footer.ClassicsFooter;
 import com.scwang.smart.refresh.header.ClassicsHeader;
 import com.scwang.smart.refresh.layout.SmartRefreshLayout;
 
-import cn.cqray.android.app2.GetInit;
+import cn.cqray.android.app.GetInit;
 import cn.cqray.android.toolbar.GetToolbarInit;
 
 public class DemoApplication extends MultiDexApplication {
