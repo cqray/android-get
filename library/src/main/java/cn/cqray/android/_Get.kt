@@ -40,7 +40,7 @@ internal class _Get : ContentProvider() {
     override fun onCreate(): Boolean {
         // 初始化Application
         application = context!!.applicationContext as Application
-        // 初始化[utilcodex]工具类
+        // 初始化工具类
         Utils.init(application)
         // 初始化提示
         GetTip.init(application)
@@ -48,7 +48,7 @@ internal class _Get : ContentProvider() {
         Check3rdUtils.check()
         // 注册生命周期管理
         registerActivityLifecycleCallbacks()
-        return false
+        return true
     }
 
     override fun query(
@@ -205,7 +205,6 @@ internal class _Get : ContentProvider() {
             "PrivateApi"
         )
         fun isTranslucentOrFloating(activity: Activity): Boolean {
-            var isTranslucentOrFloating = false
             runCatching {
                 val styleableClass = Class.forName("com.android.internal.R\$styleable")
                 val windowField = styleableClass.getDeclaredField("Window").also { it.isAccessible = true }
@@ -216,9 +215,9 @@ internal class _Get : ContentProvider() {
                 val isTranslucentOrFloatingMethod = activityInfoClass.getDeclaredMethod(
                     "isTranslucentOrFloating", TypedArray::class.java
                 ).also { it.isAccessible = true }
-                isTranslucentOrFloating = isTranslucentOrFloatingMethod.invoke(null, typedArray) as Boolean
+                return isTranslucentOrFloatingMethod.invoke(null, typedArray) as Boolean
             }
-            return isTranslucentOrFloating
+            return false
         }
     }
 }
