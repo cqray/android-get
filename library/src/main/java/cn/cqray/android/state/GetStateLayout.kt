@@ -6,6 +6,7 @@ import android.util.SparseArray
 import android.view.View
 import android.widget.FrameLayout
 import cn.cqray.android.Get
+import java.util.concurrent.atomic.AtomicReference
 
 /**
  * 状态容器控件
@@ -25,20 +26,22 @@ class GetStateLayout @JvmOverloads constructor(
     private val adapters = SparseArray<GetStateAdapter<*>>()
 
     /** 当前状态 **/
-    var currentState: GetViewState = GetViewState.IDLE
-        private set
+    private val stateRef = AtomicReference(GetViewState.IDLE)
+
+    /** 当前状态 **/
+    val currentState: GetViewState get() = stateRef.get()
 
     /** 是否忙碌 **/
-    val isBusy = currentState == GetViewState.BUSY
+    val isBusy = stateRef.get() == GetViewState.BUSY
 
     /** 是否空 **/
-    val isEmpty = currentState == GetViewState.EMPTY
+    val isEmpty = stateRef.get() == GetViewState.EMPTY
 
     /** 是否异常 **/
-    val isError = currentState == GetViewState.ERROR
+    val isError = stateRef.get() == GetViewState.ERROR
 
     /** 是否空闲状态 **/
-    val isIdle = currentState == GetViewState.IDLE
+    val isIdle = stateRef.get() == GetViewState.IDLE
 
     /** 忙碌视图适配器 **/
     val busyAdapter: GetStateAdapter<*> get() = getAdapter(GetViewState.BUSY)!!
@@ -95,18 +98,21 @@ class GetStateLayout @JvmOverloads constructor(
      * 设置为忙碌状态
      * @param text 文本信息
      */
+    @JvmOverloads
     fun setBusy(text: String? = null) = setState(GetViewState.BUSY, text)
 
     /**
      * 设置为空状态
      * @param text 文本信息
      */
+    @JvmOverloads
     fun setEmpty(text: String? = null) = setState(GetViewState.EMPTY, text)
 
     /**
      * 设置为异常状态
      * @param text 文本信息
      */
+    @JvmOverloads
     fun setError(text: String? = null) = setState(GetViewState.ERROR, text)
 
     /**
@@ -121,7 +127,7 @@ class GetStateLayout @JvmOverloads constructor(
      */
     fun setState(state: GetViewState, text: String? = null) {
         // 更新状态
-        currentState = state
+        synchronized(stateRef) { stateRef.set(state) }
         // 隐藏所有状态控件
         for (i in 0 until adapters.size()) {
             val adapter = adapters.valueAt(i)
@@ -129,15 +135,15 @@ class GetStateLayout @JvmOverloads constructor(
             if (!isBusy) adapter?.hide()
         }
         // 显示对应的状态控件
-        val adapter = getAdapter(state)
-        adapter?.let {
+        getAdapter(state)?.let {
+            // 未初始化则初始化
             if (it.view == null) {
                 it.onAttach(this@GetStateLayout)
-                it.view?.setTag(View.NO_ID, adapter.javaClass)
+                it.view?.setTag(View.NO_ID, it.javaClass)
             }
+            // 显示
+            it.show(text)
         }
-        // 显示界面
-        adapter?.show(text)
     }
 
     /**
@@ -145,19 +151,22 @@ class GetStateLayout @JvmOverloads constructor(
      * @param state 指定状态
      */
     private fun getAdapter(state: GetViewState): GetStateAdapter<*>? {
-        var adapter = adapters[state.ordinal]
-        if (adapter == null) {
-            // 获取全局配置
-            adapter = when (state) {
+        // 空闲界面没有适配器
+        if (state == GetViewState.IDLE) return null
+        // 获取对应的适配器
+        return adapters[state.ordinal] ?: run {
+            // 没有则初始化
+            val adapter = when (state) {
                 GetViewState.BUSY -> Get.init.stateInit.busyGet()
                 GetViewState.EMPTY -> Get.init.stateInit.emptyGet()
-                GetViewState.ERROR -> Get.init.stateInit.errorGet()
-                else -> null
+                else -> Get.init.stateInit.errorGet()
             }
-            adapter?.hide()
+            // 默认隐藏
+            adapter.hide()
             // 放入缓存
             adapters.put(state.ordinal, adapter)
+            // 返回
+            adapter
         }
-        return adapter
     }
 }

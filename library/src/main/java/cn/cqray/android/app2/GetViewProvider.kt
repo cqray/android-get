@@ -24,6 +24,30 @@ interface GetViewProvider : GetStateProvider, GetProvider {
      */
     override val stateDelegate get() = viewDelegate.stateDelegate
 
+    /** 根控件 */
+    val rootView get() = viewDelegate.rootView
+
+    /** 标题布局 */
+    val toolbarLayout get() = viewDelegate.toolbar
+
+    /** 标题 **/
+    val toolbar get() = viewDelegate.toolbar
+
+    /** 内容布局 **/
+    val contentLayout get() = viewDelegate.contentLayout
+
+    /** 内容视图 **/
+    val contentView: View get() = viewDelegate.contentView
+
+    /** 头部布局 */
+    val headerLayout get() = viewDelegate.headerLayout
+
+    /** 底部布局 */
+    val footerLayout get() = viewDelegate.footerLayout
+
+    /** 刷新布局 **/
+    val refreshLayout get() = viewDelegate.refreshLayout
+
     /**
      * 确认[setGetContentView]不被[setNativeContentView]替代
      * 主要是考虑到以后可能兼容AndroidX Compose框架

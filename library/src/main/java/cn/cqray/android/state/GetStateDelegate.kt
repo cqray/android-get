@@ -11,6 +11,7 @@ import com.scwang.smart.refresh.layout.SmartRefreshLayout
 import com.scwang.smart.refresh.layout.api.RefreshFooter
 import com.scwang.smart.refresh.layout.api.RefreshHeader
 import java.lang.reflect.Field
+import java.util.concurrent.atomic.AtomicReference
 
 /**
  * 状态管理委托
@@ -23,16 +24,16 @@ class GetStateDelegate {
     private val refreshStates: Array<Boolean?> = arrayOfNulls(3)
 
     /** 已关联的布局 **/
-    private var attachedLayout: ViewGroup? = null
+    private val layoutRef = AtomicReference<ViewGroup>()
 
     /** 忙碌视图适配器 **/
-    val busyAdapter: GetStateAdapter<*> get() = stateLayout.busyAdapter
+    val busyAdapter get() = stateLayout.busyAdapter
 
     /** 空白视图适配器 **/
-    val emptyAdapter: GetStateAdapter<*> get() = stateLayout.emptyAdapter
+    val emptyAdapter get() = stateLayout.emptyAdapter
 
     /** 异常视图适配器 **/
-    val errorAdapter: GetStateAdapter<*> get() = stateLayout.errorAdapter
+    val errorAdapter get() = stateLayout.errorAdapter
 
     /** 状态控件 **/
     private val stateLayout by lazy {
@@ -75,27 +76,25 @@ class GetStateDelegate {
      * 关联[FrameLayout]容器
      * @param layout [FrameLayout]容器
      */
-    fun attachLayout(layout: FrameLayout?) = attachLayout(layout as ViewGroup?)
+    fun attachLayout(layout: FrameLayout) = attachLayout(layout as ViewGroup)
 
     /**
      * 关联[SmartRefreshLayout]容器
      * @param layout [SmartRefreshLayout]容器
      */
-    fun attachLayout(layout: SmartRefreshLayout?) = attachLayout(layout as ViewGroup?)
+    fun attachLayout(layout: SmartRefreshLayout) = attachLayout(layout as ViewGroup)
 
     /**
      * 初始化状态控件
      */
-    private fun attachLayout(layout: ViewGroup?) {
-        // 没有接入容器，则不继续
-        if (layout == null) return
-        else {
-            // 断开连接
-            detachLayout(attachedLayout)
-            attachedLayout = layout
-        }
-        val childCount = layout.childCount
+    private fun attachLayout(layout: ViewGroup) {
+        // 移除数据控件
+        stateLayout.removeAllViews()
+        (stateLayout.parent as? ViewGroup)?.removeView(stateLayout)
+        // 缓存
+        synchronized(layoutRef) { layoutRef.set(layout) }
         // 遍历AttachedLayout，将内容控件置换到StateLayout中
+        val childCount = layout.childCount
         for (i in (0 until childCount).reversed()) {
             val view = layout.getChildAt(i)
             if (layout is SmartRefreshLayout) {
@@ -108,32 +107,11 @@ class GetStateDelegate {
                 stateLayout.addView(view)
             }
         }
-        // 将StateLayout添加到AttachedLayout中
+        // 替换布局
         if (layout is SmartRefreshLayout) {
+            // SmartRefreshLayout特殊处理
             layout.setRefreshContent(stateLayout)
-        } else {
-            layout.addView(stateLayout)
-        }
-    }
-
-    /**
-     * 断开连接
-     * @param oldLayout 已连接的控件
-     */
-    private fun detachLayout(oldLayout: ViewGroup?) {
-        oldLayout?.let {
-            // 设置为空闲
-            setIdle()
-            // 移除并获取内容控件
-            val contents = stateLayout.removeContents()
-            // 移除与AttachedLayout的绑定
-            it.removeView(stateLayout)
-            // 没有内容控件则不需要回置
-            if (contents.isEmpty()) return
-            // 控件回归原始状态
-            if (oldLayout is SmartRefreshLayout) oldLayout.setRefreshContent(contents[0])
-            else contents.forEach { view -> oldLayout.addView(view) }
-        }
+        } else layout.addView(stateLayout)
     }
 
     /**
@@ -199,11 +177,11 @@ class GetStateDelegate {
      * 保存刷新控件空闲状态时的相关属性
      */
     private fun saveRefreshStates(state: GetViewState) {
-        if (attachedLayout !is SmartRefreshLayout) return
+        if (layoutRef.get() !is SmartRefreshLayout) return
         runCatching {
-            val layout = attachedLayout as SmartRefreshLayout
+            val layout = layoutRef.get() as SmartRefreshLayout
             if (state == GetViewState.IDLE) {
-                (0..2).forEach { i -> refreshStates[i] = refreshFields[i]!!.getBoolean(layout) }
+                (0..2).forEach { refreshStates[it] = refreshFields[it]!!.getBoolean(layout) }
             }
         }
     }
@@ -212,12 +190,12 @@ class GetStateDelegate {
      * 恢复刷新控件启用状态
      */
     private fun restoreRefreshStates(state: GetViewState) {
-        if (attachedLayout !is SmartRefreshLayout) return
+        if (layoutRef.get() !is SmartRefreshLayout) return
         runCatching {
-            val layout = attachedLayout as SmartRefreshLayout
+            val layout = layoutRef.get() as SmartRefreshLayout
             if (state == GetViewState.IDLE) {
-                (0..2).forEach { int ->
-                    refreshFields[int]?.setBoolean(layout, refreshStates[int]!!)
+                (0..2).forEach {
+                    refreshFields[it]?.setBoolean(layout, refreshStates[it]!!)
                 }
             } else {
                 val busy = state == GetViewState.BUSY

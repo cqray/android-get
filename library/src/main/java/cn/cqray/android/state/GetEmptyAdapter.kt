@@ -5,16 +5,19 @@ import android.graphics.drawable.Drawable
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.TextView
 import androidx.annotation.DrawableRes
 import cn.cqray.android.R
+import cn.cqray.android.databinding.GetStateLayoutEmptyBinding
 import cn.cqray.android.util.Sizes
+import cn.cqray.android.util.Views
 
 /**
  * 空布局适配器实现
  * @author Cqray
  */
 @Suppress("Unused")
-class GetEmptyAdapter : GetStateAdapter<GetEmptyAdapter>(R.layout.get_layout_state_empty) {
+class GetEmptyAdapter : GetStateAdapter<GetEmptyAdapter>() {
 
     /** 图片控件  */
     private var imageView: ImageView? = null
@@ -24,6 +27,11 @@ class GetEmptyAdapter : GetStateAdapter<GetEmptyAdapter>(R.layout.get_layout_sta
 
     /** 图片尺寸 **/
     private val imageSize = arrayOf(Sizes.dp2px(80), Sizes.dp2px(80))
+
+    private val binding by lazy { Views.getBinding(GetStateLayoutEmptyBinding::class.java) }
+
+    override val stateText: TextView
+        get() = binding.getStateText
 
     init {
         setDefaultText("暂无数据")
@@ -106,4 +114,5 @@ class GetEmptyAdapter : GetStateAdapter<GetEmptyAdapter>(R.layout.get_layout_sta
      * @param height 高度
      */
     fun setImageHeight(height: Number, unit: Int) = also { this.imageSize[1] = Sizes.any2px(height, unit) }
+
 }

@@ -22,12 +22,6 @@ open class GetFragment : Fragment(),
     GetHandleProvider,
     KeyboardProvider {
 
-    /** 标题栏 **/
-    val toolbar get() = viewDelegate.toolbar
-
-    /** 刷新容器 **/
-    val refreshLayout get() = viewDelegate.refreshLayout
-
     override val handleDelegate by lazy { GetHandleDelegate(this) }
 
     final override fun onCreateView(
@@ -36,7 +30,7 @@ open class GetFragment : Fragment(),
         savedInstanceState: Bundle?
     ): View {
         onCreating(savedInstanceState)
-        return viewDelegate.root
+        return viewDelegate.rootView
     }
 
     open fun onCreating(savedInstanceState: Bundle?) {}

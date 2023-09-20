@@ -185,8 +185,8 @@ class GetPaginationDelegate<T>(val owner: LifecycleOwner) : GetStateProvider {
                     callbacks.forEach { callback -> callback.invoke(currentPageNum, defaultPageSize) }
                 }
             })
+            stateDelegate.attachLayout(it)
         }
-        stateDelegate.attachLayout(refreshLayout)
     }
 
     /**

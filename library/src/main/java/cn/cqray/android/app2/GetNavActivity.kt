@@ -17,7 +17,7 @@ open class GetNavActivity : GetActivity() {
     private val containerId = R.id.get_nav_content
 
     /** [Fragment]内容容器 **/
-    private val contentLayout: FrameLayout by lazy {
+    private val navContentLayout: FrameLayout by lazy {
         FrameLayout(this).also {
             it.id = R.id.get_nav_content
             it.layoutParams = ViewGroup.LayoutParams(-1, -1)
@@ -26,7 +26,7 @@ open class GetNavActivity : GetActivity() {
 
     override fun onCreating(savedInstanceState: Bundle?) {
         super.onCreating(savedInstanceState)
-        setNativeContentView(contentLayout)
+        setNativeContentView(navContentLayout)
     }
 
     fun loadRootFragment(rootClass: Class<*>) = navDelegate.loadRootFragment(containerId, rootClass)

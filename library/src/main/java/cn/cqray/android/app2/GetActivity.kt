@@ -23,12 +23,6 @@ open class GetActivity : AppCompatActivity(),
     GetHandleProvider,
     KeyboardProvider {
 
-    /** 标题栏 **/
-    val toolbar get() = viewDelegate.toolbar
-
-    /** 刷新容器 **/
-    val refreshLayout get() = viewDelegate.refreshLayout
-
     override val handleDelegate by lazy { GetHandleDelegate(this) }
 
     override fun onCreate(savedInstanceState: Bundle?) {

@@ -12,6 +12,9 @@ import cn.cqray.android.Get;
 import cn.cqray.android.log.GetLog;
 import cn.cqray.android.tip.GetTipInit;
 import cn.cqray.android.ui.page.GetPaginationFragment;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.Arrays;
 
 public class MainFragment extends GetPaginationFragment<Object> {
 
@@ -23,54 +26,10 @@ public class MainFragment extends GetPaginationFragment<Object> {
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        Log.e("数据", "MainFragment-" + "onCreate-" + requireActivity().hashCode());
-
-        setGetContentView(R.layout.activity_main);
-
-        findViewById(R.id.tv).setOnClickListener(v -> {
-
-//            ToolbarInit init = Get.getInit().getToolbarInit();
-//            assert init != null;
-//            init.setBackgroundColor(Color.GRAY);
-//            init.saveToLocal();
-
-//            this.to(new GetIntent(MainFragment2.class));
-//            this.to(new GetIntent(MainFragment2.class).setLaunchMode(GetIntent.SINGLE_TASK));
-//            new Handler().postDelayed(() -> {
-//                this.to(new GetIntent(MainFragment2.class).setLaunchMode(GetIntent.SINGLE_TASK));
-//
-//            }, 0);
-
-//            TipInit tip = Get.getInit().getTipInit();
-////            tip.clearLocal();
-//            tip.setBackgroundColor(Color.BLUE);
-//            tip.setTextSize(30);
-//            tip.saveToLocal();
-//
-            GetTipInit tipInit = new GetTipInit();
-            tipInit.setTextSize(15);
-
-            Get.showTip("666666666", (GetTipInit) tipInit, () -> {
-
-                Log.e("数据", "弹窗消失了");
-                return null;
-            });
-        });
-
-//        showSoftInput();
-//        showSoftInput();
-//        new Handler().postDelayed(() -> {
-//            hideSoftInput();
-//        }, 5000);
-//
-//        observeSoftInputChanged(this, h -> {
-//            Log.e("数据", "导读变化：" + h);
-//        });
-
+    public void onCreating(@Nullable Bundle savedInstanceState) {
+        super.onCreating(savedInstanceState);
+        finish(null);
     }
-
 
     @Override
     public void onStop() {

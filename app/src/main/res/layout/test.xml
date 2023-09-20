@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <!-- 标题部分 -->
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:elevation="0dp">
+
+        <com.hjq.bar.TitleBar
+            android:id="@+id/bar"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/toolbar" />
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <!-- 内容部分 -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior">
+
+        <!-- 头部布局 -->
+        <FrameLayout
+            android:id="@id/get_header"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:background="#157"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <!-- 底部布局 -->
+        <FrameLayout
+            android:id="@id/get_footer"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:background="#157"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent" />
+
+        <!-- 内容布局 -->
+        <FrameLayout
+            android:id="@id/get_content"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:background="#476"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/get_header"
+            app:layout_constraintBottom_toTopOf="@id/get_footer" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

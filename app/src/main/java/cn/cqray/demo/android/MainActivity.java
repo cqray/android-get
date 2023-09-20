@@ -17,7 +17,13 @@ public class MainActivity extends GetNavActivity {
 
 
         loadRootFragment(MainFragment.class);
+        showToolbar();
 
+//        setBusy();
+//
+//        timerTask(aLong -> {
+//            setIdle();
+//        }, 2000);
 
     }
 

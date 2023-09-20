@@ -27,7 +27,7 @@ import java.util.concurrent.atomic.AtomicReference
     "Unchecked_cast",
     "Unused"
 )
-abstract class GetStateAdapter<T : GetStateAdapter<T>> : LifecycleOwner {
+abstract class GetStateAdapter2<T : GetStateAdapter2<T>> : LifecycleOwner {
 
     /** 生命周期管理注册 **/
     private val lifecycleRegistry by lazy { LifecycleRegistry(this) }
