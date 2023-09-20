@@ -20,9 +20,24 @@
         android:id="@+id/get_state_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:gravity="center"
         android:textSize="@dimen/caption"
         android:textColor="@color/hint"
         android:text="暂无数据"/>
+
+    <TextView
+        android:id="@+id/get_state_retry"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/small"
+        android:paddingLeft="@dimen/content"
+        android:paddingRight="@dimen/content"
+        android:paddingTop="@dimen/smaller"
+        android:paddingBottom="@dimen/smaller"
+        android:background="@drawable/btn_retry"
+        android:clickable="true"
+        android:focusable="true"
+        android:textSize="@dimen/caption"
+        android:textColor="@color/retry_color"
+        android:text="点击重试"/>
 
 </LinearLayout>

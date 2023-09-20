@@ -3,7 +3,6 @@ package cn.cqray.android.state
 import android.content.Context
 import android.util.AttributeSet
 import android.util.SparseArray
-import android.view.View
 import android.widget.FrameLayout
 import cn.cqray.android.Get
 import java.util.concurrent.atomic.AtomicReference
@@ -52,19 +51,19 @@ class GetStateLayout @JvmOverloads constructor(
     /** 异常视图适配器 **/
     val errorAdapter: GetStateAdapter<*> get() = getAdapter(GetViewState.ERROR)!!
 
-    /** 移除内容控件 **/
-    fun removeContents(): MutableList<View> {
-        val list = ArrayList<View>()
-        for (i in (0 until childCount).reversed()) {
-            val view = getChildAt(i)
-            val tag = view?.getTag(View.NO_ID)
-            tag?.let {
-                removeView(view)
-                list.add(view)
-            }
-        }
-        return list
-    }
+//    /** 移除内容控件 **/
+//    fun removeContents(): MutableList<View> {
+//        val list = ArrayList<View>()
+//        for (i in (0 until childCount).reversed()) {
+//            val view = getChildAt(i)
+//            val tag = view?.getTag(View.NO_ID)
+//            tag?.let {
+//                removeView(view)
+//                list.add(view)
+//            }
+//        }
+//        return list
+//    }
 
     /**
      * 设置忙碌状态适配器
@@ -137,13 +136,24 @@ class GetStateLayout @JvmOverloads constructor(
         // 显示对应的状态控件
         getAdapter(state)?.let {
             // 未初始化则初始化
-            if (it.view == null) {
-                it.onAttach(this@GetStateLayout)
-                it.view?.setTag(View.NO_ID, it.javaClass)
-            }
+//            if (it.contentView == null) {
+//                it.onAttach(this@GetStateLayout)
+////                it.contentView?.setTag(View.NO_ID, it.javaClass)
+//            }
+            // 连接视图
+            it.onAttach(this@GetStateLayout)
             // 显示
             it.show(text)
         }
+    }
+
+    override fun onDetachedFromWindow() {
+        super.onDetachedFromWindow()
+        for (i in 0 until adapters.size()) {
+            val adapter = adapters.valueAt(i)
+            adapter?.onDetach()
+        }
+        adapters.clear()
     }
 
     /**

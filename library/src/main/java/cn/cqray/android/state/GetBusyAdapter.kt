@@ -2,23 +2,18 @@ package cn.cqray.android.state
 
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
-import android.view.View
-import android.view.ViewGroup.MarginLayoutParams
+import android.util.TypedValue
 import android.widget.TextView
-import androidx.activity.ComponentActivity
 import androidx.annotation.ColorInt
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
-import cn.cqray.android.R
 import cn.cqray.android.databinding.GetStateLayoutBusyBinding
 import cn.cqray.android.lifecycle.GetLiveData
 import cn.cqray.android.util.Colors
 import cn.cqray.android.util.Sizes
 import cn.cqray.android.util.Views
-import com.github.ybq.android.spinkit.SpinKitView
 import com.github.ybq.android.spinkit.SpriteFactory
 import com.github.ybq.android.spinkit.Style
-import kotlin.reflect.jvm.internal.impl.load.java.descriptors.UtilKt
 
 /**
  * 忙碌布局适配器实现
@@ -29,10 +24,6 @@ import kotlin.reflect.jvm.internal.impl.load.java.descriptors.UtilKt
     "Unused"
 )
 class GetBusyAdapter : GetStateAdapter<GetBusyAdapter>() {
-
-    /** 忙碌控件  */
-    private var spinKitView: SpinKitView? = null
-
 
     /** 忙碌框颜色 **/
     private val spinColor by lazy { GetLiveData(Colors.foreground()) }
@@ -46,15 +37,16 @@ class GetBusyAdapter : GetStateAdapter<GetBusyAdapter>() {
     /** 忙碌框颜色 **/
     private val frameColor by lazy { GetLiveData(Color.BLACK) }
 
+    /** 绑定视图 **/
     val binding by lazy { Views.getBinding(GetStateLayoutBusyBinding::class.java) }
+
+    /** 状态文本 **/
+    override val stateText: TextView get() = binding.getStateText
 
     init {
         setBackground(null)
         setTextColor(Colors.foreground())
     }
-
-    override val stateText: TextView
-        get() = binding.getStateText
 
     override fun onCreating() {
         super.onCreating()
@@ -68,6 +60,11 @@ class GetBusyAdapter : GetStateAdapter<GetBusyAdapter>() {
                 it.layoutParams.height = size
                 it.requestLayout()
             }
+            // 设置文本间隔
+            val margin = (spinSize.value!! / 4 + stateText.textSize) / 2
+            setTextTopMargin(margin, TypedValue.COMPLEX_UNIT_PX)
+            // 更改框大小
+            onFrameSizeChanged()
         }
         // 边框颜色
         frameColor.observe(this) { color ->
@@ -76,7 +73,6 @@ class GetBusyAdapter : GetStateAdapter<GetBusyAdapter>() {
                 it.cornerRadius = Sizes.pxfSmall()
             }
         }
-
         // 注册忙碌控件唤醒
         this.lifecycle.addObserver(object : DefaultLifecycleObserver {
             override fun onResume(owner: LifecycleOwner) {
@@ -86,6 +82,9 @@ class GetBusyAdapter : GetStateAdapter<GetBusyAdapter>() {
         })
     }
 
+    /**
+     * 方框尺寸变化
+     */
     private fun onFrameSizeChanged() {
         val textGone = stateText.text.isNullOrEmpty()
         // 上下间距
@@ -94,61 +93,9 @@ class GetBusyAdapter : GetStateAdapter<GetBusyAdapter>() {
         val startEnd =
             if (textGone) Sizes.pxContent()
             else Sizes.pxLarge()
-
-//        binding.root.background = GradientDrawable().also { drawable ->
-//            drawable.setColor(frameColor.value)
-//            drawable.cornerRadius = Sizes.pxfSmall()
-//        }
+        // 设置内部间隔
         binding.root.setPadding(startEnd, topBottom, startEnd, topBottom)
     }
-
-    private fun onStateTextChanged() {
-        val textGone = stateText.text.isNullOrEmpty()
-        with(stateText) {
-            visibility = if (textGone) View.GONE else View.VISIBLE
-            // 间隔大小
-            val params = layoutParams as MarginLayoutParams
-            val margin = (spinSize.value!! / 4 + textSize) / 2
-            params.topMargin = margin.toInt()
-            requestLayout()
-        }
-    }
-
-//    override fun onViewChanged(view: View) {
-//        super.onViewChanged(view)
-//        // 文本不显示
-//        val textGone = textView?.text.isNullOrEmpty()
-//        textView?.let {
-//            // 显示或隐藏
-//            it.visibility = if (textGone) View.GONE else View.VISIBLE
-//            // 间隔大小
-//            val params = it.layoutParams as MarginLayoutParams
-//            val margin = (spinSize / 4 + it.textSize) / 2
-//            params.topMargin = margin.toInt()
-//            it.requestLayout()
-//        }
-//        // 间隔信息
-//        val cp = Sizes.pxContent()
-//        val lp = Sizes.pxLarge()
-//        val startEnd = if (textGone) cp else lp
-//        // 外框样式
-//        val frameView = spinKitView?.parent as? View
-//        frameView?.let {
-//            it.background = GradientDrawable().also { drawable ->
-//                drawable.setColor(frameColor.value!!)
-//                drawable.cornerRadius = Sizes.pxfSmall()
-//            }
-//            it.setPadding(startEnd, cp, startEnd, cp)
-//        }
-////        // 设置SpinKitView样式
-////        spinKitView?.let {
-////            it.setColor(spinColor)
-////            it.setIndeterminateDrawable(SpriteFactory.create(spinStyle))
-////            it.layoutParams.width = spinSize
-////            it.layoutParams.height = spinSize
-////            it.requestLayout()
-////        }
-//    }
 
     /**
      * 设置忙碌控件颜色

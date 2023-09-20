@@ -4,7 +4,8 @@ import android.graphics.Typeface
 import android.graphics.drawable.Drawable
 import android.util.TypedValue
 import android.view.View
-import android.widget.FrameLayout
+import android.view.ViewGroup
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.annotation.*
 import androidx.core.content.ContextCompat
@@ -36,10 +37,7 @@ abstract class GetStateAdapter<T : GetStateAdapter<T>> : LifecycleOwner {
     private val stateLayoutRef = AtomicReference<GetStateLayout>()
 
     /** 根布局缓存 **/
-    private val rootViewRef = AtomicReference<FrameLayout>()
-
-    /** 内容视图缓存 **/
-    private val contentViewRef = AtomicReference<View>()
+    private val rootViewRef = AtomicReference<LinearLayout>()
 
     /** 背景 **/
     private val background by lazy { GetLiveData<Any?>() }
@@ -48,7 +46,7 @@ abstract class GetStateAdapter<T : GetStateAdapter<T>> : LifecycleOwner {
     private val texts by lazy { GetLiveData(arrayOfNulls<String>(2)) }
 
     /** 文本颜色 **/
-    private val textColor by lazy { GetLiveData(Colors.text()) }
+    private val textColor by lazy { GetLiveData(Colors.tint()) }
 
     /** 文本大小 **/
     private val textSize by lazy { GetLiveData(Sizes.pxfBody()) }
@@ -56,10 +54,8 @@ abstract class GetStateAdapter<T : GetStateAdapter<T>> : LifecycleOwner {
     /** 文本样式 **/
     private val textStyle by lazy { GetLiveData(0) }
 
-    /** 内容视图 **/
-    val contentView: View
-        get() = contentViewRef.get()
-            ?: throw RuntimeException("Did you forget call setContentView?")
+    /** 文本顶部间隔 **/
+    private val textTopMargin by lazy { GetLiveData(0) }
 
     override fun getLifecycle(): Lifecycle = lifecycleRegistry
 
@@ -74,7 +70,7 @@ abstract class GetStateAdapter<T : GetStateAdapter<T>> : LifecycleOwner {
         // 初始化根视图
         synchronized(rootViewRef) {
             val view = Views.inflate(R.layout.get_state_layout_default)
-            rootViewRef.set(view as FrameLayout)
+            rootViewRef.set(view as LinearLayout)
         }
         // 改变生命周期状态
         lifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_CREATE)
@@ -105,16 +101,34 @@ abstract class GetStateAdapter<T : GetStateAdapter<T>> : LifecycleOwner {
      * 初始化文本相关LiveData
      */
     private fun initTextLd() {
-        texts.observe(this) { stateText?.text = it[1]?.ifEmpty { it[0] } }
+        texts.observe(this) { stateText?.text = it[1]?.ifEmpty { it[0] } ?: it[0] }
         textColor.observe(this) { stateText?.setTextColor(it) }
         textSize.observe(this) { stateText?.setTextSize(TypedValue.COMPLEX_UNIT_PX, it) }
         textStyle.observe(this) { stateText?.typeface = Typeface.defaultFromStyle(it) }
+        textTopMargin.observe(this) { margin ->
+            val textGone = stateText?.text.isNullOrEmpty()
+            stateText?.let {
+                it.visibility = if (textGone) View.GONE else View.VISIBLE
+                val params = it.layoutParams as ViewGroup.MarginLayoutParams
+                params.topMargin = margin
+                it.requestLayout()
+            }
+        }
     }
 
+    /**
+     * 分离布局
+     */
     internal fun onDetach() {
+        hide()
+        rootViewRef.set(null)
+        stateLayoutRef.set(null)
         lifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_DESTROY)
     }
 
+    /**
+     * 创建函数
+     */
     open fun onCreating() {}
 
     /**
@@ -128,7 +142,6 @@ abstract class GetStateAdapter<T : GetStateAdapter<T>> : LifecycleOwner {
      * @param view 视图
      */
     fun setContentView(view: View) {
-        synchronized(contentViewRef) { contentViewRef.set(view) }
         rootViewRef.get().let {
             it.removeAllViews()
             it.addView(view)
@@ -156,7 +169,7 @@ abstract class GetStateAdapter<T : GetStateAdapter<T>> : LifecycleOwner {
             stateLayoutRef.get().addView(view)
             view.bringToFront()
         } else {
-            stateLayoutRef.get().removeView(view)
+            stateLayoutRef.get()?.removeView(view)
             lifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_STOP)
         }
     }
@@ -209,6 +222,18 @@ abstract class GetStateAdapter<T : GetStateAdapter<T>> : LifecycleOwner {
     fun setTextStyle(style: Int) = also { textStyle.setValue(style) } as T
 
     /**
+     * 设置文本顶部间隔
+     * @param margin 间隔
+     */
+    fun setTextTopMargin(margin: Number) = also { textTopMargin.setValue(Sizes.dp2px(margin)) }
+
+    /**
+     * 设置文本顶部间隔
+     * @param margin 间隔
+     */
+    fun setTextTopMargin(margin: Number, unit: Int) = also { textTopMargin.setValue(Sizes.any2dp(margin, unit).toInt()) }
+
+    /**
      * 设置背景
      * @param background [Drawable]
      */
@@ -218,12 +243,12 @@ abstract class GetStateAdapter<T : GetStateAdapter<T>> : LifecycleOwner {
      * 设置背景颜色
      * @param color [ColorInt]
      */
-    fun setBackgroundColor(@ColorInt color: Int) = also { this.background.setValue(color) } as T
+    fun setBackgroundColor(@ColorInt color: Int) = also { background.setValue(color) } as T
 
     /**
      * 设置背景资源ID
      * @param id 资源ID
      */
-    fun setBackgroundResource(@DrawableRes id: Int) = also { this.background.setValue(id) } as T
+    fun setBackgroundResource(@DrawableRes id: Int) = also { background.setValue(id) } as T
 
 }

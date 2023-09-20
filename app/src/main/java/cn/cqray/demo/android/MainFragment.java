@@ -28,7 +28,12 @@ public class MainFragment extends GetPaginationFragment<Object> {
     @Override
     public void onCreating(@Nullable Bundle savedInstanceState) {
         super.onCreating(savedInstanceState);
-        finish(null);
+//        finish(null);
+//        finish(null);
+
+        timerTask(aLong -> {
+            setError("");
+        }, 2000);
     }
 
     @Override
