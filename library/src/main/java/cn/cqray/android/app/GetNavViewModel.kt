@@ -93,14 +93,14 @@ internal class GetNavViewModel : ViewModel() {
      */
     fun loadRootFragment(@IdRes containerId: Int, intent: GetIntent) {
         this.containerId = containerId
-        start(intent)
+        goto(intent)
     }
 
     /**
-     * 启动界面
+     * 跳转界面
      * @param intent [GetIntent]
      */
-    fun start(intent: GetIntent) {
+    fun goto(intent: GetIntent) {
         // 检查是否是启动Activity
         if (checkActivity(intent)) return
         // 检查是否满足Fragment拦截条件
@@ -150,7 +150,7 @@ internal class GetNavViewModel : ViewModel() {
             backStack.add(fragment)
         }.onFailure {
             // 打印错误日志
-            logE("to", "start [${intent.toClass.simpleName}] failed.", it)
+            logE("to", "goto [${intent.toClass.simpleName}] failed.", it)
         }
     }
 

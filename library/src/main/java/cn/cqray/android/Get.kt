@@ -59,24 +59,24 @@ object Get {
     fun runOnUiThreadDelayed(runnable: Runnable, delayed: Int? = null) = _Get.runOnUiThreadDelayed(runnable, delayed)
 
     /**
-     * 启动界面
+     * 跳转界面
      * @param target 目标界面
      * @param callback 回调
      */
     @JvmStatic
     @JvmOverloads
-    fun start(target: Class<*>, callback: Function1<Bundle, Unit>? = null): Unit =
-        run { topGetActivity?.start(GetIntent(target), callback) }
+    fun goto(target: Class<*>, callback: Function1<Bundle, Unit>? = null): Unit =
+        run { topGetActivity?.goto(GetIntent(target), callback) }
 
     /**
-     * 启动界面
+     * 跳转界面
      * @param intent 意图
      * @param callback 回调
      */
     @JvmStatic
     @JvmOverloads
-    fun start(intent: GetIntent, callback: Function1<Bundle, Unit>? = null): Unit =
-        run { topGetActivity?.start(intent, callback) }
+    fun goto(intent: GetIntent, callback: Function1<Bundle, Unit>? = null): Unit =
+        run { topGetActivity?.goto(intent, callback) }
 
     /**
      * 回退

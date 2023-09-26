@@ -58,30 +58,30 @@ interface GetNavProvider : GetProvider {
     fun setResult(data: Bundle) = navDelegate.setResult(data)
 
     /**
-     * 启动界面
+     * 跳转界面
      * @param target 目标界面[Class]
      */
-    fun start(target: Class<*>) = navDelegate.start(GetIntent(target))
+    fun goto(target: Class<*>) = navDelegate.goto(GetIntent(target))
 
     /**
-     * 启动界面
+     * 跳转界面
      * @param intent [GetIntent]
      */
-    fun start(intent: GetIntent) = navDelegate.start(intent)
+    fun goto(intent: GetIntent) = navDelegate.goto(intent)
 
     /**
-     * 启动界面
+     * 跳转界面
      * @param target 目标界面
      * @param callback 回调
      */
-    fun start(target: Class<*>, callback: Function1<Bundle, Unit>?) = navDelegate.start(GetIntent(target), callback)
+    fun goto(target: Class<*>, callback: Function1<Bundle, Unit>?) = navDelegate.goto(GetIntent(target), callback)
 
     /**
-     * 启动界面
+     * 跳转界面
      * @param intent 意图
      * @param callback 回调
      */
-    fun start(intent: GetIntent, callback: Function1<Bundle, Unit>?) = navDelegate.start(intent, callback)
+    fun goto(intent: GetIntent, callback: Function1<Bundle, Unit>?) = navDelegate.goto(intent, callback)
 
     /**
      * 回退

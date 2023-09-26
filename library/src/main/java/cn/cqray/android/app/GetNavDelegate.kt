@@ -118,19 +118,19 @@ class GetNavDelegate(provider: GetNavProvider) : GetDelegate<GetNavProvider>(pro
     fun setResult(data: Bundle) = GetResultHelper.sendToTopReceiver(data)
 
     /**
-     * 启动界面
+     * 跳转界面
      * @param target 目标Class
      */
-    fun start(target: Class<*>) = viewModel.start(GetIntent(target))
+    fun goto(target: Class<*>) = viewModel.goto(GetIntent(target))
 
     /**
-     * 启动界面
+     * 跳转界面
      * @param intent 意图
      * @param callback 回调
      */
     @JvmOverloads
-    fun start(intent: GetIntent, callback: Function1<Bundle, Unit>? = null) {
-        viewModel.start(intent)
+    fun goto(intent: GetIntent, callback: Function1<Bundle, Unit>? = null) {
+        viewModel.goto(intent)
         callback?.let { GetResultHelper.registerReceiver(lifecycleOwner, it) }
     }
 
