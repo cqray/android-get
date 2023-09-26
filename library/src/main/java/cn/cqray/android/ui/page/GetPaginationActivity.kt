@@ -23,7 +23,6 @@ import kotlinx.coroutines.launch
 @OptIn(DelicateCoroutinesApi::class)
 @Suppress(
     "MemberVisibilityCanBePrivate",
-    "Unused_parameter",
     "Unused"
 )
 abstract class GetPaginationActivity<T> : GetActivity(), GetPaginationProvider<T> {
@@ -51,10 +50,9 @@ abstract class GetPaginationActivity<T> : GetActivity(), GetPaginationProvider<T
         // 初始化列表
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.adapter = adapter
-        recyclerView.requestLayout()
         Views.closeRvAnimator(recyclerView)
         // 初始化分页委托
-        paginationDelegate.setRefreshLayout(refreshLayout)
+        paginationDelegate.attachRefreshLayout(refreshLayout)
         paginationDelegate.adapter = adapter
         paginationDelegate.addCallback { pageNum, pageSize ->
             // 是否支持协程
@@ -74,8 +72,8 @@ abstract class GetPaginationActivity<T> : GetActivity(), GetPaginationProvider<T
         }
     }
 
-    override fun onLazyLoad() {
-        super.onLazyLoad()
+    override fun onEnterAnimEnd() {
+        super.onEnterAnimEnd()
         refreshAutomatic()
     }
 

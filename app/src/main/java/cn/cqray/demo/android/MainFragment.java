@@ -8,9 +8,7 @@ import androidx.annotation.NonNull;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.viewholder.BaseViewHolder;
 
-import cn.cqray.android.Get;
 import cn.cqray.android.log.GetLog;
-import cn.cqray.android.tip.GetTipInit;
 import cn.cqray.android.ui.page.GetPaginationFragment;
 import org.jetbrains.annotations.Nullable;
 
@@ -31,9 +29,16 @@ public class MainFragment extends GetPaginationFragment<Object> {
 //        finish(null);
 //        finish(null);
 
+
+
+    }
+
+    @Override
+    public void onEnterAnimEnd() {
+        super.onEnterAnimEnd();
         timerTask(aLong -> {
-            setError("");
-        }, 2000);
+            finish(Arrays.asList(1, 2, 3, 4));
+        }, 1000);
     }
 
     @Override
@@ -42,8 +47,13 @@ public class MainFragment extends GetPaginationFragment<Object> {
         GetLog.d("onStop");
     }
 
-
 //    @Override
+//    protected void onRefresh(int pageNum, int pageSize) {
+//        super.onRefresh(pageNum, pageSize);
+//        finish(Arrays.asList(1, 2, 3, 4));
+//    }
+
+    //    @Override
 //    public void onNewBundleGet(@Nullable Bundle bundle) {
 //        super.onNewBundleGet(bundle);
 //        GetLog.e("onNewBundleGet!!!!!!!!");
@@ -60,7 +70,7 @@ public class MainFragment extends GetPaginationFragment<Object> {
     @NonNull
     @Override
     protected BaseQuickAdapter<Object, ? extends BaseViewHolder> onCreateAdapter() {
-        return new BaseQuickAdapter<Object, BaseViewHolder>(0) {
+        return new BaseQuickAdapter<Object, BaseViewHolder>(R.layout.main_item) {
             @Override
             protected void convert(@NonNull BaseViewHolder holder, Object o) {
 

@@ -1,11 +1,7 @@
 package cn.cqray.android.state
 
-import android.app.Activity
 import android.view.ViewGroup
 import android.widget.FrameLayout
-import androidx.fragment.app.Fragment
-import cn.cqray.android.R
-import cn.cqray.android.app.GetViewProvider
 import cn.cqray.android.util.Contexts
 import com.scwang.smart.refresh.layout.SmartRefreshLayout
 import com.scwang.smart.refresh.layout.api.RefreshFooter
@@ -45,34 +41,6 @@ class GetStateDelegate {
     }
 
     /**
-     * 关联Activity
-     * @param activity
-     */
-    internal fun attachActivity(activity: Activity) {
-        if (activity is GetViewProvider) {
-            val delegate = activity.viewDelegate
-            val layout = delegate.refreshLayout
-                ?: delegate.contentLayout.findViewById(R.id.get_refresh)
-                ?: delegate.contentLayout
-            attachLayout(layout)
-        }
-    }
-
-    /**
-     * 关联Fragment
-     * @param fragment
-     */
-    internal fun attachFragment(fragment: Fragment) {
-        if (fragment is GetViewProvider) {
-            val delegate = fragment.viewDelegate
-            val layout = delegate.refreshLayout
-                ?: delegate.contentLayout.findViewById(R.id.get_refresh)
-                ?: delegate.contentLayout
-            attachLayout(layout)
-        }
-    }
-
-    /**
      * 关联[FrameLayout]容器
      * @param layout [FrameLayout]容器
      */
@@ -88,6 +56,8 @@ class GetStateDelegate {
      * 初始化状态控件
      */
     private fun attachLayout(layout: ViewGroup) {
+        // 不重复绑定同一个视图
+        if (layoutRef.get() == layout) return
         // 移除数据控件
         stateLayout.removeAllViews()
         (stateLayout.parent as? ViewGroup)?.removeView(stateLayout)

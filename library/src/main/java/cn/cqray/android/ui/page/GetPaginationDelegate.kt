@@ -167,7 +167,7 @@ class GetPaginationDelegate<T>(val owner: LifecycleOwner) : GetStateProvider {
      * 设置刷新视图
      * @param layout 刷新视图
      */
-    fun setRefreshLayout(layout: SmartRefreshLayout?) {
+    fun attachRefreshLayout(layout: SmartRefreshLayout?) {
         layout?.let {
             refreshLayout = it
             it.setEnablePureScrollMode(false)
