@@ -182,8 +182,8 @@ class GetViewDelegate internal constructor(provider: GetViewProvider) : GetDeleg
         }
         // 移除历史界面
         removeContentView()
-        // 确定是使用原始布局
-        ensureSetNativeContentView()
+        // 确定是使用扩展布局
+        ensureSetGetContentView()
         // 初始化刷新布局
         initRefreshLayout()
         // 初始化内容布局
@@ -368,7 +368,7 @@ class GetViewDelegate internal constructor(provider: GetViewProvider) : GetDeleg
         if (provider is GetNavProvider) {
             toolbar.setBackListener {
                 val delegate = (provider as GetNavProvider).navDelegate
-                delegate.back()
+                delegate.pop()
             }
         }
         // 设置全局属性
@@ -391,7 +391,7 @@ class GetViewDelegate internal constructor(provider: GetViewProvider) : GetDeleg
     /** 初始化刷新视图 **/
     private fun initRefreshLayout() {
         if (setGetContentViewRef.get()) {
-            synchronized(refreshLayoutRef.get()) {
+            synchronized(refreshLayoutRef) {
                 val layout = SmartRefreshLayout(context).also {
                     it.overScrollMode = View.OVER_SCROLL_NEVER
                     it.setEnableLoadMore(false)

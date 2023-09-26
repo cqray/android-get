@@ -46,15 +46,6 @@ object Get {
     @JvmStatic
     val application get() = _Get.application
 
-//    @JvmStatic
-//    fun init(application: Application) = init(application, null)
-//
-//    @JvmStatic
-//    fun init(application: Application, getInit: GetInit?) {
-//        // 初始化配置
-//        this.init = getInit ?: this.init
-//    }
-
     @JvmStatic
     val context: Context get() = topActivity ?: application.applicationContext
 
@@ -64,17 +55,18 @@ object Get {
      * @param delayed   延时时长(ms)
      */
     @JvmStatic
+    @JvmOverloads
     fun runOnUiThreadDelayed(runnable: Runnable, delayed: Int? = null) = _Get.runOnUiThreadDelayed(runnable, delayed)
 
     /**
      * 启动界面
-     * @param to 目标界面
+     * @param target 目标界面
      * @param callback 回调
      */
     @JvmStatic
     @JvmOverloads
-    fun to(to: Class<*>, callback: Function1<Bundle, Unit>? = null): Unit =
-        run { topGetActivity?.to(GetIntent(to), callback) }
+    fun start(target: Class<*>, callback: Function1<Bundle, Unit>? = null): Unit =
+        run { topGetActivity?.start(GetIntent(target), callback) }
 
     /**
      * 启动界面
@@ -83,23 +75,23 @@ object Get {
      */
     @JvmStatic
     @JvmOverloads
-    fun to(intent: GetIntent, callback: Function1<Bundle, Unit>? = null): Unit =
-        run { topGetActivity?.to(intent, callback) }
+    fun start(intent: GetIntent, callback: Function1<Bundle, Unit>? = null): Unit =
+        run { topGetActivity?.start(intent, callback) }
 
     /**
      * 回退
      */
     @JvmStatic
-    fun back(): Unit = run { topGetActivity?.back() }
+    fun pop(): Unit = run { topGetActivity?.pop() }
 
     /**
      * 回退到指定的界面
-     * @param back 目标界面[Class]，仅支持实现[GetNavProvider]的[Fragment]以及[Activity]
+     * @param target 目标界面[Class]，仅支持实现[GetNavProvider]的[Fragment]以及[Activity]
      * @param inclusive 是否包含指定回退的界面
      */
     @JvmStatic
     @JvmOverloads
-    fun backTo(back: Class<*>, inclusive: Boolean = true) = topGetActivity?.backTo(back, inclusive)
+    fun popTo(target: Class<*>, inclusive: Boolean = true) = topGetActivity?.popTo(target, inclusive)
 
     /**
      * 显示提示

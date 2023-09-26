@@ -119,41 +119,31 @@ class GetNavDelegate(provider: GetNavProvider) : GetDelegate<GetNavProvider>(pro
 
     /**
      * 启动界面
-     * @param toClass 目标Class
+     * @param target 目标Class
      */
-    fun to(toClass: Class<*>) = viewModel.to(GetIntent(toClass))
-
-    /**
-     * 启动界面
-     * @param intent [GetIntent]
-     */
-    fun to(intent: GetIntent) = viewModel.to(intent)
+    fun start(target: Class<*>) = viewModel.start(GetIntent(target))
 
     /**
      * 启动界面
      * @param intent 意图
      * @param callback 回调
      */
-    fun to(intent: GetIntent, callback: Function1<Bundle, Unit>?) {
-        viewModel.to(intent)
+    @JvmOverloads
+    fun start(intent: GetIntent, callback: Function1<Bundle, Unit>? = null) {
+        viewModel.start(intent)
         callback?.let { GetResultHelper.registerReceiver(lifecycleOwner, it) }
     }
 
     /**
      * 回退界面
      */
-    fun back() = viewModel.back()
-
-    /**
-     * 回退到指定的界面（包含自身）
-     * @param back 目标界面[Class]，仅支持实现[GetNavProvider]的[Fragment]以及[Activity]
-     */
-    fun backTo(back: Class<*>) = viewModel.backTo(back, true)
+    fun pop() = viewModel.pop()
 
     /**
      * 回退到指定的界面
-     * @param back 目标界面[Class]，仅支持实现[GetNavProvider]的[Fragment]以及[Activity]
+     * @param target 目标界面[Class]，仅支持实现[GetNavProvider]的[Fragment]以及[Activity]
      * @param inclusive 是否包含指定回退的界面
      */
-    fun backTo(back: Class<*>, inclusive: Boolean) = viewModel.backTo(back, inclusive)
+    @JvmOverloads
+    fun popTo(target: Class<*>, inclusive: Boolean = true) = viewModel.popTo(target, inclusive)
 }

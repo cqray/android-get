@@ -59,45 +59,45 @@ interface GetNavProvider : GetProvider {
 
     /**
      * 启动界面
-     * @param to 目标界面[Class]
+     * @param target 目标界面[Class]
      */
-    fun to(to: Class<*>) = navDelegate.to(GetIntent(to))
+    fun start(target: Class<*>) = navDelegate.start(GetIntent(target))
 
     /**
      * 启动界面
      * @param intent [GetIntent]
      */
-    fun to(intent: GetIntent) = navDelegate.to(intent)
+    fun start(intent: GetIntent) = navDelegate.start(intent)
 
     /**
      * 启动界面
-     * @param to 目标界面
+     * @param target 目标界面
      * @param callback 回调
      */
-    fun to(to: Class<*>, callback: Function1<Bundle, Unit>?) = navDelegate.to(GetIntent(to), callback)
+    fun start(target: Class<*>, callback: Function1<Bundle, Unit>?) = navDelegate.start(GetIntent(target), callback)
 
     /**
      * 启动界面
      * @param intent 意图
      * @param callback 回调
      */
-    fun to(intent: GetIntent, callback: Function1<Bundle, Unit>?) = navDelegate.to(intent, callback)
+    fun start(intent: GetIntent, callback: Function1<Bundle, Unit>?) = navDelegate.start(intent, callback)
 
     /**
      * 回退
      */
-    fun back() = navDelegate.back()
+    fun pop() = navDelegate.pop()
 
     /**
      * 回退到指定的界面
-     * @param back 目标界面[Class]，仅支持实现[GetNavProvider]的[Fragment]以及[Activity]
+     * @param target 目标界面[Class]，仅支持实现[GetNavProvider]的[Fragment]以及[Activity]
      */
-    fun backTo(back: Class<*>) = navDelegate.backTo(back, true)
+    fun popTo(target: Class<*>) = navDelegate.popTo(target, true)
 
     /**
      * 回退到指定的界面
-     * @param back 目标界面[Class]，仅支持实现[GetNavProvider]的[Fragment]以及[Activity]
+     * @param target 目标界面[Class]，仅支持实现[GetNavProvider]的[Fragment]以及[Activity]
      * @param inclusive 是否包含指定回退的界面
      */
-    fun backTo(back: Class<*>, inclusive: Boolean) = navDelegate.backTo(back, inclusive)
+    fun popTo(target: Class<*>, inclusive: Boolean) = navDelegate.popTo(target, inclusive)
 }

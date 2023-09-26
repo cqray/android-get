@@ -17,7 +17,7 @@ public class MainActivity extends GetNavActivity {
 
 
         loadRootFragment(MainFragment.class);
-        showToolbar();
+//        showToolbar();
 
 //        setBusy();
 //

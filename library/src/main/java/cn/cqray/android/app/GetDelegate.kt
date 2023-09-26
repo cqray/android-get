@@ -24,7 +24,7 @@ open class GetDelegate<P : GetProvider>(val provider: P) {
 
     init {
         // 订阅资源回收
-        val owner = provider.getLifecycleOwner()
+        val owner = provider.lifecycleOwner
         owner.lifecycle.addObserver(object : DefaultLifecycleObserver {
             override fun onDestroy(owner: LifecycleOwner) {
                 super.onDestroy(owner)

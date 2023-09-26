@@ -64,11 +64,11 @@ internal class GetNavViewModel : ViewModel() {
         if (fragment is GetNavProvider) {
             if (!fragment.onBackPress()) {
                 // 有多个Fragment，则直接回退
-                if (backStack.size > 1) back()
+                if (backStack.size > 1) pop()
                 // 只有0-1个Fragment，则检查Activity的拦截
-                else if (!(activity as GetNavProvider).onBackPress()) back()
+                else if (!(activity as GetNavProvider).onBackPress()) pop()
             }
-        } else if (!(activity as GetNavProvider).onBackPress()) back()
+        } else if (!(activity as GetNavProvider).onBackPress()) pop()
     }
 
     /**
@@ -77,7 +77,7 @@ internal class GetNavViewModel : ViewModel() {
      */
     fun getFragmentEnterAnimDuration(fragment: Fragment): Int {
         val arguments = fragment.arguments
-        return arguments?.getInt(FRAGMENT_ANIM_DURATION_Tag) ?: 0
+        return arguments?.getInt(FRAGMENT_ANIM_DURATION_TAG) ?: 0
     }
 
     /**
@@ -93,14 +93,14 @@ internal class GetNavViewModel : ViewModel() {
      */
     fun loadRootFragment(@IdRes containerId: Int, intent: GetIntent) {
         this.containerId = containerId
-        to(intent)
+        start(intent)
     }
 
     /**
      * 启动界面
      * @param intent [GetIntent]
      */
-    fun to(intent: GetIntent) {
+    fun start(intent: GetIntent) {
         // 检查是否是启动Activity
         if (checkActivity(intent)) return
         // 检查是否满足Fragment拦截条件
@@ -124,7 +124,7 @@ internal class GetNavViewModel : ViewModel() {
                 ft.setCustomAnimations(enter, exit, popEnter, popExit)
                 // 计算并设置Fragment动画时长
                 val duration = AnimUtils.getAnimDurationFromResource(enter)
-                fragment.arguments?.putInt(FRAGMENT_ANIM_DURATION_Tag, duration)
+                fragment.arguments?.putInt(FRAGMENT_ANIM_DURATION_TAG, duration)
             }
         }
         // 隐藏当前正在显示的Fragment
@@ -150,12 +150,12 @@ internal class GetNavViewModel : ViewModel() {
             backStack.add(fragment)
         }.onFailure {
             // 打印错误日志
-            logE("to", "to start [${intent.toClass.simpleName}] failed.", it)
+            logE("to", "start [${intent.toClass.simpleName}] failed.", it)
         }
     }
 
     /** 回退 **/
-    fun back() {
+    fun pop() {
         // 只剩根Fragment，则直接结束Activity
         if (backStack.size <= 1) activity?.finish()
         // 否则回退当前Fragment
@@ -164,22 +164,22 @@ internal class GetNavViewModel : ViewModel() {
 
     /**
      * 回退到指定的界面
-     * @param back 目标界面[Class]，仅支持实现[GetNavProvider]的[Fragment]以及[Activity]
+     * @param target 目标界面[Class]，仅支持实现[GetNavProvider]的[Fragment]以及[Activity]
      * @param inclusive 是否包含指定回退的界面
      */
-    fun backTo(back: Class<*>, inclusive: Boolean) {
+    fun popTo(target: Class<*>, inclusive: Boolean) {
         // 回退到指定的Activity
-        if (GetUtils.isActivityClass(back)) {
-            ActivityUtils.finishToActivity(back as Class<out Activity>, inclusive)
+        if (GetUtils.isActivityClass(target)) {
+            ActivityUtils.finishToActivity(target as Class<out Activity>, inclusive)
             return
         }
         // 回退至根Fragment（包含），不启动新的Fragment，则销毁Activity
-        if (isRootFragment(back) && inclusive) {
+        if (isRootFragment(target) && inclusive) {
             activity?.finish()
             return
         }
         // 查找回退Class在的Fragment在记录中的对应的位置（最后一个匹配的位置）
-        val index = backStack.indexOfLast { it.javaClass == back }.let {
+        val index = backStack.indexOfLast { it.javaClass == target }.let {
             // 未找到
             if (it == -1) -1
             // 不包含自身则索引+1
@@ -347,6 +347,6 @@ internal class GetNavViewModel : ViewModel() {
         const val FRAGMENT_ID_TAG = "Get:Fragment_id"
 
         /** Fragment 动画时长关键字 **/
-        const val FRAGMENT_ANIM_DURATION_Tag = "Get:Fragment_anim_duration"
+        const val FRAGMENT_ANIM_DURATION_TAG = "Get:Fragment_anim_duration"
     }
 }
