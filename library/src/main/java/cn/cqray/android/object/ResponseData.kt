@@ -46,8 +46,12 @@ class ResponseData<T> : Serializable {
         }
 
         @JvmStatic
-        fun <T> fail(message: String?): ResponseData<T> {
-            return fail(null, message)
+        @JvmOverloads
+        fun <T> fail(code: Int?, message: String? = null): ResponseData<T> {
+            val responseData = ResponseData<T>()
+            responseData.message = message
+            responseData.code = code?.toString()
+            return responseData
         }
 
         @JvmStatic
