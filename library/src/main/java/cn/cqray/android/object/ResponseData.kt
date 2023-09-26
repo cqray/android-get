@@ -1,9 +1,9 @@
 package cn.cqray.android.`object`
 
+import cn.cqray.android.Get
 import com.google.gson.annotations.SerializedName
 
 import java.io.Serializable
-import java.util.ArrayList
 import java.util.regex.Pattern
 
 /**
@@ -31,26 +31,17 @@ class ResponseData<T> : Serializable {
             return number.toInt()
         }
 
-    //        return Starter.getInstance()
-//                .getStarterStrategy()
-//                .getResponseDataSucceedCode()
-//                .contains(code);
-    val isSucceed: Boolean get() = true
+    /** 是否成功 **/
+    val isSucceed: Boolean get() = Get.init.responseInit.successCodes.contains(code)
 
-    //        return Starter.getInstance()
-//                .getStarterStrategy()
-//                .getResponseDataSucceedCode()
-//                .contains(code);
     companion object {
 
         @JvmStatic
         fun <T> success(data: T, message: String?): ResponseData<T> {
-            //List<String> codes = Starter.getInstance().getStarterStrategy().getResponseDataSucceedCode();
-            val codes: List<String> = ArrayList()
             val responseData = ResponseData<T>()
             responseData.data = data
             responseData.message = message
-            responseData.code = if (codes.isNotEmpty()) codes[0] else "200"
+            responseData.code = Get.init.responseInit.successCodes.getOrNull(0)
             return responseData
         }
 
@@ -60,17 +51,11 @@ class ResponseData<T> : Serializable {
         }
 
         @JvmStatic
-        fun <T> fail(code: Int, message: String?): ResponseData<T> {
-            return fail(code.toString(), message)
-        }
-
-        @JvmStatic
-        fun <T> fail(code: String?, message: String?): ResponseData<T> {
-            //String failCode = Starter.getInstance().getStarterStrategy().getResponseDataFailCode();
-            val failCode = ""
+        @JvmOverloads
+        fun <T> fail(code: String?, message: String? = null): ResponseData<T> {
             val responseData = ResponseData<T>()
             responseData.message = message
-            responseData.code = code ?: failCode
+            responseData.code = code
             return responseData
         }
     }

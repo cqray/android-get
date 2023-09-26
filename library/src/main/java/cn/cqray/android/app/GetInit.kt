@@ -9,6 +9,7 @@ import cn.cqray.android.anim.FragmentAnimator
 import cn.cqray.android.anim.VerticalAnimator
 import cn.cqray.android.graphics.GetDrawable
 import cn.cqray.android.log.GetLogInit
+import cn.cqray.android.`object`.ResponseInit
 import cn.cqray.android.state.*
 import cn.cqray.android.tip.GetTipInit
 import cn.cqray.android.ui.page.GetPaginationInit
@@ -20,6 +21,9 @@ class GetInit : GetBaseInit() {
 
     /** [Get]日志打印初始化配置 **/
     var logInit = GetLogInit()
+
+    /** 网络请求初始化配置 **/
+    var responseInit = ResponseInit()
 
     /** [Get]提示初始化配置  **/
     var tipInit = GetTipInit()
