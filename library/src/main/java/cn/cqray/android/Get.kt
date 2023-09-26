@@ -65,8 +65,8 @@ object Get {
      */
     @JvmStatic
     @JvmOverloads
-    fun goto(target: Class<*>, callback: Function1<Bundle, Unit>? = null): Unit =
-        run { topGetActivity?.goto(GetIntent(target), callback) }
+    fun push(target: Class<*>, callback: Function1<Bundle, Unit>? = null): Unit =
+        run { topGetActivity?.push(GetIntent(target), callback) }
 
     /**
      * 跳转界面
@@ -75,8 +75,8 @@ object Get {
      */
     @JvmStatic
     @JvmOverloads
-    fun goto(intent: GetIntent, callback: Function1<Bundle, Unit>? = null): Unit =
-        run { topGetActivity?.goto(intent, callback) }
+    fun push(intent: GetIntent, callback: Function1<Bundle, Unit>? = null): Unit =
+        run { topGetActivity?.push(intent, callback) }
 
     /**
      * 回退

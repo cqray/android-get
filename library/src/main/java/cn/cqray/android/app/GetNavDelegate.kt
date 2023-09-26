@@ -121,7 +121,7 @@ class GetNavDelegate(provider: GetNavProvider) : GetDelegate<GetNavProvider>(pro
      * 跳转界面
      * @param target 目标Class
      */
-    fun goto(target: Class<*>) = viewModel.goto(GetIntent(target))
+    fun push(target: Class<*>) = viewModel.push(GetIntent(target))
 
     /**
      * 跳转界面
@@ -129,8 +129,8 @@ class GetNavDelegate(provider: GetNavProvider) : GetDelegate<GetNavProvider>(pro
      * @param callback 回调
      */
     @JvmOverloads
-    fun goto(intent: GetIntent, callback: Function1<Bundle, Unit>? = null) {
-        viewModel.goto(intent)
+    fun push(intent: GetIntent, callback: Function1<Bundle, Unit>? = null) {
+        viewModel.push(intent)
         callback?.let { GetResultHelper.registerReceiver(lifecycleOwner, it) }
     }
 

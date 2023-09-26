@@ -3,6 +3,7 @@ package cn.cqray.demo.android;
 import android.os.Bundle;
 import android.util.Log;
 
+import cn.cqray.android.Get;
 import org.jetbrains.annotations.Nullable;
 
 import cn.cqray.android.app.GetNavActivity;
@@ -17,13 +18,7 @@ public class MainActivity extends GetNavActivity {
 
 
         loadRootFragment(MainFragment.class);
-//        showToolbar();
 
-//        setBusy();
-//
-//        timerTask(aLong -> {
-//            setIdle();
-//        }, 2000);
 
     }
 

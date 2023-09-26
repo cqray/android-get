@@ -93,14 +93,14 @@ internal class GetNavViewModel : ViewModel() {
      */
     fun loadRootFragment(@IdRes containerId: Int, intent: GetIntent) {
         this.containerId = containerId
-        goto(intent)
+        push(intent)
     }
 
     /**
      * 跳转界面
      * @param intent [GetIntent]
      */
-    fun goto(intent: GetIntent) {
+    fun push(intent: GetIntent) {
         // 检查是否是启动Activity
         if (checkActivity(intent)) return
         // 检查是否满足Fragment拦截条件
