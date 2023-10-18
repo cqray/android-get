@@ -123,7 +123,7 @@ internal class GetNavViewModel : ViewModel() {
                 // 设置自定义动画
                 ft.setCustomAnimations(enter, exit, popEnter, popExit)
                 // 计算并设置Fragment动画时长
-                val duration = AnimUtils.getAnimDurationFromResource(enter)
+                val duration = AnimUtils.getAnimDurationFromXml(enter)
                 fragment.arguments?.putInt(FRAGMENT_ANIM_DURATION_TAG, duration)
             }
         }

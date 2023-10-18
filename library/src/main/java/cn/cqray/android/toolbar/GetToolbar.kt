@@ -571,7 +571,7 @@ class GetToolbar @JvmOverloads constructor(
         // 基础属性
         setPaddingH(init.paddingH)
         layoutParams.height = Sizes.any2px(init.height, COMPLEX_UNIT_DIP)
-        elevation = init.elevation.toFloat()
+        setElevation(init.elevation)
         // 背景
         background = init.background
         // 回退按钮部分

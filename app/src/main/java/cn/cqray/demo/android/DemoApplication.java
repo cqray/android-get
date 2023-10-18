@@ -20,7 +20,7 @@ public class DemoApplication extends MultiDexApplication {
         //设置全局的Header构建器
         SmartRefreshLayout.setDefaultRefreshHeaderCreator((context, layout) -> {
             //全局设置主题颜色
-            layout.setPrimaryColorsId(R.color.colorPrimary, android.R.color.white);
+//            layout.setPrimaryColorsId(R.color.colorPrimary, android.R.color.white);
             //.setTimeFormat(new DynamicTimeFormat("更新于 %s"));指定为经典Header，默认是 贝塞尔雷达Header
             return new ClassicsHeader(context);
         });
@@ -39,7 +39,7 @@ public class DemoApplication extends MultiDexApplication {
         Log.e("数据", "APPlication是否相同：" + (app == this));
 
         GetToolbarInit toolbarInit = new GetToolbarInit();
-        toolbarInit.setElevation(7F);
+        toolbarInit.setElevation(7);
 //        toolbarInit.setBackIcon(R.drawable.def_back_common_dark);
         toolbarInit.setBackText("返回");
         GetInit getInit = new GetInit();

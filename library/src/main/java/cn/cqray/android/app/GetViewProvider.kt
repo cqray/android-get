@@ -27,8 +27,8 @@ interface GetViewProvider : GetStateProvider, GetProvider {
     /** 根控件 */
     val rootView get() = viewDelegate.rootView
 
-    /** 标题布局 */
-    val toolbarLayout get() = viewDelegate.toolbar
+//    /** 标题布局 */
+//    val toolbarLayout get() = viewDelegate.toolbarLayout
 
     /** 标题 **/
     val toolbar get() = viewDelegate.toolbar

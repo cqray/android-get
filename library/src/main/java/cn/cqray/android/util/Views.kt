@@ -99,6 +99,7 @@ object Views {
      * @param view 控件
      * @param overScrollMode 越界属性
      */
+    @JvmStatic
     fun setOverScrollMode(view: View?, overScrollMode: Int) {
         view?.let {
             when (it) {
@@ -112,6 +113,7 @@ object Views {
      * 关闭[RecyclerView]自带动画
      * @param recyclerView [RecyclerView]控件
      */
+    @JvmStatic
     fun closeRvAnimator(recyclerView: RecyclerView?) {
         recyclerView?.let { rv ->
             val animator = rv.itemAnimator
@@ -135,7 +137,6 @@ object Views {
         materialShapeDrawable.initializeElevationOverlay(context)
         return materialShapeDrawable
     }
-
 
     /**
      * View转化为Activity

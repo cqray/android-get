@@ -15,7 +15,7 @@ internal class GetTipLogInterceptor : IToastInterceptor {
     override fun intercept(params: ToastParams): Boolean {
         val task = params as? GetTipTask
         // 是否在Logcat显示
-        val logcatEnable = task?.init?.logcatEnable ?: false
+        val logcatEnable = task?.init?.logcatEnable ?: true
         // 是否打印日志
         if (!logcatEnable) return false
         // 获取调用的堆栈信息

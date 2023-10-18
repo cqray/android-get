@@ -19,13 +19,13 @@ import cn.cqray.android.util.Views
 class GetEmptyAdapter : GetStateAdapter<GetEmptyAdapter>() {
 
     /** 图片资源  */
-    private val image by lazy { GetLiveData<Any?>(R.drawable.empty2) }
+    private val image by lazy { GetLiveData<Any?>(R.drawable.no_data2) }
 
     /** 图片宽度 **/
-    private val imageWidth by lazy { GetLiveData(Sizes.dp2px(100)) }
+    private val imageWidth by lazy { GetLiveData(Sizes.dp2px(60)) }
 
     /** 图片高度 **/
-    private val imageHeight by lazy { GetLiveData(Sizes.dp2px(100)) }
+    private val imageHeight by lazy { GetLiveData(Sizes.dp2px(60)) }
 
     /** 绑定视图 **/
     private val binding by lazy { Views.getBinding(GetStateLayoutEmptyBinding::class.java) }

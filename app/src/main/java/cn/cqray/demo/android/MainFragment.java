@@ -1,10 +1,13 @@
 package cn.cqray.demo.android;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
 
+import cn.cqray.android.Get;
+import cn.cqray.android.tip.GetTip;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.viewholder.BaseViewHolder;
 
@@ -29,7 +32,9 @@ public class MainFragment extends GetPaginationFragment<Object> {
 //        finish(null);
 //        finish(null);
 
+        setBackgroundColor(Color.WHITE);
 
+        getStateDelegate().getEmptyAdapter().setBackgroundResource(R.color.foreground);
 
     }
 

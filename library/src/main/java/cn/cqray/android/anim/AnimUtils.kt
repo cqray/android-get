@@ -21,13 +21,13 @@ internal object AnimUtils {
      */
     @JvmStatic
     fun getActivityOpenEnterAnimResId(act: Activity): Int {
-        var attr = intArrayOf(android.R.attr.windowAnimationStyle)
-        var array = act.theme.obtainStyledAttributes(attr)
-        val animationStyleResId = array.getResourceId(0, -1)
+        val winAttr = intArrayOf(android.R.attr.windowAnimationStyle)
+        val winArray = act.theme.obtainStyledAttributes(winAttr)
+        val animationStyleResId = winArray.getResourceId(0, -1)
         if (animationStyleResId != -1) {
-            attr = intArrayOf(android.R.attr.activityOpenEnterAnimation)
-            array = act.theme.obtainStyledAttributes(animationStyleResId, attr)
-            return array.getResourceId(0, -1)
+            val actAttr = intArrayOf(android.R.attr.activityOpenEnterAnimation)
+            val actArray = act.theme.obtainStyledAttributes(animationStyleResId, actAttr)
+            return actArray.getResourceId(0, -1)
         }
         return -1
     }
@@ -38,7 +38,7 @@ internal object AnimUtils {
      * @return 时长
      */
     @JvmStatic
-    fun getAnimDurationFromResource(@AnimatorRes @AnimRes id: Int): Int {
+    fun getAnimDurationFromXml(@AnimatorRes @AnimRes id: Int): Int {
         var duration = 0
         runCatching {
             val parser = Contexts.resources.getAnimation(id)

@@ -17,7 +17,7 @@ public class MainActivity extends GetNavActivity {
         super.onCreating(savedInstanceState);
 
 
-        loadRootFragment(MainFragment.class);
+        loadRootFragment(MainFragment3.class);
 
 
     }

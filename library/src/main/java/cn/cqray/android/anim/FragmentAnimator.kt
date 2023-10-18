@@ -22,4 +22,4 @@ open class FragmentAnimator
     @field:AnimatorRes @field:AnimRes @param:AnimRes @param:AnimatorRes val popEnter: Int,
     /** A跳转B后，后退到A，B的动画  */
     @field:AnimatorRes @field:AnimRes @param:AnimRes @param:AnimatorRes val popExit: Int
-)
+) : java.io.Serializable

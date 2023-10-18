@@ -39,7 +39,7 @@ import java.util.concurrent.atomic.AtomicReference
     "MemberVisibilityCanBePrivate",
     "Unused"
 )
-class GetViewDelegate internal constructor(provider: GetViewProvider) : GetDelegate<GetViewProvider>(provider) {
+class GetViewDelegate2 internal constructor(provider: GetViewProvider) : GetDelegate<GetViewProvider>(provider) {
 
     /** [ViewBinding]实例缓存 **/
     private val bindingRef = AtomicReference<GetViewDefaultLayout2Binding>()
@@ -78,8 +78,8 @@ class GetViewDelegate internal constructor(provider: GetViewProvider) : GetDeleg
     /** 根控件 */
     val rootView get() = binding.root
 
-    /** 标题布局 */
-    val toolbarLayout get() = binding.getToolbar.parent as AppBarLayout
+//    /** 标题布局 */
+//    val toolbarLayout get() = binding.getToolbar.parent as AppBarLayout
 
     /** 标题 **/
     val toolbar get() = binding.getToolbar

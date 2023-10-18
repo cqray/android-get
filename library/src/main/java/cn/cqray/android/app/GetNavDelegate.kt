@@ -87,7 +87,7 @@ class GetNavDelegate(provider: GetNavProvider) : GetDelegate<GetNavProvider>(pro
             viewModel.getFragmentEnterAnimDuration(provider)
         } else {
             val animResId = AnimUtils.getActivityOpenEnterAnimResId((provider as Activity))
-            AnimUtils.getAnimDurationFromResource(animResId)
+            AnimUtils.getAnimDurationFromXml(animResId)
         }
         // 动画结束回调
         Get.runOnUiThreadDelayed({ provider.onEnterAnimEnd() }, enterAnimDuration)

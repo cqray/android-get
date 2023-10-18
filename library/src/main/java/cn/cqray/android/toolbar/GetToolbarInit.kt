@@ -41,13 +41,16 @@ class GetToolbarInit : GetBaseInit() {
     var ripple: Boolean = true
 
     /** 阴影高度，单位DP **/
-    var elevation: Number = Sizes.dpDivider()
+    var elevation: Number = 7
 
     /** 标题栏高度，单位DP **/
     val height: Number = Sizes.dp(R.dimen.toolbar)
 
     /** 左右内容间隔，单位DP **/
     var paddingH: Number = Sizes.dpContent()
+
+    /** 是否显示 **/
+    var visible: Boolean = true
 
     //===============================
     //============回退部分============
