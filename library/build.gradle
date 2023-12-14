@@ -64,6 +64,13 @@ android {
     buildFeatures {
         viewBinding = true
     }
+
+}
+
+// 打包源码jar
+task sourcesJar(type: Jar) {
+    from android.sourceSets.main.java.srcDirs
+    archiveClassifier = 'sources'
 }
 
 dependencies {
