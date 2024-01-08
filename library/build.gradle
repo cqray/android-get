@@ -12,8 +12,8 @@ android {
         minSdkVersion 17
         //noinspection ExpiredTargetSdkVersion
         targetSdkVersion 30
-        versionCode 1
-        versionName "1.0"
+        versionCode 92
+        versionName createVersionName(version)
         
         consumerProguardFiles "consumer-rules.pro"
     }
@@ -67,11 +67,6 @@ android {
 
 }
 
-// 打包源码jar
-task sourcesJar(type: Jar) {
-    from android.sourceSets.main.java.srcDirs
-    archiveClassifier = 'sources'
-}
 
 dependencies {
     api fileTree(dir: "libs", include: ["*.jar"])
@@ -109,13 +104,14 @@ dependencies {
     compileOnly 'io.reactivex.rxjava2:rxandroid:2.1.1'
     // RxJava3
     compileOnly "io.reactivex.rxjava3:rxjava:3.1.5"
-    compileOnly "io.reactivex.rxjava3:rxandroid:3.0.0"
+    compileOnly "io.reactivex.rxjava3:rxandroid:3.0.2"
     // ButterKnife快速布局工具
     compileOnly "com.jakewharton:butterknife:10.2.3"
     // 协程
     //noinspection GradleDependency
     compileOnly "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.5.1"
 }
+
 
 afterEvaluate {
 
@@ -125,13 +121,55 @@ afterEvaluate {
     publishing {
         publications {
             // Creates a Maven publication called "release".
+            //noinspection GroovyAssignabilityCheck
             release(MavenPublication) {
                 // Applies the component for the release build variant.
+                //noinspection GroovyAssignabilityCheck
                 from components.release
                 // You can then customize attributes of the publication as shown below.
+                //noinspection GroovyAssignabilityCheck
                 groupId = 'com.gitee.cqray'
+                //noinspection GroovyAssignabilityCheck
                 artifactId = 'android-get'
+                // 版本
+                version = android.defaultConfig.versionName
             }
         }
     }
+}
+
+/**
+ * 生成版本名
+ */
+static String createVersionName(int code) {
+    int num1 = (int) (code / 100)
+    int num2 = (int) ((code - num1 * 100) / 10)
+    int num3 = code - num1 * 100 - num2 * 10
+    return num1 + "." + num2 + "." + num3
+}
+
+/**
+ * 生成jar源码
+ */
+tasks.register('sourcesJar', Jar) {
+    from android.sourceSets.main.java.srcDirs
+    //noinspection GrDeprecatedAPIUsage
+    classifier = 'sources'
+}
+
+/**
+ * 生成javadoc
+ */
+tasks.register('javadoc', Jar) {
+    from javadoc.destinationDirectory
+    //noinspection GrDeprecatedAPIUsage
+    classifier = 'javadoc'
+}
+
+/**
+ * archives管理源码和文档
+ */
+artifacts {
+    archives sourcesJar
+    archives javadoc
 }
