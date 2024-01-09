@@ -13,7 +13,7 @@ android {
         //noinspection ExpiredTargetSdkVersion
         targetSdkVersion 30
         versionCode 92
-        versionName createVersionName(version)
+        versionName createVersionName(versionCode)
         
         consumerProguardFiles "consumer-rules.pro"
     }
