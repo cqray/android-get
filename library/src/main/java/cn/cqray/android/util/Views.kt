@@ -129,6 +129,10 @@ object Views {
         }
     }
 
+    fun fixRvScrollbar(recyclerView: RecyclerView?) {
+        recyclerView?.setWillNotDraw(false);
+    }
+
     private fun createMaterialShapeDrawableBackground(context: Context, background: Drawable): MaterialShapeDrawable {
         val materialShapeDrawable = MaterialShapeDrawable()
         if (background is ColorDrawable) {
