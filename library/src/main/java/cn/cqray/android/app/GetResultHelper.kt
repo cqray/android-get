@@ -39,7 +39,7 @@ internal object GetResultHelper {
         // 设置顶级接收者
         setTopReceiver(receiver)
         // 获取对应的MutableLiveData
-        val data = dataLds[receiver] ?: GetLiveData<Bundle>().also { dataLds[receiver] = it }
+        val data = GetLiveData<Bundle>().also { dataLds[receiver] = it }
         // 移除所有订阅
         data.removeObservers(receiver)
         // 重新订阅
