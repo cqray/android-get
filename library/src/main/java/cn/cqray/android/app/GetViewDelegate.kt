@@ -3,7 +3,6 @@ package cn.cqray.android.app
 import android.content.Context
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
-import android.os.Build
 
 import android.view.View
 import android.view.ViewGroup
@@ -21,7 +20,6 @@ import androidx.viewbinding.ViewBinding
 import cn.cqray.android.Get
 import cn.cqray.android.R
 import cn.cqray.android._Get
-import cn.cqray.android.databinding.GetViewDefaultLayout2Binding
 import cn.cqray.android.databinding.GetViewDefaultLayoutBinding
 import cn.cqray.android.lifecycle.GetLiveData
 import cn.cqray.android.state.GetStateDelegate
@@ -42,13 +40,13 @@ import java.util.concurrent.atomic.AtomicReference
 class GetViewDelegate internal constructor(provider: GetViewProvider) : GetDelegate<GetViewProvider>(provider) {
 
     /** [ViewBinding]实例缓存 **/
-    private val bindingRef = AtomicReference<GetViewDefaultLayout2Binding>()
+    private val bindingRef = AtomicReference<GetViewDefaultLayoutBinding>()
 
     /** 获取[ViewBinding]实例 **/
-    val binding: GetViewDefaultLayout2Binding
+    val binding: GetViewDefaultLayoutBinding
         get() {
             return bindingRef.get() ?: run {
-                val temp = GetViewDefaultLayout2Binding.inflate(Contexts.layoutInflater)
+                val temp = GetViewDefaultLayoutBinding.inflate(Contexts.layoutInflater)
                 synchronized(bindingRef) { bindingRef.set(temp) }
                 temp
             }
