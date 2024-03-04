@@ -93,7 +93,7 @@ class SelectAdapterDelegate<T>(val adapter: BaseQuickAdapter<T, out BaseViewHold
             // 则需要移除历史选中数据
             if ((maxCount > 0) and (size >= maxCount)) {
                 val index = selectedItems.keyAt(0)
-                selectedItems.removeAt(0)
+                selectedItems.removeAt(index)
                 adapter.notifyItemChanged(index)
             }
             // 添加新的选中项

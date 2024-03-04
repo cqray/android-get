@@ -12,7 +12,7 @@ android {
         minSdkVersion 17
         //noinspection ExpiredTargetSdkVersion
         targetSdkVersion 30
-        versionCode 94
+        versionCode 95
         versionName createVersionName(versionCode)
         
         consumerProguardFiles "consumer-rules.pro"
