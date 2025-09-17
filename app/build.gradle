@@ -1,23 +1,50 @@
 plugins {
     id 'com.android.application'
+    id 'org.jetbrains.kotlin.android'
+    id 'kotlin-kapt'
 }
 
 android {
-    compileSdkVersion 30
-    buildToolsVersion "30.0.3"
+    namespace 'cn.cqray.demo.android'
+    compileSdk 33
 
     defaultConfig {
         applicationId "cn.cqray.demo.android"
-        minSdkVersion 17
-        //noinspection ExpiredTargetSdkVersion
-        targetSdkVersion 30
-        versionCode 1
-        versionName "1.0"
+        minSdk 21
+        //noinspection OldTargetApi
+        targetSdk 33
+        versionCode 3
+        versionName createVersionName(versionCode)
 
         multiDexEnabled true
-
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
+
+//    signingConfigs {
+//        release {
+//            storeFile file("./cqset-common.jks")
+//            storePassword "cqset@2022"
+//            keyAlias "通用签名"
+//            keyPassword "cqset@2022"
+//        }
+//    }
+//
+//    buildTypes {
+//        debug {
+//            minifyEnabled false
+//            zipAlignEnabled true
+//            shrinkResources false
+//            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+//            signingConfig signingConfigs.release
+//
+//        }
+//        release {
+//            minifyEnabled false
+//            zipAlignEnabled true
+//            shrinkResources false
+//            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+//            signingConfig signingConfigs.release
+//        }
+//    }
 
     buildTypes {
         release {
@@ -30,26 +57,52 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+
 //    buildFeatures {
 //        viewBinding = true
 //    }
 
+//    packagingOptions {
+//        exclude 'META-INF/*'
+//    }
 }
+
+//configurations.configureEach {
+//    resolutionStrategy {
+//        force 'org.slf4j:slf4j-api:1.7.36'
+//        force 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3'
+//        force 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3'
+//    }
+//}
 
 dependencies {
 
-    implementation 'androidx.appcompat:appcompat:1.2.0'
+    implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'com.google.android.material:material:1.2.1'
     implementation 'androidx.constraintlayout:constraintlayout:2.0.1'
 //    testImplementation 'junit:junit:4.+'
 //    androidTestImplementation 'androidx.test.ext:junit:1.1.2'
 //    androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
+    implementation 'androidx.multidex:multidex:2.0.1'
 
     implementation 'cn.hutool:hutool-core:5.7.22'
 
     implementation project(":library")
 
 
-    implementation  'com.scwang.smart:refresh-header-classics:2.0.3'
+    implementation  'io.github.scwang90:refresh-header-classics:3.0.0-alpha'
+}
 
+/**
+ * 生成版本名
+ */
+static String createVersionName(int code) {
+    int num1 = (int) (code / 100)
+    int num2 = (int) ((code - num1 * 100) / 10)
+    int num3 = code - num1 * 100 - num2 * 10
+    return num1 + "." + num2 + "." + num3
 }

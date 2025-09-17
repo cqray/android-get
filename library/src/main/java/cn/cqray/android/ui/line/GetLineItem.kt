@@ -244,10 +244,10 @@ open class GetLineItem<T : GetLineItem<T>>(
         const val TEXT = -198
 
         @JvmStatic
-        fun button(text: CharSequence? = null) = GetButtonLineItem<GetButtonLineItem<*>>(text)
+        fun button(text: CharSequence? = null) = GetButtonLineItem(text)
 
         @JvmStatic
-        fun icon(text: CharSequence? = null) = GetIconLineItem<GetIconLineItem<*>>(text)
+        fun icon(text: CharSequence? = null) = GetIconLineItem(text)
 
         @JvmStatic
         fun text(text: CharSequence? = null) = GetTextLineItem(text)

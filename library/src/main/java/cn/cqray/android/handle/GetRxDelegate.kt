@@ -125,8 +125,6 @@ class GetRxDelegate @JvmOverloads constructor(
      * @param disposable 任务实例
      */
     private fun dispose(disposable: Any) {
-        // 释放RxJava2
-        if (Check3rdUtils.isRxJava2Support) if (disposable is io.reactivex.disposables.Disposable) disposable.dispose()
         // 释放RxJava3
         if (Check3rdUtils.isRxJava3Support) if (disposable is io.reactivex.rxjava3.disposables.Disposable) disposable.dispose()
     }

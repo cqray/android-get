@@ -26,7 +26,7 @@ public class MainFragment2 extends GetMultiFragment {
 //
 //        );
         getToolbar().setVisibility(View.VISIBLE);
-        getToolbar().setActionIcon(0, R.drawable.def_back_common_dark);
+//        getToolbar().setActionIcon(0, R.drawable.def_back_common_dark);
         getToolbar().setActionText(1, "123132");
 //        addFragment(new GetMultiItem(MainFragment.class,"我的").put("index", 0), 0);
 //        addFragment(new GetMultiItem(MainFragment.class,"ta").put("index", 1), 0);

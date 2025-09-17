@@ -70,11 +70,9 @@ object Views {
         val ripple = rippleEnable == null || rippleEnable
         if (ripple) {
             var drawable: Drawable? = null
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                val ta = context.obtainStyledAttributes(intArrayOf(android.R.attr.actionBarItemBackground))
-                drawable = ta.getDrawable(0)
-                ta.recycle()
-            }
+            val ta = context.obtainStyledAttributes(intArrayOf(android.R.attr.actionBarItemBackground))
+            drawable = ta.getDrawable(0)
+            ta.recycle()
             ViewCompat.setBackground(view, drawable)
         }
         //        else {
@@ -83,9 +81,7 @@ object Views {
     }
 
     fun setElevation(view: View, elevation: Float) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            view.elevation = elevation
-        }
+        view.elevation = elevation
         val background = view.background
         if (background is ColorDrawable) {
             ViewCompat.setBackground(view, createMaterialShapeDrawableBackground(view.context, background))

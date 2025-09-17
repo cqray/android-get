@@ -4,6 +4,7 @@ import android.util.SparseArray
 import androidx.lifecycle.Observer
 import kotlinx.coroutines.*
 import java.util.concurrent.TimeUnit
+import androidx.core.util.size
 
 /**
  * 协程任务委托实现
@@ -18,7 +19,7 @@ internal class GetTaskKtxDelegate : GetTaskBaseDelegate() {
     override fun onCleared() {
         // 释放job缓存
         synchronized(jobs) {
-            for (i in 0 until jobs.size()) {
+            for (i in 0 until jobs.size) {
                 jobs.valueAt(i)?.cancel()
             }
             jobs.clear()

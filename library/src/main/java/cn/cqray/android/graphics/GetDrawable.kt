@@ -7,6 +7,7 @@ import cn.cqray.android.Get
 import cn.cqray.android.util.Colors
 import cn.cqray.android.util.Contexts
 import com.blankj.utilcode.util.ImageUtils
+import androidx.core.graphics.drawable.toDrawable
 
 /**
  * [Get]兼容的[Drawable]
@@ -22,11 +23,7 @@ class GetDrawable : java.io.Serializable {
     /** 字节数据 **/
     private var bytes: ByteArray? = null
 
-    fun get(): Drawable? {
-        return if (bytes != null) ImageUtils.bytes2Drawable(bytes)
-        else if (color != null) ColorDrawable(color!!)
-        else null
-    }
+    fun get(): Drawable? = bytes?.let { ImageUtils.bytes2Drawable(it) } ?: color?.toDrawable()
 
     fun set(drawable: Drawable?) {
         if (drawable is ColorDrawable) {

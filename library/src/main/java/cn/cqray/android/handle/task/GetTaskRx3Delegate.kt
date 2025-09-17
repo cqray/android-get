@@ -7,6 +7,7 @@ import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.disposables.Disposable
 import io.reactivex.rxjava3.schedulers.Schedulers
 import java.util.concurrent.TimeUnit
+import androidx.core.util.size
 
 /**
  * RxJava3任务委托实现
@@ -20,7 +21,7 @@ internal class GetTaskRx3Delegate : GetTaskBaseDelegate() {
     override fun onCleared() {
         // 释放job缓存
         synchronized(disposables) {
-            for (i in 0 until disposables.size()) {
+            for (i in 0 until disposables.size) {
                 disposables.valueAt(i)?.dispose()
             }
             disposables.clear()

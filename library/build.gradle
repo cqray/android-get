@@ -1,20 +1,18 @@
 plugins {
     id 'com.android.library'
-    id 'kotlin-android'
-    id 'maven-publish'
+    id 'org.jetbrains.kotlin.android'
 }
 
 android {
-    compileSdkVersion 30
-    buildToolsVersion "30.0.3"
+    namespace 'cn.cqray.android'
+    compileSdk 33
 
     defaultConfig {
-        minSdkVersion 17
-        //noinspection ExpiredTargetSdkVersion
-        targetSdkVersion 30
-        versionCode 95
+        minSdk 21
+        targetSdk 33
+        versionCode 97
         versionName createVersionName(versionCode)
-        
+
         consumerProguardFiles "consumer-rules.pro"
     }
 
@@ -22,10 +20,6 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-        }
-
-        android.libraryVariants.all { variant ->
-            variant.outputs.all { outputFileName = "android-get.aar" }
         }
     }
 
@@ -35,47 +29,36 @@ android {
     }
 
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = '1.8'
         freeCompilerArgs += [
                 "-Xjvm-default=all",
                 "-Xopt-in=kotlin.RequiresOptIn",
-                '-module-name',
-                "cn.cqray.android",
+//                '-module-name',
+//                "cn.cqray.android",
         ]
-    }
-
-    lintOptions {
-        // 忽略ID non-final 警告
-        disable 'NonConstantResourceId'
-        disable 'ContentDescription'
-    }
-
-    // 强制限定版本依赖版本
-    configurations.all {
-        resolutionStrategy {
-            force 'androidx.core:core-ktx:1.6.0'
-            force 'androidx.core:core:1.6.0'
-            force 'androidx.appcompat:appcompat:1.3.1'
-            force "androidx.activity:activity:1.3.1"
-            force "androidx.fragment:fragment:1.3.1"
-        }
     }
 
     buildFeatures {
         viewBinding = true
     }
-
 }
 
-
 dependencies {
+
     api fileTree(dir: "libs", include: ["*.jar"])
+
+    def android = "1.6.1"
     //noinspection GradleDependency
-    api "androidx.appcompat:appcompat:1.3.1"
+    api "androidx.appcompat:appcompat:$android"
+    // 协程
     //noinspection GradleDependency
-    api "com.google.android.material:material:1.2.1"
-    //JetPack Lifecycle、LiveData、ViewModel扩展
-    api "androidx.lifecycle:lifecycle-common-java8:2.5.1"
+    compileOnly "org.jetbrains.kotlinx:kotlinx-coroutines-core:$android"
+    //noinspection GradleDependency
+    compileOnly "org.jetbrains.kotlinx:kotlinx-coroutines-android:$android"
+    //noinspection GradleDependency
+    api "com.google.android.material:material:1.8.0"
+//    //JetPack Lifecycle、LiveData、ViewModel扩展
+//    api "androidx.lifecycle:lifecycle-common-java8:2.5.1"
     // Json格式化工具
     api "com.google.code.gson:gson:2.10.1"
     // 常用工具类
@@ -84,59 +67,65 @@ dependencies {
     api "com.github.ybq:Android-SpinKit:1.4.0"
 
     // Toast弹窗：https://github.com/getActivity/Toaster
-    api 'com.github.getActivity:Toaster:12.5'
+    api 'com.github.getActivity:Toaster:13.5'
 //    // 标题栏：https://github.com/getActivity/TitleBar
 //    api 'com.github.getActivity:TitleBar:10.5'
 
     // 刷新框架
-    api "io.github.scwang90:refresh-layout-kernel:2.0.5"
+//    api "io.github.scwang90:refresh-layout-kernel:2.0.5"
+
+    api  'io.github.scwang90:refresh-layout-kernel:3.0.0-alpha'      //核心必须依赖
+//    implementation  'io.github.scwang90:refresh-header-classics:3.0.0-alpha'    //经典刷新头
+//    implementation  'io.github.scwang90:refresh-header-radar:3.0.0-alpha'       //雷达刷新头
+//    implementation  'io.github.scwang90:refresh-header-falsify:3.0.0-alpha'     //虚拟刷新头
+//    implementation  'io.github.scwang90:refresh-header-material:3.0.0-alpha'    //谷歌刷新头
+//    implementation  'io.github.scwang90:refresh-header-two-level:3.0.0-alpha'   //二级刷新头
+//    implementation  'io.github.scwang90:refresh-footer-ball:3.0.0-alpha'        //球脉冲加载
+//    implementation  'io.github.scwang90:refresh-footer-classics:3.0.0-alpha'    //经典加载
+
     // TabLayout框架
     api 'io.github.h07000223:flycoTabLayout:3.0.0'
     // noinspection GradleDependency
     api "com.github.CymChad:BaseRecyclerViewAdapterHelper:3.0.11"
-    // Kotlin相关框架
-    //noinspection GradleDependency
-    api "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-    //noinspection GradleDependency
-    api "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
-    // RxJava2
-    compileOnly 'io.reactivex.rxjava2:rxjava:2.2.21'
-    compileOnly 'io.reactivex.rxjava2:rxandroid:2.1.1'
+//    // Kotlin相关框架
+//    //noinspection GradleDependency
+//    api "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+//    //noinspection GradleDependency
+    api 'org.jetbrains.kotlin:kotlin-reflect:1.9.10'
+//    // RxJava2
+//    compileOnly 'io.reactivex.rxjava2:rxjava:2.2.21'
+//    compileOnly 'io.reactivex.rxjava2:rxandroid:2.1.1'
     // RxJava3
     compileOnly "io.reactivex.rxjava3:rxjava:3.1.5"
     compileOnly "io.reactivex.rxjava3:rxandroid:3.0.2"
-    // ButterKnife快速布局工具
-    compileOnly "com.jakewharton:butterknife:10.2.3"
-    // 协程
-    //noinspection GradleDependency
-    compileOnly "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.5.1"
+//    // ButterKnife快速布局工具
+//    compileOnly "com.jakewharton:butterknife:10.2.3"
 }
 
-
-afterEvaluate {
-
-    generateReleaseBuildConfig.enabled = false
-    generateDebugBuildConfig.enabled = false
-
-    publishing {
-        publications {
-            // Creates a Maven publication called "release".
-            //noinspection GroovyAssignabilityCheck
-            release(MavenPublication) {
-                // Applies the component for the release build variant.
-                //noinspection GroovyAssignabilityCheck
-                from components.release
-                // You can then customize attributes of the publication as shown below.
-                //noinspection GroovyAssignabilityCheck
-                groupId = 'com.gitee.cqray'
-                //noinspection GroovyAssignabilityCheck
-                artifactId = 'android-get'
-                // 版本
-                version = android.defaultConfig.versionName
-            }
-        }
-    }
-}
+//afterEvaluate {
+//
+//    generateReleaseBuildConfig.enabled = false
+//    generateDebugBuildConfig.enabled = false
+//
+//    publishing {
+//        publications {
+//            // Creates a Maven publication called "release".
+//            //noinspection GroovyAssignabilityCheck
+//            release(MavenPublication) {
+//                // Applies the component for the release build variant.
+//                //noinspection GroovyAssignabilityCheck
+//                from components.release
+//                // You can then customize attributes of the publication as shown below.
+//                //noinspection GroovyAssignabilityCheck
+//                groupId = 'com.gitee.cqray'
+//                //noinspection GroovyAssignabilityCheck
+//                artifactId = 'android-get'
+//                // 版本
+//                version = android.defaultConfig.versionName
+//            }
+//        }
+//    }
+//}
 
 /**
  * 生成版本名

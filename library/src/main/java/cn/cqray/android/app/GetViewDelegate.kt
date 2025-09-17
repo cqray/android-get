@@ -52,9 +52,6 @@ class GetViewDelegate internal constructor(provider: GetViewProvider) : GetDeleg
             }
         }
 
-    /** ButterKnife绑定 **/
-    private val knifeUnBinderRef = AtomicReference<Any>()
-
     /** 是否设置Get扩展界面 **/
     private val setGetContentViewRef = AtomicBoolean(true)
 
@@ -142,7 +139,6 @@ class GetViewDelegate internal constructor(provider: GetViewProvider) : GetDeleg
     override fun onCleared() {
         super.onCleared()
         bindingRef.set(null)
-        ButterKnifeUtils.unbind(knifeUnBinderRef.get())
         System.gc()
     }
 
@@ -245,8 +241,6 @@ class GetViewDelegate internal constructor(provider: GetViewProvider) : GetDeleg
         headerLayout.removeAllViews()
         view?.let { headerLayout.addView(it) }
         synchronized(headerViewRef) { headerViewRef.set(view) }
-        // 初始化ButterKnife
-        initUnBinder()
         // 更新Header位置
         floating?.let {
             val params = binding.getContent.layoutParams as RelativeLayout.LayoutParams
@@ -277,8 +271,6 @@ class GetViewDelegate internal constructor(provider: GetViewProvider) : GetDeleg
         footerLayout.removeAllViews()
         view?.let { footerLayout.addView(it) }
         synchronized(footerViewRef) { footerViewRef.set(view) }
-        // 初始化ButterKnife
-        initUnBinder()
         // 更新Header位置
         floating?.let {
             val params = binding.getContent.layoutParams as RelativeLayout.LayoutParams
@@ -358,8 +350,6 @@ class GetViewDelegate internal constructor(provider: GetViewProvider) : GetDeleg
         if (provider is Fragment) background.setValue(Get.init.fragmentBackground)
         // 初始化标题
         initToolbar()
-        // 初始化ButterKnife
-        initUnBinder()
     }
 
     /** 初始化标题 **/
@@ -410,14 +400,6 @@ class GetViewDelegate internal constructor(provider: GetViewProvider) : GetDeleg
                 }
                 refreshLayoutRef.set(layout)
             }
-        }
-    }
-
-    /** 初始化ButterKnife */
-    private fun initUnBinder() {
-        ButterKnifeUtils.unbind(knifeUnBinderRef.get())
-        synchronized(knifeUnBinderRef) {
-            knifeUnBinderRef.set(ButterKnifeUtils.bind(provider, rootView))
         }
     }
 }
