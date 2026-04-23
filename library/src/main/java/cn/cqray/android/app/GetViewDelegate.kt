@@ -319,7 +319,8 @@ class GetViewDelegate internal constructor(provider: GetViewProvider) : GetDeleg
         if (refreshLayoutRef.get() == null) contentLayout.addView(view)
         // 否则添加到刷新容器中
         else refreshLayoutRef.get().setRefreshContent(view)
-
+        // 缓存布局内容
+        contentViewRef.set(view)
         // 绑定到Activity或者Fragment中
         if (provider is AppCompatActivity) {
             // 设置界面
