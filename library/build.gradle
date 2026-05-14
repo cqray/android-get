@@ -5,12 +5,12 @@ plugins {
 
 android {
     namespace 'cn.cqray.android'
-    compileSdk 35
+    compileSdk 33
 
     defaultConfig {
         minSdk 21
-        targetSdk 35
-        versionCode 101
+        targetSdk 33
+        versionCode 102
         versionName createVersionName(versionCode)
 
         consumerProguardFiles "consumer-rules.pro"
