@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.LayoutRes
 import androidx.fragment.app.Fragment
 import cn.cqray.android.Get
 import cn.cqray.android.handle.GetHandleDelegate
@@ -34,4 +35,8 @@ open class GetFragment : Fragment(),
     }
 
     open fun onCreating(savedInstanceState: Bundle?) {}
+
+    fun setContentView(@LayoutRes id: Int) = viewDelegate.setGetContentView(id)
+
+    fun setContentView(view: View) = viewDelegate.setGetContentView(view)
 }

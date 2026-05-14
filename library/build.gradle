@@ -5,12 +5,12 @@ plugins {
 
 android {
     namespace 'cn.cqray.android'
-    compileSdk 33
+    compileSdk 35
 
     defaultConfig {
         minSdk 21
-        targetSdk 33
-        versionCode 97
+        targetSdk 35
+        versionCode 101
         versionName createVersionName(versionCode)
 
         consumerProguardFiles "consumer-rules.pro"
@@ -91,7 +91,7 @@ dependencies {
 //    //noinspection GradleDependency
 //    api "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 //    //noinspection GradleDependency
-    api 'org.jetbrains.kotlin:kotlin-reflect:1.9.10'
+    api 'org.jetbrains.kotlin:kotlin-reflect:1.8.22'
 //    // RxJava2
 //    compileOnly 'io.reactivex.rxjava2:rxjava:2.2.21'
 //    compileOnly 'io.reactivex.rxjava2:rxandroid:2.1.1'
