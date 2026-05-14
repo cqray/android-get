@@ -60,17 +60,17 @@ interface GetViewProvider : GetStateProvider, GetProvider {
      */
     fun ensureSetNativeContentView() = viewDelegate.ensureSetNativeContentView()
 
-//    /**
-//     * 设置布局，根据[ensureSetGetContentView]、[ensureSetNativeContentView]确定布局
-//     * @param id 布局资源ID
-//     */
-//    fun setContentView(@LayoutRes id: Int) = viewDelegate.setGetContentView(id)
-//
-//    /**
-//     * 设置布局，根据[ensureSetGetContentView]、[ensureSetNativeContentView]确定布局
-//     * @param view 布局
-//     */
-//    fun setContentView(view: View) = viewDelegate.setGetContentView(view)
+    /**
+     * 设置布局，根据[ensureSetGetContentView]、[ensureSetNativeContentView]确定布局
+     * @param id 布局资源ID
+     */
+    fun setContentView(@LayoutRes id: Int) = viewDelegate.setGetContentView(id)
+
+    /**
+     * 设置布局，根据[ensureSetGetContentView]、[ensureSetNativeContentView]确定布局
+     * @param view 布局
+     */
+    fun setContentView(view: View?) = viewDelegate.setGetContentView(view)
 
     /**
      * 设置Get风格布局

@@ -170,8 +170,8 @@ class GetViewDelegate internal constructor(provider: GetViewProvider) : GetDeleg
      * 设置默认布局
      * @param view 布局
      */
-    fun setGetContentView(view: View) {
-        (view.parent as? ViewGroup)?.removeView(view)
+    fun setGetContentView(view: View?) {
+        (view?.parent as? ViewGroup)?.removeView(view)
         if (!setGetContentViewRef.get()) {
             setNativeContentView(view)
             return
@@ -192,8 +192,8 @@ class GetViewDelegate internal constructor(provider: GetViewProvider) : GetDeleg
      * 设置原生布局
      * @param view 布局
      */
-    fun setNativeContentView(view: View) {
-        (view.parent as? ViewGroup)?.removeView(view)
+    fun setNativeContentView(view: View?) {
+        (view?.parent as? ViewGroup)?.removeView(view)
         // 移除历史界面
         removeContentView()
         // 确定是使用原始布局
@@ -314,7 +314,8 @@ class GetViewDelegate internal constructor(provider: GetViewProvider) : GetDeleg
     fun setBackground(drawable: Drawable?) = drawable.also { background.setValue(it) }
 
     /** 设置内容界面 */
-    private fun initContentView(view: View) {
+    private fun initContentView(view: View?) {
+        if (view == null) return
         // 没有刷新布局，则直接添加到内容容器中
         if (refreshLayoutRef.get() == null) contentLayout.addView(view)
         // 否则添加到刷新容器中

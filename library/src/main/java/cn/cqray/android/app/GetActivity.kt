@@ -35,9 +35,9 @@ open class GetActivity : AppCompatActivity(),
 
     final override fun setContentView(@LayoutRes id: Int) = viewDelegate.setGetContentView(id)
 
-    final override fun setContentView(view: View) = viewDelegate.setGetContentView(view)
+    final override fun setContentView(view: View?) = viewDelegate.setGetContentView(view)
 
-    final override fun setContentView(view: View, params: ViewGroup.LayoutParams?) =
+    final override fun setContentView(view: View?, params: ViewGroup.LayoutParams?) =
         viewDelegate.setGetContentView(view)
 
     /**

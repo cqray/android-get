@@ -35,8 +35,4 @@ open class GetFragment : Fragment(),
     }
 
     open fun onCreating(savedInstanceState: Bundle?) {}
-
-    fun setContentView(@LayoutRes id: Int) = viewDelegate.setGetContentView(id)
-
-    fun setContentView(view: View) = viewDelegate.setGetContentView(view)
 }
